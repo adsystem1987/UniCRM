@@ -18,9 +18,9 @@ import { ContactButton } from "@/components/contact/contact-buttons";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 
 export const metadata = {
-  title: "DFY UniCRM — 100% Free Forever WhatsApp CRM with Paid VIP Support",
+  title: "DFY UniCRM — 100% Free Forever WhatsApp CRM with Paid Pro Support",
   description:
-    "Indian business friendly WhatsApp CRM. Zero platform subscriptions, instant QR code connection or official Meta Cloud API, free AI options, and optional ₹1,000/mo Done-For-You VIP technical support.",
+    "Indian business friendly WhatsApp CRM. Zero platform subscriptions, instant QR code connection or official Meta Cloud API, free AI options, and optional ₹1,000/mo Done-For-You Pro technical support.",
 };
 
 export default function LandingPage() {
@@ -75,7 +75,7 @@ export default function LandingPage() {
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">What You Get</a>
-            <a href="#support-plan" className="hover:text-foreground transition-colors">Optional VIP Help (₹1,000/mo)</a>
+            <a href="#support-plan" className="hover:text-foreground transition-colors">Optional Pro Help (₹1,000/mo)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">Common Doubts</a>
           </nav>
 
@@ -268,7 +268,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing / Business Model Section: Free Forever + $10/mo (₹849/mo) DFY VIP Support */}
+        {/* Pricing / Business Model Section: Free Forever + ₹1,000/mo DFY Pro Support */}
         <section id="support-plan" className="py-16 md:py-24 border-b border-border/40 bg-card/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -279,7 +279,7 @@ export default function LandingPage() {
                 Free Forever Core Software.<br />Pay Only If You Need Handheld Support.
               </h2>
               <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
-                Zero lock-in. Direct bills to Meta. Optional Done-For-You (DFY) VIP maintenance.
+                Zero lock-in. Direct bills to Meta. Optional Done-For-You (DFY) Pro maintenance.
               </p>
             </div>
 
@@ -335,7 +335,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Plan 2: ₹1,000/mo Optional Done-For-You VIP Support */}
+              {/* Plan 2: ₹1,000/mo Optional Done-For-You Pro Support */}
               <div className="relative rounded-3xl border-2 border-emerald-500 bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
                 <div className="absolute -top-3.5 right-8 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white">
                   100% Optional Service
@@ -348,7 +348,7 @@ export default function LandingPage() {
                     </span>
                     <span className="text-xs font-semibold text-emerald-500">Stop Anytime</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">Optional Done-For-You VIP Help</h3>
+                  <h3 className="text-2xl font-black text-foreground">Optional Done-For-You Pro Help</h3>
                   <div className="mt-4 flex items-baseline gap-1">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ month</span>
@@ -376,7 +376,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Quick team walkthrough and training calls</span>
+                      <span>Priority Support with rapid response times</span>
                     </li>
                   </ul>
                 </div>
@@ -384,10 +384,10 @@ export default function LandingPage() {
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <ContactButton
                     className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-                    defaultTopic="Optional VIP Support (₹1,000/mo)"
+                    defaultTopic="Optional Pro Support (₹1,000/mo)"
                     icon="message"
                   >
-                    Request Optional VIP Setup (₹1,000/mo)
+                    Request Optional Pro Setup (₹1,000/mo)
                   </ContactButton>
                 </div>
               </div>
@@ -412,9 +412,9 @@ export default function LandingPage() {
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">Is the Done-For-You VIP Support mandatory?</h4>
+                <h4 className="font-bold text-foreground">Is the Done-For-You Pro Support mandatory?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  No, not at all! It is 100% optional. The entire software is free to use on your own. You only choose VIP support if you prefer our team to handle your Meta verification and WhatsApp number setup for you.
+                  No, not at all! It is 100% optional. The entire software is free to use on your own. You only choose Pro support if you prefer our team to handle your Meta verification and WhatsApp number setup for you.
                 </p>
               </div>
 
