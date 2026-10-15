@@ -42,6 +42,19 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
+  // Defense-in-depth: If Supabase dropped the user on `/` with a `?code=` or `?token_hash=`,
+  // forward immediately to `/auth/callback` so the PKCE session exchange executes.
+  if (
+    request.nextUrl.pathname === '/' &&
+    (request.nextUrl.searchParams.has('code') ||
+      request.nextUrl.searchParams.has('token_hash') ||
+      request.nextUrl.searchParams.has('error'))
+  ) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = '/auth/callback';
+    return withRefreshedCookies(NextResponse.redirect(callbackUrl));
+  }
+
   // Auth pages - redirect to dashboard if already logged in.
   // Exception: when an invite token is in the query string we
   // send the already-signed-in user to /join/<token> instead so
