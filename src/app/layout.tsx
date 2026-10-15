@@ -52,6 +52,9 @@ const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  verification: {
+    google: "v18y6m3_8ahks2fbJhITfglcADK302iADB5NlBGfFmw",
+  },
 };
 
 export const viewport: Viewport = {
