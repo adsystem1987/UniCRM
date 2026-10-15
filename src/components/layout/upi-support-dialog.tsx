@@ -58,8 +58,8 @@ const PRESET_OPTIONS: PresetOption[] = [
   {
     amount: "299",
     label: "₹299",
-    sublabel: "Super Hero",
-    badge: "VIP Perks",
+    sublabel: "Super Hero 🌟",
+    badge: "Pro Community",
     icon: Award,
   },
 ];
