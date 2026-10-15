@@ -175,6 +175,19 @@ function SignupPageInner() {
             </div>
           )}
 
+          {/* Limited Server Capacity Scarcity Alert */}
+          {!inviteToken && (
+            <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 font-medium shadow-xs">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              </span>
+              <span>
+                <strong>Limited Batch Notice:</strong> Only 14 free lifetime accounts remaining today due to server bandwidth limits. Complete signup to secure your slot.
+              </span>
+            </div>
+          )}
+
           {/* Primary Action: 1-Click Google Signup */}
           <GoogleSignInButton
             inviteToken={inviteToken}
