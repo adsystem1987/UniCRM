@@ -707,3 +707,40 @@ export interface QuickReply {
   created_at: string;
   updated_at: string;
 }
+
+// ============================================================
+// Voice Calling & IVR (Whatomate Integration)
+// ============================================================
+
+export type CallDirection = 'inbound' | 'outbound';
+
+export type CallStatus =
+  | 'initiated'
+  | 'ringing'
+  | 'in_progress'
+  | 'completed'
+  | 'missed'
+  | 'busy'
+  | 'failed';
+
+export interface CallLog {
+  id: string;
+  account_id: string;
+  contact_id?: string | null;
+  conversation_id?: string | null;
+  whatomate_call_id?: string | null;
+  direction: CallDirection;
+  status: CallStatus;
+  from_number: string;
+  to_number: string;
+  duration_seconds: number;
+  recording_url?: string | null;
+  ivr_path?: Array<{ step: string; dtmf?: string; timestamp: string }> | null;
+  metadata?: Record<string, unknown>;
+  started_at?: string | null;
+  ended_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  contact?: Contact;
+}
+

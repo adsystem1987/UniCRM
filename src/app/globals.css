@@ -228,3 +228,39 @@ html[data-theme="rose"] {
     @apply font-sans;
   }
 }
+
+/* ============================================================
+ * Emil Kowalski (animations.dev / skills) Design Engineering
+ * Snappy micro-interactions, spring curves & tactile presses
+ * ============================================================ */
+
+:root {
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* Tactile button & card press feedback */
+.pressable {
+  transition: transform 150ms var(--ease-snappy), opacity 150ms ease;
+  will-change: transform;
+}
+.pressable:active {
+  transform: scale(0.975);
+}
+
+/* Snappy entrance for dialogs and popovers (scale 0.96 -> 1, never 0) */
+.animate-in-snappy {
+  animation: enter-snappy 200ms var(--ease-snappy) forwards;
+}
+
+@keyframes enter-snappy {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

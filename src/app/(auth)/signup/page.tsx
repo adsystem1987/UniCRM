@@ -225,14 +225,27 @@ function SignupPageInner() {
               />
             </div>
 
+            <p className="text-xs text-muted-foreground text-center">
+              By registering, you agree to our{" "}
+              <Link href="/terms" className="text-primary underline hover:text-primary/80">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link href="/privacy" className="text-primary underline hover:text-primary/80">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+
             <Button
               type="submit"
               disabled={loading}
-              className="mt-2 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="mt-1 h-10 w-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
               {loading ? t("creating") : t("submit")}
             </Button>
           </form>
+
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {t("haveAccount")}{" "}

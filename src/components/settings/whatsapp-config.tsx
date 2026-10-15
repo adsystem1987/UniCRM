@@ -31,6 +31,8 @@ import {
   AccordionContent,
 } from '@/components/ui/accordion';
 import type { WhatsAppConfig as WhatsAppConfigType } from '@/types';
+import { EvolutionQrConnect } from './evolution-qr-connect';
+
 
 const MASKED_TOKEN = '••••••••••••••••';
 
@@ -545,7 +547,14 @@ export function WhatsAppConfig() {
         title={t("title")}
         description={t("description")}
       />
+
+      {/* Zero-Markup Community Option: Evolution API QR Code Connection */}
+      <div className="mb-6">
+        <EvolutionQrConnect />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+
       {/* Main config form */}
       <div className="space-y-6">
         {/* Corrupted-token reset banner */}

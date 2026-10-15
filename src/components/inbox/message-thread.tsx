@@ -27,6 +27,7 @@ import {
   RefreshCw,
   PanelRightOpen,
   PanelRightClose,
+  Phone,
 } from "lucide-react";
 import { format, isToday, isYesterday, differenceInHours } from "date-fns";
 import { useTranslations } from "next-intl";
@@ -51,6 +52,8 @@ import {
 import { deleteAccountMedia } from "@/lib/storage/upload-media";
 import { TemplatePicker } from "./template-picker";
 import { AiThreadBanner } from "./ai-thread-banner";
+import { VoiceCallModal } from "./voice-call-modal";
+
 import { buildReplyPreview } from "./reply-quote";
 import { renderTemplateBody } from "@/lib/whatsapp/template-body";
 import { contactHandle } from "@/lib/whatsapp/wa-identity";
@@ -198,7 +201,9 @@ export function MessageThread({
       refreshTimerRef.current = null;
     }, 700);
   }, [isRefreshing, onRefresh]);
+  const [callModalOpen, setCallModalOpen] = useState(false);
   const [replyTo, setReplyTo] = useState<ReplyDraft | null>(null);
+
   // Which attachment the media viewer is showing. Lives here rather than in
   // the bubble so the viewer can page through every image/video in the
   // thread (issue #373). Paired with the conversation it belongs to and read
@@ -969,6 +974,17 @@ export function MessageThread({
             </button>
           )}
 
+          {/* Call Contact via WhatsApp Voice / Whatomate */}
+          <button
+            type="button"
+            onClick={() => setCallModalOpen(true)}
+            aria-label="Call Contact"
+            title="Start WhatsApp Voice Call"
+            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-emerald-500 transition-colors hover:bg-muted hover:text-emerald-400"
+          >
+            <Phone className="h-4 w-4" />
+          </button>
+
           {/* Manual refresh — forces a refetch of the messages + the
               conversation list (the parent bumps its resyncToken). Useful
               when realtime missed an event or the agent just wants to be
@@ -990,6 +1006,7 @@ export function MessageThread({
               />
             </button>
           )}
+
 
           {/* Status dropdown */}
           <DropdownMenu>
@@ -1194,6 +1211,13 @@ export function MessageThread({
         onSelect={handleSendTemplate}
       />
 
+      {/* Voice Call Modal for WhatsApp calling via Whatomate */}
+      <VoiceCallModal
+        contact={contact}
+        isOpen={callModalOpen}
+        onClose={() => setCallModalOpen(false)}
+      />
+
       {/* Full-size viewer for the thread's images/videos. Renders nothing
           until a bubble opens it. */}
       <MediaLightbox
@@ -1205,3 +1229,4 @@ export function MessageThread({
     </div>
   );
 }
+

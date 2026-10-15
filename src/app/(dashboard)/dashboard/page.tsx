@@ -33,6 +33,8 @@ import { ConversationsChart } from '@/components/dashboard/conversations-chart'
 import { PipelineDonut } from '@/components/dashboard/pipeline-donut'
 import { ResponseTimeChart } from '@/components/dashboard/response-time-chart'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
+import { OnboardingChecklist } from '@/components/dashboard/onboarding-checklist'
+
 
 import { useTranslations } from 'next-intl'
 
@@ -131,8 +133,12 @@ export default function DashboardPage() {
         </p>
       </div>
 
+      {/* Interactive Onboarding Checklist for new users */}
+      <OnboardingChecklist />
+
       {/* Metric cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
         {metricsLoading || !metrics ? (
           Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
         ) : (

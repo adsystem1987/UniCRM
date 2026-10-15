@@ -311,13 +311,49 @@ export function AiConfig() {
               </div>
 
               {provider === 'openai_compatible' && (
-                <div className="space-y-2">
-                  <Label htmlFor="ai-base-url">{t('baseUrl')}</Label>
+                <div className="space-y-2 sm:col-span-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="ai-base-url">{t('baseUrl')}</Label>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setBaseUrl('https://generativelanguage.googleapis.com/v1beta/openai/');
+                          setModel('gemini-1.5-flash');
+                        }}
+                        className="font-medium text-emerald-500 hover:underline"
+                      >
+                        ✨ Free Google Gemini
+                      </button>
+
+                      <span className="text-muted-foreground">•</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setBaseUrl('https://openrouter.ai/api/v1');
+                          setModel('google/gemini-2.0-flash-exp:free');
+                        }}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        🌐 OpenRouter Free
+                      </button>
+
+                      <span className="text-muted-foreground">•</span>
+                      <a
+                        href="https://aistudio.google.com/app/apikey"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-muted-foreground hover:text-foreground underline decoration-dotted"
+                      >
+                        Get Free Gemini Key ↗
+                      </a>
+                    </div>
+                  </div>
                   <Input
                     id="ai-base-url"
                     value={baseUrl}
                     onChange={(e) => setBaseUrl(e.target.value)}
-                    placeholder="https://api.example.com/v1"
+                    placeholder="http://omniroute:20128/v1"
                     disabled={disabled}
                     autoComplete="off"
                   />
@@ -325,6 +361,7 @@ export function AiConfig() {
                 </div>
               )}
             </div>
+
 
             <div className="space-y-2">
               <Label htmlFor="ai-key">{t('apiKey')}</Label>

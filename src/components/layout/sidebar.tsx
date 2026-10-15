@@ -25,7 +25,9 @@ import {
   Workflow,
   X,
   Zap,
+  Heart,
 } from "lucide-react";
+
 import type { AccountRole } from "@/lib/auth/roles";
 
 // Per-role chip metadata used in the sidebar's account strip + the
@@ -268,7 +270,26 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
             })}
           </ul>
 
-          <div className="my-4 border-t border-border" />
+          {/* Community Support & Free Software Card */}
+          <div className="mt-auto mb-2 rounded-lg border border-primary/20 bg-primary/5 p-2.5 text-xs">
+            <div className="flex items-center gap-1.5 font-medium text-foreground">
+              <Heart className="h-3.5 w-3.5 fill-red-500 text-red-500" />
+              <span>Community-Powered</span>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground leading-tight">
+              UniCRM is free & open. Support our server and AI gateway costs.
+            </p>
+            <a
+              href="https://github.com/sponsors"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 block w-full rounded bg-primary/10 py-1 text-center font-medium text-primary hover:bg-primary/20 transition-colors"
+            >
+              Support Project
+            </a>
+          </div>
+
+          <div className="my-2 border-t border-border" />
 
           <ul className="flex flex-col gap-1">
             {bottomNavItems.map((item) => {
@@ -295,6 +316,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
         {/* User section */}
         <div className="shrink-0 border-t border-border p-3">
+
           {/* Account name display — surfaced only when the account
               name differs from the user's own name (see
               `showAccountStrip`). For a default solo account the two

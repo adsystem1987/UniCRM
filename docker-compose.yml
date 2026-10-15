@@ -26,6 +26,8 @@ services:
     ports:
       - '${HOST_PORT:-3000}:3000'
     restart: unless-stopped
+    networks:
+      - crm_net
     healthcheck:
       test:
         [
@@ -38,3 +40,77 @@ services:
       timeout: 5s
       retries: 3
       start_period: 15s
+
+  # Whatomate Voice Calling & IVR sidecar service
+  whatomate:
+    image: shridh0r/whatomate:latest
+    container_name: whatomate_voice_sidecar
+    restart: unless-stopped
+    ports:
+      - '${WHATOMATE_PORT:-8080}:8080'
+    networks:
+      - crm_net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./whatomate/uploads:/app/uploads:rw
+      - ./whatomate/config.toml:/app/config.toml:ro
+    command: ["server", "-migrate", "-config", "/app/config.toml"]
+
+  # Redis cache/queue required by Whatomate
+  redis:
+    image: redis:7-alpine
+    container_name: whatomate_redis
+    restart: unless-stopped
+    networks:
+      - crm_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # OmniRoute AI Proxy & Fallback Router (Free & Multi-Provider Gateway)
+  omniroute:
+    image: diegosouzapw/omniroute:latest
+    container_name: unicrm_omniroute
+    restart: unless-stopped
+    ports:
+      - '${OMNIROUTE_PORT:-20128}:20128'
+    networks:
+      - crm_net
+    volumes:
+      - ./omniroute/data:/app/data
+    environment:
+      - PORT=20128
+
+  # Evolution API v2 (Zero-Cost WhatsApp Web / QR Code Connection Gateway)
+  evolution-api:
+    image: evoapicloud/evolution-api:latest
+    container_name: unicrm_evolution_api
+    restart: unless-stopped
+    ports:
+      - '${EVOLUTION_PORT:-8081}:8080'
+    networks:
+      - crm_net
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./evolution/instances:/evolution/instances
+    environment:
+      - SERVER_PORT=8080
+      - SERVER_URL=${EVOLUTION_SERVER_URL:-http://localhost:8081}
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY:-unicrm-evolution-secret-key}
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://redis:6379/0
+      - CACHE_REDIS_PREFIX=evolution
+      - DEL_INSTANCE=false
+
+networks:
+  crm_net:
+    driver: bridge
+
+
+
