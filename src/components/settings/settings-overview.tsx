@@ -174,6 +174,11 @@ export function SettingsOverview({
       ),
     },
     {
+      section: 'integrations',
+      loading: false,
+      subtitle: 'Google Drive, Email, FB & IG',
+    },
+    {
       section: 'members',
       loading: countsLoading,
       subtitle:

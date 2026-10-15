@@ -1783,7 +1783,8 @@
       "fields": "필드 & 태그",
       "deals": "딜 & 통화",
       "members": "팀원",
-      "api": "API 키"
+      "api": "API 키",
+      "integrations": "채널 및 연동"
     },
     "groups": {
       "account": "계정",
