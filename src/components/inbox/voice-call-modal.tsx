@@ -26,7 +26,7 @@ export function VoiceCallModal({ contact, isOpen, onClose }: VoiceCallModalProps
   const [callId, setCallId] = useState<string | null>(null);
 
   const startCall = async () => {
-    if (!contact?.phone_number) {
+    if (!contact?.phone) {
       toast.error("Contact has no phone number");
       return;
     }
@@ -37,7 +37,7 @@ export function VoiceCallModal({ contact, isOpen, onClose }: VoiceCallModalProps
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          toNumber: contact.phone_number,
+          toNumber: contact.phone,
           contactId: contact.id,
         }),
       });
@@ -106,7 +106,7 @@ export function VoiceCallModal({ contact, isOpen, onClose }: VoiceCallModalProps
           </div>
 
           <h3 className="text-lg font-semibold">{contact?.name || "Customer"}</h3>
-          <p className="text-sm text-muted-foreground">{contact?.phone_number}</p>
+          <p className="text-sm text-muted-foreground">{contact?.phone}</p>
           <p className="mt-2 text-xs font-medium text-emerald-500 flex items-center gap-1.5 justify-center">
             {callActive ? (
               <>
