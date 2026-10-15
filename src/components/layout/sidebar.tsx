@@ -26,6 +26,7 @@ import {
   X,
   Zap,
   Heart,
+  Target,
 } from "lucide-react";
 import { UpiSupportCard } from "./upi-support-dialog";
 
@@ -97,6 +98,7 @@ const navItems: NavItem[] = [
   { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
   { href: "/notifications", labelKey: "notifications", icon: Bell },
   { href: "/contacts", labelKey: "contacts", icon: Users },
+  { href: "/leads", labelKey: "leadFinder", icon: Target, beta: true },
   { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
   { href: "/broadcasts", labelKey: "broadcasts", icon: Radio },
   { href: "/automations", labelKey: "automations", icon: Zap },

@@ -49,7 +49,15 @@ import {
   SlidersHorizontal,
   Filter,
   X,
+  Target,
 } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import { LeadFinderView } from '@/components/leads/lead-finder-view';
 import { ContactForm } from '@/components/contacts/contact-form';
 import { ContactDetailView } from '@/components/contacts/contact-detail-view';
 import { ImportModal } from '@/components/contacts/import-modal';
@@ -86,6 +94,7 @@ export default function ContactsPage() {
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailContactId, setDetailContactId] = useState<string | null>(null);
   const [importOpen, setImportOpen] = useState(false);
+  const [leadFinderOpen, setLeadFinderOpen] = useState(false);
   const [customFieldsOpen, setCustomFieldsOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Contact | null>(null);
@@ -371,6 +380,17 @@ export default function ContactsPage() {
             <Upload className="size-4" />
             {t('importBtn')}
           </GatedButton>
+          <Button
+            variant="outline"
+            onClick={() => setLeadFinderOpen(true)}
+            className="border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary gap-1.5"
+          >
+            <Target className="size-4" />
+            <span>Find Leads (ICP)</span>
+            <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">
+              AI
+            </span>
+          </Button>
           <GatedButton
             canAct={canEdit}
             gateReason={tGate('reasons.addOrImportContacts')}
@@ -828,6 +848,24 @@ export default function ContactsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Smart Lead Finder Sheet (ICP Finder) */}
+      <Sheet open={leadFinderOpen} onOpenChange={setLeadFinderOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto p-4 sm:p-6 bg-card border-border">
+          <SheetHeader className="pb-3 border-b border-border/50">
+            <SheetTitle className="text-foreground flex items-center gap-2 text-base font-semibold">
+              <Target className="size-5 text-primary" />
+              <span>UniCRM Smart Lead Finder</span>
+              <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded-full font-semibold uppercase">
+                ICP Engine
+              </span>
+            </SheetTitle>
+          </SheetHeader>
+          <div className="py-2">
+            <LeadFinderView isDrawer={true} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
