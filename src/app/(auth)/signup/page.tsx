@@ -18,6 +18,7 @@ import {
 import { MessageSquare, CheckCircle, UsersRound } from "lucide-react";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { useServerSlots } from "@/lib/scarcity";
 
 // `useSearchParams` opts the component out of static prerendering
 // unless wrapped in Suspense — same pattern as /login.
@@ -47,6 +48,7 @@ function SignupPageInner() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const supabase = createClient();
+  const slots = useServerSlots();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,7 +185,7 @@ function SignupPageInner() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
               </span>
               <span>
-                <strong>Limited Batch Notice:</strong> Only 14 free lifetime accounts remaining today due to server bandwidth limits. Complete signup to secure your slot.
+                <strong>Limited Batch Notice:</strong> Only {slots.remaining} free lifetime accounts remaining today due to server bandwidth limits. Complete signup to secure your slot.
               </span>
             </div>
           )}
