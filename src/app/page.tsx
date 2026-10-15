@@ -14,6 +14,7 @@ import {
   GitBranch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ContactButton } from "@/components/contact/contact-buttons";
 
 export const metadata = {
   title: "DFY UniCRM — 100% Free Forever WhatsApp CRM with Paid VIP Support",
@@ -58,9 +59,11 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black shadow-sm">
-              <MessageSquare className="h-5 w-5" />
-            </div>
+            <img
+              src="/apple-touch-icon.png"
+              alt="DFY UniCRM"
+              className="h-9 w-9 rounded-xl object-contain shadow-xs"
+            />
             <div className="flex items-center gap-1.5">
               <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
               <span className="rounded-md bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-primary">
@@ -71,7 +74,7 @@ export default function LandingPage() {
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">What You Get</a>
-            <a href="#support-plan" className="hover:text-foreground transition-colors">VIP Help (₹1,000/mo)</a>
+            <a href="#support-plan" className="hover:text-foreground transition-colors">Optional VIP Help (₹1,000/mo)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">Common Doubts</a>
           </nav>
 
@@ -115,16 +118,15 @@ export default function LandingPage() {
                   Try It Free Right Now
                 </Button>
               </Link>
-              <a
-                href="https://wa.me/919880238015?text=Hi%2C%20I'd%20like%20to%20learn%20more%20about%20DFY%20UniCRM%20and%20how%20to%20set%20it%20up."
-                target="_blank"
-                rel="noreferrer"
+              <ContactButton
+                variant="outline"
+                size="lg"
+                className="h-12 px-7 rounded-xl font-bold text-base shadow-xs"
+                icon="headphones"
+                defaultTopic="General Inquiry"
               >
-                <Button variant="outline" size="lg" className="h-12 px-7 rounded-xl font-bold text-base gap-2">
-                  <Headphones className="h-5 w-5 text-emerald-500" />
-                  Chat With Us on WhatsApp
-                </Button>
-              </a>
+                Contact Support Desk
+              </ContactButton>
             </div>
 
 
@@ -331,26 +333,26 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Plan 2: ₹1,000/mo ($12/mo) Done-For-You VIP Support */}
+              {/* Plan 2: ₹1,000/mo Optional Done-For-You VIP Support */}
               <div className="relative rounded-3xl border-2 border-emerald-500 bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
                 <div className="absolute -top-3.5 right-8 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white">
-                  We Do The Hard Work For You
+                  100% Optional Service
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
-                      Handheld VIP Support
+                      Completely Optional Help
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">No Commitments • Stop Anytime</span>
+                    <span className="text-xs font-semibold text-emerald-500">Stop Anytime</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">Done-For-You VIP Help</h3>
+                  <h3 className="text-2xl font-black text-foreground">Optional Done-For-You VIP Help</h3>
                   <div className="mt-4 flex items-baseline gap-1">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ month</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    Don't want to deal with technical setups, Meta portals, or server headaches? We take care of everything over WhatsApp and Google Meet.
+                    The software is 100% free forever. This hands-on assistance is completely optional—only choose it if you want our experts to handle your Meta setup, phone number verification, and templates for you.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
@@ -364,7 +366,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Direct 1-on-1 WhatsApp help whenever you get stuck</span>
+                      <span>Dedicated technical desk whenever you need assistance</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -378,17 +380,13 @@ export default function LandingPage() {
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/40">
-                  <a
-                    href="https://wa.me/919880238015?text=Hi%2C%20I'd%20like%20the%20₹1,000%2Fmonth%20Done-For-You%20VIP%20Support%20for%20UniCRM."
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block w-full"
+                  <ContactButton
+                    className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                    defaultTopic="Optional VIP Support (₹1,000/mo)"
+                    icon="message"
                   >
-                    <Button className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2">
-                      <MessageCircle className="h-4 w-4" />
-                      Talk to Us on WhatsApp (₹1,000/mo)
-                    </Button>
-                  </a>
+                    Request Optional VIP Setup (₹1,000/mo)
+                  </ContactButton>
                 </div>
               </div>
             </div>
@@ -412,9 +410,9 @@ export default function LandingPage() {
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">Why do you offer ₹1,000/month VIP Support?</h4>
+                <h4 className="font-bold text-foreground">Is the Done-For-You VIP Support mandatory?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Many business owners and busy founders don't want to spend time reading technical guides, configuring Meta Business portals, or fixing domain DNS. For ₹1,000 a month, our team becomes your personal WhatsApp CRM tech desk on WhatsApp.
+                  No, not at all! It is 100% optional. The entire software is free to use on your own. You only choose VIP support if you prefer our team to handle your Meta verification and WhatsApp number setup for you.
                 </p>
               </div>
 
@@ -426,9 +424,9 @@ export default function LandingPage() {
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">How can I pay for the ₹1,000 VIP Support?</h4>
+                <h4 className="font-bold text-foreground">How do I reach support if I need help?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Direct UPI (Google Pay, PhonePe, Paytm) or card. Just message us on WhatsApp and we will activate your VIP support slot immediately.
+                  Click the Contact Support button or write to ravibabuche@dfydude.online. We respond to every inquiry directly.
                 </p>
               </div>
             </div>
@@ -453,14 +451,12 @@ export default function LandingPage() {
             <Link href="/privacy" className="hover:text-foreground transition-colors">
               Privacy Policy
             </Link>
-            <a
-              href="https://wa.me/919880238015"
-              target="_blank"
-              rel="noreferrer"
+            <Link
+              href="/contact"
               className="text-emerald-500 font-medium hover:underline"
             >
-              Contact Support: +91 98802 38015
-            </a>
+              Contact Support: ravibabuche@dfydude.online
+            </Link>
           </div>
         </div>
       </footer>
