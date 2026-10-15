@@ -29,7 +29,7 @@ const ONBOARDING_STEPS: Step[] = [
   {
     id: 'whatsapp',
     title: 'Connect WhatsApp (Free or Official)',
-    description: 'Scan a QR code with your phone (Evolution API) or enter your Meta Cloud API keys.',
+    description: 'Scan a QR code with your phone (Instant WhatsApp QR) or enter your Meta Cloud API keys.',
     href: '/settings?tab=whatsapp',
     icon: QrCode,
     actionText: 'Connect Channel',

@@ -111,7 +111,7 @@ export function VoiceCallModal({ contact, isOpen, onClose }: VoiceCallModalProps
             {callActive ? (
               <>
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                Live VoIP Audio (via Whatomate Engine)
+                Live VoIP Audio (UniCRM Voice Gateway)
               </>
             ) : (
               "Ready to connect via WhatsApp Voice"

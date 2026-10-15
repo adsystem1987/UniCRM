@@ -180,11 +180,11 @@ export function IntegrationsPanel() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
               <div className="space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Supabase Cloud Limit
+                  Default Cloud Server Storage
                 </span>
-                <p className="text-sm font-black text-foreground">1 GB File Limit (Free Tier)</p>
+                <p className="text-sm font-black text-foreground">Standard Server Storage</p>
                 <p className="text-[11px] text-muted-foreground">
-                  Fills quickly with heavy media files and invoices.
+                  Heavy media, documents, and voice recordings can use up cloud server space.
                 </p>
               </div>
               <div className="space-y-1">
@@ -195,7 +195,7 @@ export function IntegrationsPanel() {
                   15 GB Free Per Account (15x Capacity)
                 </p>
                 <p className="text-[11px] text-muted-foreground">
-                  Keeps Supabase storage at 0 MB forever!
+                  Keeps your CRM server storage at 0 MB forever!
                 </p>
               </div>
             </div>

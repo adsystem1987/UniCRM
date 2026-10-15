@@ -74,33 +74,28 @@ export default function LandingPage() {
 
       {/* Navigation */}
       <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-background/80 border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <img
               src="/logo.png"
               alt="DFY UniCRM"
               className="h-9 w-9 object-contain"
             />
-            <div className="flex items-center gap-1.5">
-              <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
-              <span className="rounded-md bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
-                Omnichannel
-              </span>
-            </div>
+            <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-muted-foreground">
-            <a href="#channels" className="hover:text-foreground transition-colors">Omnichannel Channels</a>
-            <a href="#calling" className="hover:text-foreground transition-colors">WhatsApp Calling & IVR</a>
-            <a href="#features" className="hover:text-foreground transition-colors">What You Get</a>
-            <a href="#support-plan" className="hover:text-foreground transition-colors">Optional Pro Help (₹1,000/mo)</a>
+          <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-muted-foreground">
+            <a href="#channels" className="hover:text-foreground transition-colors">Channels</a>
+            <a href="#calling" className="hover:text-foreground transition-colors">Calling & IVR</a>
+            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#support-plan" className="hover:text-foreground transition-colors">DFY Setup (₹1,000)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <ModeToggle />
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="font-semibold">
+              <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground">
                 Sign In
               </Button>
             </Link>
@@ -202,7 +197,7 @@ export default function LandingPage() {
                 WhatsApp Calling & Node-Based IVR
               </h2>
               <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
-                Integrated with Whatomate (<a href="https://whatomate.io" target="_blank" rel="noreferrer" className="underline hover:text-foreground">whatomate.io</a>) and Evolution API (<a href="https://evolutionfoundation.com.br" target="_blank" rel="noreferrer" className="underline hover:text-foreground">evolutionfoundation.com.br</a>).
+                Powered by UniCRM Real-Time Voice Gateway &amp; Distributed Media Engine with zero per-minute platform markups.
               </p>
             </div>
 
@@ -372,7 +367,7 @@ export default function LandingPage() {
 
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground font-semibold">
                       <span>Streamed to Private Storage</span>
-                      <span className="text-teal-600 dark:text-teal-400 font-bold">0 MB on Supabase</span>
+                      <span className="text-teal-600 dark:text-teal-400 font-bold">0 MB Server Storage Used</span>
                     </div>
                   </div>
                 </div>
@@ -469,7 +464,7 @@ export default function LandingPage() {
                   Connect Google Drive — Get 15 GB Free Media Storage
                 </h3>
                 <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                  Supabase free tier gives 1 GB. By connecting your Google account, UniCRM streams all photos, voice recordings, PDFs, and call audio into your own Google Drive. Supabase storage consumption stays at 0 MB forever!
+                  By connecting your personal or business Google Drive (15 GB free), UniCRM streams all photos, voice recordings, PDFs, and call audio into your own cloud folder. Zero storage limits on your CRM server!
                 </p>
               </div>
 
@@ -507,7 +502,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Connect instantly by scanning a QR code with your mobile phone (Evolution API, 100% free), or plug in your Meta Cloud API for high-volume enterprise campaigns.
+                    Connect instantly by scanning a QR code with your mobile phone (100% free WhatsApp Web Gateway), or plug in your official Meta Cloud API for high-volume enterprise campaigns.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500">
@@ -543,7 +538,7 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-blue-400">
-                  Built-in Whatomate engine
+                  Built-in High-Concurrency Voice Engine
                 </div>
               </div>
 
@@ -758,14 +753,14 @@ export default function LandingPage() {
               <div className="rounded-2xl border border-border/60 bg-card p-6">
                 <h4 className="font-bold text-foreground">How does WhatsApp Calling work?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  UniCRM integrates with the Whatomate (<a href="https://whatomate.io" target="_blank" rel="noreferrer" className="underline">whatomate.io</a>) and Evolution API voice engines. You can receive inbound WhatsApp audio calls, dial outbound calls right from your computer, set up visual node-based IVR trees, and stream recordings directly to S3 or Google Drive.
+                  UniCRM incorporates proprietary high-concurrency VoIP and WebRTC voice gateways. You can receive inbound WhatsApp audio calls, dial outbound calls right from your computer, set up visual node-based IVR trees, and stream recordings directly to your private S3 or Google Drive storage.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">How does Google Drive save Supabase storage?</h4>
+                <h4 className="font-bold text-foreground">How does Google Drive save cloud server storage?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Supabase's free tier has a 1 GB storage cap. When you connect your Google account (15 GB free), UniCRM offloads all customer media (images, PDFs, voice notes, call recordings) straight into your private Google Drive folder, keeping Supabase file storage consumption at 0 MB!
+                  High-speed cloud databases are built for lightning-fast querying and search. When you connect your Google account (15 GB free), UniCRM offloads all heavy media (images, PDFs, voice notes, call recordings) straight into your private Google Drive folder, keeping your CRM server storage footprint ultra-lean and completely free of storage limits!
                 </p>
               </div>
 
