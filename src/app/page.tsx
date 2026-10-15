@@ -11,16 +11,28 @@ import {
   Headphones,
   MessageCircle,
   PhoneCall,
+  PhoneIncoming,
+  PhoneOutgoing,
+  PhoneMissed,
   GitBranch,
+  Mail,
+  Camera,
+  Share2,
+  HardDrive,
+  ShieldCheck,
+  Play,
+  Volume2,
+  Sliders,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 
 export const metadata = {
-  title: "DFY UniCRM — 100% Free Forever WhatsApp CRM with Paid Pro Support",
+  title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
   description:
-    "Indian business friendly WhatsApp CRM. Zero platform subscriptions, instant QR code connection or official Meta Cloud API, free AI options, and optional ₹1,000/mo Done-For-You Pro technical support.",
+    "Single-click omnichannel CRM for Indian businesses and global teams. Connect WhatsApp, Instagram, Facebook, Support Email Inboxes, and WhatsApp Calling with node-based IVR & Google Drive storage. Zero software subscriptions.",
 };
 
 export default function LandingPage() {
@@ -51,9 +63,9 @@ export default function LandingPage() {
         </>
       )}
 
-      {/* Top Banner: Indian Community Friendly */}
-      <div className="bg-emerald-600/10 border-b border-emerald-500/20 px-4 py-2 text-center text-xs font-medium text-emerald-500">
-        🇮🇳 Tailored for Indian Businesses, D2C Brands & Agencies • Zero Per-Seat Charges • Direct Meta & UPI-Friendly Support
+      {/* Top Banner */}
+      <div className="bg-emerald-600/10 border-b border-emerald-500/20 px-4 py-2 text-center text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+        🇮🇳 Omnichannel Social & Support CRM • WhatsApp Calling • Instagram • Facebook • Email • Zero Per-Seat Charges
       </div>
 
       {/* Navigation */}
@@ -67,16 +79,18 @@ export default function LandingPage() {
             />
             <div className="flex items-center gap-1.5">
               <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
-              <span className="rounded-md bg-primary/10 border border-primary/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-primary">
-                Free Core
+              <span className="rounded-md bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
+                Omnichannel
               </span>
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-muted-foreground">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-muted-foreground">
+            <a href="#channels" className="hover:text-foreground transition-colors">Omnichannel Channels</a>
+            <a href="#calling" className="hover:text-foreground transition-colors">WhatsApp Calling & IVR</a>
             <a href="#features" className="hover:text-foreground transition-colors">What You Get</a>
             <a href="#support-plan" className="hover:text-foreground transition-colors">Optional Pro Help (₹1,000/mo)</a>
-            <a href="#faq" className="hover:text-foreground transition-colors">Common Doubts</a>
+            <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -87,8 +101,8 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5">
-                Start Free in 1 Minute
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5 shadow-xs">
+                Start Free
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -100,24 +114,47 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            {/* Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-secondary border border-border text-foreground mb-6 shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-              <span>100% Free Forever • No Hidden Software Charges</span>
+              <span>One Single Click to Integrate All Support, Sales & Marketing</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[1.15] max-w-4xl mx-auto">
-              Handle all your WhatsApp chats, leads & team in one place. <span className="text-emerald-500">Zero software fees.</span>
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[1.12] max-w-5xl mx-auto">
+              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-emerald-600 dark:text-emerald-400">In one single CRM.</span>
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
-              Why pay ₹5,000 to ₹15,000 every month for tools like Wati or Interakt? Just scan a QR code from your phone like WhatsApp Web, connect your sales staff, and let free AI draft your customer replies.
+            <p className="mt-6 text-lg sm:text-xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
+              Why pay ₹15,000 every month juggling Wati, Zendesk, and call center tools? Handle your WhatsApp messaging, WhatsApp voice calls, Instagram DMs, Facebook messages, and support emails with zero per-seat fees.
             </p>
+
+            {/* Channels Strip */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Messaging
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                <PhoneCall className="h-3.5 w-3.5" /> WhatsApp Calling & IVR
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                <Camera className="h-3.5 w-3.5" /> Instagram DMs
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                <Share2 className="h-3.5 w-3.5" /> Facebook Messenger
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                <Mail className="h-3.5 w-3.5" /> Support Email Inbox
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+                <HardDrive className="h-3.5 w-3.5" /> Google Drive (15GB Free)
+              </span>
+            </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link href="/signup">
                 <Button size="lg" className="h-12 px-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-base gap-2 shadow-lg shadow-emerald-600/20">
                   <MessageCircle className="h-5 w-5" />
-                  Try It Free Right Now
+                  Get Started Free
                 </Button>
               </Link>
               <ContactButton
@@ -127,10 +164,9 @@ export default function LandingPage() {
                 icon="headphones"
                 defaultTopic="General Inquiry"
               >
-                Contact Support Desk
+                Contact Technical Desk
               </ContactButton>
             </div>
-
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm font-semibold text-muted-foreground">
               <div className="flex items-center gap-1.5">
@@ -139,16 +175,308 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-emerald-500" />
-                <span>Instant QR Code or Official Meta API</span>
+                <span>Instant QR Code & Meta Cloud API</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-emerald-500" />
-                <span>Free UniCRM AI Gateway Included</span>
+                <span>Free Multi-Model AI Gateway</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-emerald-500" />
-                <span>Voice Calling & WhatsApp IVR</span>
+                <span>Inbound & Outbound Voice Calling</span>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION: WHATSAPP CALLING & NODE-BASED IVR SHOWCASE */}
+        <section id="calling" className="py-16 md:py-24 border-b border-border/40 bg-card/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 mb-3">
+                Industry First • WhatsApp Voice Stack
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
+                WhatsApp Calling & Node-Based IVR
+              </h2>
+              <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
+                Integrated with Whatomate (<a href="https://whatomate.io" target="_blank" rel="noreferrer" className="underline hover:text-foreground">whatomate.io</a>) and Evolution API (<a href="https://evolutionfoundation.com.br" target="_blank" rel="noreferrer" className="underline hover:text-foreground">evolutionfoundation.com.br</a>).
+              </p>
+            </div>
+
+            {/* 3 Interactive Feature Columns */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Feature 01: Inbound & Outbound Calling */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black text-sm">
+                      01
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                      Live Calling
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Inbound & Outbound Calling</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    Receive customer calls on your WhatsApp number and place outbound calls from the dashboard or a single API request.
+                  </p>
+
+                  {/* Real Call Log Visual Preview */}
+                  <div className="mt-5 space-y-2 rounded-2xl border border-border bg-muted/40 p-3 text-xs">
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-background border border-border/60">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+                          <PhoneIncoming className="h-3.5 w-3.5" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-foreground">Jane Smith</p>
+                          <p className="text-[10px] text-muted-foreground">+1 555 0142</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono text-[10px] font-bold text-emerald-600">02:14</span>
+                        <p className="text-[9px] uppercase font-bold text-emerald-500">answered</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-background border border-border/60">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-full bg-blue-500/15 text-blue-600 flex items-center justify-center">
+                          <PhoneOutgoing className="h-3.5 w-3.5" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-foreground">Outbound Call</p>
+                          <p className="text-[10px] text-muted-foreground">+1 555 0197</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono text-[10px] font-bold text-blue-600">00:42</span>
+                        <p className="text-[9px] uppercase font-bold text-blue-500">completed</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 rounded-xl bg-background border border-border/60">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-full bg-rose-500/15 text-rose-600 flex items-center justify-center">
+                          <PhoneMissed className="h-3.5 w-3.5" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-foreground">TechBuild Inc</p>
+                          <p className="text-[10px] text-muted-foreground">+44 20 7946</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-mono text-[10px] font-bold text-muted-foreground">—</span>
+                        <p className="text-[9px] uppercase font-bold text-rose-500">missed</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-blue-500 flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Browser WebRTC & SIP Support
+                </div>
+              </div>
+
+              {/* Feature 02: Routing Node-Based IVR */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black text-sm">
+                      02
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full">
+                      Visual Routing
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Node-Based IVR Builder</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    Drag, drop, and wire nodes on a canvas. Greet, capture input, branch, hit your API mid-call, route to agent teams, schedule by business hours — all visual.
+                  </p>
+
+                  {/* Visual Node Flow Preview */}
+                  <div className="mt-5 space-y-2 rounded-2xl border border-border bg-muted/40 p-4 text-xs font-bold">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-2">
+                      Live Call Logic Canvas:
+                    </p>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                        Greet 🎵
+                      </span>
+                      <span className="text-muted-foreground font-mono">➔</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/25">
+                        Branch 🔀
+                      </span>
+                      <span className="text-muted-foreground font-mono">➔</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25">
+                        Gather ⌨️
+                      </span>
+                      <span className="text-muted-foreground font-mono">➔</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25">
+                        Transfer 📞
+                      </span>
+                      <span className="text-muted-foreground font-mono">➔</span>
+                      <span className="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25">
+                        Hangup 🛑
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-muted-foreground font-normal pt-2">
+                      Automatically route VIP callers directly to senior agents based on CRM tags or deals pipeline status.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-500 flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> No-Code Visual Flow Editor
+                </div>
+              </div>
+
+              {/* Feature 03: Encrypted Recordings */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 font-black text-sm">
+                      03
+                    </span>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">
+                      Storage
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Recordings → S3 & Google Drive</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    Every recording is encrypted and streamed straight to the S3-compatible or Google Drive bucket you configure. You set retention. You own the keys.
+                  </p>
+
+                  {/* Audio Player Card Preview */}
+                  <div className="mt-5 rounded-2xl border border-border bg-muted/40 p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-lg bg-teal-500/20 text-teal-600 flex items-center justify-center">
+                          <Play className="h-4 w-4 fill-teal-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground">call_recording_0482.wav</p>
+                          <p className="text-[10px] text-muted-foreground">02:14 • 128 kbps • Encrypted AES-256</p>
+                        </div>
+                      </div>
+                      <Volume2 className="h-4 w-4 text-muted-foreground" />
+                    </div>
+
+                    <div className="w-full bg-border rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-teal-500 h-1.5 rounded-full w-2/3" />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground font-semibold">
+                      <span>Streamed to Private Storage</span>
+                      <span className="text-teal-600 dark:text-teal-400 font-bold">0 MB on Supabase</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-500 flex items-center gap-1">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> End-to-End Private Encryption
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION: OMNICHANNEL CHANNELS & BYOS */}
+        <section id="channels" className="py-16 md:py-24 border-b border-border/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-3">
+                Unified Omnichannel Inbox
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
+                All Your Channels, Zero App-Switching
+              </h2>
+              <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
+                Your support, sales, and marketing agents respond from one central dashboard.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* WhatsApp */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
+                  <MessageCircle className="h-5 w-5" />
+                </div>
+                <h4 className="font-bold text-foreground">WhatsApp Messaging</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Connect via QR code in 10 seconds or through official Meta Cloud API. Send broadcasts, buttons, and catalogs.
+                </p>
+                <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                  Instant QR or Official API
+                </div>
+              </div>
+
+              {/* Instagram */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+                <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold">
+                  <Camera className="h-5 w-5" />
+                </div>
+                <h4 className="font-bold text-foreground">Instagram Direct</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Turn Instagram DMs, story mentions, and product inquiries into closed deals without leaving the CRM.
+                </p>
+                <div className="text-[11px] font-bold text-purple-600 dark:text-purple-400">
+                  100% Free Meta Messaging
+                </div>
+              </div>
+
+              {/* Facebook */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+                <div className="h-10 w-10 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center font-bold">
+                  <Share2 className="h-5 w-5" />
+                </div>
+                <h4 className="font-bold text-foreground">Facebook Messenger</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Sync all customer inquiries from your Facebook Business Pages into your agents' shared inbox timeline.
+                </p>
+                <div className="text-[11px] font-bold text-sky-600 dark:text-sky-400">
+                  Zero Message Surcharges
+                </div>
+              </div>
+
+              {/* Support Email */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
+                <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold">
+                  <Mail className="h-5 w-5" />
+                </div>
+                <h4 className="font-bold text-foreground">Support Email Inboxes</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Connect company email via Gmail OAuth, IMAP/SMTP (Zoho/Outlook), or smart inbound forwarding.
+                </p>
+                <div className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                  Integrated Ticket Threads
+                </div>
+              </div>
+            </div>
+
+            {/* Google Drive BYOS Banner */}
+            <div className="mt-8 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                  <HardDrive className="h-3.5 w-3.5" />
+                  Bring Your Own Storage (BYOS)
+                </div>
+                <h3 className="text-xl md:text-2xl font-black text-foreground">
+                  Connect Google Drive — Get 15 GB Free Media Storage
+                </h3>
+                <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                  Supabase free tier gives 1 GB. By connecting your Google account, UniCRM streams all photos, voice recordings, PDFs, and call audio into your own Google Drive. Supabase storage consumption stays at 0 MB forever!
+                </p>
+              </div>
+
+              <Link href="/signup" className="shrink-0">
+                <Button className="h-11 px-6 font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
+                  Connect in 1 Click
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
@@ -161,7 +489,7 @@ export default function LandingPage() {
                 Full-Stack Customer Operations
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-                Replace 5 Expensive SaaS Subscriptions
+                Replace 6 Expensive SaaS Subscriptions
               </h2>
               <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
                 Engineered for Indian businesses, agencies, and high-growth teams.
@@ -193,7 +521,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Powered by internal OmniRoute proxy routing. Get smart draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying \$20/seat.
+                    Powered by internal OmniRoute proxy routing. Get smart draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying $20/seat.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">
@@ -209,7 +537,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">WhatsApp Voice & IVR Calls</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Make and receive WhatsApp voice calls directly inside your browser. Record calls, track durations, and route callers through interactive DTMF menus.
+                    Make and receive WhatsApp voice calls directly inside your browser. Record calls, track durations, and route callers through visual DTMF menus.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-blue-400">
@@ -225,7 +553,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Visual Deals Kanban</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Turn WhatsApp chats into sales pipelines. Move deals across stages, link contact values, and track revenue in INR (₹) or USD ($).
+                    Turn WhatsApp, Instagram, and email chats into sales pipelines. Move deals across stages, link contact values, and track revenue in INR (₹) or USD ($).
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-400">
@@ -257,7 +585,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Unlimited Team Members</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Invite your entire sales and customer support staff. Assign granular roles (Admin, Agent, Viewer) with real-time agent presence tracking.
+                    Invite your entire sales, marketing, and customer support staff. Assign granular roles (Admin, Agent, Viewer) with real-time presence tracking.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-rose-400">
@@ -299,7 +627,7 @@ export default function LandingPage() {
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    Complete access to the entire CRM software. No trial period, no card required.
+                    Complete access to the entire omnichannel CRM software. No trial period, no card required.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
@@ -309,19 +637,23 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>WhatsApp, Instagram, Facebook & Support Email</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>WhatsApp Inbound & Outbound Calling with IVR</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>Google Drive BYOS (15 GB Free Storage)</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                       <span>Unlimited team agent accounts</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Evolution API (QR Code) & Meta Cloud API</span>
-                    </li>
-                    <li className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>UniCRM Free AI Gateway</span>
-                    </li>
-                    <li className="flex items-center gap-2.5">
-                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Pipelines & Deals Kanban</span>
+                      <span>UniCRM Free Multi-Model AI Gateway</span>
                     </li>
                   </ul>
                 </div>
@@ -364,7 +696,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We connect your WhatsApp & Meta API for you</span>
+                      <span>We connect your WhatsApp, Meta API & Social accounts</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -372,7 +704,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We help write and get your WhatsApp templates approved by Meta</span>
+                      <span>We help write and get your WhatsApp templates approved</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -412,16 +744,23 @@ export default function LandingPage() {
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">Is the Done-For-You Pro Support mandatory?</h4>
+                <h4 className="font-bold text-foreground">How does WhatsApp Calling work?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  No, not at all! It is 100% optional. The entire software is free to use on your own. You only choose Pro support if you prefer our team to handle your Meta verification and WhatsApp number setup for you.
+                  UniCRM integrates with the Whatomate (<a href="https://whatomate.io" target="_blank" rel="noreferrer" className="underline">whatomate.io</a>) and Evolution API voice engines. You can receive inbound WhatsApp audio calls, dial outbound calls right from your computer, set up visual node-based IVR trees, and stream recordings directly to S3 or Google Drive.
                 </p>
               </div>
 
               <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h4 className="font-bold text-foreground">What is the difference between QR Code and Official Meta API?</h4>
+                <h4 className="font-bold text-foreground">How does Google Drive save Supabase storage?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  With QR Code, you link your regular WhatsApp or WhatsApp Business phone in 10 seconds just like opening WhatsApp Web on your laptop. It's completely free. The Official Meta API is used if you want verified green tick badges and massive broadcasts through Meta directly. Both work inside UniCRM!
+                  Supabase's free tier has a 1 GB storage cap. When you connect your Google account (15 GB free), UniCRM offloads all customer media (images, PDFs, voice notes, call recordings) straight into your private Google Drive folder, keeping Supabase file storage consumption at 0 MB!
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border/60 bg-card p-6">
+                <h4 className="font-bold text-foreground">Is the Done-For-You Pro Support mandatory?</h4>
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                  No, not at all! It is 100% optional. The entire software is free to use on your own. You only choose Pro support if you prefer our team to handle your Meta verification and WhatsApp number setup for you.
                 </p>
               </div>
 
@@ -436,14 +775,13 @@ export default function LandingPage() {
         </section>
       </main>
 
-
       {/* Footer */}
       <footer className="border-t border-border/40 bg-card/30 px-4 py-8 text-center text-xs text-muted-foreground">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="font-bold text-foreground">DFY UniCRM</span>
             <span>•</span>
-            <span>A Community-Powered Project</span>
+            <span>A Community-Powered Omnichannel Project</span>
           </div>
 
           <div className="flex items-center gap-6">
