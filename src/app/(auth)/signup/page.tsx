@@ -16,6 +16,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { MessageSquare, CheckCircle, UsersRound } from "lucide-react";
+import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
+import { ModeToggle } from "@/components/layout/mode-toggle";
 
 // `useSearchParams` opts the component out of static prerendering
 // unless wrapped in Suspense — same pattern as /login.
@@ -140,14 +142,23 @@ function SignupPageInner() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md border-border bg-card">
+    <div className="relative flex min-h-screen items-center justify-center bg-background px-4">
+      {/* Sun/Moon Theme Toggle (Dark Mode by default) */}
+      <div className="absolute top-4 right-4">
+        <ModeToggle />
+      </div>
+
+      <Card className="w-full max-w-md border-border bg-card shadow-sm">
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
             {inviteToken ? (
               <UsersRound className="h-6 w-6 text-primary" />
             ) : (
-              <MessageSquare className="h-6 w-6 text-primary" />
+              <img
+                src="/apple-touch-icon.png"
+                alt="UniCRM"
+                className="h-8 w-8 rounded-lg object-contain shadow-xs"
+              />
             )}
           </div>
           <CardTitle className="text-xl text-foreground">
@@ -157,13 +168,29 @@ function SignupPageInner() {
             {inviteToken ? t("descJoin") : t("desc")}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Primary Action: 1-Click Google Signup */}
+          <GoogleSignInButton
+            inviteToken={inviteToken}
+            text="Sign up with Google"
+          />
+
+          <div className="relative my-2 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border" />
+            </div>
+            <div className="relative bg-card px-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              or sign up with email
+            </div>
+          </div>
+
           <form onSubmit={handleSignup} className="flex flex-col gap-4">
-            {error && (
-              <div className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                {error}
-              </div>
-            )}
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="fullName" className="text-muted-foreground">

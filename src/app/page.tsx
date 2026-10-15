@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
+import { ModeToggle } from "@/components/layout/mode-toggle";
 
 export const metadata = {
   title: "DFY UniCRM — 100% Free Forever WhatsApp CRM with Paid VIP Support",
@@ -79,6 +80,7 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <ModeToggle />
             <Link href="/login">
               <Button variant="ghost" size="sm" className="font-semibold">
                 Sign In
