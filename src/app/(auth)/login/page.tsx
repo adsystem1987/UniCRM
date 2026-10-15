@@ -99,9 +99,9 @@ function LoginPageInner() {
               <UsersRound className="h-6 w-6 text-primary" />
             ) : (
               <img
-                src="/apple-touch-icon.png"
+                src="/logo.png"
                 alt="UniCRM"
-                className="h-8 w-8 rounded-lg object-contain shadow-xs"
+                className="h-8 w-8 object-contain"
               />
             )}
           </div>

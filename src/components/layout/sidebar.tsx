@@ -191,9 +191,9 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
         <div className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <img
-              src="/apple-touch-icon.png"
+              src="/logo.png"
               alt="UniCRM"
-              className="h-8 w-8 rounded-lg object-contain shadow-xs"
+              className="h-8 w-8 object-contain"
             />
             <span className="text-sm font-bold text-foreground">
               {t("title")}

@@ -14,9 +14,9 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <img
-              src="/apple-touch-icon.png"
+              src="/logo.png"
               alt="DFY UniCRM"
-              className="h-8 w-8 rounded-lg object-contain shadow-xs"
+              className="h-8 w-8 object-contain"
             />
             <span className="font-bold text-foreground">DFY UniCRM</span>
           </Link>

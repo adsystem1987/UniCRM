@@ -61,9 +61,9 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <img
-              src="/apple-touch-icon.png"
+              src="/logo.png"
               alt="DFY UniCRM"
-              className="h-9 w-9 rounded-xl object-contain shadow-xs"
+              className="h-9 w-9 object-contain"
             />
             <div className="flex items-center gap-1.5">
               <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
