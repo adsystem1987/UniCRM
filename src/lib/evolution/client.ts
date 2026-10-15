@@ -13,6 +13,7 @@ export interface EvolutionQrCodeResponse {
   code?: string;
   base64?: string;
   count?: number;
+  state?: 'connecting' | 'open' | 'close' | string;
 }
 
 export class EvolutionClient {
