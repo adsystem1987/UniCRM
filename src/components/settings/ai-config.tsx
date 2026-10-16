@@ -36,7 +36,7 @@ const MASKED_KEY = '••••••••••••••••';
 
 const BUILTIN_ROUTER_URL = process.env.NEXT_PUBLIC_AI_ROUTER_URL || 'https://omniroute.dfydude.online/v1';
 const BUILTIN_ROUTER_KEY = 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
-const BUILTIN_ROUTER_MODEL = 'openrouter/google/gemma-4-26b-a4b-it:free';
+const BUILTIN_ROUTER_MODEL = process.env.NEXT_PUBLIC_AI_ROUTER_MODEL || 'auto/best-free';
 const GEMINI_FREE_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
 const GEMINI_FREE_MODEL = 'gemini-1.5-flash';
 
@@ -472,7 +472,7 @@ export function AiConfig() {
                 {showAdvancedBuiltin && (
                   <div className="pt-2 border-t border-border/50 text-[11px] font-mono text-muted-foreground space-y-1">
                     <div>Routing Gateway: <code className="text-foreground">UniCRM Internal Smart Proxy</code></div>
-                    <div>Default Model: <code className="text-foreground">{model}</code></div>
+                    <div>Model Routing: <code className="text-foreground">auto/best-free (Dynamic Free Tier)</code></div>
                   </div>
                 )}
               </div>

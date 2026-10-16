@@ -46,7 +46,7 @@ export async function loadAiConfig(
     // Fall back to UniCRM Smart Router default if account has not configured custom AI
     const defaultKey = process.env.SYSTEM_AI_API_KEY || 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
     const defaultUrl = process.env.SYSTEM_AI_BASE_URL || 'https://omniroute.dfydude.online/v1';
-    const defaultModel = process.env.SYSTEM_AI_MODEL || 'openrouter/google/gemma-4-26b-a4b-it:free';
+    const defaultModel = process.env.SYSTEM_AI_MODEL || 'auto/best-free';
     if (defaultKey && defaultUrl) {
       return {
         provider: 'openai_compatible',
