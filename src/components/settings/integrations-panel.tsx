@@ -47,6 +47,12 @@ export function IntegrationsPanel() {
       } else if (params.get("gdrive_error")) {
         toast.error(`Google Drive connection error: ${params.get("gdrive_error")}`);
         window.history.replaceState({}, "", "/settings?tab=integrations");
+      } else if (params.get("gmail") === "connected") {
+        toast.success("Gmail connected successfully!");
+        window.history.replaceState({}, "", "/settings?tab=integrations");
+      } else if (params.get("gmail_error")) {
+        toast.error(`Gmail connection error: ${params.get("gmail_error")}`);
+        window.history.replaceState({}, "", "/settings?tab=integrations");
       }
     }
   }, []);
@@ -108,6 +114,87 @@ export function IntegrationsPanel() {
       toast.success(checked ? "Mirroring enabled" : "Mirroring disabled");
     } catch {
       // Ignored
+    }
+  };
+
+  // Gmail state
+  const [gmailLoading, setGmailLoading] = useState(true);
+  const [gmailConnected, setGmailConnected] = useState(false);
+  const [gmailEmail, setGmailEmail] = useState("");
+  const [testEmailTo, setTestEmailTo] = useState("");
+  const [testEmailSending, setTestEmailSending] = useState(false);
+
+  // Fetch actual Gmail connection status from DB
+  useEffect(() => {
+    async function checkGmailStatus() {
+      setGmailLoading(true);
+      try {
+        const res = await fetch("/api/integrations/gmail/status");
+        const data = await res.json();
+        if (data.connected) {
+          setGmailConnected(true);
+          setGmailEmail(data.email || "");
+        } else {
+          setGmailConnected(false);
+          setGmailEmail("");
+        }
+      } catch {
+        setGmailConnected(false);
+      } finally {
+        setGmailLoading(false);
+      }
+    }
+    void checkGmailStatus();
+  }, []);
+
+  const handleConnectGmail = () => {
+    window.location.href = "/api/integrations/gmail/auth";
+  };
+
+  const handleDisconnectGmail = async () => {
+    try {
+      const res = await fetch("/api/integrations/gmail/status", {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setGmailConnected(false);
+        setGmailEmail("");
+        toast.info("Gmail disconnected");
+      } else {
+        toast.error("Failed to disconnect Gmail");
+      }
+    } catch {
+      toast.error("Failed to disconnect Gmail");
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    if (!testEmailTo || !testEmailTo.includes("@")) {
+      toast.error("Please enter a valid recipient email address");
+      return;
+    }
+    setTestEmailSending(true);
+    try {
+      const res = await fetch("/api/integrations/gmail/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: testEmailTo.trim(),
+          subject: "Test Email from DFY UniCRM",
+          message: "Hello!\n\nThis is a test email sent directly from your connected Google Workspace / Gmail account in UniCRM.\n\nYour outbound email integration is working perfectly! 🚀",
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`Test email sent successfully to ${testEmailTo}!`);
+        setTestEmailTo("");
+      } else {
+        toast.error(data.error || "Failed to send test email");
+      }
+    } catch {
+      toast.error("Failed to send test email");
+    } finally {
+      setTestEmailSending(false);
     }
   };
 
@@ -397,57 +484,123 @@ export function IntegrationsPanel() {
                     : "border-border bg-card text-muted-foreground hover:bg-muted/40"
                 }`}
               >
-                <p className="text-xs font-bold text-foreground">1-Click Gmail / Workspace</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-foreground">1-Click Gmail / Workspace</p>
+                  {gmailConnected && (
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" />
+                  )}
+                </div>
                 <p className="text-[10px] text-muted-foreground">Connect via Google OAuth</p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setEmailMethod("smtp")}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border text-left transition-all relative ${
                   emailMethod === "smtp"
                     ? "border-blue-500 bg-blue-500/10 text-foreground ring-1 ring-blue-500"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/40"
                 }`}
               >
-                <p className="text-xs font-bold text-foreground">Custom IMAP & SMTP</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-foreground">Custom IMAP &amp; SMTP</p>
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-muted text-muted-foreground border border-border">
+                    Roadmap
+                  </span>
+                </div>
                 <p className="text-[10px] text-muted-foreground">Zoho, Outlook, cPanel, Titan</p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setEmailMethod("forward")}
-                className={`p-3 rounded-xl border text-left transition-all ${
+                className={`p-3 rounded-xl border text-left transition-all relative ${
                   emailMethod === "forward"
                     ? "border-blue-500 bg-blue-500/10 text-foreground ring-1 ring-blue-500"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/40"
                 }`}
               >
-                <p className="text-xs font-bold text-foreground">Auto-Forwarding Webhook</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-foreground">Auto-Forwarding Webhook</p>
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-muted text-muted-foreground border border-border">
+                    Roadmap
+                  </span>
+                </div>
                 <p className="text-[10px] text-muted-foreground">Works with any email host</p>
               </button>
             </div>
 
             {/* Method Details */}
             {emailMethod === "gmail" && (
-              <div className="p-4 rounded-xl border border-border bg-muted/20 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-xs font-bold text-foreground">Google Workspace / Gmail Sync</h4>
+              <div className="p-4 rounded-xl border border-border bg-card space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-foreground">Google Workspace / Gmail Support</h4>
+                      {gmailConnected && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/25">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Connected &amp; Ready
+                        </span>
+                      )}
+                    </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Connect your support Gmail to view emails in UniCRM chats and reply directly.
+                      {gmailLoading ? (
+                        <span className="flex items-center gap-1.5 text-muted-foreground">
+                          <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                          Checking Gmail connection...
+                        </span>
+                      ) : gmailConnected ? (
+                        `Connected to ${gmailEmail}. You can send and reply to customer emails directly from UniCRM.`
+                      ) : (
+                        "Connect your Google Workspace or Gmail account to send support emails from UniCRM."
+                      )}
                     </p>
                   </div>
                   <Button
-                    onClick={() => {
-                      setEmailConnected(!emailConnected);
-                      toast.success(emailConnected ? "Gmail disconnected" : "Gmail support connected!");
-                    }}
-                    className="font-bold bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={gmailConnected ? handleDisconnectGmail : handleConnectGmail}
+                    disabled={gmailLoading}
+                    className={`font-bold transition-all shadow-xs ${
+                      gmailConnected
+                        ? "bg-muted text-foreground hover:bg-muted/80 border border-border"
+                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
                   >
-                    {emailConnected ? "Disconnect Gmail" : "Connect with Google"}
+                    {gmailLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : gmailConnected ? (
+                      "Disconnect Gmail"
+                    ) : (
+                      "Connect with Google"
+                    )}
                   </Button>
                 </div>
+
+                {gmailConnected && (
+                  <div className="pt-3 border-t border-border space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold">Send a Live Test Email</Label>
+                      <span className="text-[10px] text-muted-foreground">Uses official Gmail API</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={testEmailTo}
+                        onChange={(e) => setTestEmailTo(e.target.value)}
+                        placeholder="Enter an email to verify (e.g. you@gmail.com)"
+                        className="text-xs"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={handleSendTestEmail}
+                        disabled={testEmailSending || !testEmailTo}
+                        className="shrink-0 font-bold bg-blue-600 hover:bg-blue-700 text-white text-xs h-9 px-3 gap-1.5"
+                      >
+                        {testEmailSending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
+                        Send Test
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -564,8 +717,8 @@ export function IntegrationsPanel() {
                   </CardDescription>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                100% Free Messaging
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-muted text-muted-foreground border border-border">
+                Roadmap
               </span>
             </div>
           </CardHeader>
@@ -646,8 +799,8 @@ export function IntegrationsPanel() {
                   </CardDescription>
                 </div>
               </div>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                100% Free Messaging
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-muted text-muted-foreground border border-border">
+                Roadmap
               </span>
             </div>
           </CardHeader>
