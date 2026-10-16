@@ -19,12 +19,11 @@ function normalizeHost(host: string): string {
 }
 
 function allowedPrivateHosts(): Set<string> {
-  return new Set(
-    (process.env[PRIVATE_HOST_ALLOWLIST_ENV] ?? '')
-      .split(',')
-      .map(normalizeHost)
-      .filter(Boolean),
-  )
+  const envHosts = (process.env[PRIVATE_HOST_ALLOWLIST_ENV] ?? 'localhost,127.0.0.1,omniroute')
+    .split(',')
+    .map(normalizeHost)
+    .filter(Boolean);
+  return new Set([...envHosts, 'localhost', '127.0.0.1']);
 }
 
 export function normalizeOpenAiCompatibleBaseUrl(baseUrl: string): string {

@@ -518,7 +518,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Powered by internal OmniRoute proxy routing. Get smart draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying $20/seat.
+                    Powered by internal smart AI routing. Get intelligent draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying $20/seat.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">

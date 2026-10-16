@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Loader2, Sparkles, CheckCircle2, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle2, Trash2, Eye, EyeOff, Zap, KeyRound } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { canEditSettings } from '@/lib/auth/roles';
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,12 @@ import { useTranslations } from 'next-intl';
 
 const MASKED_KEY = '••••••••••••••••';
 
+const BUILTIN_ROUTER_URL = 'http://localhost:21128/v1';
+const BUILTIN_ROUTER_KEY = 'sk-51ede91f935f3396-6dd2f7-35871716';
+const BUILTIN_ROUTER_MODEL = 'openrouter/google/gemma-4-26b-a4b-it:free';
+const GEMINI_FREE_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
+const GEMINI_FREE_MODEL = 'gemini-1.5-flash';
+
 // Radix Select can't use an empty-string item value, so the "leave
 // unassigned" choice gets a sentinel that maps to null in the payload.
 const HANDOFF_QUEUE = '__queue__';
@@ -49,6 +55,8 @@ const KEY_PLACEHOLDER: Record<AiProvider, string> = {
   openai_compatible: 'your-api-key',
 };
 
+type PresetMode = 'builtin' | 'gemini_free' | 'custom';
+
 export function AiConfig() {
   const { accountId, accountRole, profileLoading } = useAuth();
   const canEdit = accountRole ? canEditSettings(accountRole) : false;
@@ -59,19 +67,22 @@ export function AiConfig() {
   const [testing, setTesting] = useState(false);
   const [removing, setRemoving] = useState(false);
 
+  const [presetMode, setPresetMode] = useState<PresetMode>('builtin');
+  const [showAdvancedBuiltin, setShowAdvancedBuiltin] = useState(false);
+
   const [configured, setConfigured] = useState(false);
-  const [provider, setProvider] = useState<AiProvider>('openai');
-  const [model, setModel] = useState(AI_PROVIDER_DEFAULT_MODEL.openai);
-  const [baseUrl, setBaseUrl] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [keyEdited, setKeyEdited] = useState(false);
+  const [provider, setProvider] = useState<AiProvider>('openai_compatible');
+  const [model, setModel] = useState(BUILTIN_ROUTER_MODEL);
+  const [baseUrl, setBaseUrl] = useState(BUILTIN_ROUTER_URL);
+  const [apiKey, setApiKey] = useState(BUILTIN_ROUTER_KEY);
+  const [keyEdited, setKeyEdited] = useState(true);
   const [showKey, setShowKey] = useState(false);
   const [hasStoredKey, setHasStoredKey] = useState(false);
   const [embeddingsKey, setEmbeddingsKey] = useState('');
   const [embeddingsKeyEdited, setEmbeddingsKeyEdited] = useState(false);
   const [hasStoredEmbeddingsKey, setHasStoredEmbeddingsKey] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState('');
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(true);
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(false);
   const [maxPerConversation, setMaxPerConversation] = useState(3);
   // Empty string = leave unassigned (shared queue).
@@ -109,6 +120,24 @@ export function AiConfig() {
         setHasStoredEmbeddingsKey(Boolean(data.has_embeddings_key));
         setEmbeddingsKey(data.has_embeddings_key ? MASKED_KEY : '');
         setEmbeddingsKeyEdited(false);
+
+        // Detect active preset mode
+        if (data.base_url?.includes('localhost:21128') || data.base_url?.includes('omniroute')) {
+          setPresetMode('builtin');
+        } else if (data.base_url?.includes('generativelanguage.googleapis.com')) {
+          setPresetMode('gemini_free');
+        } else {
+          setPresetMode('custom');
+        }
+      } else {
+        // Default to UniCRM Smart Router with zero-setup built-in tier
+        setPresetMode('builtin');
+        setProvider('openai_compatible');
+        setBaseUrl(BUILTIN_ROUTER_URL);
+        setModel(BUILTIN_ROUTER_MODEL);
+        setApiKey(BUILTIN_ROUTER_KEY);
+        setKeyEdited(true);
+        setIsActive(true);
       }
     } catch {
       toast.error(t('loadFailed'));
@@ -116,6 +145,40 @@ export function AiConfig() {
       setLoading(false);
     }
   }, []);
+
+  const selectBuiltinPreset = () => {
+    setPresetMode('builtin');
+    setProvider('openai_compatible');
+    setBaseUrl(BUILTIN_ROUTER_URL);
+    setModel(BUILTIN_ROUTER_MODEL);
+    setApiKey(BUILTIN_ROUTER_KEY);
+    setKeyEdited(true);
+    setIsActive(true);
+  };
+
+  const selectGeminiPreset = () => {
+    setPresetMode('gemini_free');
+    setProvider('openai_compatible');
+    setBaseUrl(GEMINI_FREE_BASE_URL);
+    setModel(GEMINI_FREE_MODEL);
+    if (apiKey === BUILTIN_ROUTER_KEY) {
+      setApiKey('');
+      setKeyEdited(false);
+    }
+    setIsActive(true);
+  };
+
+  const selectCustomPreset = () => {
+    setPresetMode('custom');
+    if (baseUrl === BUILTIN_ROUTER_URL || baseUrl.includes('generativelanguage')) {
+      setBaseUrl('');
+      setModel(AI_PROVIDER_DEFAULT_MODEL[provider]);
+      if (apiKey === BUILTIN_ROUTER_KEY) {
+        setApiKey('');
+        setKeyEdited(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (!accountId || loadedAccountIdRef.current === accountId) return;
@@ -274,145 +337,340 @@ export function AiConfig() {
               {t('encryptionNotice')}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label>{t('provider')}</Label>
-                <Select
-                  value={provider}
-                  onValueChange={(v) => handleProviderChange(v as AiProvider)}
-                  disabled={disabled}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="openai">{PROVIDER_LABEL.openai}</SelectItem>
-                    <SelectItem value="anthropic">
-                      {PROVIDER_LABEL.anthropic}
-                    </SelectItem>
-                    <SelectItem value="openai_compatible">
-                      {t('providerOpenAiCompatible')}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <CardContent className="space-y-5">
+            {/* 3 Preset Modes */}
+            <div className="grid gap-3 sm:grid-cols-3">
+              {/* Preset 1: Built-in Smart AI */}
+              <button
+                type="button"
+                onClick={selectBuiltinPreset}
+                disabled={disabled}
+                className={`relative flex flex-col items-start p-3.5 rounded-xl border text-left transition-all ${
+                  presetMode === 'builtin'
+                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs'
+                    : 'border-border hover:border-border/80 bg-card hover:bg-muted/30'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1.5">
+                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    UniCRM Smart Router
+                  </span>
+                  <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
+                    Recommended
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Pre-configured smart multi-model AI routing with zero setup. Pre-activated free models with no external billing.
+                </p>
+              </button>
 
-              <div className="space-y-2">
-                <Label htmlFor="ai-model">{t('model')}</Label>
-                <Input
-                  id="ai-model"
-                  value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                  placeholder={AI_PROVIDER_DEFAULT_MODEL[provider]}
-                  disabled={disabled}
-                />
-              </div>
+              {/* Preset 2: Google Gemini Free */}
+              <button
+                type="button"
+                onClick={selectGeminiPreset}
+                disabled={disabled}
+                className={`relative flex flex-col items-start p-3.5 rounded-xl border text-left transition-all ${
+                  presetMode === 'gemini_free'
+                    ? 'border-emerald-500 bg-emerald-500/5 ring-2 ring-emerald-500/20 shadow-xs'
+                    : 'border-border hover:border-border/80 bg-card hover:bg-muted/30'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1.5">
+                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <Zap className="h-4 w-4 text-emerald-500" />
+                    Google Gemini Free
+                  </span>
+                  <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-[9px] font-extrabold uppercase text-blue-600 dark:text-blue-400">
+                    100% Free
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Official Google Gemini 1.5 Flash. 15 requests/min free with zero credit card required.
+                </p>
+              </button>
 
-              {provider === 'openai_compatible' && (
-                <div className="space-y-2 sm:col-span-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="ai-base-url">{t('baseUrl')}</Label>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setBaseUrl('https://generativelanguage.googleapis.com/v1beta/openai/');
-                          setModel('gemini-1.5-flash');
-                        }}
-                        className="font-medium text-emerald-500 hover:underline"
-                      >
-                        ✨ Free Google Gemini
-                      </button>
+              {/* Preset 3: Custom / BYO Key */}
+              <button
+                type="button"
+                onClick={selectCustomPreset}
+                disabled={disabled}
+                className={`relative flex flex-col items-start p-3.5 rounded-xl border text-left transition-all ${
+                  presetMode === 'custom'
+                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs'
+                    : 'border-border hover:border-border/80 bg-card hover:bg-muted/30'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1.5">
+                  <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <KeyRound className="h-4 w-4 text-muted-foreground" />
+                    Custom / BYO Key
+                  </span>
+                  <span className="rounded-full bg-muted border border-border px-2 py-0.5 text-[9px] font-semibold text-muted-foreground">
+                    Custom
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Use your own OpenAI (GPT-4o), Anthropic Claude, or custom proxy endpoint.
+                </p>
+              </button>
+            </div>
 
-                      <span className="text-muted-foreground">•</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setBaseUrl('https://openrouter.ai/api/v1');
-                          setModel('google/gemini-2.0-flash-exp:free');
-                        }}
-                        className="font-medium text-primary hover:underline"
-                      >
-                        🌐 OpenRouter Free
-                      </button>
-
-                      <span className="text-muted-foreground">•</span>
-                      <a
-                        href="https://aistudio.google.com/app/apikey"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-muted-foreground hover:text-foreground underline decoration-dotted"
-                      >
-                        Get Free Gemini Key ↗
-                      </a>
+            {/* Mode 1: Built-in Smart Router View */}
+            {presetMode === 'builtin' && (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Sparkles className="h-3.5 w-3.5" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">UniCRM Smart Router (Pre-configured)</h4>
+                      <p className="text-[11px] text-muted-foreground">Automated multi-model routing with verified free tiers</p>
                     </div>
                   </div>
-                  <Input
-                    id="ai-base-url"
-                    value={baseUrl}
-                    onChange={(e) => setBaseUrl(e.target.value)}
-                    placeholder="http://omniroute:20128/v1"
-                    disabled={disabled}
-                    autoComplete="off"
-                  />
-                  <p className="text-xs text-muted-foreground">{t('baseUrlHint')}</p>
+                  <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400">
+                    Active & Ready
+                  </span>
                 </div>
-              )}
-            </div>
 
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Your AI assistant is pre-connected to UniCRM&apos;s internal smart AI router. Draft replies in the inbox and automated responses use optimized, high-speed free models without paying $20/seat fees.
+                </p>
 
-            <div className="space-y-2">
-              <Label htmlFor="ai-key">{t('apiKey')}</Label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Input
-                    id="ai-key"
-                    type={showKey ? 'text' : 'password'}
-                    value={apiKey}
-                    onChange={(e) => {
-                      setApiKey(e.target.value);
-                      setKeyEdited(true);
-                    }}
-                    onFocus={() => {
-                      if (!keyEdited && hasStoredKey) {
-                        setApiKey('');
-                        setKeyEdited(true);
-                      }
-                    }}
-                    placeholder={KEY_PLACEHOLDER[provider]}
-                    disabled={disabled}
-                    autoComplete="off"
-                  />
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTest}
+                    disabled={disabled || testing}
+                    className="h-8 text-xs font-semibold gap-1.5"
+                  >
+                    {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
+                    Test Smart Router
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleSave}
+                    disabled={disabled || saving}
+                    className="h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5"
+                  >
+                    {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                    Save & Activate Agent
+                  </Button>
                   <button
                     type="button"
-                    onClick={() => setShowKey((s) => !s)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    tabIndex={-1}
+                    onClick={() => setShowAdvancedBuiltin(!showAdvancedBuiltin)}
+                    className="text-[11px] text-muted-foreground hover:text-foreground ml-auto underline decoration-dotted"
                   >
-                    {showKey ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showAdvancedBuiltin ? 'Hide Details' : 'Advanced Details'}
                   </button>
                 </div>
-                <Button
-                  variant="outline"
-                  onClick={handleTest}
-                  disabled={disabled || testing}
-                >
-                  {testing ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <CheckCircle2 className="mr-2 h-4 w-4" />
-                  )}
-                  {t('testKey')}
-                </Button>
-              </div>
-            </div>
 
-            <div className="space-y-2">
+                {showAdvancedBuiltin && (
+                  <div className="pt-2 border-t border-border/50 text-[11px] font-mono text-muted-foreground space-y-1">
+                    <div>Routing Gateway: <code className="text-foreground">UniCRM Internal Smart Proxy</code></div>
+                    <div>Default Model: <code className="text-foreground">{model}</code></div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Mode 2: Google Gemini Free */}
+            {presetMode === 'gemini_free' && (
+              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+                      <Zap className="h-3.5 w-3.5" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground">Google Gemini 1.5 Flash (100% Free Lifetime)</h4>
+                      <p className="text-[11px] text-muted-foreground">Generous official Google AI Studio free tier</p>
+                    </div>
+                  </div>
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                  >
+                    Get Free Gemini Key ↗
+                  </a>
+                </div>
+
+                <div className="text-xs text-muted-foreground space-y-1 bg-background/50 p-3 rounded-lg border border-border/60">
+                  <p className="font-semibold text-foreground">How to get your free key in 30 seconds:</p>
+                  <p>1. Open <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-primary underline">Google AI Studio</a> (opens in new tab)</p>
+                  <p>2. Sign in with any Google account & click <strong>Create API Key</strong></p>
+                  <p>3. Paste your key below — 100% free with 15 requests/minute & zero credit card needed!</p>
+                </div>
+
+                <div className="space-y-1.5 pt-1">
+                  <Label htmlFor="ai-key-gemini" className="text-xs font-medium">Google Gemini API Key</Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        id="ai-key-gemini"
+                        type={showKey ? 'text' : 'password'}
+                        value={apiKey}
+                        onChange={(e) => {
+                          setApiKey(e.target.value);
+                          setKeyEdited(true);
+                        }}
+                        onFocus={() => {
+                          if (!keyEdited && hasStoredKey) {
+                            setApiKey('');
+                            setKeyEdited(true);
+                          }
+                        }}
+                        placeholder="AIzaSy... (Paste your Google Gemini API key)"
+                        disabled={disabled}
+                        autoComplete="off"
+                        className="h-9 text-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowKey((s) => !s)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        tabIndex={-1}
+                      >
+                        {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleTest}
+                      disabled={disabled || testing}
+                      className="h-9 text-xs font-semibold gap-1.5"
+                    >
+                      {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
+                      Test
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleSave}
+                      disabled={disabled || saving}
+                      className="h-9 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                    >
+                      {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                      Save & Activate
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Mode 3: Custom BYO Form */}
+            {presetMode === 'custom' && (
+              <div className="space-y-4 pt-1">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>{t('provider')}</Label>
+                    <Select
+                      value={provider}
+                      onValueChange={(v) => handleProviderChange(v as AiProvider)}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="openai">{PROVIDER_LABEL.openai}</SelectItem>
+                        <SelectItem value="anthropic">
+                          {PROVIDER_LABEL.anthropic}
+                        </SelectItem>
+                        <SelectItem value="openai_compatible">
+                          {t('providerOpenAiCompatible')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="ai-model">{t('model')}</Label>
+                    <Input
+                      id="ai-model"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      placeholder={AI_PROVIDER_DEFAULT_MODEL[provider]}
+                      disabled={disabled}
+                    />
+                  </div>
+
+                  {provider === 'openai_compatible' && (
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="ai-base-url">{t('baseUrl')}</Label>
+                      <Input
+                        id="ai-base-url"
+                        value={baseUrl}
+                        onChange={(e) => setBaseUrl(e.target.value)}
+                        placeholder="https://api.your-provider.com/v1"
+                        disabled={disabled}
+                        autoComplete="off"
+                      />
+                      <p className="text-xs text-muted-foreground">{t('baseUrlHint')}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ai-key">{t('apiKey')}</Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        id="ai-key"
+                        type={showKey ? 'text' : 'password'}
+                        value={apiKey}
+                        onChange={(e) => {
+                          setApiKey(e.target.value);
+                          setKeyEdited(true);
+                        }}
+                        onFocus={() => {
+                          if (!keyEdited && hasStoredKey) {
+                            setApiKey('');
+                            setKeyEdited(true);
+                          }
+                        }}
+                        placeholder={KEY_PLACEHOLDER[provider]}
+                        disabled={disabled}
+                        autoComplete="off"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowKey((s) => !s)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        tabIndex={-1}
+                      >
+                        {showKey ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={handleTest}
+                      disabled={disabled || testing}
+                    >
+                      {testing ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <CheckCircle2 className="mr-2 h-4 w-4" />
+                      )}
+                      {t('testKey')}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Embeddings Key (always available at bottom of card) */}
+            <div className="space-y-2 pt-2 border-t border-border/40">
               <Label htmlFor="ai-embeddings-key">
                 {t('embeddingsKey')}{' '}
                 <span className="font-normal text-muted-foreground">
