@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { mirrorMediaToGoogleDrive } from '@/lib/gdrive/offload';
 
 // Lazy-initialized admin client for webhook delivery
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -176,6 +177,30 @@ export async function POST(req: NextRequest) {
           updated_at: new Date().toISOString(),
         })
         .eq('id', conv.id);
+
+      // Automatically offload media to customer's Google Drive if present
+      const rawBase64 = data.message?.base64 || data.base64;
+      if (rawBase64 && accountId) {
+        const mimeType =
+          data.message?.imageMessage?.mimetype ||
+          data.message?.documentMessage?.mimetype ||
+          data.message?.audioMessage?.mimetype ||
+          data.message?.videoMessage?.mimetype ||
+          'application/octet-stream';
+        const ext = mimeType.split('/')[1]?.split(';')[0] || 'bin';
+        const filename = `${pushName.replace(/[^a-zA-Z0-9_-]/g, '_')}_${Date.now()}.${ext}`;
+        try {
+          const buffer = Buffer.from(rawBase64, 'base64');
+          void mirrorMediaToGoogleDrive({
+            accountId,
+            filename,
+            mimeType,
+            buffer,
+          }).catch((err) => console.error('[evolution-webhook] GDrive offload failed:', err));
+        } catch (e) {
+          console.error('[evolution-webhook] Base64 decode failed:', e);
+        }
+      }
     }
 
     return NextResponse.json({ success: true });

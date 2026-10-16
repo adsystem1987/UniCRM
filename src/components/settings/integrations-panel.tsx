@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   HardDrive,
   Mail,
@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   AlertCircle,
   HelpCircle,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -30,10 +31,85 @@ export function IntegrationsPanel() {
   const [activeTab, setActiveTab] = useState<IntegrationTab>("gdrive");
 
   // Google Drive state
+  const [gdriveLoading, setGdriveLoading] = useState(true);
   const [gdriveConnected, setGdriveConnected] = useState(false);
   const [gdriveEmail, setGdriveEmail] = useState("");
   const [gdriveFolder, setGdriveFolder] = useState("/DFY UniCRM Attachments");
   const [gdriveMirrorInbound, setGdriveMirrorInbound] = useState(true);
+
+  // Check URL params for OAuth redirect results
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("gdrive") === "connected") {
+        toast.success("Google Drive connected successfully with 15 GB quota!");
+        window.history.replaceState({}, "", "/settings?tab=integrations");
+      } else if (params.get("gdrive_error")) {
+        toast.error(`Google Drive connection error: ${params.get("gdrive_error")}`);
+        window.history.replaceState({}, "", "/settings?tab=integrations");
+      }
+    }
+  }, []);
+
+  // Fetch actual Google Drive connection status from DB
+  useEffect(() => {
+    async function checkDriveStatus() {
+      setGdriveLoading(true);
+      try {
+        const res = await fetch("/api/integrations/google-drive/status");
+        const data = await res.json();
+        if (data.connected) {
+          setGdriveConnected(true);
+          setGdriveEmail(data.email || "");
+          if (data.target_folder) setGdriveFolder(data.target_folder);
+          if (typeof data.mirror_inbound === "boolean") setGdriveMirrorInbound(data.mirror_inbound);
+        } else {
+          setGdriveConnected(false);
+          setGdriveEmail("");
+        }
+      } catch {
+        setGdriveConnected(false);
+      } finally {
+        setGdriveLoading(false);
+      }
+    }
+    void checkDriveStatus();
+  }, []);
+
+  const handleConnectDrive = () => {
+    window.location.href = "/api/integrations/google-drive/auth";
+  };
+
+  const handleDisconnectDrive = async () => {
+    try {
+      const res = await fetch("/api/integrations/google-drive/status", {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setGdriveConnected(false);
+        setGdriveEmail("");
+        toast.info("Google Drive disconnected");
+      } else {
+        toast.error("Failed to disconnect Google Drive");
+      }
+    } catch {
+      toast.error("Failed to disconnect Google Drive");
+    }
+  };
+
+  const handleToggleMirror = async (checked: boolean) => {
+    setGdriveMirrorInbound(checked);
+    try {
+      await fetch("/api/integrations/google-drive/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mirror_inbound: checked }),
+      });
+      toast.success(checked ? "Mirroring enabled" : "Mirroring disabled");
+    } catch {
+      // Ignored
+    }
+  };
 
   // Email state
   const [emailMethod, setEmailMethod] = useState<"gmail" | "smtp" | "forward">("gmail");
@@ -204,32 +280,44 @@ export function IntegrationsPanel() {
             <div className="p-4 rounded-xl border border-border bg-card space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-foreground">Connection Status</h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-foreground">Connection Status</h4>
+                    {gdriveConnected && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Active &amp; Ready
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-muted-foreground">
-                    {gdriveConnected
-                      ? `Connected to ${gdriveEmail || "Google Drive"}. Media files are streamed to your Drive.`
-                      : "Not connected yet. Connect your Google account to enable auto-offload."}
+                    {gdriveLoading ? (
+                      <span className="flex items-center gap-1.5 text-muted-foreground">
+                        <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                        Checking Google Drive status...
+                      </span>
+                    ) : gdriveConnected ? (
+                      `Connected to ${gdriveEmail || "Google Drive"}. Media files are streamed to your Drive.`
+                    ) : (
+                      "Not connected yet. Connect your Google account to enable auto-offload."
+                    )}
                   </p>
                 </div>
                 <Button
-                  onClick={() => {
-                    if (gdriveConnected) {
-                      setGdriveConnected(false);
-                      setGdriveEmail("");
-                      toast.info("Google Drive disconnected");
-                    } else {
-                      setGdriveConnected(true);
-                      setGdriveEmail("connected-drive@gmail.com");
-                      toast.success("Google Drive connected successfully with 15 GB quota!");
-                    }
-                  }}
-                  className={`font-bold ${
+                  onClick={gdriveConnected ? handleDisconnectDrive : handleConnectDrive}
+                  disabled={gdriveLoading}
+                  className={`font-bold transition-all shadow-xs ${
                     gdriveConnected
                       ? "bg-muted text-foreground hover:bg-muted/80 border border-border"
                       : "bg-emerald-600 hover:bg-emerald-700 text-white"
                   }`}
                 >
-                  {gdriveConnected ? "Disconnect Drive" : "Connect with Google Drive"}
+                  {gdriveLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : gdriveConnected ? (
+                    "Disconnect Drive"
+                  ) : (
+                    "Connect with Google Drive"
+                  )}
                 </Button>
               </div>
 
@@ -239,12 +327,12 @@ export function IntegrationsPanel() {
                     <Label className="text-xs font-bold">Storage Target Folder</Label>
                     <Input
                       value={gdriveFolder}
-                      onChange={(e) => setGdriveFolder(e.target.value)}
+                      readOnly
                       placeholder="/DFY UniCRM Attachments"
-                      className="text-xs font-mono"
+                      className="text-xs font-mono bg-muted/40 cursor-default"
                     />
                     <p className="text-[11px] text-muted-foreground">
-                      UniCRM will automatically organize files by year/month inside this folder.
+                      UniCRM organizes your media files inside this folder in your personal Drive.
                     </p>
                   </div>
 
@@ -257,7 +345,7 @@ export function IntegrationsPanel() {
                     </div>
                     <Switch
                       checked={gdriveMirrorInbound}
-                      onCheckedChange={setGdriveMirrorInbound}
+                      onCheckedChange={handleToggleMirror}
                     />
                   </div>
                 </div>

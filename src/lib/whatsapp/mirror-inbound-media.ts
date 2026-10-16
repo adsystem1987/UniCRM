@@ -1,6 +1,7 @@
 import { downloadMedia } from "./meta-api";
 import { extensionForMime } from "@/lib/media/filename";
 import { buildMediaPath, MEDIA_MAX_BYTES } from "@/lib/storage/upload-media";
+import { mirrorMediaToGoogleDrive } from "@/lib/gdrive/offload";
 
 /**
  * Copies inbound WhatsApp media into the `chat-media` bucket so it
@@ -229,6 +230,15 @@ export async function mirrorInboundMedia(
     const {
       data: { publicUrl },
     } = storage.from(MIRROR_BUCKET).getPublicUrl(path);
+
+    // Also offload to Google Drive if the account has it connected
+    void mirrorMediaToGoogleDrive({
+      accountId,
+      filename: objectName,
+      mimeType: uploadType,
+      buffer,
+    }).catch((err) => console.error('[mirror-media] GDrive mirror failed:', err));
+
     return publicUrl || null;
   } catch (error) {
     console.warn(
