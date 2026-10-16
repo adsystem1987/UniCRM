@@ -699,6 +699,8 @@ export interface QuickReply {
   /** Author / audit only. */
   user_id: string;
   title: string;
+  /** Slash command shortcut (e.g. "pricing", "meeting", "bank") */
+  shortcut?: string | null;
   kind: QuickReplyKind;
   /** Set when `kind === 'text'`. */
   content_text?: string | null;

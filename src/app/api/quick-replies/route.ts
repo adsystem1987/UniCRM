@@ -63,12 +63,16 @@ export async function POST(request: Request) {
     content_text = text
   }
 
+  const rawShortcut = typeof body.shortcut === 'string' ? body.shortcut.trim() : ''
+  const shortcut = rawShortcut.replace(/^\/+/, '').toLowerCase() || null
+
   const { data, error } = await supabaseAdmin()
     .from('quick_replies')
     .insert({
       account_id: ctx.accountId,
       user_id: ctx.userId,
       title,
+      shortcut,
       kind,
       content_text,
       interactive_payload,

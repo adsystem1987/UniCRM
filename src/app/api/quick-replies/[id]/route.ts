@@ -71,6 +71,11 @@ export async function PATCH(
     }
   }
 
+  if ('shortcut' in body) {
+    const raw = typeof body.shortcut === 'string' ? body.shortcut.trim() : ''
+    update.shortcut = raw.replace(/^\/+/, '').toLowerCase() || null
+  }
+
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ ok: true })
   }

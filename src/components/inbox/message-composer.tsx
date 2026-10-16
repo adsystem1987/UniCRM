@@ -53,7 +53,7 @@ import {
   blankButtonsPayload,
 } from "@/components/interactive/interactive-builder";
 import { validateInteractivePayload } from "@/lib/whatsapp/interactive";
-import type { InteractiveMessagePayload, QuickReply } from "@/types";
+import type { InteractiveMessagePayload, QuickReply, Contact } from "@/types";
 import { QuickReplyPicker } from "./quick-reply-picker";
 
 /** Media content types an agent can send from the composer. */
@@ -112,6 +112,7 @@ interface MediaDraft {
 interface MessageComposerProps {
   conversationId: string;
   sessionExpired: boolean;
+  contact?: Contact | null;
   onSend: (text: string, replyToId?: string) => void;
   onSendMedia: (payload: SendMediaPayload) => void;
   onSendInteractive: (payload: InteractiveMessagePayload, replyToId?: string) => void;
@@ -134,6 +135,7 @@ const OPUS_ENCODER_PATH = "/opus/encoderWorker.min.js";
 export function MessageComposer({
   conversationId,
   sessionExpired,
+  contact,
   onSend,
   onSendMedia,
   onSendInteractive,
@@ -155,6 +157,42 @@ export function MessageComposer({
     useState<InteractiveMessagePayload>(blankButtonsPayload);
   const [savingQuickReply, setSavingQuickReply] = useState(false);
   const [quickReplyOpen, setQuickReplyOpen] = useState(false);
+
+  // Quick replies list & slash command autocomplete state
+  const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
+  const [slashQuery, setSlashQuery] = useState<string | null>(null);
+  const [slashStartIndex, setSlashStartIndex] = useState<number | null>(null);
+  const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/api/quick-replies", { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
+        if (!cancelled && res.ok) {
+          setQuickReplies((data.quick_replies as QuickReply[]) ?? []);
+        }
+      } catch {}
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const slashMatches = useMemo(() => {
+    if (slashQuery === null) return [];
+    const q = slashQuery.toLowerCase();
+    return quickReplies
+      .filter((qr) => {
+        if (!q) return true;
+        const shortcutMatch = qr.shortcut?.toLowerCase().includes(q);
+        const titleMatch = qr.title.toLowerCase().includes(q);
+        const textMatch = qr.content_text?.toLowerCase().includes(q);
+        return shortcutMatch || titleMatch || textMatch;
+      })
+      .slice(0, 6);
+  }, [slashQuery, quickReplies]);
 
   // Media attachment state. `draft` holds an uploaded-but-not-yet-sent
   // attachment; `busy` covers the upload/transcode window.
@@ -221,6 +259,65 @@ export function MessageComposer({
     el.style.height = `${Math.min(el.scrollHeight, 96)}px`;
   }, []);
 
+  const selectQuickReply = useCallback(
+    (qr: QuickReply) => {
+      if (qr.kind === "interactive" && qr.interactive_payload) {
+        setInteractivePayload(qr.interactive_payload);
+        setInteractiveOpen(true);
+        if (slashStartIndex !== null) {
+          const before = text.slice(0, slashStartIndex);
+          const after = text.slice(slashStartIndex + (slashQuery?.length ?? 0) + 1);
+          setText(before + after);
+        }
+        setSlashQuery(null);
+        setSlashStartIndex(null);
+        return;
+      }
+
+      let insertText = qr.content_text ?? "";
+      if (contact) {
+        insertText = insertText
+          .replace(/\{\{name\}\}/gi, contact.name || "")
+          .replace(/\{\{first_name\}\}/gi, contact.name ? contact.name.split(" ")[0] : "")
+          .replace(/\{\{phone\}\}/gi, contact.phone || "")
+          .replace(/\{\{email\}\}/gi, contact.email || "")
+          .replace(/\{\{company\}\}/gi, contact.company || "");
+      }
+
+      if (slashStartIndex !== null) {
+        const before = text.slice(0, slashStartIndex);
+        const after = text.slice(slashStartIndex + (slashQuery?.length ?? 0) + 1);
+        const nextVal = before + insertText + after;
+        setText(nextVal);
+        requestAnimationFrame(() => {
+          adjustHeight();
+          if (textareaRef.current) {
+            const newPos = before.length + insertText.length;
+            textareaRef.current.focus();
+            textareaRef.current.setSelectionRange(newPos, newPos);
+          }
+        });
+      } else {
+        setText((prev) =>
+          prev && !/\s$/.test(prev) ? `${prev}\n${insertText}` : `${prev}${insertText}`
+        );
+        requestAnimationFrame(() => {
+          adjustHeight();
+          if (textareaRef.current) {
+            textareaRef.current.focus();
+            textareaRef.current.setSelectionRange(
+              textareaRef.current.value.length,
+              textareaRef.current.value.length
+            );
+          }
+        });
+      }
+      setSlashQuery(null);
+      setSlashStartIndex(null);
+    },
+    [slashStartIndex, slashQuery, text, contact, adjustHeight]
+  );
+
   const handleSend = useCallback(async () => {
     const trimmed = text.trim();
     if (!trimmed || sending || sessionExpired) return;
@@ -229,6 +326,8 @@ export function MessageComposer({
     try {
       onSend(trimmed, replyTo?.id);
       setText("");
+      setSlashQuery(null);
+      setSlashStartIndex(null);
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
@@ -239,18 +338,59 @@ export function MessageComposer({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (slashMatches.length > 0) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSlashSelectedIndex((i) => (i + 1) % slashMatches.length);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSlashSelectedIndex((i) => (i - 1 + slashMatches.length) % slashMatches.length);
+          return;
+        }
+        if (e.key === "Enter" || e.key === "Tab") {
+          e.preventDefault();
+          selectQuickReply(slashMatches[slashSelectedIndex]);
+          return;
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setSlashQuery(null);
+          setSlashStartIndex(null);
+          return;
+        }
+      }
+
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleSend();
       }
     },
-    [handleSend]
+    [slashMatches, slashSelectedIndex, selectQuickReply, handleSend]
   );
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setText(e.target.value);
+      const val = e.target.value;
+      setText(val);
       adjustHeight();
+
+      // Check cursor position for slash command trigger
+      const cursorPos = e.target.selectionStart ?? val.length;
+      const textBeforeCursor = val.slice(0, cursorPos);
+      const match = /(?:^|\s)\/([a-zA-Z0-9_-]*)$/.exec(textBeforeCursor);
+
+      if (match) {
+        const query = match[1];
+        const slashPos = textBeforeCursor.lastIndexOf(`/${query}`);
+        setSlashQuery(query);
+        setSlashStartIndex(slashPos);
+        setSlashSelectedIndex(0);
+      } else {
+        setSlashQuery(null);
+        setSlashStartIndex(null);
+      }
     },
     [adjustHeight]
   );
@@ -355,31 +495,12 @@ export function MessageComposer({
     }
   }, [interactivePayload, t]);
 
-  // A picked quick reply: text fills the composer; interactive opens the
-  // builder pre-filled so the agent can tweak before sending.
   const handlePickQuickReply = useCallback(
     (qr: QuickReply) => {
       setQuickReplyOpen(false);
-      if (qr.kind === "interactive" && qr.interactive_payload) {
-        openInteractiveBuilder(qr.interactive_payload);
-        return;
-      }
-      const body = qr.content_text ?? "";
-      // Separate the snippet from any existing draft with a newline so the
-      // words don't run together ("Thanks" + "we'll…" → "Thankswe'll…").
-      setText((prev) =>
-        prev && !/\s$/.test(prev) ? `${prev}\n${body}` : `${prev}${body}`,
-      );
-      requestAnimationFrame(() => {
-        adjustHeight();
-        const el = textareaRef.current;
-        if (el) {
-          el.focus();
-          el.setSelectionRange(el.value.length, el.value.length);
-        }
-      });
+      selectQuickReply(qr);
     },
-    [openInteractiveBuilder, adjustHeight],
+    [selectQuickReply],
   );
 
   // Upload a captured file to chat-media and stage it as a draft.
@@ -539,7 +660,82 @@ export function MessageComposer({
   // ---- Render --------------------------------------------------------
 
   return (
-    <div className="border-t border-border bg-card p-3">
+    <div className="relative border-t border-border bg-card p-3">
+      {/* Inline Slash Command Autocomplete Popover */}
+      {slashMatches.length > 0 && (
+        <div className="absolute bottom-full left-3 right-3 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-2xl z-50 p-1.5 animate-in fade-in slide-in-from-bottom-2 duration-150">
+          <div className="px-2.5 py-1 text-[11px] font-medium text-muted-foreground flex items-center justify-between border-b border-border/50 mb-1">
+            <span className="flex items-center gap-1.5 text-foreground font-semibold">
+              <Zap className="h-3.5 w-3.5 text-primary" />
+              Quick Replies ({slashMatches.length})
+            </span>
+            <span className="text-[10px] text-muted-foreground">↑↓ navigate · ↵ or Tab insert · Esc close</span>
+          </div>
+          <ul className="flex flex-col gap-0.5">
+            {slashMatches.map((qr, index) => (
+              <li key={qr.id}>
+                <button
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    selectQuickReply(qr);
+                  }}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors",
+                    index === slashSelectedIndex
+                      ? "bg-primary text-primary-foreground font-medium"
+                      : "text-foreground hover:bg-muted"
+                  )}
+                >
+                  <div className="min-w-0 flex-1 flex items-center gap-2">
+                    {qr.kind === "interactive" ? (
+                      <Zap
+                        className={cn(
+                          "h-3.5 w-3.5 shrink-0",
+                          index === slashSelectedIndex ? "text-primary-foreground" : "text-primary"
+                        )}
+                      />
+                    ) : (
+                      <MessageSquare
+                        className={cn(
+                          "h-3.5 w-3.5 shrink-0",
+                          index === slashSelectedIndex
+                            ? "text-primary-foreground"
+                            : "text-muted-foreground"
+                        )}
+                      />
+                    )}
+                    <span className="truncate font-medium">{qr.title}</span>
+                    <span
+                      className={cn(
+                        "truncate text-[11px]",
+                        index === slashSelectedIndex
+                          ? "text-primary-foreground/80"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {qr.content_text || (qr.interactive_payload ? "Interactive message" : "")}
+                    </span>
+                  </div>
+                  {qr.shortcut && (
+                    <span
+                      className={cn(
+                        "rounded px-1.5 py-0.5 text-[10px] font-mono shrink-0 font-semibold",
+                        index === slashSelectedIndex
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-primary"
+                      )}
+                    >
+                      /{qr.shortcut}
+                    </span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {replyTo && (
         <div className="mb-2">
           <ReplyQuote
