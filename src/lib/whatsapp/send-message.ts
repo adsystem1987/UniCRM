@@ -36,6 +36,7 @@ import {
 } from '@/lib/whatsapp/interactive';
 import { decrypt, encrypt, isLegacyFormat } from '@/lib/whatsapp/encryption';
 import { supabaseAdmin } from '@/lib/flows/admin-client';
+import { evolution } from '@/lib/evolution/client';
 import {
   phoneVariants,
   isRecipientNotAllowedError,
@@ -87,6 +88,7 @@ export interface SendMessageParams {
   /** Structured payload for `messageType === 'interactive'`. */
   interactivePayload?: InteractiveMessagePayload | null;
   replyToMessageId?: string | null;
+  userId?: string;
 }
 
 export interface SendMessageResult {
@@ -200,6 +202,7 @@ export async function sendMessageToConversation(
     templateMessageParams,
     interactivePayload,
     replyToMessageId,
+    userId,
   } = params;
 
   if (!conversationId) {
@@ -261,18 +264,36 @@ export async function sendMessageToConversation(
     .eq('account_id', accountId)
     .single();
 
+  let isEvolution = false;
+  let evolutionInstance = `acc_${userId ? userId.slice(0, 8) : accountId.slice(0, 8)}`;
   if (configError || !config) {
-    throw new SendMessageError(
-      'whatsapp_not_configured',
-      'WhatsApp not configured. Please set up your WhatsApp integration first.',
-      400
-    );
+    try {
+      let evoState = await evolution.getConnectionState(evolutionInstance).catch(() => null);
+      if (evoState?.instance?.state === 'open') {
+        isEvolution = true;
+      } else {
+        const altInstance = `acc_${accountId.slice(0, 8)}`;
+        evoState = await evolution.getConnectionState(altInstance).catch(() => null);
+        if (evoState?.instance?.state === 'open') {
+          isEvolution = true;
+          evolutionInstance = altInstance;
+        }
+      }
+    } catch {}
+
+    if (!isEvolution) {
+      throw new SendMessageError(
+        'whatsapp_not_configured',
+        'WhatsApp not configured. Please set up your WhatsApp integration first.',
+        400
+      );
+    }
   }
 
-  const accessToken = decrypt(config.access_token);
+  const accessToken = config?.access_token ? decrypt(config.access_token) : '';
 
   // Self-heal legacy CBC ciphertexts. Fire-and-forget; idempotent.
-  if (isLegacyFormat(config.access_token)) {
+  if (config && isLegacyFormat(config.access_token)) {
     void db
       .from('whatsapp_config')
       .update({ access_token: encrypt(accessToken) })
@@ -340,9 +361,14 @@ export async function sendMessageToConversation(
   }
 
   const attempt = async (phone: string): Promise<string> => {
+    if (isEvolution) {
+      const cleanPhone = phone.replace(/\D/g, '');
+      const res = await evolution.sendText(evolutionInstance, cleanPhone, contentText || '');
+      return res?.key?.id || `evo_${Date.now()}`;
+    }
     if (messageType === 'template') {
       const result = await sendTemplateMessage({
-        phoneNumberId: config.phone_number_id,
+        phoneNumberId: config!.phone_number_id,
         accessToken,
         to: phone,
         templateName: templateName!,
@@ -356,7 +382,7 @@ export async function sendMessageToConversation(
     }
     if (isMediaKind) {
       const result = await sendMediaMessage({
-        phoneNumberId: config.phone_number_id,
+        phoneNumberId: config!.phone_number_id,
         accessToken,
         to: phone,
         kind: messageType as MediaKind,
@@ -371,7 +397,7 @@ export async function sendMessageToConversation(
       const p = interactivePayload!;
       if (p.kind === 'buttons') {
         const result = await sendInteractiveButtons({
-          phoneNumberId: config.phone_number_id,
+          phoneNumberId: config!.phone_number_id,
           accessToken,
           to: phone,
           bodyText: p.body,
@@ -383,7 +409,7 @@ export async function sendMessageToConversation(
         return result.messageId;
       }
       const result = await sendInteractiveList({
-        phoneNumberId: config.phone_number_id,
+        phoneNumberId: config!.phone_number_id,
         accessToken,
         to: phone,
         bodyText: p.body,
@@ -396,7 +422,7 @@ export async function sendMessageToConversation(
       return result.messageId;
     }
     const result = await sendTextMessage({
-      phoneNumberId: config.phone_number_id,
+      phoneNumberId: config!.phone_number_id,
       accessToken,
       to: phone,
       text: contentText!,
