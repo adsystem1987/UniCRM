@@ -100,12 +100,13 @@ export class EvolutionClient {
       method: 'GET',
     });
     const qrObj = (raw?.qrcode && typeof raw.qrcode === 'object') ? (raw.qrcode as Record<string, unknown>) : raw || {};
+    const instanceObj = (raw?.instance && typeof raw.instance === 'object') ? (raw.instance as Record<string, unknown>) : {};
     return {
       pairingCode: (qrObj.pairingCode as string | undefined) || (raw?.pairingCode as string | undefined),
       code: (qrObj.code as string | undefined) || (raw?.code as string | undefined),
       base64: (qrObj.base64 as string | undefined) || (raw?.base64 as string | undefined),
       count: (qrObj.count as number | undefined) || (raw?.count as number | undefined),
-      state: (raw?.state as string | undefined) || (qrObj.state as string | undefined),
+      state: (instanceObj.state as string | undefined) || (raw?.state as string | undefined) || (qrObj.state as string | undefined),
     };
   }
 

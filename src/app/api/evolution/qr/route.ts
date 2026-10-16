@@ -25,15 +25,30 @@ export async function GET(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : evolution;
 
+    // 1. Check if instance already exists and is connected
+    try {
+      const connState = await client.getConnectionState(instanceName);
+      if (connState?.instance?.state === 'open') {
+        return NextResponse.json({ success: true, qr: { state: 'open' } });
+      }
+    } catch {
+      // Instance does not exist yet or connection check not ready
+    }
+
+    // 2. Try fetching active QR code
     try {
       const qrData = await client.getQrCode(instanceName);
-      if (qrData?.base64 || qrData?.state === 'open') {
+      if (qrData?.state === 'open') {
+        return NextResponse.json({ success: true, qr: { state: 'open' } });
+      }
+      if (qrData?.base64) {
         return NextResponse.json({ success: true, qr: qrData });
       }
     } catch {
       // Instance likely does not exist yet on gateway, proceed to create it
     }
 
+    // 3. Create instance if not yet created
     try {
       const origin = req.nextUrl.origin;
       const webhookUrl = `${origin}/api/evolution/webhook`;
@@ -46,6 +61,18 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ success: true, qr: qrData });
       }
     } catch (err: unknown) {
+      // If error is "already in use" (403), re-check connection state gracefully
+      try {
+        const connState = await client.getConnectionState(instanceName);
+        if (connState?.instance?.state === 'open') {
+          return NextResponse.json({ success: true, qr: { state: 'open' } });
+        }
+        const qrData = await client.getQrCode(instanceName);
+        if (qrData?.base64 || qrData?.state === 'open') {
+          return NextResponse.json({ success: true, qr: qrData });
+        }
+      } catch {}
+
       const targetUrl = customGatewayUrl || process.env.EVOLUTION_URL || 'endpoint';
       const message = err instanceof Error ? err.message : 'Gateway unreachable';
       return NextResponse.json({
