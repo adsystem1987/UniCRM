@@ -154,22 +154,60 @@ export async function POST() {
       )
     }
 
-    if (!config.waba_id) {
+    const accessToken = decrypt(config.access_token)
+    let wabaId = config.waba_id
+
+    // If waba_id was not explicitly provided, attempt to auto-discover it from Meta debug_token
+    if (!wabaId) {
+      try {
+        const debugRes = await fetch(
+          `${META_API_BASE}/debug_token?input_token=${accessToken}&access_token=${accessToken}`,
+        )
+        if (debugRes.ok) {
+          const debugData = await debugRes.json()
+          const granularScopes = debugData?.data?.granular_scopes
+          if (Array.isArray(granularScopes)) {
+            for (const gs of granularScopes) {
+              if (
+                gs.scope === 'whatsapp_business_management' &&
+                Array.isArray(gs?.target_ids) &&
+                gs.target_ids.length > 0
+              ) {
+                wabaId = gs.target_ids[0]
+                break
+              }
+              if (Array.isArray(gs?.target_ids) && gs.target_ids.length > 0 && !wabaId) {
+                wabaId = gs.target_ids[0]
+              }
+            }
+          }
+          if (wabaId) {
+            // Persist auto-discovered waba_id in whatsapp_config
+            await supabase
+              .from('whatsapp_config')
+              .update({ waba_id: wabaId, updated_at: new Date().toISOString() })
+              .eq('account_id', accountId)
+          }
+        }
+      } catch (discoveryErr) {
+        console.warn('[templates/sync] Auto-discovery of WABA ID failed:', discoveryErr)
+      }
+    }
+
+    if (!wabaId) {
       return NextResponse.json(
         {
           error:
-            t('common.wabaIdMissing'),
+            "WhatsApp Business Account (WABA) ID is missing. The inbox only needs a Phone Number ID to send messages, but message templates are owned by your WABA. Please enter your WhatsApp Business Account ID in Settings → WhatsApp.",
         },
         { status: 400 },
       )
     }
 
-    const accessToken = decrypt(config.access_token)
-
     const metaTemplates: MetaTemplate[] = []
     let nextUrl:
       | string
-      | null = `${META_API_BASE}/${config.waba_id}/message_templates?limit=100&fields=id,name,language,status,category,components,quality_score`
+      | null = `${META_API_BASE}/${wabaId}/message_templates?limit=100&fields=id,name,language,status,category,components,quality_score`
     const PAGE_CAP = 20
     let pageCount = 0
 
@@ -181,12 +219,34 @@ export async function POST() {
 
       if (!metaRes.ok) {
         let metaErr = t('templates.metaApiStatus', { status: metaRes.status })
+        let isScopeError = false
         try {
           const body = await metaRes.json()
-          if (body?.error?.message) metaErr = body.error.message
+          if (body?.error?.message) {
+            metaErr = body.error.message
+            if (
+              body.error.code === 200 ||
+              body.error.code === 10 ||
+              metaErr.toLowerCase().includes('whatsapp_business_management') ||
+              metaErr.toLowerCase().includes('permission')
+            ) {
+              isScopeError = true
+            }
+          }
         } catch {
           // response wasn't JSON — keep the fallback
         }
+
+        if (isScopeError) {
+          return NextResponse.json(
+            {
+              error:
+                "Meta Access Token is missing the 'whatsapp_business_management' permission. The inbox can send/receive messages with 'whatsapp_business_messaging', but managing/syncing templates requires 'whatsapp_business_management'. Please regenerate your System User Token in Meta Business Manager with both permissions.",
+            },
+            { status: 403 },
+          )
+        }
+
         return NextResponse.json({ error: metaErr }, { status: 502 })
       }
 
@@ -259,11 +319,23 @@ export async function POST() {
         continue
       }
 
-      if (existing?.id) {
+      let existingId = existing?.id
+
+      if (!existingId && t.id) {
+        const { data: byMetaId } = await supabase
+          .from('message_templates')
+          .select('id')
+          .eq('account_id', accountId)
+          .eq('meta_template_id', t.id)
+          .maybeSingle()
+        if (byMetaId?.id) existingId = byMetaId.id
+      }
+
+      if (existingId) {
         const { error: updErr } = await supabase
           .from('message_templates')
           .update(row)
-          .eq('id', existing.id)
+          .eq('id', existingId)
         if (updErr) {
           errors.push({
             name: t.name,
@@ -278,11 +350,23 @@ export async function POST() {
           .from('message_templates')
           .insert(row)
         if (insErr) {
-          errors.push({
-            name: t.name,
-            language: t.language,
-            message: insErr.message,
-          })
+          // If insert conflicted on unique constraint, fallback to update by name/language
+          const { error: fallbackUpd } = await supabase
+            .from('message_templates')
+            .update(row)
+            .eq('account_id', accountId)
+            .eq('name', t.name)
+            .eq('language', t.language)
+
+          if (fallbackUpd) {
+            errors.push({
+              name: t.name,
+              language: t.language,
+              message: insErr.message,
+            })
+          } else {
+            updated++
+          }
         } else {
           inserted++
         }
