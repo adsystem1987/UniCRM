@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   HeartHandshake,
   ShieldCheck,
-  Crown,
   Smile,
 } from "lucide-react";
 import {
@@ -85,15 +84,6 @@ const SAMPLE_TEMPLATES = [
     category: "5-Star Review & Feedback Request",
     text: "Hi {{1}}, thanks for choosing {{2}}! How was your experience? If you enjoyed our service, could you take 20 seconds to rate us on Google? {{3}}",
   },
-];
-
-const COMMUNITY_SUPPORTERS = [
-  { name: "Amit Sharma", role: "Agency Founder", city: "Delhi", amount: "₹299/mo" },
-  { name: "Rajesh Kumar", role: "D2C Brand Owner", city: "Bengaluru", amount: "₹99/mo" },
-  { name: "Priya Menon", role: "Freelance Consultant", city: "Kochi", amount: "₹29/mo" },
-  { name: "Vikram Bora", role: "Real Estate Broker", city: "Mumbai", amount: "₹299/mo" },
-  { name: "TechVeda Solutions", role: "B2B SaaS Team", city: "Pune", amount: "₹299/mo" },
-  { name: "Suresh Patel", role: "Local Retailer", city: "Ahmedabad", amount: "₹99/mo" },
 ];
 
 export function UpiSupportDialog({
@@ -574,27 +564,6 @@ export function UpiSupportDialog({
                     Enables regular maintenance, fixes, and community-requested features.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Community Shoutouts */}
-            <div className="space-y-2">
-              <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <Crown className="h-3.5 w-3.5 text-amber-500" />
-                <span>Community Backers Wall of Gratitude:</span>
-              </p>
-              <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
-                {COMMUNITY_SUPPORTERS.map((s) => (
-                  <div key={s.name} className="p-2 rounded-lg border border-border bg-muted/40 text-[11px] flex items-center justify-between">
-                    <div>
-                      <p className="font-bold text-foreground truncate">{s.name}</p>
-                      <p className="text-[10px] text-muted-foreground">{s.role} • {s.city}</p>
-                    </div>
-                    <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
-                      {s.amount}
-                    </span>
-                  </div>
-                ))}
               </div>
             </div>
 
