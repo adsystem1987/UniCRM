@@ -59,6 +59,7 @@ export class EvolutionClient {
       method: 'POST',
       body: JSON.stringify({
         instanceName,
+        integration: 'WHATSAPP-BAILEYS',
         token: this.apiKey,
         qrcode: true,
         webhook: webhookUrl,
