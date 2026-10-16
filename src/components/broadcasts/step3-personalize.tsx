@@ -12,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, Eye, ImageIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, ImageIcon, Loader2, Sparkles, Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { hasSpintax, countSpintaxVariations, parseSpintax } from '@/lib/broadcast-spintax';
 
 type VariableType = 'static' | 'field' | 'custom_field';
 
@@ -84,6 +85,7 @@ export function Step3Personalize({
     Map<string, string>
   >(new Map());
   const [loadingPreview, setLoadingPreview] = useState(true);
+  const [shuffleSeed, setShuffleSeed] = useState(0);
 
   // Load user's custom fields + a representative contact for the
   // live preview. Fall back to sample data if no contacts exist yet.
@@ -133,6 +135,18 @@ export function Step3Personalize({
     if (!matches) return [];
     return [...new Set(matches)].sort();
   }, [template.body_text]);
+
+  const spintaxTotalVariations = useMemo(() => {
+    let combined = template.body_text;
+    for (const placeholder of placeholders) {
+      const key = placeholder.replace(/^\{\{|\}\}$/g, '');
+      const mapping = variables[key];
+      if (mapping?.value) {
+        combined = combined.replaceAll(placeholder, mapping.value);
+      }
+    }
+    return hasSpintax(combined) ? countSpintaxVariations(combined) : 0;
+  }, [template.body_text, placeholders, variables]);
 
   // Templates with an IMAGE/VIDEO/DOCUMENT header need a media URL at
   // send time — Meta requires the media component on every delivery and
@@ -209,7 +223,7 @@ export function Step3Personalize({
 
       if (mapping) {
         if (mapping.type === 'static' && mapping.value) {
-          replacement = mapping.value;
+          replacement = parseSpintax(mapping.value);
         } else if (mapping.type === 'field' && mapping.value) {
           const fieldMap: Record<string, string | undefined> = {
             name: contact.name,
@@ -217,20 +231,21 @@ export function Step3Personalize({
             email: contact.email,
             company: contact.company,
           };
-          replacement = fieldMap[mapping.value] ?? placeholder;
+          replacement = parseSpintax(fieldMap[mapping.value] ?? placeholder);
         } else if (mapping.type === 'custom_field' && mapping.value) {
-          replacement = customValues.get(mapping.value) || placeholder;
+          replacement = parseSpintax(customValues.get(mapping.value) || placeholder);
         }
       }
       text = text.replaceAll(placeholder, replacement);
     }
-    return text;
+    return parseSpintax(text);
   }, [
     template.body_text,
     variables,
     placeholders,
     firstContact,
     firstContactCustomValues,
+    shuffleSeed,
     t,
   ]);
 
@@ -344,14 +359,19 @@ export function Step3Personalize({
                       {mapping.type === 'static' ? t('personalize.staticValue') : t('personalize.contactField')}
                     </label>
                     {mapping.type === 'static' ? (
-                      <Input
-                        value={mapping.value}
-                        onChange={(e) =>
-                          updateVariable(key, { value: e.target.value })
-                        }
-                        placeholder={t('personalize.enterValue')}
-                        className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          value={mapping.value}
+                          onChange={(e) =>
+                            updateVariable(key, { value: e.target.value })
+                          }
+                          placeholder={t('personalize.enterValue')}
+                          className="border-border bg-muted text-foreground placeholder:text-muted-foreground"
+                        />
+                        <p className="text-[11px] text-muted-foreground">
+                          Tip: Use spintax like <code className="text-primary font-mono font-medium">&#123;Hi|Hello|Hey&#125;</code> for randomized variations per recipient.
+                        </p>
+                      </div>
                     ) : mapping.type === 'field' ? (
                       <Select
                         value={mapping.value || undefined}
@@ -408,12 +428,32 @@ export function Step3Personalize({
       {/* Live Preview — rendered as a WhatsApp-style bubble so the user
           sees approximately what the recipient will see. */}
       <div className="rounded-xl border border-border bg-card/50 p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Eye className="h-4 w-4 text-primary" />
-          <p className="text-sm font-medium text-foreground">{t('personalize.preview')}</p>
-          <span className="text-xs text-muted-foreground">({previewLabel})</span>
-          {loadingPreview && (
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Eye className="h-4 w-4 text-primary" />
+            <p className="text-sm font-medium text-foreground">{t('personalize.preview')}</p>
+            <span className="text-xs text-muted-foreground">({previewLabel})</span>
+            {loadingPreview && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+            )}
+          </div>
+          {spintaxTotalVariations > 1 && (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
+                <Sparkles className="h-3 w-3" />
+                Spintax Active ({spintaxTotalVariations.toLocaleString()} variations)
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShuffleSeed((s) => s + 1)}
+                className="h-6 border-border px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <Shuffle className="mr-1 h-3 w-3" />
+                Shuffle Preview
+              </Button>
+            </div>
           )}
         </div>
         <div className="rounded-lg bg-[#0e1a12] p-3">

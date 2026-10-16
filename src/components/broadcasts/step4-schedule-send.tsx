@@ -14,15 +14,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { ArrowLeft, Send, Loader2, Users, Save } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, Users, Save, ShieldCheck, Zap, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
+import type { ThrottleConfig } from '@/hooks/use-broadcast-sending';
 
 interface Step4Props {
   name: string;
   onNameChange: (name: string) => void;
   template: MessageTemplate;
   audience: AudienceConfig;
+  throttle: ThrottleConfig;
+  onThrottleChange: (throttle: ThrottleConfig) => void;
   onSend: () => void;
   onSaveDraft?: () => void;
   onBack: () => void;
@@ -30,11 +33,25 @@ interface Step4Props {
   progress: number;
 }
 
+function getEstimatedTime(reach: number, throttle: ThrottleConfig): string {
+  if (reach <= 0) return '0 sec';
+  const avgDelayMs = (throttle.minDelayMs + throttle.maxDelayMs) / 2;
+  const batches = Math.ceil(reach / throttle.batchSize);
+  const totalSeconds = Math.ceil((batches * avgDelayMs) / 1000);
+  if (totalSeconds < 60) return `~${totalSeconds} sec`;
+  const minutes = Math.ceil(totalSeconds / 60);
+  if (minutes < 60) return `~${minutes} min${minutes > 1 ? 's' : ''}`;
+  const hours = (totalSeconds / 3600).toFixed(1);
+  return `~${hours} hrs`;
+}
+
 export function Step4ScheduleSend({
   name,
   onNameChange,
   template,
   audience,
+  throttle,
+  onThrottleChange,
   onSend,
   onSaveDraft,
   onBack,
@@ -119,6 +136,112 @@ export function Step4ScheduleSend({
             <p className="text-xs text-muted-foreground">{t('scheduleSend.language')}</p>
             <p className="text-foreground">{template.language ?? 'en_US'}</p>
           </div>
+        </div>
+      </div>
+
+      {/* Anti-Ban & Delivery Speed Card */}
+      <div className="rounded-xl border border-border bg-card/50 p-4 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+            <p className="text-sm font-medium text-foreground">Anti-Ban Pacing & Delivery Rate</p>
+          </div>
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            <Clock className="h-3 w-3 text-primary" />
+            Est. completion: <strong className="text-foreground">{getEstimatedTime(estimatedReach, throttle)}</strong>
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+          {/* Standard */}
+          <button
+            type="button"
+            onClick={() =>
+              onThrottleChange({
+                mode: 'standard',
+                minDelayMs: 1000,
+                maxDelayMs: 2000,
+                batchSize: 10,
+              })
+            }
+            className={cn(
+              'flex flex-col items-start rounded-lg border p-3 text-left transition-all',
+              throttle.mode === 'standard'
+                ? 'border-primary bg-primary/10 text-primary shadow-sm'
+                : 'border-border bg-muted/40 text-muted-foreground hover:border-primary/40 hover:bg-muted'
+            )}
+          >
+            <div className="flex w-full items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1">
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                Standard
+              </span>
+              <span className="text-[10px] text-muted-foreground">1-2s delay</span>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Fast batching. Recommended for official Meta Cloud API WABA numbers.
+            </p>
+          </button>
+
+          {/* Safe Mode */}
+          <button
+            type="button"
+            onClick={() =>
+              onThrottleChange({
+                mode: 'safe',
+                minDelayMs: 4000,
+                maxDelayMs: 8000,
+                batchSize: 1,
+              })
+            }
+            className={cn(
+              'flex flex-col items-start rounded-lg border p-3 text-left transition-all',
+              throttle.mode === 'safe'
+                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-sm'
+                : 'border-border bg-muted/40 text-muted-foreground hover:border-emerald-500/40 hover:bg-muted'
+            )}
+          >
+            <div className="flex w-full items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                Safe Mode (Recommended)
+              </span>
+              <span className="text-[10px] text-emerald-400 font-medium">4-8s jitter</span>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Random human delay. Protects against bans on WhatsApp Web / Evolution QR.
+            </p>
+          </button>
+
+          {/* Ultra Safe */}
+          <button
+            type="button"
+            onClick={() =>
+              onThrottleChange({
+                mode: 'ultra_safe',
+                minDelayMs: 12000,
+                maxDelayMs: 25000,
+                batchSize: 1,
+              })
+            }
+            className={cn(
+              'flex flex-col items-start rounded-lg border p-3 text-left transition-all',
+              throttle.mode === 'ultra_safe'
+                ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400 shadow-sm'
+                : 'border-border bg-muted/40 text-muted-foreground hover:border-cyan-500/40 hover:bg-muted'
+            )}
+          >
+            <div className="flex w-full items-center justify-between">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-cyan-400" />
+                Ultra Safe
+              </span>
+              <span className="text-[10px] text-cyan-400 font-medium">12-25s delay</span>
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Deep pacing for newly paired numbers or cold contact lists.
+            </p>
+          </button>
         </div>
       </div>
 

@@ -15,12 +15,20 @@ import { normalizeKey } from '@/lib/contacts/dedupe';
 import { fetchAllInChunks, fetchAllPages } from '@/lib/supabase/paged-query';
 import { BroadcastRecipient, Contact, MessageTemplate } from '@/types';
 import { getT } from '@/lib/i18n/translate';
+import { parseSpintax } from '@/lib/broadcast-spintax';
 
 export type {
   AudienceConfig,
   CustomFieldFilter,
   CustomFieldOperator,
 } from '@/lib/broadcast-audience';
+
+export interface ThrottleConfig {
+  mode: 'standard' | 'safe' | 'ultra_safe' | 'custom';
+  minDelayMs: number;
+  maxDelayMs: number;
+  batchSize: number;
+}
 
 /**
  * Variable mapping — each template placeholder (by key, usually "1",
@@ -46,6 +54,8 @@ interface BroadcastPayload {
    * falls back to the template's stored URL only when this is empty.
    */
   headerMediaUrl?: string;
+  /** Anti-ban throttling and safe delivery rate configuration */
+  throttle?: ThrottleConfig;
 }
 
 interface UseBroadcastSendingReturn {
@@ -105,7 +115,7 @@ export function resolveVariables(
 
   return keys.map((key) => {
     const v = variables[key];
-    if (v.type === 'static') return v.value;
+    if (v.type === 'static') return parseSpintax(v.value);
 
     if (v.type === 'field') {
       const fieldMap: Record<string, string | undefined> = {
@@ -114,11 +124,12 @@ export function resolveVariables(
         email: contact.email,
         company: contact.company,
       };
-      return fieldMap[v.value] ?? '';
+      return parseSpintax(fieldMap[v.value] ?? '');
     }
 
     // custom_field
-    return customValues?.get(v.value) ?? '';
+    const rawCustom = customValues?.get(v.value) ?? '';
+    return parseSpintax(rawCustom);
   });
 }
 
@@ -426,8 +437,12 @@ export function useBroadcastSending(): UseBroadcastSendingReturn {
       const messageParams =
         isMediaHeader && headerMediaUrl ? { headerMediaUrl } : undefined;
 
-      for (let i = 0; i < recipients.length; i += SEND_BATCH_SIZE) {
-        const batch = recipients.slice(i, i + SEND_BATCH_SIZE);
+      const batchSize = Math.max(1, payload.throttle?.batchSize ?? SEND_BATCH_SIZE);
+      const minDelayMs = payload.throttle?.minDelayMs ?? SEND_BATCH_DELAY_MS;
+      const maxDelayMs = payload.throttle?.maxDelayMs ?? SEND_BATCH_DELAY_MS;
+
+      for (let i = 0; i < recipients.length; i += batchSize) {
+        const batch = recipients.slice(i, i + batchSize);
 
         const apiRecipients = batch
           .filter((r) => r.contact?.phone)
@@ -529,8 +544,11 @@ export function useBroadcastSending(): UseBroadcastSendingReturn {
           30 + Math.round(((i + batch.length) / totalRecipients) * 60);
         setProgress(progressPct);
 
-        if (i + SEND_BATCH_SIZE < recipients.length) {
-          await sleep(SEND_BATCH_DELAY_MS);
+        if (i + batchSize < recipients.length) {
+          const delay = minDelayMs === maxDelayMs
+            ? minDelayMs
+            : Math.floor(Math.random() * (maxDelayMs - minDelayMs + 1)) + minDelayMs;
+          await sleep(delay);
         }
       }
 
