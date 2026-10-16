@@ -42,7 +42,27 @@ export async function loadAiConfig(
     .maybeSingle()
 
   if (error) throw error
-  if (!data) return null
+  if (!data) {
+    // Fall back to UniCRM Smart Router default if account has not configured custom AI
+    const defaultKey = process.env.SYSTEM_AI_API_KEY || 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
+    const defaultUrl = process.env.SYSTEM_AI_BASE_URL || 'https://omniroute.dfydude.online/v1';
+    const defaultModel = process.env.SYSTEM_AI_MODEL || 'openrouter/google/gemma-4-26b-a4b-it:free';
+    if (defaultKey && defaultUrl) {
+      return {
+        provider: 'openai_compatible',
+        model: defaultModel,
+        baseUrl: defaultUrl,
+        apiKey: defaultKey,
+        systemPrompt: null,
+        isActive: true,
+        autoReplyEnabled: false,
+        autoReplyMaxPerConversation: 3,
+        handoffAgentId: null,
+        embeddingsApiKey: null,
+      };
+    }
+    return null;
+  }
 
   const row = data as AiConfigRow
   // The Playground passes requireActive:false so an admin can test the

@@ -34,8 +34,8 @@ import { useTranslations } from 'next-intl';
 
 const MASKED_KEY = '••••••••••••••••';
 
-const BUILTIN_ROUTER_URL = 'http://localhost:21128/v1';
-const BUILTIN_ROUTER_KEY = 'sk-51ede91f935f3396-6dd2f7-35871716';
+const BUILTIN_ROUTER_URL = process.env.NEXT_PUBLIC_AI_ROUTER_URL || 'https://omniroute.dfydude.online/v1';
+const BUILTIN_ROUTER_KEY = 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
 const BUILTIN_ROUTER_MODEL = 'openrouter/google/gemma-4-26b-a4b-it:free';
 const GEMINI_FREE_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
 const GEMINI_FREE_MODEL = 'gemini-1.5-flash';
