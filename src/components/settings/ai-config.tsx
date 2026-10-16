@@ -354,14 +354,14 @@ export function AiConfig() {
                 <div className="flex items-center justify-between w-full mb-1.5">
                   <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                     <Sparkles className="h-4 w-4 text-primary" />
-                    UniCRM Smart Router
+                    UniCRM Smart Router Pro
                   </span>
                   <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
                     Recommended
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Pre-configured smart multi-model AI routing with zero setup. Pre-activated free models with no external billing.
+                  Pre-configured smart multi-model AI routing with zero setup. High-speed intelligent responses with no external API key needed.
                 </p>
               </button>
 
@@ -425,8 +425,8 @@ export function AiConfig() {
                       <Sparkles className="h-3.5 w-3.5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-bold text-foreground">UniCRM Smart Router (Pre-configured)</h4>
-                      <p className="text-[11px] text-muted-foreground">Automated multi-model routing with verified free tiers</p>
+                      <h4 className="text-xs font-bold text-foreground">UniCRM Smart Router Pro</h4>
+                      <p className="text-[11px] text-muted-foreground">Auto / Best Model from Smart Router Pro</p>
                     </div>
                   </div>
                   <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400">
@@ -435,7 +435,7 @@ export function AiConfig() {
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Your AI assistant is pre-connected to UniCRM&apos;s internal smart AI router. Draft replies in the inbox and automated responses use optimized, high-speed free models without paying $20/seat fees.
+                  Your AI assistant is connected to UniCRM&apos;s Smart Router Pro. Draft replies, lead qualification, and automated responses use intelligent multi-model routing with zero configuration.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -471,8 +471,8 @@ export function AiConfig() {
 
                 {showAdvancedBuiltin && (
                   <div className="pt-2 border-t border-border/50 text-[11px] font-mono text-muted-foreground space-y-1">
-                    <div>Routing Gateway: <code className="text-foreground">UniCRM Internal Smart Proxy</code></div>
-                    <div>Model Routing: <code className="text-foreground">auto/best-free (Dynamic Free Tier)</code></div>
+                    <div>Routing Gateway: <code className="text-foreground">UniCRM Smart Router Pro</code></div>
+                    <div>Model Engine: <code className="text-foreground">Auto / Best Model from Smart Router Pro</code></div>
                   </div>
                 )}
               </div>
