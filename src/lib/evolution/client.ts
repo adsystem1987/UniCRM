@@ -54,17 +54,40 @@ export class EvolutionClient {
   /**
    * Create or initialize an instance for an account
    */
-  async createInstance(instanceName: string, webhookUrl?: string): Promise<{ instance: { instanceName: string; status: string } }> {
-    return this.request('/instance/create', {
+  async createInstance(
+    instanceName: string,
+    webhookUrl?: string
+  ): Promise<{ instance: { instanceName: string; status: string }; qrcode?: EvolutionQrCodeResponse }> {
+    const res = await this.request<{ instance: { instanceName: string; status: string }; qrcode?: EvolutionQrCodeResponse }>('/instance/create', {
       method: 'POST',
       body: JSON.stringify({
         instanceName,
         integration: 'WHATSAPP-BAILEYS',
         token: this.apiKey,
         qrcode: true,
-        webhook: webhookUrl,
-        webhook_by_events: false,
-        events: ['MESSAGES_UPSERT', 'CONNECTION_UPDATE', 'MESSAGES_UPDATE'],
+      }),
+    });
+
+    if (webhookUrl) {
+      await this.setWebhook(instanceName, webhookUrl).catch(() => {});
+    }
+
+    return res;
+  }
+
+  /**
+   * Configure webhook for an instance
+   */
+  async setWebhook(instanceName: string, webhookUrl: string): Promise<void> {
+    await this.request(`/webhook/set/${encodeURIComponent(instanceName)}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        webhook: {
+          url: webhookUrl,
+          enabled: true,
+          webhookByEvents: false,
+          events: ['MESSAGES_UPSERT', 'CONNECTION_UPDATE', 'MESSAGES_UPDATE'],
+        },
       }),
     });
   }
@@ -73,9 +96,17 @@ export class EvolutionClient {
    * Fetch QR code for scanning
    */
   async getQrCode(instanceName: string): Promise<EvolutionQrCodeResponse> {
-    return this.request<EvolutionQrCodeResponse>(`/instance/connect/${encodeURIComponent(instanceName)}`, {
+    const raw = await this.request<Record<string, unknown>>(`/instance/connect/${encodeURIComponent(instanceName)}`, {
       method: 'GET',
     });
+    const qrObj = (raw?.qrcode && typeof raw.qrcode === 'object') ? (raw.qrcode as Record<string, unknown>) : raw || {};
+    return {
+      pairingCode: (qrObj.pairingCode as string | undefined) || (raw?.pairingCode as string | undefined),
+      code: (qrObj.code as string | undefined) || (raw?.code as string | undefined),
+      base64: (qrObj.base64 as string | undefined) || (raw?.base64 as string | undefined),
+      count: (qrObj.count as number | undefined) || (raw?.count as number | undefined),
+      state: (raw?.state as string | undefined) || (qrObj.state as string | undefined),
+    };
   }
 
   /**

@@ -31,23 +31,28 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ success: true, qr: qrData });
       }
     } catch {
-      try {
-        const origin = req.nextUrl.origin;
-        const webhookUrl = `${origin}/api/evolution/webhook`;
-        await client.createInstance(instanceName, webhookUrl);
-        const qrData = await client.getQrCode(instanceName);
-        if (qrData?.base64 || qrData?.state === 'open') {
-          return NextResponse.json({ success: true, qr: qrData });
-        }
-      } catch (err: unknown) {
-        const targetUrl = customGatewayUrl || process.env.EVOLUTION_URL || 'endpoint';
-        const message = err instanceof Error ? err.message : 'Gateway unreachable';
-        return NextResponse.json({
-          success: false,
-          gatewayOffline: true,
-          message: `Unable to reach WhatsApp Gateway at ${targetUrl}: ${message}`,
-        });
+      // Instance likely does not exist yet on gateway, proceed to create it
+    }
+
+    try {
+      const origin = req.nextUrl.origin;
+      const webhookUrl = `${origin}/api/evolution/webhook`;
+      const createRes = await client.createInstance(instanceName, webhookUrl);
+      const qrData = (createRes?.qrcode?.base64)
+        ? createRes.qrcode
+        : await client.getQrCode(instanceName);
+
+      if (qrData?.base64 || qrData?.state === 'open') {
+        return NextResponse.json({ success: true, qr: qrData });
       }
+    } catch (err: unknown) {
+      const targetUrl = customGatewayUrl || process.env.EVOLUTION_URL || 'endpoint';
+      const message = err instanceof Error ? err.message : 'Gateway unreachable';
+      return NextResponse.json({
+        success: false,
+        gatewayOffline: true,
+        message: `Unable to reach WhatsApp Gateway at ${targetUrl}: ${message}`,
+      });
     }
 
     return NextResponse.json({
