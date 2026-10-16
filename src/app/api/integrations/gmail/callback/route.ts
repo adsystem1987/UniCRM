@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { exchangeGmailCode, getGmailUserEmail } from "@/lib/gmail/client";
-import { encrypt } from "@/lib/whatsapp/encryption";
+import { encrypt, decrypt } from "@/lib/whatsapp/encryption";
 
 export const dynamic = "force-dynamic";
 
