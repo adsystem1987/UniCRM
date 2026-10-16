@@ -17,6 +17,9 @@ const t = getT("LibErrors");
  * composer call this so the logic lives in exactly one place.
  */
 
+/** Account-scoped chat media bucket (migration 023). */
+export const CHAT_MEDIA_BUCKET = "chat-media";
+
 /** 16 MB — matches the `file_size_limit` on both buckets (migrations 016/020/023). */
 export const MEDIA_MAX_BYTES = 16 * 1024 * 1024;
 

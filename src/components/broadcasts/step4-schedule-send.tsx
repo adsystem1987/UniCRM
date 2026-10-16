@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+} from '@/components/ui/dialog';
 import { ArrowLeft, Send, Loader2, Users, Save, ShieldCheck, Zap, Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
