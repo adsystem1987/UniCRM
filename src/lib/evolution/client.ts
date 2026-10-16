@@ -16,12 +16,14 @@ export interface EvolutionQrCodeResponse {
   state?: 'connecting' | 'open' | 'close' | string;
 }
 
+export const DEFAULT_EVOLUTION_GATEWAY = 'https://wa.dfydude.cc.cd';
+
 export class EvolutionClient {
   private baseUrl: string;
   private apiKey: string;
 
   constructor(
-    baseUrl = process.env.EVOLUTION_URL || 'http://localhost:8081',
+    baseUrl = process.env.EVOLUTION_URL || DEFAULT_EVOLUTION_GATEWAY,
     apiKey = process.env.EVOLUTION_API_KEY || 'unicrm-evolution-secret-key'
   ) {
     this.baseUrl = baseUrl.replace(/\/$/, '');

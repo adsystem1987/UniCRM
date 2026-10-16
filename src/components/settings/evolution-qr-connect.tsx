@@ -37,17 +37,16 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
 
   useEffect(() => {
     let savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || '';
-    // Auto-heal legacy invalid fallback
-    if (savedUrl === 'https://dfydude.cc.cd') {
-      savedUrl = '';
-      localStorage.removeItem('unicrm_wa_gateway_url');
+    // Auto-heal legacy fallbacks or default to pre-configured cloud gateway
+    if (savedUrl === 'https://dfydude.cc.cd' || savedUrl === 'http://localhost:8081') {
+      savedUrl = 'https://wa.dfydude.cc.cd';
+      localStorage.setItem('unicrm_wa_gateway_url', savedUrl);
+    } else if (!savedUrl) {
+      savedUrl = 'https://wa.dfydude.cc.cd';
     }
-    const savedKey = localStorage.getItem('unicrm_wa_gateway_key') || '';
+    const savedKey = localStorage.getItem('unicrm_wa_gateway_key') || 'unicrm-evolution-secret-key';
     setGatewayUrl(savedUrl);
     setGatewayKey(savedKey);
-    if (!savedUrl) {
-      setShowConfig(true);
-    }
     fetchQr(savedUrl, savedKey);
   }, []);
 
@@ -305,23 +304,14 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                     )}
                   </div>
 
-                  {/* Cloud to Gateway Tunnel Guide */}
-                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 text-[11px] space-y-2 text-muted-foreground text-left mt-2">
+                  {/* Pre-Configured Cloud Gateway Active Note */}
+                  <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3 text-[11px] space-y-1.5 text-muted-foreground text-left mt-2">
                     <p className="font-semibold text-foreground flex items-center gap-1.5">
-                      <ExternalLink className="h-3.5 w-3.5 text-primary" />
-                      Connecting Cloud CRM to Local Gateway:
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                      Pre-Configured Cloud Gateway:
                     </p>
-                    <p>
-                      Because Vercel runs in the cloud, it cannot directly reach <code className="text-foreground">localhost:8081</code> on your home server without a public tunnel.
-                    </p>
-                    <div className="space-y-1 bg-background/80 p-2.5 rounded-lg border border-border font-mono text-[10px] text-foreground">
-                      <p className="text-muted-foreground font-sans text-[11px]">Option 1: Cloudflare Named Tunnel (Permanent)</p>
-                      <p className="text-primary font-bold">hostname: wa.dfydude.cc.cd &rarr; http://localhost:8081</p>
-                      <p className="mt-1 text-muted-foreground font-sans text-[11px]">Option 2: Instant Quick Tunnel (Testing)</p>
-                      <p className="text-emerald-500 font-bold">cloudflared tunnel --url http://localhost:8081</p>
-                    </div>
-                    <p className="text-[10px]">
-                      Tip: Add <code className="text-foreground">EVOLUTION_URL</code> to your Vercel Project Environment Variables to connect automatically for all users.
+                    <p className="leading-relaxed">
+                      UniCRM is connected to the cloud gateway at <code className="text-foreground font-semibold">https://wa.dfydude.cc.cd</code>. If you prefer to connect your own self-hosted WhatsApp Gateway (Evolution API), you can enter your custom URL and secret key above.
                     </p>
                   </div>
                 </form>

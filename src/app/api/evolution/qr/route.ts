@@ -23,19 +23,7 @@ export async function GET(req: NextRequest) {
 
     const client = customGatewayUrl
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
-      : process.env.EVOLUTION_URL
-        ? evolution
-        : null;
-
-    if (!client) {
-      return NextResponse.json({
-        success: false,
-        gatewayOffline: true,
-        needsConfiguration: true,
-        message:
-          'WhatsApp Web Gateway endpoint is not configured. Please enter your Gateway URL below (or set EVOLUTION_URL) to generate a QR Code.',
-      });
-    }
+      : evolution;
 
     try {
       const qrData = await client.getQrCode(instanceName);
