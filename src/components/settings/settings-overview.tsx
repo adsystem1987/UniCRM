@@ -179,6 +179,11 @@ export function SettingsOverview({
       subtitle: 'Auto-replies, smart drafts & knowledge base',
     },
     {
+      section: 'chat-widget',
+      loading: false,
+      subtitle: 'Embeddable floating WhatsApp button & QR code',
+    },
+    {
       section: 'integrations',
       loading: false,
       subtitle: 'Google Drive, Email, FB & IG',

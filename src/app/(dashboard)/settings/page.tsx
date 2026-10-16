@@ -20,6 +20,7 @@ import { MembersTab } from '@/components/settings/members-tab';
 import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
 import { IntegrationsPanel } from '@/components/settings/integrations-panel';
 import { AiConfig } from '@/components/settings/ai-config';
+import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
   resolveSection,
   type SettingsSection,
@@ -77,6 +78,7 @@ function SettingsPageInner() {
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
     whatsapp: <WhatsAppConfig />,
+    'chat-widget': <ChatWidgetPanel />,
     ai: <AiConfig />,
     integrations: <IntegrationsPanel />,
     templates: <TemplateManager />,
