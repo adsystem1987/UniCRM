@@ -208,6 +208,23 @@ export async function mirrorInboundMedia(
     // that makes a redelivery idempotent rather than duplicative.
     const path = buildMediaPath(accountId, objectName, null, MIRROR_FOLDER);
 
+    // If the account has connected Google Drive (BYOS), upload directly
+    // to their Google Drive so ZERO bytes are stored on our servers!
+    try {
+      const gdriveResult = await mirrorMediaToGoogleDrive({
+        accountId,
+        filename: objectName,
+        mimeType: uploadType,
+        buffer,
+      });
+
+      if (gdriveResult?.webViewLink) {
+        return gdriveResult.webViewLink;
+      }
+    } catch (gdriveErr) {
+      console.warn(`[mirror-media] GDrive direct offload failed for ${mediaId}:`, gdriveErr);
+    }
+
     // `upsert: true` for that same reason: on the rare Meta redelivery
     // the second pass rewrites byte-identical content at the same key
     // instead of erroring or orphaning a duplicate.
@@ -230,14 +247,6 @@ export async function mirrorInboundMedia(
     const {
       data: { publicUrl },
     } = storage.from(MIRROR_BUCKET).getPublicUrl(path);
-
-    // Also offload to Google Drive if the account has it connected
-    void mirrorMediaToGoogleDrive({
-      accountId,
-      filename: objectName,
-      mimeType: uploadType,
-      buffer,
-    }).catch((err) => console.error('[mirror-media] GDrive mirror failed:', err));
 
     return publicUrl || null;
   } catch (error) {

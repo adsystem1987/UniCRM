@@ -160,14 +160,14 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (!existingMsg) {
-      await supabase.from('messages').insert({
+      const { data: insertedMsg } = await supabase.from('messages').insert({
         conversation_id: conv.id,
         sender_type: isFromMe ? 'agent' : 'customer',
         content_type: 'text',
         content_text: messageContent,
         message_id: messageId,
         status: isFromMe ? 'sent' : 'delivered',
-      });
+      }).select('id').maybeSingle();
 
       await supabase
         .from('conversations')
@@ -196,6 +196,13 @@ export async function POST(req: NextRequest) {
             filename,
             mimeType,
             buffer,
+          }).then((res) => {
+            if (res?.webViewLink && insertedMsg?.id) {
+              void supabase
+                .from('messages')
+                .update({ media_url: res.webViewLink })
+                .eq('id', insertedMsg.id);
+            }
           }).catch((err) => console.error('[evolution-webhook] GDrive offload failed:', err));
         } catch (e) {
           console.error('[evolution-webhook] Base64 decode failed:', e);
