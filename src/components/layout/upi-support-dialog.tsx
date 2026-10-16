@@ -48,21 +48,21 @@ const PRESET_OPTIONS: PresetOption[] = [
     amount: "29",
     label: "₹29/mo",
     sublabel: "Chai Supporter ☕",
-    badge: "Starter",
+    badge: "Community",
     icon: Coffee,
   },
   {
-    amount: "99",
-    label: "₹99/mo",
-    sublabel: "Server Backer 🚀",
-    badge: "Popular",
-    icon: Rocket,
+    amount: "59",
+    label: "₹59/mo",
+    sublabel: "AI Assistant Pro ⚡",
+    badge: "Smart Router",
+    icon: Sparkles,
   },
   {
-    amount: "299",
-    label: "₹299/mo",
-    sublabel: "Community Hero 🌟",
-    badge: "Community Star",
+    amount: "199",
+    label: "₹199/mo",
+    sublabel: "Agency Hero 🌟",
+    badge: "VIP Star",
     icon: Award,
   },
 ];
@@ -92,7 +92,7 @@ export function UpiSupportDialog({
   upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi",
 }: UpiSupportDialogProps) {
   const [activeTab, setActiveTab] = useState<"pay" | "perks" | "thanks">("pay");
-  const [selectedAmount, setSelectedAmount] = useState<string>("99");
+  const [selectedAmount, setSelectedAmount] = useState<string>("59");
   const [isCustom, setIsCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [copiedId, setCopiedId] = useState(false);
@@ -397,22 +397,22 @@ export function UpiSupportDialog({
             {/* 3 Core Perks */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="rounded-xl border border-border p-2.5 bg-card space-y-1">
-                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span>50+ Templates</span>
+                <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold text-xs">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                  <span>AI Smart Router Pro</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                  High-converting copy for follow-ups, flash sales, festive campaigns & reviews.
+                  Zero-config AI for automatic WhatsApp reply drafts & incoming lead qualification (₹59/mo).
                 </p>
               </div>
 
               <div className="rounded-xl border border-border p-2.5 bg-card space-y-1">
-                <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold text-xs">
-                  <Rocket className="h-3.5 w-3.5" />
-                  <span>3 Automations</span>
+                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-xs">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  <span>50+ Templates & Flows</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                  1-click importable flows: Lead Welcome, Inactive Re-engagement & VIP Tagger.
+                  High-converting copy for follow-ups, flash sales, festive campaigns & importable flows.
                 </p>
               </div>
 
@@ -422,7 +422,7 @@ export function UpiSupportDialog({
                   <span>Supporter Role</span>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                  Supporter badge, priority bug triage & early preview access to upcoming AI features.
+                  Supporter badge, priority bug triage & early preview access to upcoming CRM updates.
                 </p>
               </div>
             </div>
@@ -675,7 +675,7 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
             <Gift className="h-3 w-3" />
             Supporter Perks
           </span>
-          <span className="font-bold text-foreground">₹29/mo • ₹99/mo • ₹299/mo</span>
+          <span className="font-bold text-foreground">₹29/mo • ₹59/mo • ₹199/mo</span>
         </div>
 
         {/* Cool, vibrant, modern button */}

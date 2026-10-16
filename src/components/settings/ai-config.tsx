@@ -357,11 +357,11 @@ export function AiConfig() {
                     UniCRM Smart Router Pro
                   </span>
                   <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
-                    Recommended
+                    ₹59/mo Pro
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Pre-configured smart multi-model AI routing with zero setup. High-speed intelligent responses with no external API key needed.
+                  Zero-configuration AI assistant for ₹59/mo. High-speed intelligent responses with no personal API keys required.
                 </p>
               </button>
 
@@ -429,13 +429,18 @@ export function AiConfig() {
                       <p className="text-[11px] text-muted-foreground">Auto / Best Model from Smart Router Pro</p>
                     </div>
                   </div>
-                  <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400">
-                    Active & Ready
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 text-[9px] font-black text-indigo-600 dark:text-indigo-400">
+                      ₹59/mo Pro Plan
+                    </span>
+                    <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400">
+                      Active & Ready
+                    </span>
+                  </div>
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Your AI assistant is connected to UniCRM&apos;s Smart Router Pro. Draft replies, lead qualification, and automated responses use intelligent multi-model routing with zero configuration.
+                  Your AI assistant is connected to UniCRM&apos;s Smart Router Pro. Provides zero-configuration intelligent reply drafts, incoming lead qualification, and automated routing for ₹59/month (or connect free Google Gemini below).
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">
