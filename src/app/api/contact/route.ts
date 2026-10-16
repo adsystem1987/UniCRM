@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/gdrive/offload';
 import { refreshGmailAccessToken, sendGmailMessage } from '@/lib/gmail/client';
+import { notifySlackContactLead } from '@/lib/slack/notify';
 
 export const dynamic = 'force-dynamic';
 
@@ -232,6 +233,16 @@ export async function POST(req: Request) {
             console.warn('[contact/route] Resend notification failed:', resendErr);
           }
         }
+
+        // 4. Send Slack notification to designated channel
+        void notifySlackContactLead({
+          name,
+          email,
+          phone,
+          message: `[${topic}] ${message}`,
+        }).catch((slackErr) => {
+          console.warn('[contact/route] Slack notification failed:', slackErr);
+        });
       }
     } catch (dbErr) {
       console.warn('[contact/route] Real-time CRM ingestion warning:', dbErr);

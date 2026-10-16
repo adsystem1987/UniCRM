@@ -37,6 +37,7 @@ import {
   relativeRedirect,
   safeNextPath,
 } from '@/lib/auth/callback';
+import { notifySlackNewSignup } from '@/lib/slack/notify';
 
 // Session exchange is per-request by definition; never prerender.
 export const dynamic = 'force-dynamic';
@@ -56,7 +57,7 @@ export async function GET(request: Request) {
   }
 
   const supabase = await createClient();
-  const { error } =
+  const { data, error } =
     link.kind === 'code'
       ? await supabase.auth.exchangeCodeForSession(link.code)
       : await supabase.auth.verifyOtp({
@@ -74,6 +75,35 @@ export async function GET(request: Request) {
       message: error.message,
     });
     return relativeRedirect(loginFailurePath('link_invalid'));
+  }
+
+  // Detect and notify Slack on new user registration (created within the last 5 minutes)
+  if (data?.user) {
+    const user = data.user;
+    const createdAtMs = new Date(user.created_at).getTime();
+    const isRecentSignup = Math.abs(Date.now() - createdAtMs) < 5 * 60 * 1000;
+    const alreadyNotified = Boolean(user.user_metadata?.slack_signup_notified);
+
+    if (isRecentSignup && !alreadyNotified) {
+      void supabase.auth
+        .updateUser({
+          data: { slack_signup_notified: true },
+        })
+        .catch(() => {});
+
+      void notifySlackNewSignup({
+        name:
+          (user.user_metadata?.full_name as string) ||
+          (user.user_metadata?.name as string) ||
+          null,
+        email: user.email,
+        provider: (user.app_metadata?.provider as string) || 'Google OAuth',
+        userId: user.id,
+        inviteToken: searchParams.get('invite'),
+      }).catch((err) => {
+        console.error('[Slack] Failed to send signup notification:', err);
+      });
+    }
   }
 
   return relativeRedirect(next);
