@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 import {
@@ -28,6 +28,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Upload,
   FileText,
@@ -36,6 +37,9 @@ import {
   XCircle,
   AlertTriangle,
   Tag,
+  FileSpreadsheet,
+  RefreshCw,
+  ExternalLink,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -150,6 +154,102 @@ export function ImportModal({
     tagsAssigned: number;
   } | null>(null);
 
+  const [importSource, setImportSource] = useState<'csv' | 'sheets'>('csv');
+  const [sheetUrl, setSheetUrl] = useState('');
+  const [sheetLoading, setSheetLoading] = useState(false);
+  const [userSheets, setUserSheets] = useState<{ id: string; name: string }[]>([]);
+  const [driveConnected, setDriveConnected] = useState(false);
+
+  const fetchUserSheets = async () => {
+    try {
+      const res = await fetch('/api/integrations/google-sheets');
+      const data = await res.json();
+      if (data.connected && Array.isArray(data.sheets)) {
+        setDriveConnected(true);
+        setUserSheets(data.sheets);
+      } else {
+        setDriveConnected(false);
+      }
+    } catch {
+      setDriveConnected(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      fetchUserSheets();
+    }
+  }, [open]);
+
+  const handleLoadGoogleSheet = async (urlOrIdToLoad?: string) => {
+    const target = urlOrIdToLoad || sheetUrl;
+    if (!target.trim()) {
+      toast.error('Please enter a Google Sheet URL or select one from your Drive');
+      return;
+    }
+
+    setSheetLoading(true);
+    setResult(null);
+
+    try {
+      const res = await fetch('/api/integrations/google-sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sheetUrlOrId: target.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to load Google Sheet');
+      }
+
+      const {
+        rows,
+        hasTagsColumn: csvHasTags,
+        hasCompanyColumn: csvHasCompany,
+      } = parseContactCsv(data.csvText);
+
+      if (rows.length === 0) {
+        toast.error('No contacts with a valid "phone" column found in this Google Sheet.');
+        setParsedRows([]);
+        return;
+      }
+
+      if (rows.length > MAX_IMPORT_ROWS_PER_BATCH) {
+        toast.error(
+          `Sheet contains ${rows.length.toLocaleString()} contacts, which exceeds the limit of ${MAX_IMPORT_ROWS_PER_BATCH.toLocaleString()} contacts per batch. Please upload in smaller batches.`
+        );
+        setParsedRows([]);
+        return;
+      }
+
+      setFile(new File([data.csvText], 'GoogleSheet_Live_Stream.csv', { type: 'text/csv' }));
+      setParsedRows(rows);
+      setHasTagsColumn(csvHasTags);
+      setHasCompanyColumn(csvHasCompany);
+      toast.success(`Successfully loaded ${rows.length.toLocaleString()} contacts from Google Sheet!`);
+
+      if (csvHasTags && accountId) {
+        const { data: tags } = await supabase
+          .from('tags')
+          .select('name, color')
+          .eq('account_id', accountId);
+
+        const colors = new Map<string, string>();
+        for (const tag of tags ?? []) {
+          const key = tag.name.trim().toLowerCase();
+          if (!colors.has(key)) colors.set(key, tag.color);
+        }
+        setTagColorByKey(colors);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to load Google Sheet';
+      toast.error(msg);
+    } finally {
+      setSheetLoading(false);
+    }
+  };
+
   function reset() {
     setFile(null);
     setParsedRows([]);
@@ -157,6 +257,7 @@ export function ImportModal({
     setHasCompanyColumn(false);
     setTagColorByKey(new Map());
     setResult(null);
+    setSheetUrl('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
 
@@ -471,53 +572,169 @@ export function ImportModal({
             />
           </DialogHeader>
 
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => fileInputRef.current?.click()}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ')
-                fileInputRef.current?.click();
-            }}
-            className={cn(
-              'group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-5 transition-all',
-              file
-                ? 'border-primary/35 bg-primary/[0.04]'
-                : 'hover:border-primary/40 border-border/80 bg-background/40 hover:bg-background/70'
-            )}
-          >
-            {file ? (
-              <>
-                <div className="bg-primary/15 ring-primary/25 flex size-10 items-center justify-center rounded-lg ring-1">
-                  <FileText className="text-primary size-5" />
-                </div>
-                <p
-                  className="max-w-full truncate px-2 text-sm font-medium text-popover-foreground"
-                  title={file.name}
-                >
-                  {truncateFilename(file.name)}
-                </p>
-                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  {t('rowsReady', { count: parsedRows.length })}
-                </span>
-              </>
-            ) : (
-              <>
-                <div className="flex size-10 items-center justify-center rounded-lg bg-muted/80 ring-1 ring-border/80 transition-colors group-hover:bg-muted">
-                  <Upload className="size-5 text-muted-foreground group-hover:text-foreground" />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {t('uploadDropzone')}
-                </p>
-                <div className="flex flex-col items-center gap-1 text-[11px] text-muted-foreground">
-                  <p>{t('uploadHint')}</p>
-                  <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">
-                    Free Tier Safe Limit: Max 1 MB (up to 5,000 contacts / batch)
-                  </span>
-                </div>
-              </>
-            )}
+          {/* Source Tabs: CSV Upload vs 1-Click Google Sheet */}
+          <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+            <button
+              type="button"
+              onClick={() => setImportSource('csv')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                importSource === 'csv'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              )}
+            >
+              <Upload className="size-3.5" />
+              Upload CSV File
+            </button>
+            <button
+              type="button"
+              onClick={() => setImportSource('sheets')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all',
+                importSource === 'sheets'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              )}
+            >
+              <FileSpreadsheet className="size-3.5" />
+              1-Click Google Sheets Sync
+              <span className="text-[10px] bg-emerald-500/20 text-white px-1.5 py-0.2 rounded-full font-bold uppercase">
+                BYOS
+              </span>
+            </button>
           </div>
+
+          {importSource === 'sheets' ? (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.03] p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <FileSpreadsheet className="size-4" />
+                  </div>
+                  <div>
+                    <h5 className="text-xs font-bold text-foreground">Stream from Google Sheets</h5>
+                    <p className="text-[11px] text-muted-foreground">
+                      Reads live contacts directly from your Google Drive into memory. 0 bytes saved on our server.
+                    </p>
+                  </div>
+                </div>
+                {driveConnected && (
+                  <span className="text-[10px] bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-full font-bold">
+                    Drive Connected
+                  </span>
+                )}
+              </div>
+
+              {/* If user has Google Sheets in their connected Drive, show quick dropdown */}
+              {userSheets.length > 0 && (
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-muted-foreground">
+                    Pick a Sheet from your Google Drive:
+                  </label>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setSheetUrl(e.target.value);
+                        handleLoadGoogleSheet(e.target.value);
+                      }
+                    }}
+                    defaultValue=""
+                    className="w-full h-8 text-xs bg-muted/60 rounded-lg px-2.5 border border-border text-foreground"
+                  >
+                    <option value="" disabled>
+                      -- Select from your Google Drive Spreadsheets --
+                    </option>
+                    {userSheets.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        📄 {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Paste any Google Sheet URL */}
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-medium text-muted-foreground">
+                  Or paste any Google Sheet Link:
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="https://docs.google.com/spreadsheets/d/.../edit"
+                    value={sheetUrl}
+                    onChange={(e) => setSheetUrl(e.target.value)}
+                    className="h-8 text-xs bg-background"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={sheetLoading || !sheetUrl.trim()}
+                    onClick={() => handleLoadGoogleSheet()}
+                    className="h-8 text-xs font-bold gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
+                  >
+                    {sheetLoading ? (
+                      <RefreshCw className="size-3.5 animate-spin" />
+                    ) : (
+                      <FileSpreadsheet className="size-3.5" />
+                    )}
+                    Load Sheet
+                  </Button>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  💡 Works with private sheets in your connected Google Drive or public sheets (&ldquo;Anyone with link can view&rdquo;).
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ')
+                  fileInputRef.current?.click();
+              }}
+              className={cn(
+                'group flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-5 transition-all',
+                file
+                  ? 'border-primary/35 bg-primary/[0.04]'
+                  : 'hover:border-primary/40 border-border/80 bg-background/40 hover:bg-background/70'
+              )}
+            >
+              {file ? (
+                <>
+                  <div className="bg-primary/15 ring-primary/25 flex size-10 items-center justify-center rounded-lg ring-1">
+                    <FileText className="text-primary size-5" />
+                  </div>
+                  <p
+                    className="max-w-full truncate px-2 text-sm font-medium text-popover-foreground"
+                    title={file.name}
+                  >
+                    {truncateFilename(file.name)}
+                  </p>
+                  <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                    {t('rowsReady', { count: parsedRows.length })}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-muted/80 ring-1 ring-border/80 transition-colors group-hover:bg-muted">
+                    <Upload className="size-5 text-muted-foreground group-hover:text-foreground" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {t('uploadDropzone')}
+                  </p>
+                  <div className="flex flex-col items-center gap-1 text-[11px] text-muted-foreground">
+                    <p>{t('uploadHint')}</p>
+                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">
+                      Free Tier Safe Limit: Max 1 MB (up to 5,000 contacts / batch)
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
 
           <input
             ref={fileInputRef}

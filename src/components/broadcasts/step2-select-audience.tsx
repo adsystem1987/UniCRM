@@ -7,6 +7,7 @@ import { parseBroadcastCsv } from '@/lib/broadcast-csv';
 import { CustomField, Tag } from '@/types';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 import {
   Users,
   Tags,
@@ -17,6 +18,8 @@ import {
   ArrowRight,
   ArrowLeft,
   X,
+  FileSpreadsheet,
+  RefreshCw,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
@@ -105,6 +108,70 @@ export function Step2SelectAudience({
   // Only meaningful while the rows it produced are still in play —
   // picking another audience type wipes `csvContacts`.
   const csvFileName = csvCount > 0 ? pickedCsvName : null;
+
+  const [csvSource, setCsvSource] = useState<'upload' | 'sheets'>('upload');
+  const [sheetUrl, setSheetUrl] = useState('');
+  const [sheetLoading, setSheetLoading] = useState(false);
+  const [userSheets, setUserSheets] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    async function loadSheets() {
+      try {
+        const res = await fetch('/api/integrations/google-sheets');
+        const data = await res.json();
+        if (data.connected && Array.isArray(data.sheets)) {
+          setUserSheets(data.sheets);
+        }
+      } catch {
+        // ignore
+      }
+    }
+    loadSheets();
+  }, []);
+
+  const handleLoadGoogleSheet = async (urlOrId?: string) => {
+    const target = urlOrId || sheetUrl;
+    if (!target.trim()) {
+      toast.error('Please enter a Google Sheet URL or select one from your Drive');
+      return;
+    }
+
+    setSheetLoading(true);
+    try {
+      const res = await fetch('/api/integrations/google-sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sheetUrlOrId: target.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to stream Google Sheet');
+      }
+
+      const result = parseBroadcastCsv(data.csvText);
+      if (!result.ok) {
+        toast.error(
+          result.error === 'missing_phone_column'
+            ? t('selectAudience.errorCsvMissingPhone')
+            : t('selectAudience.errorCsvParse')
+        );
+        onUpdate({ ...audience, csvContacts: undefined });
+        return;
+      }
+
+      if (result.invalid > 0) {
+        toast.warning(t('selectAudience.csvInvalidPhones', { count: result.invalid }));
+      }
+
+      setPickedCsvName(`Google Sheet (${result.contacts.length} recipients)`);
+      onUpdate({ ...audience, csvContacts: result.contacts });
+      toast.success(`Loaded ${result.contacts.length} recipients directly from Google Sheet!`);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to load Google Sheet');
+    } finally {
+      setSheetLoading(false);
+    }
+  };
 
   // Tags are used both by the primary "Filter by Tags" audience type
   // AND by the exclude-list below — so always load once on mount.
@@ -393,34 +460,146 @@ export function Step2SelectAudience({
         <div className="space-y-3 rounded-xl border border-border bg-card/50 p-4">
           <div>
             <p className="text-sm font-medium text-foreground">
-              {t('selectAudience.uploadCsv')}
+              External Audience (Zero Server Storage)
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {t('selectAudience.csvFormatDesc')}
+              Broadcast directly to contacts from a CSV or Google Sheet without storing them in the CRM database.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => csvInputRef.current?.click()}
-            className="group flex w-full flex-col items-center gap-2 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted/70"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-foreground">
-              {csvFileName ? (
-                <FileText className="h-5 w-5" />
-              ) : (
-                <Upload className="h-5 w-5" />
+          {/* Switcher: File Upload vs Google Sheet */}
+          <div className="flex items-center gap-2 border-b border-border/60 pb-2">
+            <button
+              type="button"
+              onClick={() => setCsvSource('upload')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                csvSource === 'upload'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
+            >
+              <Upload className="size-3.5" />
+              Upload CSV File
+            </button>
+            <button
+              type="button"
+              onClick={() => setCsvSource('sheets')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                csvSource === 'sheets'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
+            >
+              <FileSpreadsheet className="size-3.5" />
+              Stream from Google Sheet
+              <span className="text-[10px] bg-emerald-500/20 text-white px-1.5 py-0.2 rounded-full font-bold uppercase">
+                BYOS
+              </span>
+            </button>
+          </div>
+
+          {csvSource === 'sheets' ? (
+            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.03] p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <FileSpreadsheet className="size-4" />
+                </div>
+                <div>
+                  <h5 className="text-xs font-bold text-foreground">1-Click Google Sheet Broadcast</h5>
+                  <p className="text-[11px] text-muted-foreground">
+                    Streams recipients directly from your Google Drive into memory. 0 contacts saved in database.
+                  </p>
+                </div>
+              </div>
+
+              {userSheets.length > 0 && (
+                <div className="space-y-1">
+                  <label className="text-[11px] font-medium text-muted-foreground">
+                    Pick a Sheet from your Google Drive:
+                  </label>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setSheetUrl(e.target.value);
+                        handleLoadGoogleSheet(e.target.value);
+                      }
+                    }}
+                    defaultValue=""
+                    className="w-full h-8 text-xs bg-muted/60 rounded-lg px-2.5 border border-border text-foreground"
+                  >
+                    <option value="" disabled>
+                      -- Select from your Google Drive Spreadsheets --
+                    </option>
+                    {userSheets.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        📄 {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-medium text-muted-foreground">
+                  Or paste Google Sheet Link:
+                </label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="https://docs.google.com/spreadsheets/d/.../edit"
+                    value={sheetUrl}
+                    onChange={(e) => setSheetUrl(e.target.value)}
+                    className="h-8 text-xs bg-background"
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={sheetLoading || !sheetUrl.trim()}
+                    onClick={() => handleLoadGoogleSheet()}
+                    className="h-8 text-xs font-bold gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shrink-0"
+                  >
+                    {sheetLoading ? (
+                      <RefreshCw className="size-3.5 animate-spin" />
+                    ) : (
+                      <FileSpreadsheet className="size-3.5" />
+                    )}
+                    Load Sheet
+                  </Button>
+                </div>
+              </div>
+
+              {csvCount > 0 && (
+                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
+                  <span className="font-semibold">✓ {csvFileName}</span>
+                  <span className="font-bold">{csvCount.toLocaleString()} recipients loaded</span>
+                </div>
               )}
             </div>
-            <p className="text-sm text-foreground">
-              {csvFileName ?? t('selectAudience.uploadCsv')}
-            </p>
-            {csvCount > 0 && (
-              <p className="text-xs text-primary">
-                {t('selectAudience.csvContactsFound', { count: csvCount })}
+          ) : (
+            <button
+              type="button"
+              onClick={() => csvInputRef.current?.click()}
+              className="group flex w-full flex-col items-center gap-2 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted/70"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-foreground">
+                {csvFileName ? (
+                  <FileText className="h-5 w-5" />
+                ) : (
+                  <Upload className="h-5 w-5" />
+                )}
+              </div>
+              <p className="text-sm text-foreground">
+                {csvFileName ?? t('selectAudience.uploadCsv')}
               </p>
-            )}
-          </button>
+              {csvCount > 0 && (
+                <p className="text-xs text-primary font-bold">
+                  {t('selectAudience.csvContactsFound', { count: csvCount })}
+                </p>
+              )}
+              <span className="text-[10px] text-muted-foreground">
+                Max 1 MB file size
+              </span>
+            </button>
+          )}
 
           <input
             ref={csvInputRef}

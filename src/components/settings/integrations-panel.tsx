@@ -16,6 +16,8 @@ import {
   AlertCircle,
   HelpCircle,
   Loader2,
+  Database,
+  Terminal,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,10 +27,20 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SettingsPanelHead } from "./settings-panel-head";
 
-type IntegrationTab = "gdrive" | "email" | "facebook" | "instagram";
+type IntegrationTab = "gdrive" | "email" | "database" | "facebook" | "instagram";
 
 export function IntegrationsPanel() {
   const [activeTab, setActiveTab] = useState<IntegrationTab>("gdrive");
+
+  // BYOD Database state
+  const [byodLoading, setByodLoading] = useState(false);
+  const [byodConnected, setByodConnected] = useState(false);
+  const [byodUrl, setByodUrl] = useState("");
+  const [byodAnonKey, setByodAnonKey] = useState("");
+  const [byodServiceKey, setByodServiceKey] = useState("");
+  const [byodSchemaInit, setByodSchemaInit] = useState(false);
+  const [byodSchemaSql, setByodSchemaSql] = useState("");
+  const [showSchemaSql, setShowSchemaSql] = useState(false);
 
   // Google Drive state
   const [gdriveLoading, setGdriveLoading] = useState(true);
@@ -198,6 +210,77 @@ export function IntegrationsPanel() {
     }
   };
 
+  // Fetch BYOD status
+  useEffect(() => {
+    async function checkByodStatus() {
+      try {
+        const res = await fetch("/api/integrations/byod");
+        const data = await res.json();
+        if (data.connected) {
+          setByodConnected(true);
+          setByodUrl(data.supabaseUrl || "");
+          setByodSchemaInit(data.schemaInitialized);
+        } else {
+          setByodConnected(false);
+        }
+        if (data.schemaSql) {
+          setByodSchemaSql(data.schemaSql);
+        }
+      } catch {
+        setByodConnected(false);
+      }
+    }
+    void checkByodStatus();
+  }, []);
+
+  const handleSaveByod = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!byodUrl.trim() || !byodAnonKey.trim()) {
+      toast.error("Please enter your Supabase Project URL and Anon Key");
+      return;
+    }
+    setByodLoading(true);
+    try {
+      const res = await fetch("/api/integrations/byod", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          supabaseUrl: byodUrl.trim(),
+          anonKey: byodAnonKey.trim(),
+          serviceRoleKey: byodServiceKey.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to connect personal Supabase");
+      }
+      setByodConnected(true);
+      setByodSchemaInit(data.schemaInitialized);
+      toast.success("Personal Supabase database connected successfully!");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to connect Supabase");
+    } finally {
+      setByodLoading(false);
+    }
+  };
+
+  const handleDisconnectByod = async () => {
+    try {
+      const res = await fetch("/api/integrations/byod", { method: "DELETE" });
+      if (res.ok) {
+        setByodConnected(false);
+        setByodUrl("");
+        setByodAnonKey("");
+        setByodServiceKey("");
+        toast.info("Reverted to default CRM database");
+      } else {
+        toast.error("Failed to disconnect database");
+      }
+    } catch {
+      toast.error("Failed to disconnect database");
+    }
+  };
+
   // Email state
   const [emailMethod, setEmailMethod] = useState<"gmail" | "smtp" | "forward">("gmail");
   const [supportEmail, setSupportEmail] = useState("");
@@ -239,7 +322,7 @@ export function IntegrationsPanel() {
       />
 
       {/* Channel Switcher Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         <button
           type="button"
           onClick={() => setActiveTab("gdrive")}
@@ -273,6 +356,24 @@ export function IntegrationsPanel() {
           <div className="min-w-0">
             <p className="text-xs font-bold truncate text-foreground">Support Email</p>
             <p className="text-[10px] text-muted-foreground truncate">Inbox & Ticketing</p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("database")}
+          className={`flex items-center gap-2 p-3 rounded-xl border text-left transition-all ${
+            activeTab === "database"
+              ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary shadow-xs"
+              : "border-border bg-card hover:bg-muted/50 text-muted-foreground"
+          }`}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
+            <Database className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold truncate text-foreground">Database (BYOD)</p>
+            <p className="text-[10px] text-muted-foreground truncate">Personal Supabase</p>
           </div>
         </button>
 
@@ -697,6 +798,158 @@ export function IntegrationsPanel() {
                 </div>
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TAB: BRING YOUR OWN DATABASE (BYOD) */}
+      {activeTab === "database" && (
+        <Card className="border-border">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <Database className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-bold">
+                    Bring Your Own Database (BYOD Supabase)
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Connect your personal free Supabase project. All contacts, chat history, and CRM data save directly to your database.
+                  </CardDescription>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {byodConnected ? (
+                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    BYOD Active: 100% On Your Server
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-muted border border-border px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+                    Master Cloud: Standard Tier
+                  </span>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {byodConnected ? (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <p className="text-xs font-bold text-foreground">Personal Supabase Connected</p>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground break-all">{byodUrl}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      CRM contacts and message queries are routed to your personal database. 0 bytes saved on master CRM servers.
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDisconnectByod}
+                    className="text-xs text-red-500 hover:text-red-600 border-red-500/30 hover:bg-red-500/10"
+                  >
+                    Disconnect Database
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSaveByod} className="space-y-4">
+                <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-2 text-xs">
+                  <p className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Zero Database Costs &amp; Unlimited Storage
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    By connecting your own free Supabase project, you get your own dedicated 500 MB Postgres database (holds over 500,000+ contacts) without hitting our free tier limits.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">Your Supabase Project URL</Label>
+                    <Input
+                      placeholder="https://xyzprojectref.supabase.co"
+                      value={byodUrl}
+                      onChange={(e) => setByodUrl(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Found in Supabase Dashboard → Project Settings → API → Project URL
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-semibold">Your Supabase Anon / Public Key</Label>
+                    <Input
+                      type="password"
+                      placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                      value={byodAnonKey}
+                      onChange={(e) => setByodAnonKey(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Encrypted with AES-256-GCM. Never stored in plaintext.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <Button
+                    type="submit"
+                    disabled={byodLoading || !byodUrl.trim() || !byodAnonKey.trim()}
+                    className="gap-2 text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white"
+                  >
+                    {byodLoading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Database className="h-3.5 w-3.5" />}
+                    Test &amp; Connect Personal Supabase
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {/* 1-Click Schema SQL Viewer */}
+            <div className="rounded-xl border border-border bg-muted/40 p-3.5 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <Terminal className="h-3.5 w-3.5 text-primary" />
+                  1-Click Customer Schema SQL
+                </span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(byodSchemaSql, "schemaSql")}
+                    className="h-7 px-2 text-xs font-bold gap-1"
+                  >
+                    {copiedKey === "schemaSql" ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
+                    Copy Schema SQL
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowSchemaSql(!showSchemaSql)}
+                    className="h-7 text-xs font-semibold"
+                  >
+                    {showSchemaSql ? "Hide SQL" : "View SQL"}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Run this single script in your own <strong>Supabase Dashboard → SQL Editor</strong> to create the necessary tables in 2 seconds.
+              </p>
+              {showSchemaSql && (
+                <pre className="max-h-48 overflow-y-auto rounded-lg bg-black/80 p-3 text-[10px] font-mono text-emerald-400 whitespace-pre">
+                  {byodSchemaSql}
+                </pre>
+              )}
+            </div>
           </CardContent>
         </Card>
       )}
