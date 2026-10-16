@@ -250,18 +250,26 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                     <div className="flex items-center justify-between">
                       <Label className="text-[11px] text-muted-foreground">Gateway URL (with http/https)</Label>
                       <div className="flex items-center gap-1.5 text-[10px]">
-                        <span className="text-muted-foreground">Preset:</span>
+                        <span className="text-muted-foreground">Presets:</span>
+                        <button
+                          type="button"
+                          onClick={() => setGatewayUrl('https://wa.dfydude.online')}
+                          className="text-primary hover:underline font-mono"
+                        >
+                          wa.dfydude.online
+                        </button>
+                        <span className="text-muted-foreground">•</span>
                         <button
                           type="button"
                           onClick={() => setGatewayUrl('http://localhost:8081')}
-                          className="text-primary hover:underline font-mono"
+                          className="text-muted-foreground hover:text-foreground font-mono"
                         >
                           localhost:8081
                         </button>
                       </div>
                     </div>
                     <Input
-                      placeholder="e.g. http://localhost:8081 or https://gateway.yourdomain.com"
+                      placeholder="e.g. https://wa.dfydude.online or http://localhost:8081"
                       value={gatewayUrl}
                       onChange={(e) => setGatewayUrl(e.target.value)}
                       className="h-8 text-xs bg-muted"
@@ -295,6 +303,26 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                         Clear
                       </Button>
                     )}
+                  </div>
+
+                  {/* Cloud to Gateway Tunnel Guide */}
+                  <div className="rounded-xl border border-border/60 bg-muted/30 p-3 text-[11px] space-y-2 text-muted-foreground text-left mt-2">
+                    <p className="font-semibold text-foreground flex items-center gap-1.5">
+                      <ExternalLink className="h-3.5 w-3.5 text-primary" />
+                      Connecting Cloud CRM to Local Gateway:
+                    </p>
+                    <p>
+                      Because Vercel runs in the cloud, it cannot directly reach <code className="text-foreground">localhost:8081</code> on your home server without a public tunnel.
+                    </p>
+                    <div className="space-y-1 bg-background/80 p-2.5 rounded-lg border border-border font-mono text-[10px] text-foreground">
+                      <p className="text-muted-foreground font-sans text-[11px]">Option 1: Cloudflare Named Tunnel (Permanent)</p>
+                      <p className="text-primary font-bold">hostname: wa.dfydude.online &rarr; http://localhost:8081</p>
+                      <p className="mt-1 text-muted-foreground font-sans text-[11px]">Option 2: Instant Quick Tunnel (Testing)</p>
+                      <p className="text-emerald-500 font-bold">cloudflared tunnel --url http://localhost:8081</p>
+                    </div>
+                    <p className="text-[10px]">
+                      Tip: Add <code className="text-foreground">EVOLUTION_URL</code> to your Vercel Project Environment Variables to connect automatically for all users.
+                    </p>
                   </div>
                 </form>
               ) : (
