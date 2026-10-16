@@ -48,6 +48,7 @@ export function IntegrationsPanel() {
   const [gdriveEmail, setGdriveEmail] = useState("");
   const [gdriveFolder, setGdriveFolder] = useState("/DFY UniCRM Attachments");
   const [gdriveMirrorInbound, setGdriveMirrorInbound] = useState(true);
+  const [gdriveMirrorOutbound, setGdriveMirrorOutbound] = useState(true);
 
   // Check URL params for OAuth redirect results
   useEffect(() => {
@@ -81,6 +82,7 @@ export function IntegrationsPanel() {
           setGdriveEmail(data.email || "");
           if (data.target_folder) setGdriveFolder(data.target_folder);
           if (typeof data.mirror_inbound === "boolean") setGdriveMirrorInbound(data.mirror_inbound);
+          if (typeof data.mirror_outbound === "boolean") setGdriveMirrorOutbound(data.mirror_outbound);
         } else {
           setGdriveConnected(false);
           setGdriveEmail("");
@@ -123,7 +125,21 @@ export function IntegrationsPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mirror_inbound: checked }),
       });
-      toast.success(checked ? "Mirroring enabled" : "Mirroring disabled");
+      toast.success(checked ? "Inbound mirroring enabled" : "Inbound mirroring disabled");
+    } catch {
+      // Ignored
+    }
+  };
+
+  const handleToggleMirrorOutbound = async (checked: boolean) => {
+    setGdriveMirrorOutbound(checked);
+    try {
+      await fetch("/api/integrations/google-drive/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mirror_outbound: checked }),
+      });
+      toast.success(checked ? "Outbound streaming enabled" : "Outbound streaming disabled");
     } catch {
       // Ignored
     }
@@ -534,6 +550,19 @@ export function IntegrationsPanel() {
                     <Switch
                       checked={gdriveMirrorInbound}
                       onCheckedChange={handleToggleMirror}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs font-bold">Stream Outbound Inbox Media</Label>
+                      <p className="text-[11px] text-muted-foreground">
+                        Save composer attachments, voice recordings, and PDFs directly to Google Drive (0 MB server storage).
+                      </p>
+                    </div>
+                    <Switch
+                      checked={gdriveMirrorOutbound}
+                      onCheckedChange={handleToggleMirrorOutbound}
                     />
                   </div>
                 </div>

@@ -381,12 +381,22 @@ export async function sendMessageToConversation(
       return result.messageId;
     }
     if (isMediaKind) {
+      let resolvedLink = mediaUrl!;
+      if (resolvedLink.startsWith("/")) {
+        const appUrl =
+          process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+        if (appUrl) {
+          resolvedLink = `${appUrl}${resolvedLink}`;
+        }
+      }
+
       const result = await sendMediaMessage({
         phoneNumberId: config!.phone_number_id,
         accessToken,
         to: phone,
         kind: messageType as MediaKind,
-        link: mediaUrl!,
+        link: resolvedLink,
         caption: contentText || undefined,
         filename: filename || undefined,
         contextMessageId,

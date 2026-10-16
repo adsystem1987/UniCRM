@@ -175,6 +175,46 @@ export async function getOrCreateDriveFolder(
   return createData.id;
 }
 
+const tokenCache = new Map<string, { token: string; expiresAt: number }>();
+
+export async function getOrRefreshDriveToken(
+  accountId: string,
+  encryptedRefreshToken: string
+): Promise<string> {
+  const cached = tokenCache.get(accountId);
+  if (cached && cached.expiresAt > Date.now() + 60_000) {
+    return cached.token;
+  }
+
+  const token = await refreshGoogleAccessToken(encryptedRefreshToken);
+  tokenCache.set(accountId, {
+    token,
+    expiresAt: Date.now() + 55 * 60 * 1000,
+  });
+  return token;
+}
+
+export async function makeFilePubliclyReadable(
+  accessToken: string,
+  fileId: string
+): Promise<void> {
+  try {
+    await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        role: "reader",
+        type: "anyone",
+      }),
+    });
+  } catch (err) {
+    console.warn(`[gdrive] Could not set public reader on file ${fileId}:`, err);
+  }
+}
+
 export async function uploadBufferToDrive({
   accessToken,
   folderId,
@@ -187,7 +227,7 @@ export async function uploadBufferToDrive({
   filename: string;
   mimeType: string;
   buffer: Buffer;
-}): Promise<{ fileId: string; webViewLink?: string }> {
+}): Promise<{ fileId: string; webViewLink?: string; streamUrl?: string }> {
   const metadata: Record<string, unknown> = {
     name: filename,
     mimeType: mimeType || "application/octet-stream",
@@ -227,6 +267,9 @@ export async function uploadBufferToDrive({
   if (!res.ok) {
     throw new Error(data.error?.message || "Failed to upload file to Google Drive");
   }
+
+  // Grant public reader permissions so direct Google CDN stream works seamlessly
+  await makeFilePubliclyReadable(accessToken, data.id).catch(() => {});
 
   return {
     fileId: data.id,

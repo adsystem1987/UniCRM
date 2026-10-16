@@ -197,10 +197,11 @@ export async function POST(req: NextRequest) {
             mimeType,
             buffer,
           }).then((res) => {
-            if (res?.webViewLink && insertedMsg?.id) {
+            const mediaUrl = res?.streamUrl || res?.webViewLink;
+            if (mediaUrl && insertedMsg?.id) {
               void supabase
                 .from('messages')
-                .update({ media_url: res.webViewLink })
+                .update({ media_url: mediaUrl })
                 .eq('id', insertedMsg.id);
             }
           }).catch((err) => console.error('[evolution-webhook] GDrive offload failed:', err));

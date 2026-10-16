@@ -13,7 +13,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from("gdrive_configs")
-      .select("connected_email, target_folder, folder_id, mirror_inbound, updated_at")
+      .select("connected_email, target_folder, folder_id, mirror_inbound, mirror_outbound, updated_at")
       .eq("account_id", accountId)
       .maybeSingle();
 
@@ -32,6 +32,7 @@ export async function GET() {
       target_folder: data.target_folder,
       folder_id: data.folder_id,
       mirror_inbound: data.mirror_inbound,
+      mirror_outbound: data.mirror_outbound ?? true,
       updated_at: data.updated_at,
     });
   } catch (err) {
@@ -41,7 +42,7 @@ export async function GET() {
 
 /**
  * PATCH /api/integrations/google-drive/status
- * Update Drive settings (target_folder, mirror_inbound)
+ * Update Drive settings (target_folder, mirror_inbound, mirror_outbound)
  */
 export async function PATCH(request: Request) {
   try {
@@ -60,11 +61,15 @@ export async function PATCH(request: Request) {
       updates.mirror_inbound = body.mirror_inbound;
     }
 
+    if (typeof body.mirror_outbound === "boolean") {
+      updates.mirror_outbound = body.mirror_outbound;
+    }
+
     const { data, error } = await supabase
       .from("gdrive_configs")
       .update(updates)
       .eq("account_id", accountId)
-      .select("connected_email, target_folder, folder_id, mirror_inbound")
+      .select("connected_email, target_folder, folder_id, mirror_inbound, mirror_outbound")
       .single();
 
     if (error) {
@@ -77,6 +82,7 @@ export async function PATCH(request: Request) {
       target_folder: data.target_folder,
       folder_id: data.folder_id,
       mirror_inbound: data.mirror_inbound,
+      mirror_outbound: data.mirror_outbound ?? true,
     });
   } catch (err) {
     return toErrorResponse(err);

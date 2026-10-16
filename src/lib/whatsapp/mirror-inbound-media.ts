@@ -218,8 +218,8 @@ export async function mirrorInboundMedia(
         buffer,
       });
 
-      if (gdriveResult?.webViewLink) {
-        return gdriveResult.webViewLink;
+      if (gdriveResult?.streamUrl) {
+        return gdriveResult.streamUrl;
       }
     } catch (gdriveErr) {
       console.warn(`[mirror-media] GDrive direct offload failed for ${mediaId}:`, gdriveErr);

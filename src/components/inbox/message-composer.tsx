@@ -46,6 +46,7 @@ import {
   deleteAccountMedia,
   MEDIA_MAX_BYTES_BY_KIND,
 } from "@/lib/storage/upload-media";
+import { uploadSmartMedia } from "@/lib/media/smart-upload";
 import { ReplyQuote } from "./reply-quote";
 import { useTranslations } from "next-intl";
 import {
@@ -211,7 +212,7 @@ export function MessageComposer({
 
   // Best-effort GC of a staged object the user never sent. Fire-and-forget.
   const removeStaged = useCallback((path: string | undefined) => {
-    if (!path) return;
+    if (!path || path.startsWith("gdrive:")) return;
     void deleteAccountMedia(CHAT_MEDIA_BUCKET, path).catch(() => {});
   }, []);
 
@@ -522,7 +523,7 @@ export function MessageComposer({
       }
       setBusy(true);
       try {
-        const { publicUrl, path } = await uploadAccountMedia(CHAT_MEDIA_BUCKET, file);
+        const { publicUrl, path } = await uploadSmartMedia(file);
         // Replacing an existing draft? GC the previous object first.
         removeStaged(draftRef.current?.path);
         setDraft({ kind, mediaUrl: publicUrl, path, filename: file.name, caption: "" });
@@ -560,7 +561,7 @@ export function MessageComposer({
       }
       setBusy(true);
       try {
-        const { publicUrl, path } = await uploadAccountMedia(CHAT_MEDIA_BUCKET, file);
+        const { publicUrl, path } = await uploadSmartMedia(file);
         removeStaged(draftRef.current?.path);
         setDraft({ kind: "audio", mediaUrl: publicUrl, path, filename: file.name, caption: "" });
       } catch (err) {
