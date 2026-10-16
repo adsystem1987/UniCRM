@@ -628,7 +628,7 @@ export function WhatsAppConfig() {
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Pair your personal or business WhatsApp number directly via &ldquo;Linked Devices&rdquo; QR scan. Connects via UniCRM Web Gateway (<code>dfydude.cc.cd</code>).
+              Pair your personal or business WhatsApp number directly via &ldquo;Linked Devices&rdquo; QR scan. Connects via your UniCRM Web Gateway.
             </p>
           </div>
         </button>

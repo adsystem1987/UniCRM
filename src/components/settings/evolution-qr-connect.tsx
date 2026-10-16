@@ -19,8 +19,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
-const DEFAULT_GATEWAY_URL = 'https://dfydude.cc.cd';
-
 interface EvolutionQrConnectProps {
   onSelectMetaOption?: () => void;
 }
@@ -38,10 +36,18 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
   const [gatewayKey, setGatewayKey] = useState('');
 
   useEffect(() => {
-    const savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || DEFAULT_GATEWAY_URL;
+    let savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || '';
+    // Auto-heal legacy invalid fallback
+    if (savedUrl === 'https://dfydude.cc.cd') {
+      savedUrl = '';
+      localStorage.removeItem('unicrm_wa_gateway_url');
+    }
     const savedKey = localStorage.getItem('unicrm_wa_gateway_key') || '';
     setGatewayUrl(savedUrl);
     setGatewayKey(savedKey);
+    if (!savedUrl) {
+      setShowConfig(true);
+    }
     fetchQr(savedUrl, savedKey);
   }, []);
 
@@ -49,7 +55,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
     setLoading(true);
     setGatewayOffline(false);
     try {
-      const url = customUrl !== undefined ? customUrl : (gatewayUrl || DEFAULT_GATEWAY_URL);
+      const url = customUrl !== undefined ? customUrl : gatewayUrl;
       const key = customKey !== undefined ? customKey : gatewayKey;
 
       const params = new URLSearchParams();
@@ -64,6 +70,9 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
         setOfflineMessage(data.message);
         setQrBase64(null);
         setConnected(false);
+        if (data.needsConfiguration) {
+          setShowConfig(true);
+        }
         return;
       }
 
@@ -95,8 +104,12 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
 
   const handleSaveGateway = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanUrl = gatewayUrl.trim() || DEFAULT_GATEWAY_URL;
-    localStorage.setItem('unicrm_wa_gateway_url', cleanUrl);
+    const cleanUrl = gatewayUrl.trim();
+    if (cleanUrl) {
+      localStorage.setItem('unicrm_wa_gateway_url', cleanUrl);
+    } else {
+      localStorage.removeItem('unicrm_wa_gateway_url');
+    }
     localStorage.setItem('unicrm_wa_gateway_key', gatewayKey.trim());
     toast.success('Gateway endpoint saved! Checking connection...');
     fetchQr(cleanUrl, gatewayKey.trim());
@@ -110,7 +123,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'disconnect',
-          gatewayUrl: gatewayUrl.trim() || DEFAULT_GATEWAY_URL,
+          gatewayUrl: gatewayUrl.trim() || undefined,
           apiKey: gatewayKey.trim() || undefined,
         }),
       });
@@ -234,9 +247,21 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
               {showConfig ? (
                 <form onSubmit={handleSaveGateway} className="space-y-3 pt-1">
                   <div className="space-y-1">
-                    <Label className="text-[11px] text-muted-foreground">Gateway URL (with http/https)</Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-[11px] text-muted-foreground">Gateway URL (with http/https)</Label>
+                      <div className="flex items-center gap-1.5 text-[10px]">
+                        <span className="text-muted-foreground">Preset:</span>
+                        <button
+                          type="button"
+                          onClick={() => setGatewayUrl('http://localhost:8081')}
+                          className="text-primary hover:underline font-mono"
+                        >
+                          localhost:8081
+                        </button>
+                      </div>
+                    </div>
                     <Input
-                      placeholder="e.g. https://dfydude.cc.cd or http://localhost:8081"
+                      placeholder="e.g. http://localhost:8081 or https://gateway.yourdomain.com"
                       value={gatewayUrl}
                       onChange={(e) => setGatewayUrl(e.target.value)}
                       className="h-8 text-xs bg-muted"
@@ -251,13 +276,37 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                       className="h-8 text-xs bg-muted"
                     />
                   </div>
-                  <Button type="submit" disabled={loading} size="sm" className="w-full h-8 text-xs font-bold">
-                    {loading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : 'Save & Check Gateway'}
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button type="submit" disabled={loading} size="sm" className="flex-1 h-8 text-xs font-bold">
+                      {loading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : 'Save & Check Gateway'}
+                    </Button>
+                    {gatewayUrl && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs"
+                        onClick={() => {
+                          setGatewayUrl('');
+                          localStorage.removeItem('unicrm_wa_gateway_url');
+                          fetchQr('', gatewayKey);
+                        }}
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
                 </form>
               ) : (
                 <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Current endpoint: <code className="text-foreground font-semibold">{gatewayUrl || DEFAULT_GATEWAY_URL}</code></span>
+                  <span>
+                    Current endpoint:{' '}
+                    {gatewayUrl ? (
+                      <code className="text-foreground font-semibold">{gatewayUrl}</code>
+                    ) : (
+                      <span className="text-amber-500 font-medium">None (Not configured)</span>
+                    )}
+                  </span>
                   <Button
                     variant="ghost"
                     size="sm"

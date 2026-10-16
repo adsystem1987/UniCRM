@@ -1,5 +1,5 @@
 /**
- * Client for communicating with the Evolution API v2 service.
+ * Client for communicating with the WhatsApp Web Gateway service.
  * Handles instance creation, QR code generation, connection status, and message dispatch.
  */
 
@@ -40,7 +40,10 @@ export class EvolutionClient {
 
     if (!res.ok) {
       const err = await res.text().catch(() => '');
-      throw new Error(`Evolution API error (${res.status}): ${err || res.statusText}`);
+      const cleanMsg = (err.includes('<html') || err.includes('<!DOCTYPE') || err.includes('<head'))
+        ? `Endpoint returned HTTP ${res.status} ${res.statusText}. Please verify that this URL points to an active WhatsApp Web Gateway server.`
+        : (err.slice(0, 200) || res.statusText);
+      throw new Error(`WhatsApp Gateway error (${res.status}): ${cleanMsg}`);
     }
 
     return res.json() as Promise<T>;

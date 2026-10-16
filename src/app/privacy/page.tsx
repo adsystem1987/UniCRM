@@ -51,7 +51,7 @@ export default function PrivacyPage() {
               2. Encryption & Credentials Security
             </h2>
             <p className="mt-2">
-              Sensitive credentials—such as Meta WhatsApp permanent system tokens, Evolution API keys, and third-party AI keys—are encrypted at rest using AES-256-GCM encryption before storage. Server-side secrets are never exposed to browser clients.
+              Sensitive credentials—such as Meta WhatsApp permanent system tokens, Web Gateway keys, and third-party AI keys—are encrypted at rest using AES-256-GCM encryption before storage. Server-side secrets are never exposed to browser clients.
             </p>
           </section>
 

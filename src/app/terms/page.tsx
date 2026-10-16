@@ -72,7 +72,7 @@ export default function TermsPage() {
             <ul className="mt-2 list-disc pl-5 space-y-1">
               <li><strong>Explicit Consent:</strong> You must have explicit, opt-in consent from all recipients before messaging or broadcasting to them.</li>
               <li><strong>No Unsolicited Spam:</strong> You strictly agree not to use UniCRM for unsolicited commercial spam, phishing, harassment, or distributing illegal content.</li>
-              <li><strong>Account Suspensions & Bans:</strong> If you use unofficial connection methods (including QR code-based WhatsApp Web sessions via Evolution API), you acknowledge and accept that Meta’s automated anti-spam algorithms may flag or permanently ban your phone number if spam thresholds are breached. <strong>UniCRM is not responsible or liable for any suspension, block, or ban of your WhatsApp numbers or Meta accounts.</strong></li>
+              <li><strong>Account Suspensions & Bans:</strong> If you use unofficial connection methods (including QR code-based WhatsApp Web sessions via Web Gateway), you acknowledge and accept that Meta’s automated anti-spam algorithms may flag or permanently ban your phone number if spam thresholds are breached. <strong>UniCRM is not responsible or liable for any suspension, block, or ban of your WhatsApp numbers or Meta accounts.</strong></li>
             </ul>
           </section>
 

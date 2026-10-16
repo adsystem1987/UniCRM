@@ -4,7 +4,7 @@ import { EvolutionClient, evolution } from '@/lib/evolution/client';
 
 /**
  * Manage WhatsApp Web instances & QR Code pairing for an account.
- * Requires an active Evolution API gateway to generate real cryptographic
+ * Connects to a WhatsApp Web Gateway to generate real cryptographic
  * WhatsApp Web pairing handshakes.
  */
 export async function GET(req: NextRequest) {
@@ -25,14 +25,15 @@ export async function GET(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : process.env.EVOLUTION_URL
         ? evolution
-        : new EvolutionClient('https://dfydude.cc.cd', 'unicrm-evolution-secret-key');
+        : null;
 
     if (!client) {
       return NextResponse.json({
         success: false,
         gatewayOffline: true,
+        needsConfiguration: true,
         message:
-          'WhatsApp Web Gateway is not configured. WhatsApp requires a live gateway server to generate authentic QR handshakes.',
+          'WhatsApp Web Gateway endpoint is not configured. Please enter your Gateway URL below (or set EVOLUTION_URL) to generate a QR Code.',
       });
     }
 
@@ -51,11 +52,12 @@ export async function GET(req: NextRequest) {
           return NextResponse.json({ success: true, qr: qrData });
         }
       } catch (err: unknown) {
+        const targetUrl = customGatewayUrl || process.env.EVOLUTION_URL || 'endpoint';
         const message = err instanceof Error ? err.message : 'Gateway unreachable';
         return NextResponse.json({
           success: false,
           gatewayOffline: true,
-          message: `Unable to reach WhatsApp Gateway at ${customGatewayUrl || process.env.EVOLUTION_URL}: ${message}`,
+          message: `Unable to reach WhatsApp Gateway at ${targetUrl}: ${message}`,
         });
       }
     }
@@ -90,7 +92,7 @@ export async function POST(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : process.env.EVOLUTION_URL
         ? evolution
-        : new EvolutionClient('https://dfydude.cc.cd', 'unicrm-evolution-secret-key');
+        : null;
 
     if (action === 'disconnect') {
       if (client) {
