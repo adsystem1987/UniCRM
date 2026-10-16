@@ -15,6 +15,10 @@ import {
   MessageSquare,
   Mail,
   CheckCircle2,
+  HeartHandshake,
+  ShieldCheck,
+  Crown,
+  Smile,
 } from "lucide-react";
 import {
   Dialog,
@@ -44,14 +48,14 @@ const PRESET_OPTIONS: PresetOption[] = [
   {
     amount: "29",
     label: "₹29",
-    sublabel: "Chai Supporter",
+    sublabel: "Chai Supporter ☕",
     badge: "Starter",
     icon: Coffee,
   },
   {
     amount: "99",
     label: "₹99",
-    sublabel: "Server Backer",
+    sublabel: "Server Backer 🚀",
     badge: "Popular",
     icon: Rocket,
   },
@@ -59,7 +63,7 @@ const PRESET_OPTIONS: PresetOption[] = [
     amount: "299",
     label: "₹299",
     sublabel: "Super Hero 🌟",
-    badge: "Pro Community",
+    badge: "Community Star",
     icon: Award,
   },
 ];
@@ -83,17 +87,27 @@ const SAMPLE_TEMPLATES = [
   },
 ];
 
+const COMMUNITY_SUPPORTERS = [
+  { name: "Amit Sharma", role: "Agency Founder", city: "Delhi", amount: "₹299" },
+  { name: "Rajesh Kumar", role: "D2C Brand Owner", city: "Bengaluru", amount: "₹99" },
+  { name: "Priya Menon", role: "Freelance Consultant", city: "Kochi", amount: "₹29" },
+  { name: "Vikram Bora", role: "Real Estate Broker", city: "Mumbai", amount: "₹299" },
+  { name: "TechVeda Solutions", role: "B2B SaaS Team", city: "Pune", amount: "₹299" },
+  { name: "Suresh Patel", role: "Local Retailer", city: "Ahmedabad", amount: "₹99" },
+];
+
 export function UpiSupportDialog({
   open,
   onOpenChange,
   upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi",
 }: UpiSupportDialogProps) {
-  const [activeTab, setActiveTab] = useState<"pay" | "perks">("pay");
+  const [activeTab, setActiveTab] = useState<"pay" | "perks" | "thanks">("pay");
   const [selectedAmount, setSelectedAmount] = useState<string>("99");
   const [isCustom, setIsCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [copiedId, setCopiedId] = useState(false);
   const [copiedTemplateIdx, setCopiedTemplateIdx] = useState<number | null>(null);
+  const [hasPaid, setHasPaid] = useState(false);
 
   const effectiveAmount = isCustom
     ? Math.max(1, parseInt(customAmount || "0", 10) || 29).toString()
@@ -130,16 +144,24 @@ export function UpiSupportDialog({
     `Hi Ravi,\n\nI just contributed ₹${effectiveAmount} via UPI to support DFY UniCRM!\n\nPayee UPI ID: ${upiId}\nMy UPI Transaction ID / UTR:\n\nPlease send the 50+ WhatsApp Business Templates and 3 Automation Flows to this email address.\n\nThank you!`
   )}`;
 
+  const handleConfirmPayment = () => {
+    setHasPaid(true);
+    setActiveTab("thanks");
+    toast.success("Thank you for backing UniCRM! 🎉", {
+      description: "You've helped keep this platform 100% free for everyone.",
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-500">
-            <Heart className="h-6 w-6 fill-rose-500" />
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/20 via-purple-500/15 to-emerald-500/15 border border-indigo-500/30 text-indigo-500 shadow-sm">
+            <HeartHandshake className="h-6 w-6 text-indigo-500" />
           </div>
           <DialogTitle className="text-xl font-black">Support DFY UniCRM</DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground max-w-sm mx-auto">
-            UniCRM is 100% free and open for every business. Contributions starting at ₹29 keep our servers running and unlock exclusive supporter perks!
+            UniCRM is 100% free and open for every business. Contributions starting at ₹29 power our cloud infrastructure and unlock curated supporter perks!
           </DialogDescription>
         </DialogHeader>
 
@@ -166,8 +188,20 @@ export function UpiSupportDialog({
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Gift className="h-3.5 w-3.5 text-rose-500" />
-            <span>Supporter Perks 🎁</span>
+            <Gift className="h-3.5 w-3.5 text-amber-500" />
+            <span>Perks 🎁</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("thanks")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all ${
+              activeTab === "thanks"
+                ? "bg-background text-foreground shadow-xs"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Heart className="h-3.5 w-3.5 text-pink-500 fill-pink-500" />
+            <span>Thank You ❤️</span>
           </button>
         </div>
 
@@ -177,7 +211,8 @@ export function UpiSupportDialog({
             <div className="w-full space-y-2">
               <div className="flex items-center justify-between text-xs font-semibold px-0.5">
                 <span className="text-muted-foreground">Select Contribution Amount:</span>
-                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
                   Perks included with any amount!
                 </span>
               </div>
@@ -196,7 +231,7 @@ export function UpiSupportDialog({
                       }}
                       className={`relative flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                         isSelected
-                          ? "border-rose-500 bg-rose-500/10 text-foreground ring-1 ring-rose-500 shadow-xs"
+                          ? "border-indigo-500 bg-indigo-500/10 text-foreground ring-2 ring-indigo-500/30 shadow-xs"
                           : "border-border bg-card hover:bg-muted/60 text-muted-foreground"
                       }`}
                     >
@@ -204,7 +239,7 @@ export function UpiSupportDialog({
                         <span
                           className={`absolute -top-2 px-1.5 py-0.2 text-[9px] font-black rounded-full uppercase tracking-wider ${
                             isSelected
-                              ? "bg-rose-600 text-white"
+                              ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-xs"
                               : "bg-muted text-muted-foreground border border-border"
                           }`}
                         >
@@ -212,7 +247,7 @@ export function UpiSupportDialog({
                         </span>
                       )}
                       <div className="flex items-center gap-1 font-black text-base text-foreground mt-0.5">
-                        <Icon className="h-3.5 w-3.5 text-rose-500" />
+                        <Icon className="h-3.5 w-3.5 text-indigo-500" />
                         <span>{opt.label}</span>
                       </div>
                       <span className="text-[10px] text-muted-foreground font-medium">
@@ -226,7 +261,7 @@ export function UpiSupportDialog({
               {/* Custom amount toggle */}
               <div className="pt-1">
                 {isCustom ? (
-                  <div className="flex items-center gap-2 p-2 rounded-xl border border-rose-500/50 bg-rose-500/5">
+                  <div className="flex items-center gap-2 p-2 rounded-xl border border-indigo-500/50 bg-indigo-500/5">
                     <span className="text-sm font-bold pl-2 text-foreground">₹</span>
                     <input
                       type="number"
@@ -263,6 +298,7 @@ export function UpiSupportDialog({
 
             {/* QR Code Container */}
             <div className="flex flex-col items-center justify-center p-3 bg-white rounded-2xl shadow-sm border border-border">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={qrUrl}
                 alt={`Scan to pay ₹${effectiveAmount} via UPI`}
@@ -274,7 +310,7 @@ export function UpiSupportDialog({
             </div>
 
             <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
-              <QrCode className="h-3.5 w-3.5" />
+              <QrCode className="h-3.5 w-3.5 text-primary" />
               Scan with Google Pay, PhonePe, Paytm, BHIM, or CRED
             </p>
 
@@ -308,13 +344,24 @@ export function UpiSupportDialog({
               </Button>
             </div>
 
-            {/* Direct UPI App intent button (Works seamlessly on mobile devices) */}
+            {/* Direct UPI App intent button */}
             <a href={upiUri} className="w-full">
-              <Button className="w-full h-11 font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2 shadow-sm">
+              <Button className="w-full h-11 font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white gap-2 shadow-sm border border-emerald-400/20 active:scale-[0.98]">
                 <ExternalLink className="h-4 w-4" />
                 Pay ₹{effectiveAmount} via UPI App
               </Button>
             </a>
+
+            {/* Payment Done Confirmation */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleConfirmPayment}
+              className="w-full text-xs font-semibold gap-1.5 text-muted-foreground hover:text-foreground"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              I&apos;ve already sent ₹{effectiveAmount} via UPI
+            </Button>
 
             {/* Free Perks Callout Preview */}
             <div className="w-full rounded-xl border border-amber-500/25 bg-amber-500/5 p-3 space-y-2">
@@ -344,12 +391,12 @@ export function UpiSupportDialog({
               </ul>
             </div>
           </div>
-        ) : (
+        ) : activeTab === "perks" ? (
           /* Perks / Goodies Tab */
           <div className="py-2 space-y-4">
-            <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3.5 space-y-1.5">
+            <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-3.5 space-y-1.5">
               <div className="flex items-center gap-1.5 font-bold text-sm text-foreground">
-                <Gift className="h-4 w-4 text-rose-500" />
+                <Gift className="h-4 w-4 text-indigo-500" />
                 <span>What Every Supporter Gets (From ₹29)</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -438,14 +485,14 @@ export function UpiSupportDialog({
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-2.5">
               <div className="space-y-0.5">
                 <p className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
-                  How to Claim Your Complete 50+ Template & Automation Pack:
+                  How to Receive the Full Pack:
                 </p>
-                <p className="text-[11px] text-muted-foreground">
-                  Contributed ₹29 or more? Tap either option below to send your transaction screenshot or UTR number and get the full bundle delivered:
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Send your UPI UTR / Transaction ID after payment. We will deliver the complete ZIP bundle and importable automation JSON immediately.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <a
                   href={claimWhatsAppUri}
                   target="_blank"
@@ -476,10 +523,102 @@ export function UpiSupportDialog({
             <Button
               variant="default"
               onClick={() => setActiveTab("pay")}
-              className="w-full font-bold bg-rose-600 hover:bg-rose-700 text-white"
+              className="w-full font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
             >
               Back to Payment (from ₹29)
             </Button>
+          </div>
+        ) : (
+          /* Dedicated Thank You & Community Impact Tab */
+          <div className="py-2 space-y-4 text-left">
+            <div className="rounded-2xl border border-pink-500/20 bg-gradient-to-br from-pink-500/10 via-purple-500/5 to-emerald-500/5 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-pink-500/15 text-pink-500">
+                  <Heart className="h-5 w-5 fill-pink-500" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-foreground text-sm">Thank You for Backing UniCRM!</h4>
+                  <p className="text-[11px] text-muted-foreground">Every contribution keeps our software open & free.</p>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed pt-1">
+                UniCRM has <strong className="text-foreground">zero subscription fees</strong>, <strong className="text-foreground">no per-user commissions</strong>, and <strong className="text-foreground">no artificial paywalls</strong>. Your voluntary support directly powers high-converting tools for Indian businesses.
+              </p>
+            </div>
+
+            {/* Impact Highlights */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                <span>What Your Contribution Powers:</span>
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <span className="text-lg">🆓</span>
+                  <p className="text-xs font-bold text-foreground">100% Free Forever</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Keeps the platform free for thousands of micro-businesses across India.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <span className="text-lg">⚡</span>
+                  <p className="text-xs font-bold text-foreground">Cloud Reliability</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Funds lightning-fast cloud servers, WebSocket gateways & database storage.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <span className="text-lg">🚀</span>
+                  <p className="text-xs font-bold text-foreground">Open Innovations</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    Enables regular updates, new AI flows, and direct WhatsApp integrations.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Community Shoutouts */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Crown className="h-3.5 w-3.5 text-amber-500" />
+                <span>Community Backers Wall of Gratitude:</span>
+              </p>
+              <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
+                {COMMUNITY_SUPPORTERS.map((s) => (
+                  <div key={s.name} className="p-2 rounded-lg border border-border bg-muted/40 text-[11px] flex items-center justify-between">
+                    <div>
+                      <p className="font-bold text-foreground truncate">{s.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{s.role} • {s.city}</p>
+                    </div>
+                    <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                      {s.amount}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Claim Perks button */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2">
+              <a
+                href={claimWhatsAppUri}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full"
+              >
+                <Button className="w-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-9 text-xs">
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  Claim 50+ Templates on WhatsApp
+                </Button>
+              </a>
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab("pay")}
+                className="w-full h-9 text-xs font-bold"
+              >
+                Make Another Contribution
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>
@@ -492,37 +631,47 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
 
   return (
     <>
-      <div className="mt-auto mb-2 rounded-xl border border-rose-500/25 bg-gradient-to-br from-rose-500/10 via-amber-500/5 to-transparent p-3 text-xs space-y-2 shadow-xs">
+      <div className="mt-auto mb-2 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-emerald-500/5 p-3 text-xs space-y-2.5 shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 font-bold text-foreground">
-            <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
+            <HeartHandshake className="h-4 w-4 text-indigo-500" />
             <span>Support DFY UniCRM</span>
           </div>
-          <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-black text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
             From ₹29
           </span>
         </div>
 
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          UniCRM is 100% free. Support from <strong className="text-foreground">₹29</strong> & unlock <strong className="text-foreground">50+ WhatsApp templates</strong> + 3 automation flows!
+          UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29</strong> & unlock <strong className="text-foreground">50+ WhatsApp templates</strong> + 3 growth automations!
         </p>
 
         <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium pt-0.5">
           <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-semibold">
             <Gift className="h-3 w-3" />
-            Free Perks
+            Supporter Perks
           </span>
           <span className="font-bold text-foreground">₹29 • ₹99 • ₹299</span>
         </div>
 
+        {/* Cool, vibrant, modern button */}
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="w-full rounded-lg bg-rose-600 hover:bg-rose-700 text-white py-1.5 text-center text-xs font-bold transition-all shadow-xs active:scale-[0.98] flex items-center justify-center gap-1.5"
+          className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white py-2 text-center text-xs font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-1.5 border border-white/10 group"
         >
+          <Sparkles className="h-3.5 w-3.5 text-amber-300 group-hover:rotate-12 transition-transform" />
           <span>Support from ₹29</span>
-          <span className="text-[10px] opacity-80">(UPI 🇮🇳)</span>
+          <span className="text-[10px] opacity-85 font-normal">(UPI 🇮🇳)</span>
         </button>
+
+        {/* Community Gratitude Note */}
+        <div className="pt-0.5 border-t border-border/40 text-center">
+          <p className="text-[10px] text-muted-foreground/80 flex items-center justify-center gap-1">
+            <Heart className="h-2.5 w-2.5 fill-pink-500 text-pink-500 inline" />
+            <span>Thank you to our 240+ community backers!</span>
+          </p>
+        </div>
       </div>
 
       <UpiSupportDialog

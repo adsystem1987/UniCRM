@@ -627,7 +627,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               setSelectedPackAmount(499);
               setLeadPackDialogOpen(true);
             }}
-            className="font-bold bg-rose-600 hover:bg-rose-700 text-white shrink-0 gap-1.5 shadow-xs"
+            className="font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shrink-0 gap-1.5 shadow-sm active:scale-[0.98] border border-emerald-400/20"
           >
             <span>Order Lead Pack (from ₹499)</span>
             <ArrowRight className="h-4 w-4" />
