@@ -41,6 +41,8 @@ import { useTranslations } from 'next-intl';
 
 const DEFAULT_TAG_COLOR = '#3b82f6';
 const PREVIEW_LIMIT = 5;
+export const MAX_IMPORT_FILE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MB free tier safety limit
+export const MAX_IMPORT_ROWS_PER_BATCH = 5000; // 5,000 contacts per batch limit
 
 function truncateFilename(name: string, max = 48): string {
   if (name.length <= max) return name;
@@ -167,6 +169,17 @@ export function ImportModal({
     const selected = e.target.files?.[0];
     if (!selected) return;
 
+    if (selected.size > MAX_IMPORT_FILE_SIZE_BYTES) {
+      const sizeMb = (selected.size / (1024 * 1024)).toFixed(2);
+      toast.error(
+        `File exceeds 1 MB free tier limit (${sizeMb} MB). Please split your CSV into smaller batches of up to 5,000 contacts.`
+      );
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setFile(null);
+      setParsedRows([]);
+      return;
+    }
+
     setFile(selected);
     setResult(null);
 
@@ -183,6 +196,16 @@ export function ImportModal({
       setHasTagsColumn(false);
       setHasCompanyColumn(false);
       setTagColorByKey(new Map());
+      return;
+    }
+
+    if (rows.length > MAX_IMPORT_ROWS_PER_BATCH) {
+      toast.error(
+        `File contains ${rows.length.toLocaleString()} contacts, which exceeds the limit of ${MAX_IMPORT_ROWS_PER_BATCH.toLocaleString()} contacts per batch. Please upload in smaller batches.`
+      );
+      setFile(null);
+      setParsedRows([]);
+      if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
@@ -486,9 +509,12 @@ export function ImportModal({
                 <p className="text-sm text-muted-foreground">
                   {t('uploadDropzone')}
                 </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {t('uploadHint')}
-                </p>
+                <div className="flex flex-col items-center gap-1 text-[11px] text-muted-foreground">
+                  <p>{t('uploadHint')}</p>
+                  <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px]">
+                    Free Tier Safe Limit: Max 1 MB (up to 5,000 contacts / batch)
+                  </span>
+                </div>
               </>
             )}
           </div>

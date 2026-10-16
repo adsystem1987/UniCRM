@@ -174,6 +174,14 @@ export function Step2SelectAudience({
     const selected = e.target.files?.[0];
     if (!selected) return;
 
+    if (selected.size > 1 * 1024 * 1024) {
+      const sizeMb = (selected.size / (1024 * 1024)).toFixed(2);
+      toast.error(`CSV file exceeds 1 MB limit (${sizeMb} MB). Please upload a file under 1 MB.`);
+      e.target.value = '';
+      setPickedCsvName(null);
+      return;
+    }
+
     const result = parseBroadcastCsv(await selected.text());
 
     if (!result.ok) {
