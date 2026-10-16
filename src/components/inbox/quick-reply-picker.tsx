@@ -85,7 +85,8 @@ export function QuickReplyPicker({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by title or /shortcut..."
-            className="w-full rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+            aria-label="Search quick replies"
+            className="w-full rounded-md border border-border bg-muted px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:outline-none focus:outline-none transition-all"
             autoFocus
           />
         </div>
