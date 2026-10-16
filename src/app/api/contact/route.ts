@@ -117,15 +117,10 @@ export async function POST(req: Request) {
             .eq('contact_id', contactId)
             .maybeSingle();
 
+          const messageContent = `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`;
+
           if (existingConv) {
             conversationId = existingConv.id;
-            await supabase
-              .from('conversations')
-              .update({
-                last_message_at: new Date().toISOString(),
-                unread_count: 1,
-              })
-              .eq('id', conversationId);
           } else {
             const { data: newConv } = await supabase
               .from('conversations')
@@ -133,7 +128,9 @@ export async function POST(req: Request) {
                 account_id: accountId,
                 user_id: userId,
                 contact_id: contactId,
+                last_message_text: messageContent,
                 last_message_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
                 unread_count: 1,
               })
               .select('id')
@@ -142,15 +139,30 @@ export async function POST(req: Request) {
           }
 
           if (conversationId) {
-            // Realtime Inbound Message
-            await supabase.from('messages').insert({
-              account_id: accountId,
+            // Realtime Inbound Message matching messages table schema
+            const { error: msgErr } = await supabase.from('messages').insert({
               conversation_id: conversationId,
-              direction: 'inbound',
-              sender_type: 'contact',
-              content_text: `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`,
+              sender_type: 'customer',
+              content_type: 'text',
+              content_text: messageContent,
+              message_id: `web_${Date.now()}`,
               status: 'delivered',
             });
+
+            if (msgErr) {
+              console.error('[contact/route] Message insert error:', msgErr);
+            }
+
+            // Keep conversation snippet and unread counter up to date
+            await supabase
+              .from('conversations')
+              .update({
+                last_message_text: messageContent,
+                last_message_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                unread_count: 1,
+              })
+              .eq('id', conversationId);
           }
         }
 
