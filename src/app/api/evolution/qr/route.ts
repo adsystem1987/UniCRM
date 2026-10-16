@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : process.env.EVOLUTION_URL
         ? evolution
-        : null;
+        : new EvolutionClient('https://dfydude.cc.cd', 'unicrm-evolution-secret-key');
 
     if (!client) {
       return NextResponse.json({
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : process.env.EVOLUTION_URL
         ? evolution
-        : null;
+        : new EvolutionClient('https://dfydude.cc.cd', 'unicrm-evolution-secret-key');
 
     if (action === 'disconnect') {
       if (client) {

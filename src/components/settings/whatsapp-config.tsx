@@ -13,6 +13,8 @@ import {
   Zap,
   AlertTriangle,
   RotateCcw,
+  Cloud,
+  QrCode,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -117,6 +119,19 @@ export function WhatsAppConfig() {
   // a viewer's toggle would match zero rows and appear to work.
   const [mirrorMedia, setMirrorMedia] = useState(true);
   const [savingMirror, setSavingMirror] = useState(false);
+  const [activeMethod, setActiveMethod] = useState<'meta_cloud' | 'web_qr'>('meta_cloud');
+
+  useEffect(() => {
+    const savedMethod = localStorage.getItem('unicrm_wa_connection_method');
+    if (savedMethod === 'web_qr' || savedMethod === 'meta_cloud') {
+      setActiveMethod(savedMethod as 'meta_cloud' | 'web_qr');
+    }
+  }, []);
+
+  const handleMethodChange = (method: 'meta_cloud' | 'web_qr') => {
+    setActiveMethod(method);
+    localStorage.setItem('unicrm_wa_connection_method', method);
+  };
 
   // True once /register has succeeded on Meta's side (timestamp set
   // in the row). When false, the saved config is metadata-only and
@@ -548,12 +563,83 @@ export function WhatsAppConfig() {
         description={t("description")}
       />
 
-      {/* Zero-Markup Community Option: Evolution API QR Code Connection */}
-      <div className="mb-6">
-        <EvolutionQrConnect />
+      {/* Client Choice: Option 1 (Official Meta Cloud API) vs Option 2 (WhatsApp Web QR Code) */}
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => handleMethodChange('meta_cloud')}
+          className={`flex items-start gap-3.5 rounded-2xl p-4 text-left transition-all border-2 ${
+            activeMethod === 'meta_cloud'
+              ? 'border-primary bg-primary/5 shadow-xs ring-2 ring-primary/20'
+              : 'border-border/60 bg-card hover:border-border hover:bg-muted/40 opacity-80 hover:opacity-100'
+          }`}
+        >
+          <div
+            className={`mt-0.5 rounded-xl p-2.5 shrink-0 ${
+              activeMethod === 'meta_cloud'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            <Cloud className="size-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className="text-sm font-bold text-foreground">Option 1: Meta Cloud API</span>
+              <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
+                Recommended
+              </span>
+              <span className="rounded-full bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 text-[10px] font-medium text-blue-600 dark:text-blue-400">
+                100% Cloud-Hosted
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Official Meta WhatsApp Cloud API. 1,000 free conversations/month. Zero server setup, works directly on cloud hosting with official Meta compliance.
+            </p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleMethodChange('web_qr')}
+          className={`flex items-start gap-3.5 rounded-2xl p-4 text-left transition-all border-2 ${
+            activeMethod === 'web_qr'
+              ? 'border-emerald-500 bg-emerald-500/5 shadow-xs ring-2 ring-emerald-500/20'
+              : 'border-border/60 bg-card hover:border-border hover:bg-muted/40 opacity-80 hover:opacity-100'
+          }`}
+        >
+          <div
+            className={`mt-0.5 rounded-xl p-2.5 shrink-0 ${
+              activeMethod === 'web_qr'
+                ? 'bg-emerald-500 text-white'
+                : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            <QrCode className="size-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <span className="text-sm font-bold text-foreground">Option 2: WhatsApp Web QR Code</span>
+              <span className="rounded-full bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 text-[10px] font-extrabold uppercase text-purple-600 dark:text-purple-400">
+                Link Device
+              </span>
+              <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[10px] font-medium text-amber-600 dark:text-amber-400">
+                No Meta Dev Account
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Pair your personal or business WhatsApp number directly via &ldquo;Linked Devices&rdquo; QR scan. Connects via UniCRM Web Gateway (<code>dfydude.cc.cd</code>).
+            </p>
+          </div>
+        </button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+      {activeMethod === 'web_qr' ? (
+        <div className="max-w-3xl">
+          <EvolutionQrConnect onSelectMetaOption={() => handleMethodChange('meta_cloud')} />
+        </div>
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
 
       {/* Main config form */}
       <div className="space-y-6">
@@ -1075,8 +1161,8 @@ export function WhatsAppConfig() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+        </div>
+      )}
     </section>
   );
 }

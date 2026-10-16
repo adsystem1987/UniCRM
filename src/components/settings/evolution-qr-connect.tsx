@@ -8,11 +8,10 @@ import {
   AlertCircle,
   Smartphone,
   LogOut,
-  ExternalLink,
   Server,
-  Key,
-  ShieldAlert,
-  ArrowDown,
+  Sparkles,
+  ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +19,13 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
-export function EvolutionQrConnect() {
+const DEFAULT_GATEWAY_URL = 'https://dfydude.cc.cd';
+
+interface EvolutionQrConnectProps {
+  onSelectMetaOption?: () => void;
+}
+
+export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectProps) {
   const [loading, setLoading] = useState(false);
   const [qrBase64, setQrBase64] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
@@ -33,7 +38,7 @@ export function EvolutionQrConnect() {
   const [gatewayKey, setGatewayKey] = useState('');
 
   useEffect(() => {
-    const savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || '';
+    const savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || DEFAULT_GATEWAY_URL;
     const savedKey = localStorage.getItem('unicrm_wa_gateway_key') || '';
     setGatewayUrl(savedUrl);
     setGatewayKey(savedKey);
@@ -44,7 +49,7 @@ export function EvolutionQrConnect() {
     setLoading(true);
     setGatewayOffline(false);
     try {
-      const url = customUrl !== undefined ? customUrl : gatewayUrl;
+      const url = customUrl !== undefined ? customUrl : (gatewayUrl || DEFAULT_GATEWAY_URL);
       const key = customKey !== undefined ? customKey : gatewayKey;
 
       const params = new URLSearchParams();
@@ -75,7 +80,7 @@ export function EvolutionQrConnect() {
       } else {
         setGatewayOffline(true);
         setOfflineMessage(
-          'Gateway did not return an active WhatsApp Web session. Ensure your gateway container is running.'
+          'Gateway did not return an active WhatsApp Web session. Ensure your gateway server is running.'
         );
       }
     } catch (err: unknown) {
@@ -90,10 +95,11 @@ export function EvolutionQrConnect() {
 
   const handleSaveGateway = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('unicrm_wa_gateway_url', gatewayUrl.trim());
+    const cleanUrl = gatewayUrl.trim() || DEFAULT_GATEWAY_URL;
+    localStorage.setItem('unicrm_wa_gateway_url', cleanUrl);
     localStorage.setItem('unicrm_wa_gateway_key', gatewayKey.trim());
     toast.success('Gateway endpoint saved! Checking connection...');
-    fetchQr(gatewayUrl.trim(), gatewayKey.trim());
+    fetchQr(cleanUrl, gatewayKey.trim());
   };
 
   const handleDisconnect = async () => {
@@ -104,7 +110,7 @@ export function EvolutionQrConnect() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'disconnect',
-          gatewayUrl: gatewayUrl.trim() || undefined,
+          gatewayUrl: gatewayUrl.trim() || DEFAULT_GATEWAY_URL,
           apiKey: gatewayKey.trim() || undefined,
         }),
       });
@@ -125,13 +131,13 @@ export function EvolutionQrConnect() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <QrCode className="h-5 w-5 text-emerald-500" />
-          <span>Free WhatsApp Web Connection (QR Code)</span>
+          <span>Option 2: WhatsApp Web QR Code (&ldquo;Link Device&rdquo; with Phone)</span>
           <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400">
-            Community Option
+            Free Community Option
           </span>
         </CardTitle>
         <CardDescription>
-          Link your WhatsApp by scanning a QR code with your phone. (Or use the Official Meta Cloud API below for 100% cloud hosting).
+          Scan the QR code with your phone&apos;s WhatsApp (Linked Devices). Zero Meta verification or credit card required.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center py-4 text-center">
@@ -160,6 +166,7 @@ export function EvolutionQrConnect() {
         ) : qrBase64 ? (
           <div className="flex flex-col items-center gap-4 max-w-sm">
             <div className="rounded-2xl border-2 border-emerald-500/30 bg-white p-3 shadow-md relative group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrBase64} alt="WhatsApp QR Code" className="h-56 w-56 object-contain" />
               {loading && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-xs flex items-center justify-center rounded-xl">
@@ -199,8 +206,13 @@ export function EvolutionQrConnect() {
                 <span>WhatsApp Web Gateway Required for Real QR Pairing</span>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                WhatsApp encrypts QR handshakes via an active WebSocket session with WhatsApp servers. To scan with your real phone, a live Gateway server (Evolution API) must be connected.
+                WhatsApp encrypts QR handshakes via an active WebSocket session with WhatsApp servers. To scan with your real phone, a live UniCRM Web Gateway server must be reachable.
               </p>
+              {offlineMessage && (
+                <div className="mt-2 text-[11px] font-mono text-amber-800 dark:text-amber-300 bg-amber-500/15 p-2 rounded-lg break-all">
+                  {offlineMessage}
+                </div>
+              )}
             </div>
 
             {/* Quick Gateway Configuration */}
@@ -208,7 +220,7 @@ export function EvolutionQrConnect() {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
                   <Server className="h-3.5 w-3.5 text-primary" />
-                  Connect Self-Hosted Gateway Server
+                  UniCRM Web Gateway Endpoint
                 </span>
                 <button
                   type="button"
@@ -224,14 +236,14 @@ export function EvolutionQrConnect() {
                   <div className="space-y-1">
                     <Label className="text-[11px] text-muted-foreground">Gateway URL (with http/https)</Label>
                     <Input
-                      placeholder="e.g. https://wa.yourdomain.com or http://localhost:8081"
+                      placeholder="e.g. https://dfydude.cc.cd or http://localhost:8081"
                       value={gatewayUrl}
                       onChange={(e) => setGatewayUrl(e.target.value)}
                       className="h-8 text-xs bg-muted"
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] text-muted-foreground">API Key (optional)</Label>
+                    <Label className="text-[11px] text-muted-foreground">Gateway Secret Key (optional)</Label>
                     <Input
                       placeholder="unicrm-evolution-secret-key"
                       value={gatewayKey}
@@ -240,29 +252,46 @@ export function EvolutionQrConnect() {
                     />
                   </div>
                   <Button type="submit" disabled={loading} size="sm" className="w-full h-8 text-xs font-bold">
-                    {loading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : 'Save & Generate Real QR'}
+                    {loading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : 'Save & Check Gateway'}
                   </Button>
                 </form>
               ) : (
-                <p className="text-[11px] text-muted-foreground">
-                  Running Evolution API on Docker? Click <strong>Configure Endpoint</strong> to enter your server URL.
-                </p>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>Current endpoint: <code className="text-foreground font-semibold">{gatewayUrl || DEFAULT_GATEWAY_URL}</code></span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-[11px]"
+                    onClick={() => fetchQr()}
+                    disabled={loading}
+                  >
+                    <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                    Retry
+                  </Button>
+                </div>
               )}
             </div>
 
-            {/* Recommended Zero-Server Solution */}
-            <div className="w-full rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-xs space-y-2">
-              <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4" />
-                Recommended: Official Meta WhatsApp Cloud API
-              </p>
-              <p className="text-muted-foreground leading-relaxed text-[11px]">
-                No Docker containers or servers needed! Configure your Phone Number ID and System User Token in the form directly below. 100% cloud-hosted on Vercel with 1,000 free conversations/month directly from Meta.
-              </p>
-              <div className="pt-1 flex items-center gap-1 text-[11px] font-semibold text-primary">
-                <ArrowDown className="h-3 w-3" /> Fill in the Meta Cloud API form below
+            {/* Cloud API Alternative */}
+            {onSelectMetaOption && (
+              <div className="w-full rounded-2xl border border-primary/20 bg-primary/5 p-4 text-xs space-y-2">
+                <p className="font-bold text-foreground flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Prefer 100% Cloud Hosting with Zero Servers?
+                </p>
+                <p className="text-muted-foreground leading-relaxed text-[11px]">
+                  Use <strong>Option 1 (Official Meta WhatsApp Cloud API)</strong>. Works directly on Vercel with 1,000 free conversations/month directly from Meta.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onSelectMetaOption}
+                  className="mt-1 h-7 text-xs font-bold border-primary/30 text-primary hover:bg-primary/10"
+                >
+                  Switch to Option 1: Meta Cloud API
+                </Button>
               </div>
-            </div>
+            )}
           </div>
         )}
       </CardContent>
