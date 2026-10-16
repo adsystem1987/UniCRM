@@ -1710,7 +1710,7 @@
       "mediaTitle": "첨부파일 저장",
       "mediaDesc": "Meta는 수신된 미디어를 도착 후 약 30일이 지나면 삭제합니다. 첨부파일을 자체 스토리지에 복사해 두면 계속 볼 수 있습니다.",
       "mirrorInbound": "수신 첨부파일 보관",
-      "mirrorInboundDesc": "고객이 보낸 사진, 동영상, 음성 메모, 문서를 모두 복사해 저장합니다. Supabase 스토리지를 사용하며 16MB를 초과하는 파일은 건너뜁니다.",
+      "mirrorInboundDesc": "고객이 보낸 사진, 동영상, 음성 메모, 문서를 모두 복사해 저장합니다. UniCRM 클라우드 스토리지를 사용하며 16MB를 초과하는 파일은 건너뜁니다.",
       "mirrorInboundOffWarning": "새 첨부파일이 더 이상 복사되지 않으며, 도착 후 약 30일이 지나면 볼 수 없게 됩니다.",
       "mirrorInboundSaveFailed": "첨부파일 설정을 업데이트하지 못했습니다.",
       "loadFailed": "WhatsApp 설정을 불러오지 못했습니다",
@@ -2656,7 +2656,7 @@
     "whatsappConfig": {
       "fetchFailed": "설정을 가져오지 못했습니다",
       "noConfig": "아직 저장된 WhatsApp 설정이 없습니다. 양식을 작성하고 설정 저장을 클릭하세요.",
-      "tokenCorrupted": "저장된 액세스 토큰을 현재 ENCRYPTION_KEY로 복호화할 수 없습니다. 보통 키가 변경되었거나 환경마다 다르기 때문입니다(local vs Hostinger vs Vercel). 아래의 \"설정 초기화\"를 클릭한 후 다시 저장하세요.",
+      "tokenCorrupted": "저장된 액세스 토큰을 현재 ENCRYPTION_KEY로 복호화할 수 없습니다. 보통 키가 변경되었거나 재설정되었기 때문입니다. 아래의 \"설정 초기화\"를 클릭한 후 다시 저장하세요.",
       "credentialsRequired": "access_token과 phone_number_id는 필수입니다",
       "phoneIdDigits": "Phone Number ID는 숫자만 포함해야 합니다 — 전화번호 자체가 아니라 Meta → WhatsApp → API Setup에 표시되는 숫자 ID입니다.",
       "wabaIdDigits": "WhatsApp Business Account ID는 숫자만 포함해야 합니다 — Meta → WhatsApp → API Setup에서 복사하세요.",

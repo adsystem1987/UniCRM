@@ -1710,7 +1710,7 @@
       "mediaTitle": "Attachment Storage",
       "mediaDesc": "Meta deletes received media about 30 days after it arrives. Attachments can be copied to your own storage so they stay viewable.",
       "mirrorInbound": "Keep inbound attachments",
-      "mirrorInboundDesc": "Save a copy of every photo, video, voice note and document customers send. Uses your Supabase storage; files over 16 MB are skipped.",
+      "mirrorInboundDesc": "Save a copy of every photo, video, voice note and document customers send. Uses your UniCRM Cloud storage; files over 16 MB are skipped.",
       "mirrorInboundOffWarning": "New attachments will stop being copied and will become unavailable about 30 days after they arrive.",
       "mirrorInboundSaveFailed": "Could not update the attachment setting.",
       "loadFailed": "Failed to load WhatsApp configuration",
@@ -2656,7 +2656,7 @@
     "whatsappConfig": {
       "fetchFailed": "Failed to fetch configuration",
       "noConfig": "No WhatsApp configuration saved yet. Fill in the form and click Save Configuration.",
-      "tokenCorrupted": "The stored access token cannot be decrypted with the current ENCRYPTION_KEY. This usually means the key changed, or it differs between environments (local vs Hostinger vs Vercel). Click \"Reset Configuration\" below, then re-save.",
+      "tokenCorrupted": "The stored access token cannot be decrypted with the current ENCRYPTION_KEY. This usually means the key changed or was reset. Click \"Reset Configuration\" below, then re-save.",
       "credentialsRequired": "access_token and phone_number_id are required",
       "phoneIdDigits": "Phone Number ID must contain only digits — it is the numeric id shown under Meta → WhatsApp → API Setup, not the phone number itself.",
       "wabaIdDigits": "WhatsApp Business Account ID must contain only digits — copy it from Meta → WhatsApp → API Setup.",

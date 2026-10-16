@@ -1710,7 +1710,7 @@
       "mediaTitle": "Armazenamento de anexos",
       "mediaDesc": "A Meta exclui as mídias recebidas cerca de 30 dias após a chegada. Os anexos podem ser copiados para o seu próprio armazenamento para continuarem visíveis.",
       "mirrorInbound": "Manter anexos recebidos",
-      "mirrorInboundDesc": "Salva uma cópia de cada foto, vídeo, mensagem de voz e documento enviado pelos clientes. Usa seu armazenamento do Supabase; arquivos acima de 16 MB são ignorados.",
+      "mirrorInboundDesc": "Salva uma cópia de cada foto, vídeo, mensagem de voz e documento enviado pelos clientes. Usa seu armazenamento do UniCRM Cloud; arquivos acima de 16 MB são ignorados.",
       "mirrorInboundOffWarning": "Novos anexos deixarão de ser copiados e ficarão indisponíveis cerca de 30 dias após a chegada.",
       "mirrorInboundSaveFailed": "Não foi possível atualizar a configuração de anexos.",
       "loadFailed": "Falha ao carregar a configuração do WhatsApp",
@@ -2656,7 +2656,7 @@
     "whatsappConfig": {
       "fetchFailed": "Falha ao buscar a configuração",
       "noConfig": "Nenhuma configuração do WhatsApp salva ainda. Preencha o formulário e clique em Salvar configuração.",
-      "tokenCorrupted": "O token de acesso salvo não pode ser descriptografado com a ENCRYPTION_KEY atual. Isso geralmente significa que a chave mudou ou é diferente entre ambientes (local vs Hostinger vs Vercel). Clique em \"Redefinir configuração\" abaixo e salve novamente.",
+      "tokenCorrupted": "O token de acesso salvo não pode ser descriptografado com a ENCRYPTION_KEY atual. Isso geralmente significa que a chave mudou ou foi redefinida. Clique em \"Redefinir configuração\" abaixo e salve novamente.",
       "credentialsRequired": "access_token e phone_number_id são obrigatórios",
       "phoneIdDigits": "O Phone Number ID deve conter apenas dígitos — é o ID numérico exibido em Meta → WhatsApp → API Setup, não o número de telefone em si.",
       "wabaIdDigits": "O WhatsApp Business Account ID deve conter apenas dígitos — copie-o de Meta → WhatsApp → API Setup.",

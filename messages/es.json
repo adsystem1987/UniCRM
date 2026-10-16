@@ -1710,7 +1710,7 @@
       "mediaTitle": "Almacenamiento de adjuntos",
       "mediaDesc": "Meta elimina los archivos recibidos unos 30 días después de su llegada. Los adjuntos pueden copiarse a tu propio almacenamiento para que sigan visibles.",
       "mirrorInbound": "Conservar adjuntos entrantes",
-      "mirrorInboundDesc": "Guarda una copia de cada foto, video, nota de voz y documento que envían los clientes. Usa tu almacenamiento de Supabase; los archivos de más de 16 MB se omiten.",
+      "mirrorInboundDesc": "Guarda una copia de cada foto, video, nota de voz y documento que envían los clientes. Usa tu almacenamiento de UniCRM Cloud; los archivos de más de 16 MB se omiten.",
       "mirrorInboundOffWarning": "Los nuevos adjuntos dejarán de copiarse y quedarán inaccesibles unos 30 días después de su llegada.",
       "mirrorInboundSaveFailed": "No se pudo actualizar la configuración de adjuntos.",
       "loadFailed": "Error al cargar la configuración de WhatsApp",
@@ -2656,7 +2656,7 @@
     "whatsappConfig": {
       "fetchFailed": "Error al obtener la configuración",
       "noConfig": "Aún no hay ninguna configuración de WhatsApp guardada. Completa el formulario y haz clic en Guardar configuración.",
-      "tokenCorrupted": "El token de acceso guardado no se puede descifrar con la ENCRYPTION_KEY actual. Normalmente significa que la clave cambió o que es distinta entre entornos (local vs Hostinger vs Vercel). Haz clic en \"Restablecer configuración\" abajo y vuelve a guardar.",
+      "tokenCorrupted": "El token de acceso guardado no se puede descifrar con la ENCRYPTION_KEY actual. Normalmente significa que la clave cambió o se restableció. Haz clic en \"Restablecer configuración\" abajo y vuelve a guardar.",
       "credentialsRequired": "access_token y phone_number_id son obligatorios",
       "phoneIdDigits": "El Phone Number ID debe contener solo dígitos: es el ID numérico que aparece en Meta → WhatsApp → API Setup, no el número de teléfono en sí.",
       "wabaIdDigits": "El WhatsApp Business Account ID debe contener solo dígitos: cópialo de Meta → WhatsApp → API Setup.",

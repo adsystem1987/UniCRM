@@ -245,7 +245,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                   <div className="space-y-1">
                     <Label className="text-[11px] text-muted-foreground">Gateway Secret Key (optional)</Label>
                     <Input
-                      placeholder="unicrm-evolution-secret-key"
+                      placeholder="unicrm-gateway-secret-key"
                       value={gatewayKey}
                       onChange={(e) => setGatewayKey(e.target.value)}
                       className="h-8 text-xs bg-muted"
@@ -280,7 +280,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                   Prefer 100% Cloud Hosting with Zero Servers?
                 </p>
                 <p className="text-muted-foreground leading-relaxed text-[11px]">
-                  Use <strong>Option 1 (Official Meta WhatsApp Cloud API)</strong>. Works directly on Vercel with 1,000 free conversations/month directly from Meta.
+                  Use <strong>Option 1 (Official Meta WhatsApp Cloud API)</strong>. Runs natively on UniCRM Cloud with 1,000 free conversations/month directly from Meta.
                 </p>
                 <Button
                   variant="outline"
