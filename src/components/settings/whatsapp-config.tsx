@@ -1161,8 +1161,9 @@ export function WhatsAppConfig() {
             </div>
           </CardContent>
         </Card>
-        </div>
-      )}
-    </section>
+      </div>
+    </div>
+  )}
+</section>
   );
 }
