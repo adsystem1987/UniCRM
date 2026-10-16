@@ -25,27 +25,42 @@ export async function GET(req: NextRequest) {
       ? new EvolutionClient(customGatewayUrl, customApiKey || 'unicrm-evolution-secret-key')
       : evolution;
 
+    const forceRefresh = searchParams.get('force') === 'true';
+
+    // If force refresh requested, delete stale instance first
+    if (forceRefresh) {
+      await client.deleteInstance(instanceName).catch(() => {});
+    }
+
     // 1. Check if instance already exists and is connected
-    try {
-      const connState = await client.getConnectionState(instanceName);
-      if (connState?.instance?.state === 'open') {
-        return NextResponse.json({ success: true, qr: { state: 'open' } });
+    if (!forceRefresh) {
+      try {
+        const connState = await client.getConnectionState(instanceName);
+        if (connState?.instance?.state === 'open') {
+          return NextResponse.json({ success: true, qr: { state: 'open' } });
+        }
+        // If instance was logged out or closed, purge it so fresh pairing can start
+        if (connState?.instance?.state === 'close') {
+          await client.deleteInstance(instanceName).catch(() => {});
+        }
+      } catch {
+        // Instance does not exist yet or connection check not ready
       }
-    } catch {
-      // Instance does not exist yet or connection check not ready
     }
 
     // 2. Try fetching active QR code
-    try {
-      const qrData = await client.getQrCode(instanceName);
-      if (qrData?.state === 'open') {
-        return NextResponse.json({ success: true, qr: { state: 'open' } });
+    if (!forceRefresh) {
+      try {
+        const qrData = await client.getQrCode(instanceName);
+        if (qrData?.state === 'open') {
+          return NextResponse.json({ success: true, qr: { state: 'open' } });
+        }
+        if (qrData?.base64) {
+          return NextResponse.json({ success: true, qr: qrData });
+        }
+      } catch {
+        // Instance likely does not exist yet on gateway, proceed to create it
       }
-      if (qrData?.base64) {
-        return NextResponse.json({ success: true, qr: qrData });
-      }
-    } catch {
-      // Instance likely does not exist yet on gateway, proceed to create it
     }
 
     // 3. Create instance if not yet created
@@ -61,13 +76,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ success: true, qr: qrData });
       }
     } catch (err: unknown) {
-      // If error is "already in use" (403), re-check connection state gracefully
+      // If error occurred (conflict or stale session), purge and retry once cleanly
       try {
-        const connState = await client.getConnectionState(instanceName);
-        if (connState?.instance?.state === 'open') {
-          return NextResponse.json({ success: true, qr: { state: 'open' } });
-        }
-        const qrData = await client.getQrCode(instanceName);
+        await client.deleteInstance(instanceName).catch(() => {});
+        const origin = req.nextUrl.origin;
+        const webhookUrl = `${origin}/api/evolution/webhook`;
+        const createRes = await client.createInstance(instanceName, webhookUrl);
+        const qrData = (createRes?.qrcode?.base64)
+          ? createRes.qrcode
+          : await client.getQrCode(instanceName);
+
         if (qrData?.base64 || qrData?.state === 'open') {
           return NextResponse.json({ success: true, qr: qrData });
         }
@@ -117,6 +135,7 @@ export async function POST(req: NextRequest) {
     if (action === 'disconnect') {
       if (client) {
         await client.logout(instanceName).catch(() => {});
+        await client.deleteInstance(instanceName).catch(() => {});
       }
       return NextResponse.json({ success: true, state: 'close' });
     }

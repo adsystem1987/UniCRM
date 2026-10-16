@@ -140,6 +140,15 @@ export class EvolutionClient {
       method: 'DELETE',
     });
   }
+
+  /**
+   * Delete instance and completely purge any stale or disconnected session state
+   */
+  async deleteInstance(instanceName: string): Promise<{ status: string }> {
+    return this.request(`/instance/delete/${encodeURIComponent(instanceName)}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const evolution = new EvolutionClient();

@@ -50,9 +50,16 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
     fetchQr(savedUrl, savedKey);
   }, []);
 
-  const fetchQr = async (customUrl?: string, customKey?: string) => {
-    setLoading(true);
-    setGatewayOffline(false);
+  const fetchQr = async (
+    customUrl?: string,
+    customKey?: string,
+    force = false,
+    isBackgroundPoll = false
+  ) => {
+    if (!isBackgroundPoll) {
+      setLoading(true);
+      setGatewayOffline(false);
+    }
     try {
       const url = customUrl !== undefined ? customUrl : gatewayUrl;
       const key = customKey !== undefined ? customKey : gatewayKey;
@@ -60,17 +67,20 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
       const params = new URLSearchParams();
       if (url.trim()) params.set('gatewayUrl', url.trim());
       if (key.trim()) params.set('apiKey', key.trim());
+      if (force) params.set('force', 'true');
 
       const res = await fetch(`/api/evolution/qr?${params.toString()}`);
       const data = await res.json();
 
       if (data.gatewayOffline) {
-        setGatewayOffline(true);
-        setOfflineMessage(data.message);
-        setQrBase64(null);
-        setConnected(false);
-        if (data.needsConfiguration) {
-          setShowConfig(true);
+        if (!isBackgroundPoll) {
+          setGatewayOffline(true);
+          setOfflineMessage(data.message);
+          setQrBase64(null);
+          setConnected(false);
+          if (data.needsConfiguration) {
+            setShowConfig(true);
+          }
         }
         return;
       }
@@ -85,21 +95,36 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
         setQrBase64(data.qr.base64);
         setConnected(false);
         setGatewayOffline(false);
-      } else {
+      } else if (!isBackgroundPoll) {
         setGatewayOffline(true);
         setOfflineMessage(
           'Gateway did not return an active WhatsApp Web session. Ensure your gateway server is running.'
         );
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error fetching QR';
-      setGatewayOffline(true);
-      setOfflineMessage(message);
-      setQrBase64(null);
+      if (!isBackgroundPoll) {
+        const message = err instanceof Error ? err.message : 'Error fetching QR';
+        setGatewayOffline(true);
+        setOfflineMessage(message);
+        setQrBase64(null);
+      }
     } finally {
-      setLoading(false);
+      if (!isBackgroundPoll) {
+        setLoading(false);
+      }
     }
   };
+
+  // Background poll every 3.5s while waiting for the phone to scan
+  useEffect(() => {
+    if (connected || !qrBase64 || gatewayOffline) return;
+
+    const interval = setInterval(() => {
+      fetchQr(undefined, undefined, false, true);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [connected, qrBase64, gatewayOffline]);
 
   const handleSaveGateway = (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,7 +226,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => fetchQr()}
+                onClick={() => fetchQr(undefined, undefined, true)}
                 disabled={loading}
                 className="gap-2"
               >
