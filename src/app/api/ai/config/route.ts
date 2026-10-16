@@ -221,7 +221,19 @@ export async function POST(request: Request) {
       }
     }
 
-    const encryptedKey = rawKey ? encrypt(rawKey) : null
+    let encryptedKey: string | null = null
+    if (rawKey) {
+      try {
+        encryptedKey = encrypt(rawKey)
+      } catch (err) {
+        console.error('[ai/config POST] encryption error:', err)
+        return NextResponse.json(
+          { error: 'Failed to encrypt AI API key. Please verify ENCRYPTION_KEY.' },
+          { status: 500 },
+        )
+      }
+    }
+
     const shared: Record<string, unknown> = {
       provider,
       model,
@@ -235,7 +247,15 @@ export async function POST(request: Request) {
     // so a partial save (e.g. flipping a toggle) doesn't wipe it.
     if (handoffProvided) shared.handoff_agent_id = handoffAgentId
     if (rawEmbeddingsKey) {
-      shared.embeddings_api_key = encrypt(rawEmbeddingsKey)
+      try {
+        shared.embeddings_api_key = encrypt(rawEmbeddingsKey)
+      } catch (err) {
+        console.error('[ai/config POST] embeddings encryption error:', err)
+        return NextResponse.json(
+          { error: 'Failed to encrypt embeddings API key.' },
+          { status: 500 },
+        )
+      }
     } else if (clearEmbeddingsKey) {
       shared.embeddings_api_key = null
     }
@@ -248,7 +268,7 @@ export async function POST(request: Request) {
       if (upErr) {
         console.error('[ai/config POST] update error:', upErr)
         return NextResponse.json(
-          { error: t('ai.saveConfigFailed') },
+          { error: upErr.message || t('ai.saveConfigFailed') },
           { status: 500 },
         )
       }
@@ -262,7 +282,7 @@ export async function POST(request: Request) {
       if (insErr) {
         console.error('[ai/config POST] insert error:', insErr)
         return NextResponse.json(
-          { error: t('ai.saveConfigFailed') },
+          { error: insErr.message || t('ai.saveConfigFailed') },
           { status: 500 },
         )
       }
