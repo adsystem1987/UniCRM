@@ -88,6 +88,7 @@ export default function LandingPage() {
             <a href="#channels" className="hover:text-foreground transition-colors">Channels</a>
             <a href="#calling" className="hover:text-foreground transition-colors">Calling & IVR</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
+            <a href="#why-free" className="hover:text-foreground transition-colors">Why 100% Free?</a>
             <a href="#support-plan" className="hover:text-foreground transition-colors">DFY Setup (₹1,000)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
@@ -588,6 +589,116 @@ export default function LandingPage() {
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-rose-400">
                   No per-agent penalties
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION: WHY 100% FREE & HOW IT WORKS WITHOUT PAYING A SINGLE PENNY */}
+        <section id="why-free" className="py-16 md:py-24 border-b border-border/40 bg-gradient-to-b from-background via-emerald-500/[0.03] to-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-14">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-3">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                Our Community Promise
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
+                How Can UniCRM Be 100% Free Without Paying a Single Penny?
+              </h2>
+              <p className="mt-4 text-muted-foreground text-base md:text-lg font-medium leading-relaxed">
+                Traditional CRMs charge ₹15,000–₹25,000/month just for basic WhatsApp inboxes and per-seat fees. We built UniCRM on an open-architecture model so every business owner, agency &amp; creator can grow without burning a single rupee.
+              </p>
+            </div>
+
+            {/* 4 Pillars of Zero Cost */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-emerald-500/40 transition-all">
+                <div>
+                  <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-black mb-4">
+                    ₹0
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">Zero Software Subscriptions</h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    No 7-day trials, no artificial paywalls, and no &ldquo;Upgrade to unlock&rdquo; traps. All CRM modules, contact pipelines, and team accounts are 100% free forever.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Unlimited Team Seats
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-blue-500/40 transition-all">
+                <div>
+                  <div className="h-11 w-11 rounded-2xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black mb-4">
+                    <QrCode className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">Zero-Cost WhatsApp Connection</h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    Connect via free QR Code scanning with your existing phone, or use Meta&rsquo;s Cloud API where Meta directly gives you 1,000 free service conversations every month.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-blue-600 dark:text-blue-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  No Platform Markups
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-purple-500/40 transition-all">
+                <div>
+                  <div className="h-11 w-11 rounded-2xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-purple-600 dark:text-purple-400 font-black mb-4">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">Pre-Configured Free AI Router</h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    Enjoy built-in smart AI customer service. UniCRM auto-routes to zero-cost AI models (Gemini Flash, Gemma, Llama) so you get instant auto-replies at ₹0 extra cost.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-purple-600 dark:text-purple-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Free Multi-Model AI
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-amber-500/40 transition-all">
+                <div>
+                  <div className="h-11 w-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 dark:text-amber-400 font-black mb-4">
+                    <HardDrive className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">BYOS: 15GB Free Cloud Drive</h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    Bring Your Own Storage (BYOS). Connect your existing Google Drive for 15 GB of completely free file, invoice, and voice call audio recording storage.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Your Data Stays Yours
+                </div>
+              </div>
+            </div>
+
+            {/* Inspiring Bottom Banner: Transparent Community Model */}
+            <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 p-6 sm:p-8 text-center space-y-3">
+              <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                <ShieldCheck className="h-4 w-4" />
+                How UniCRM Stays Alive &amp; Free For Everyone
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-foreground">
+                Sustained by Community Love, Not By Predatory Subscriptions
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                UniCRM has zero corporate overhead and no aggressive sales targets. Passionate community members voluntarily contribute micro-support (from ₹29/month) to fund shared cloud servers, while busy founders can optionally request hands-on Done-For-You onboarding. Every single business owner gets to use the full CRM 100% free forever.
+              </p>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs font-bold text-foreground">
+                <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                  <Check className="h-4 w-4" /> No Credit Card Required
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                  <Check className="h-4 w-4" /> Export Contacts Anytime
+                </span>
+                <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                  <Check className="h-4 w-4" /> Active Community Uptime
+                </span>
               </div>
             </div>
           </div>
