@@ -47,22 +47,22 @@ interface PresetOption {
 const PRESET_OPTIONS: PresetOption[] = [
   {
     amount: "29",
-    label: "₹29",
+    label: "₹29/mo",
     sublabel: "Chai Supporter ☕",
     badge: "Starter",
     icon: Coffee,
   },
   {
     amount: "99",
-    label: "₹99",
+    label: "₹99/mo",
     sublabel: "Server Backer 🚀",
     badge: "Popular",
     icon: Rocket,
   },
   {
     amount: "299",
-    label: "₹299",
-    sublabel: "Super Hero 🌟",
+    label: "₹299/mo",
+    sublabel: "Community Hero 🌟",
     badge: "Community Star",
     icon: Award,
   },
@@ -88,12 +88,12 @@ const SAMPLE_TEMPLATES = [
 ];
 
 const COMMUNITY_SUPPORTERS = [
-  { name: "Amit Sharma", role: "Agency Founder", city: "Delhi", amount: "₹299" },
-  { name: "Rajesh Kumar", role: "D2C Brand Owner", city: "Bengaluru", amount: "₹99" },
-  { name: "Priya Menon", role: "Freelance Consultant", city: "Kochi", amount: "₹29" },
-  { name: "Vikram Bora", role: "Real Estate Broker", city: "Mumbai", amount: "₹299" },
-  { name: "TechVeda Solutions", role: "B2B SaaS Team", city: "Pune", amount: "₹299" },
-  { name: "Suresh Patel", role: "Local Retailer", city: "Ahmedabad", amount: "₹99" },
+  { name: "Amit Sharma", role: "Agency Founder", city: "Delhi", amount: "₹299/mo" },
+  { name: "Rajesh Kumar", role: "D2C Brand Owner", city: "Bengaluru", amount: "₹99/mo" },
+  { name: "Priya Menon", role: "Freelance Consultant", city: "Kochi", amount: "₹29/mo" },
+  { name: "Vikram Bora", role: "Real Estate Broker", city: "Mumbai", amount: "₹299/mo" },
+  { name: "TechVeda Solutions", role: "B2B SaaS Team", city: "Pune", amount: "₹299/mo" },
+  { name: "Suresh Patel", role: "Local Retailer", city: "Ahmedabad", amount: "₹99/mo" },
 ];
 
 export function UpiSupportDialog({
@@ -114,7 +114,7 @@ export function UpiSupportDialog({
     : selectedAmount;
 
   const payeeName = "DFY UniCRM";
-  const note = `Support DFY UniCRM (₹${effectiveAmount})`;
+  const note = `Support DFY UniCRM Monthly (₹${effectiveAmount}/mo)`;
 
   // Standard UPI URI format compatible with Google Pay, PhonePe, Paytm, BHIM, etc.
   const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${effectiveAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
@@ -135,13 +135,13 @@ export function UpiSupportDialog({
   };
 
   const claimWhatsAppUri = `https://wa.me/?text=${encodeURIComponent(
-    `Hi DFY UniCRM team! I just contributed ₹${effectiveAmount} via UPI to support the project (UPI ID: ${upiId}).\n\nMy Payment Ref/UTR:\nPlease send me the 50+ WhatsApp Business Templates & Automation Pack! 🙌`
+    `Hi DFY UniCRM team! I just contributed ₹${effectiveAmount}/month via UPI to support the project (UPI ID: ${upiId}).\n\nMy Payment Ref/UTR:\nPlease send me the 50+ WhatsApp Business Templates & Automation Pack! 🙌`
   )}`;
 
   const claimEmailUri = `mailto:ravibabuche@dfydude.online?subject=${encodeURIComponent(
-    `DFY UniCRM Supporter Perks Claim (₹${effectiveAmount})`
+    `DFY UniCRM Monthly Supporter Perks Claim (₹${effectiveAmount}/mo)`
   )}&body=${encodeURIComponent(
-    `Hi Ravi,\n\nI just contributed ₹${effectiveAmount} via UPI to support DFY UniCRM!\n\nPayee UPI ID: ${upiId}\nMy UPI Transaction ID / UTR:\n\nPlease send the 50+ WhatsApp Business Templates and 3 Automation Flows to this email address.\n\nThank you!`
+    `Hi Ravi,\n\nI just contributed ₹${effectiveAmount}/month via UPI to support DFY UniCRM!\n\nPayee UPI ID: ${upiId}\nMy UPI Transaction ID / UTR:\n\nPlease send the 50+ WhatsApp Business Templates and 3 Automation Flows to this email address.\n\nThank you!`
   )}`;
 
   const handleConfirmPayment = () => {
@@ -161,7 +161,7 @@ export function UpiSupportDialog({
           </div>
           <DialogTitle className="text-xl font-black">Support DFY UniCRM</DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground max-w-sm mx-auto">
-            UniCRM is 100% free and open for every business. Contributions starting at ₹29 power our cloud infrastructure and unlock curated supporter perks!
+            UniCRM is 100% free forever. Support from ₹29/month to help fund cloud servers, AI infrastructure & maintenance to keep UniCRM free for every community member!
           </DialogDescription>
         </DialogHeader>
 
@@ -210,10 +210,10 @@ export function UpiSupportDialog({
             {/* Multiple Amount Selector */}
             <div className="w-full space-y-2">
               <div className="flex items-center justify-between text-xs font-semibold px-0.5">
-                <span className="text-muted-foreground">Select Contribution Amount:</span>
+                <span className="text-muted-foreground">Select Monthly Support Tier:</span>
                 <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                   <Sparkles className="h-3 w-3" />
-                  Perks included with any amount!
+                  Perks included with all tiers!
                 </span>
               </div>
 
@@ -397,10 +397,10 @@ export function UpiSupportDialog({
             <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 p-3.5 space-y-1.5">
               <div className="flex items-center gap-1.5 font-bold text-sm text-foreground">
                 <Gift className="h-4 w-4 text-indigo-500" />
-                <span>What Every Supporter Gets (From ₹29)</span>
+                <span>What Every Monthly Supporter Gets (From ₹29/mo)</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                As a heartfelt thank you for supporting UniCRM, you get instant access to our curated WhatsApp marketing vault to boost your business revenue:
+                As a heartfelt thank you for helping keep UniCRM free and reliable for every community member, you get instant access to our curated WhatsApp marketing vault to boost your business revenue:
               </p>
             </div>
 
@@ -525,7 +525,7 @@ export function UpiSupportDialog({
               onClick={() => setActiveTab("pay")}
               className="w-full font-bold bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white"
             >
-              Back to Payment (from ₹29)
+              Back to Support (from ₹29/month)
             </Button>
           </div>
         ) : (
@@ -538,11 +538,11 @@ export function UpiSupportDialog({
                 </div>
                 <div>
                   <h4 className="font-bold text-foreground text-sm">Thank You for Backing UniCRM!</h4>
-                  <p className="text-[11px] text-muted-foreground">Every contribution keeps our software open & free.</p>
+                  <p className="text-[11px] text-muted-foreground">Every monthly contribution keeps our software open & free.</p>
                 </div>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed pt-1">
-                UniCRM has <strong className="text-foreground">zero subscription fees</strong>, <strong className="text-foreground">no per-user commissions</strong>, and <strong className="text-foreground">no artificial paywalls</strong>. Your voluntary support directly powers high-converting tools for Indian businesses.
+                UniCRM has <strong className="text-foreground">zero subscription fees</strong>, <strong className="text-foreground">no per-user commissions</strong>, and <strong className="text-foreground">no artificial paywalls</strong>. Your voluntary monthly support keeps UniCRM running reliably for everyone, and empowers us to keep building and releasing more useful free tools, templates & automations for all business owners!
               </p>
             </div>
 
@@ -550,7 +550,7 @@ export function UpiSupportDialog({
             <div className="space-y-2">
               <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                <span>What Your Contribution Powers:</span>
+                <span>What Your Monthly Contribution Powers:</span>
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="p-3 rounded-xl border border-border bg-card space-y-1">
@@ -562,16 +562,16 @@ export function UpiSupportDialog({
                 </div>
                 <div className="p-3 rounded-xl border border-border bg-card space-y-1">
                   <span className="text-lg">⚡</span>
-                  <p className="text-xs font-bold text-foreground">Cloud Reliability</p>
+                  <p className="text-xs font-bold text-foreground">Cloud Servers & AI</p>
                   <p className="text-[10px] text-muted-foreground">
-                    Funds lightning-fast cloud servers, WebSocket gateways & database storage.
+                    Funds reliable cloud servers, AI bills & real-time WhatsApp message gateways.
                   </p>
                 </div>
                 <div className="p-3 rounded-xl border border-border bg-card space-y-1">
                   <span className="text-lg">🚀</span>
-                  <p className="text-xs font-bold text-foreground">Open Innovations</p>
+                  <p className="text-xs font-bold text-foreground">Active Maintenance</p>
                   <p className="text-[10px] text-muted-foreground">
-                    Enables regular updates, new AI flows, and direct WhatsApp integrations.
+                    Enables regular maintenance, fixes, and community-requested features.
                   </p>
                 </div>
               </div>
@@ -616,7 +616,7 @@ export function UpiSupportDialog({
                 onClick={() => setActiveTab("pay")}
                 className="w-full h-9 text-xs font-bold"
               >
-                Make Another Contribution
+                Back to Supporter Tiers
               </Button>
             </div>
           </div>
@@ -638,12 +638,12 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
             <span>Support DFY UniCRM</span>
           </div>
           <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
-            From ₹29
+            From ₹29/mo
           </span>
         </div>
 
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29</strong> & unlock <strong className="text-foreground">50+ WhatsApp templates</strong> + 3 growth automations!
+          UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> to help fund cloud servers, AI infrastructure & maintenance so UniCRM stays free for every community member!
         </p>
 
         <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium pt-0.5">
@@ -651,7 +651,7 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
             <Gift className="h-3 w-3" />
             Supporter Perks
           </span>
-          <span className="font-bold text-foreground">₹29 • ₹99 • ₹299</span>
+          <span className="font-bold text-foreground">₹29/mo • ₹99/mo • ₹299/mo</span>
         </div>
 
         {/* Cool, vibrant, modern button */}
@@ -661,15 +661,15 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
           className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white py-2 text-center text-xs font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-1.5 border border-white/10 group"
         >
           <Sparkles className="h-3.5 w-3.5 text-amber-300 group-hover:rotate-12 transition-transform" />
-          <span>Support from ₹29</span>
+          <span>Support from ₹29/month</span>
           <span className="text-[10px] opacity-85 font-normal">(UPI 🇮🇳)</span>
         </button>
 
         {/* Community Gratitude Note */}
         <div className="pt-0.5 border-t border-border/40 text-center">
-          <p className="text-[10px] text-muted-foreground/80 flex items-center justify-center gap-1">
-            <Heart className="h-2.5 w-2.5 fill-pink-500 text-pink-500 inline" />
-            <span>Thank you to our 240+ community backers!</span>
+          <p className="text-[10px] text-muted-foreground/85 leading-snug flex items-center justify-center gap-1">
+            <Heart className="h-2.5 w-2.5 fill-pink-500 text-pink-500 inline shrink-0" />
+            <span>Every supporter keeps UniCRM running for everyone & fuels more useful free tools for all business owners!</span>
           </p>
         </div>
       </div>
