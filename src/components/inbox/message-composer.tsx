@@ -5,7 +5,8 @@ import {
   useRef,
   useCallback,
   useEffect,
-  KeyboardEvent,
+  useMemo,
+  type KeyboardEvent,
 } from "react";
 import {
   Send,
@@ -20,6 +21,7 @@ import {
   Loader2,
   Sparkles,
   Plus,
+  MessageSquare,
   MessageSquareDashed,
   Zap,
 } from "lucide-react";
@@ -181,11 +183,11 @@ export function MessageComposer({
     };
   }, []);
 
-  const slashMatches = useMemo(() => {
+  const slashMatches: QuickReply[] = useMemo(() => {
     if (slashQuery === null) return [];
     const q = slashQuery.toLowerCase();
     return quickReplies
-      .filter((qr) => {
+      .filter((qr: QuickReply) => {
         if (!q) return true;
         const shortcutMatch = qr.shortcut?.toLowerCase().includes(q);
         const titleMatch = qr.title.toLowerCase().includes(q);
@@ -673,7 +675,7 @@ export function MessageComposer({
             <span className="text-[10px] text-muted-foreground">↑↓ navigate · ↵ or Tab insert · Esc close</span>
           </div>
           <ul className="flex flex-col gap-0.5">
-            {slashMatches.map((qr, index) => (
+            {slashMatches.map((qr: QuickReply, index: number) => (
               <li key={qr.id}>
                 <button
                   type="button"
