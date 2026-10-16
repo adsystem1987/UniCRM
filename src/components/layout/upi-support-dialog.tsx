@@ -626,6 +626,61 @@ export function UpiSupportDialog({
   );
 }
 
+export function UpiSupportBanner({ upiId }: { upiId?: string }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <div className="relative overflow-hidden rounded-2xl border border-indigo-500/25 bg-gradient-to-r from-indigo-500/10 via-purple-500/5 to-emerald-500/10 p-4 sm:p-5 shadow-xs transition-all hover:border-indigo-500/40">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1.5 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-1.5 font-black text-sm text-foreground">
+                <HeartHandshake className="h-4 w-4 text-indigo-500" />
+                <span>Support DFY UniCRM</span>
+              </div>
+              <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+                From ₹29/mo
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                <Gift className="h-3 w-3" />
+                Supporter Perks: ₹29/mo • ₹99/mo • ₹299/mo
+              </span>
+            </div>
+
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
+              UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> to help fund cloud servers, AI infrastructure &amp; maintenance so UniCRM stays free for every community member!
+            </p>
+
+            <p className="text-[11px] text-muted-foreground/85 flex items-center gap-1 pt-0.5">
+              <Heart className="h-3 w-3 fill-pink-500 text-pink-500 inline shrink-0" />
+              <span>Every supporter keeps UniCRM running for everyone &amp; fuels more useful free tools for all business owners!</span>
+            </p>
+          </div>
+
+          <div className="shrink-0 flex items-center">
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white px-5 py-2.5 text-center text-xs sm:text-sm font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-2 border border-white/10 group cursor-pointer"
+            >
+              <Sparkles className="h-4 w-4 text-amber-300 group-hover:rotate-12 transition-transform" />
+              <span>Support from ₹29/month</span>
+              <span className="text-[11px] opacity-85 font-normal">(UPI 🇮🇳)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <UpiSupportDialog
+        open={open}
+        onOpenChange={setOpen}
+        upiId={upiId}
+      />
+    </>
+  );
+}
+
 export function UpiSupportCard({ upiId }: { upiId?: string }) {
   const [open, setOpen] = useState(false);
 

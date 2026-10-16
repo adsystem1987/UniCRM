@@ -34,6 +34,7 @@ import { PipelineDonut } from '@/components/dashboard/pipeline-donut'
 import { ResponseTimeChart } from '@/components/dashboard/response-time-chart'
 import { ActivityFeed } from '@/components/dashboard/activity-feed'
 import { OnboardingChecklist } from '@/components/dashboard/onboarding-checklist'
+import { UpiSupportBanner } from '@/components/layout/upi-support-dialog'
 
 
 import { useTranslations } from 'next-intl'
@@ -125,6 +126,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-5">
+      {/* Top Banner: Community Support DFY UniCRM */}
+      <UpiSupportBanner />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>

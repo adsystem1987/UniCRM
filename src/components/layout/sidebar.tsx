@@ -28,7 +28,6 @@ import {
   Heart,
   Target,
 } from "lucide-react";
-import { UpiSupportCard } from "./upi-support-dialog";
 
 import type { AccountRole } from "@/lib/auth/roles";
 
@@ -274,9 +273,6 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               );
             })}
           </ul>
-
-          {/* Voluntary ₹99 UPI Support Card */}
-          <UpiSupportCard />
 
           <div className="my-2 border-t border-border" />
 
