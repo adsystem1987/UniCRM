@@ -38,11 +38,11 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
   useEffect(() => {
     let savedUrl = localStorage.getItem('unicrm_wa_gateway_url') || '';
     // Auto-heal legacy fallbacks or default to pre-configured cloud gateway
-    if (savedUrl === 'https://dfydude.cc.cd' || savedUrl === 'http://localhost:8081') {
-      savedUrl = 'https://wa.dfydude.cc.cd';
+    if (savedUrl === 'https://dfydude.cc.cd' || savedUrl === 'http://localhost:8081' || savedUrl === 'https://wa.dfydude.cc.cd') {
+      savedUrl = 'https://wa.dfydude.online';
       localStorage.setItem('unicrm_wa_gateway_url', savedUrl);
     } else if (!savedUrl) {
-      savedUrl = 'https://wa.dfydude.cc.cd';
+      savedUrl = 'https://wa.dfydude.online';
     }
     const savedKey = localStorage.getItem('unicrm_wa_gateway_key') || 'unicrm-evolution-secret-key';
     setGatewayUrl(savedUrl);
@@ -252,23 +252,23 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                         <span className="text-muted-foreground">Presets:</span>
                         <button
                           type="button"
-                          onClick={() => setGatewayUrl('https://wa.dfydude.cc.cd')}
+                          onClick={() => setGatewayUrl('https://wa.dfydude.online')}
                           className="text-primary hover:underline font-mono"
                         >
-                          wa.dfydude.cc.cd
+                          wa.dfydude.online
                         </button>
                         <span className="text-muted-foreground">•</span>
                         <button
                           type="button"
-                          onClick={() => setGatewayUrl('http://localhost:8081')}
+                          onClick={() => setGatewayUrl('https://wa.dfydude.cc.cd')}
                           className="text-muted-foreground hover:text-foreground font-mono"
                         >
-                          localhost:8081
+                          wa.dfydude.cc.cd
                         </button>
                       </div>
                     </div>
                     <Input
-                      placeholder="e.g. https://wa.dfydude.cc.cd or http://localhost:8081"
+                      placeholder="e.g. https://wa.dfydude.online or https://wa.dfydude.cc.cd"
                       value={gatewayUrl}
                       onChange={(e) => setGatewayUrl(e.target.value)}
                       className="h-8 text-xs bg-muted"
@@ -311,7 +311,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                       Pre-Configured Cloud Gateway:
                     </p>
                     <p className="leading-relaxed">
-                      UniCRM is connected to the cloud gateway at <code className="text-foreground font-semibold">https://wa.dfydude.cc.cd</code>. If you prefer to connect your own self-hosted WhatsApp Gateway (Evolution API), you can enter your custom URL and secret key above.
+                      UniCRM is connected to the cloud gateway at <code className="text-foreground font-semibold">https://wa.dfydude.online</code>. If you prefer to connect your own self-hosted WhatsApp Gateway (Evolution API), you can enter your custom URL and secret key above.
                     </p>
                   </div>
                 </form>

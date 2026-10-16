@@ -16,7 +16,7 @@ export interface EvolutionQrCodeResponse {
   state?: 'connecting' | 'open' | 'close' | string;
 }
 
-export const DEFAULT_EVOLUTION_GATEWAY = 'https://wa.dfydude.cc.cd';
+export const DEFAULT_EVOLUTION_GATEWAY = 'https://wa.dfydude.online';
 
 export class EvolutionClient {
   private baseUrl: string;
