@@ -253,10 +253,10 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                         <span className="text-muted-foreground">Presets:</span>
                         <button
                           type="button"
-                          onClick={() => setGatewayUrl('https://wa.dfydude.online')}
+                          onClick={() => setGatewayUrl('https://wa.dfydude.cc.cd')}
                           className="text-primary hover:underline font-mono"
                         >
-                          wa.dfydude.online
+                          wa.dfydude.cc.cd
                         </button>
                         <span className="text-muted-foreground">•</span>
                         <button
@@ -269,7 +269,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                       </div>
                     </div>
                     <Input
-                      placeholder="e.g. https://wa.dfydude.online or http://localhost:8081"
+                      placeholder="e.g. https://wa.dfydude.cc.cd or http://localhost:8081"
                       value={gatewayUrl}
                       onChange={(e) => setGatewayUrl(e.target.value)}
                       className="h-8 text-xs bg-muted"
@@ -316,7 +316,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                     </p>
                     <div className="space-y-1 bg-background/80 p-2.5 rounded-lg border border-border font-mono text-[10px] text-foreground">
                       <p className="text-muted-foreground font-sans text-[11px]">Option 1: Cloudflare Named Tunnel (Permanent)</p>
-                      <p className="text-primary font-bold">hostname: wa.dfydude.online &rarr; http://localhost:8081</p>
+                      <p className="text-primary font-bold">hostname: wa.dfydude.cc.cd &rarr; http://localhost:8081</p>
                       <p className="mt-1 text-muted-foreground font-sans text-[11px]">Option 2: Instant Quick Tunnel (Testing)</p>
                       <p className="text-emerald-500 font-bold">cloudflared tunnel --url http://localhost:8081</p>
                     </div>
