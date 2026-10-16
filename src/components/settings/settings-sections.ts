@@ -11,6 +11,7 @@ import {
   User,
   UsersRound,
   Zap,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -28,6 +29,7 @@ export const SETTINGS_SECTIONS = [
   'security',
   'appearance',
   'whatsapp',
+  'ai',
   'integrations',
   'templates',
   'quick-replies',
@@ -55,6 +57,7 @@ export const SECTION_META: Record<SettingsSection, SectionMeta> = {
   security: { id: 'security', label: 'Login & security', icon: Shield, group: 'account' },
   appearance: { id: 'appearance', label: 'Appearance', icon: Palette, group: 'account' },
   whatsapp: { id: 'whatsapp', label: 'WhatsApp', icon: PlugZap, group: 'workspace' },
+  ai: { id: 'ai', label: 'AI Assistant', icon: Sparkles, group: 'workspace' },
   integrations: { id: 'integrations', label: 'Channels & Integrations', icon: Layers, group: 'workspace' },
   templates: { id: 'templates', label: 'Templates', icon: FileText, group: 'workspace' },
   'quick-replies': { id: 'quick-replies', label: 'Quick replies', icon: Zap, group: 'workspace' },

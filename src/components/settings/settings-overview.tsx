@@ -174,6 +174,11 @@ export function SettingsOverview({
       ),
     },
     {
+      section: 'ai',
+      loading: false,
+      subtitle: 'Auto-replies, smart drafts & knowledge base',
+    },
+    {
       section: 'integrations',
       loading: false,
       subtitle: 'Google Drive, Email, FB & IG',
