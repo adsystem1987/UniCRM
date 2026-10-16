@@ -47,23 +47,23 @@ const PRESET_OPTIONS: PresetOption[] = [
   {
     amount: "29",
     label: "₹29/mo",
-    sublabel: "Chai Supporter ☕",
-    badge: "Community",
+    sublabel: "Community Supporter ☕",
+    badge: "Free Mission",
     icon: Coffee,
   },
   {
     amount: "59",
     label: "₹59/mo",
-    sublabel: "AI Assistant Pro ⚡",
-    badge: "Smart Router",
+    sublabel: "AI Smart Router Pro ⚡",
+    badge: "Most Popular",
     icon: Sparkles,
   },
   {
-    amount: "199",
-    label: "₹199/mo",
-    sublabel: "Agency Hero 🌟",
-    badge: "VIP Star",
-    icon: Award,
+    amount: "149",
+    label: "₹149/mo",
+    sublabel: "24/7 Cloud Gateway 🚀",
+    badge: "Full Power",
+    icon: Rocket,
   },
 ];
 
@@ -91,7 +91,7 @@ export function UpiSupportDialog({
   onOpenChange,
   upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi",
 }: UpiSupportDialogProps) {
-  const [activeTab, setActiveTab] = useState<"pay" | "perks" | "thanks">("pay");
+  const [activeTab, setActiveTab] = useState<"pay" | "dfy" | "perks" | "thanks">("pay");
   const [selectedAmount, setSelectedAmount] = useState<string>("59");
   const [isCustom, setIsCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -167,7 +167,19 @@ export function UpiSupportDialog({
             }`}
           >
             <QrCode className="h-3.5 w-3.5" />
-            <span>Pay via UPI (₹{effectiveAmount})</span>
+            <span>Support (₹{effectiveAmount})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("dfy")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg transition-all ${
+              activeTab === "dfy"
+                ? "bg-background text-foreground shadow-xs ring-1 ring-amber-500/30 text-amber-600 dark:text-amber-400 font-extrabold"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+            <span>DFY Setup 🛠️</span>
           </button>
           <button
             type="button"
@@ -379,6 +391,137 @@ export function UpiSupportDialog({
                   <strong className="text-foreground">Community Supporter Badge</strong> + Direct WhatsApp delivery
                 </li>
               </ul>
+            </div>
+          </div>
+        ) : activeTab === "dfy" ? (
+          /* Done-For-You (DFY) Team Onboarding & Setup Tab */
+          <div className="py-2 space-y-4 text-left">
+            <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-indigo-500/5 p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                  <Sparkles className="h-3 w-3" />
+                  High-Touch Agency Service
+                </span>
+                <span className="text-sm font-black text-foreground bg-background/80 px-2.5 py-0.5 rounded-lg border border-border">
+                  ₹1,999 <span className="text-[10px] text-muted-foreground font-normal">one-time</span>
+                </span>
+              </div>
+              <h4 className="font-black text-foreground text-base">
+                Done-For-You (DFY) Team Setup &amp; Onboarding
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Skip technical hurdles. Our engineering team gets UniCRM fully configured, tailored to your sales process, and working seamlessly for your team in under 24 hours.
+              </p>
+            </div>
+
+            {/* Deliverables List */}
+            <div className="space-y-2">
+              <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                <span>Everything Included in Your ₹1,999 DFY Package:</span>
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="text-base">🎯</span>
+                    <span>30-Min 1-on-1 Google Meet</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Live call with you &amp; your sales reps to map your pipeline stages, custom tags &amp; team roles.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="text-base">📱</span>
+                    <span>WhatsApp Web Gateway Pairing</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    End-to-end QR pairing, webhook verification, and 24/7 cloud auto-reconnect guarantee.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="text-base">👥</span>
+                    <span>Contact &amp; Lead CSV Migration</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    We clean, format &amp; import up to 5,000 existing leads from Excel/CSV with custom fields.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="text-base">⚡</span>
+                    <span>3 Custom Automation Flows</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Instant welcome reply, inbound lead qualifier, and automated payment/quote follow-ups.
+                  </p>
+                </div>
+
+                <div className="p-3 rounded-xl border border-border bg-card space-y-1 sm:col-span-2">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="text-base">🤖</span>
+                    <span>1-Month AI Smart Router Pro Included (Free)</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Instant zero-config AI reply drafts, automated lead qualification &amp; priority triage included for 30 days.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* UPI & Booking Action Card */}
+            <div className="rounded-xl border border-indigo-500/25 bg-muted/40 p-3.5 space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-foreground">Pay ₹1,999 via UPI to Book:</span>
+                <span className="font-mono text-[11px] text-muted-foreground bg-background px-2 py-0.5 rounded border border-border">
+                  {upiId}
+                </span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-2">
+                <a
+                  href={`upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent("DFY UniCRM Onboarding")}&am=1999&cu=INR&tn=${encodeURIComponent("UniCRM DFY Team Onboarding (₹1,999)")}`}
+                  className="flex-1"
+                >
+                  <Button className="w-full h-10 font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-600 text-white gap-2 shadow-xs text-xs">
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Pay ₹1,999 via UPI
+                  </Button>
+                </a>
+
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(
+                    `Hi DFY UniCRM team! I want to book the Done-For-You (DFY) Team Onboarding & Setup (₹1,999).\n\nMy Business Name:\nTeam Size:\nPreferred Time for Google Meet:\nPayment UTR (if already sent via UPI):`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-10 font-bold text-xs gap-1.5 border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500/10"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Schedule via WhatsApp
+                  </Button>
+                </a>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px] text-muted-foreground">
+                <span>Questions before booking?</span>
+                <a
+                  href="mailto:ravibabuche@dfydude.online?subject=UniCRM%20DFY%20Setup%20Inquiry"
+                  className="font-semibold text-primary hover:underline flex items-center gap-1"
+                >
+                  <Mail className="h-3 w-3" />
+                  Email our team
+                </a>
+              </div>
             </div>
           </div>
         ) : activeTab === "perks" ? (
@@ -613,12 +756,12 @@ export function UpiSupportBanner({ upiId }: { upiId?: string }) {
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/20">
                 <Gift className="h-3 w-3" />
-                Supporter Perks: ₹29/mo • ₹99/mo • ₹299/mo
+                ₹29/mo Supporter • ₹59/mo AI Pro • ₹149/mo Gateway • ₹1,999 DFY Setup
               </span>
             </div>
 
             <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
-              UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> to help fund cloud servers, AI infrastructure &amp; maintenance so UniCRM stays free for every community member!
+              UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> or get our <strong className="text-foreground">Done-For-You (DFY) Team Onboarding (₹1,999)</strong> to get your pipeline, WhatsApp gateway &amp; automations configured live with zero headaches!
             </p>
 
             <p className="text-[11px] text-muted-foreground/85 flex items-center gap-1 pt-0.5">
@@ -634,7 +777,7 @@ export function UpiSupportBanner({ upiId }: { upiId?: string }) {
               className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white px-5 py-2.5 text-center text-xs sm:text-sm font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-2 border border-white/10 group cursor-pointer"
             >
               <Sparkles className="h-4 w-4 text-amber-300 group-hover:rotate-12 transition-transform" />
-              <span>Support from ₹29/month</span>
+              <span>Support &amp; DFY Setup</span>
               <span className="text-[11px] opacity-85 font-normal">(UPI 🇮🇳)</span>
             </button>
           </div>
@@ -667,7 +810,7 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
         </div>
 
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> to help fund cloud servers, AI infrastructure & maintenance so UniCRM stays free for every community member!
+          UniCRM is 100% free forever. Support from <strong className="text-foreground">₹29/month</strong> or get our <strong className="text-foreground">DFY Team Setup (₹1,999)</strong> to fast-track your launch!
         </p>
 
         <div className="flex items-center justify-between text-[10px] text-muted-foreground font-medium pt-0.5">
@@ -675,17 +818,17 @@ export function UpiSupportCard({ upiId }: { upiId?: string }) {
             <Gift className="h-3 w-3" />
             Supporter Perks
           </span>
-          <span className="font-bold text-foreground">₹29/mo • ₹59/mo • ₹199/mo</span>
+          <span className="font-bold text-foreground">₹29 • ₹59 • ₹149 • ₹1,999 DFY</span>
         </div>
 
         {/* Cool, vibrant, modern button */}
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white py-2 text-center text-xs font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-1.5 border border-white/10 group"
+          className="w-full rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white py-2 text-center text-xs font-bold transition-all shadow-md hover:shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center gap-1.5 border border-white/10 group cursor-pointer"
         >
           <Sparkles className="h-3.5 w-3.5 text-amber-300 group-hover:rotate-12 transition-transform" />
-          <span>Support from ₹29/month</span>
+          <span>Support &amp; DFY Setup</span>
           <span className="text-[10px] opacity-85 font-normal">(UPI 🇮🇳)</span>
         </button>
 
