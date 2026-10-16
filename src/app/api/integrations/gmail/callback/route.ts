@@ -52,9 +52,29 @@ export async function GET(request: Request) {
     const { accessToken, refreshToken } = await exchangeGmailCode(code, redirectUri);
 
     const email = await getGmailUserEmail(accessToken);
-    const encryptedRefreshToken = encrypt(refreshToken || accessToken);
-
     const supabase = getAdminClient();
+
+    let tokenToStore = refreshToken;
+    if (!tokenToStore) {
+      const { data: existing } = await supabase
+        .from("gmail_configs")
+        .select("refresh_token")
+        .eq("account_id", accountId)
+        .maybeSingle();
+
+      if (existing?.refresh_token) {
+        try {
+          tokenToStore = decrypt(existing.refresh_token);
+        } catch {
+          // ignore decrypt error if old format
+        }
+      }
+    }
+    if (!tokenToStore) {
+      tokenToStore = accessToken;
+    }
+
+    const encryptedRefreshToken = encrypt(tokenToStore);
     const { error: dbError } = await supabase.from("gmail_configs").upsert(
       {
         account_id: accountId,

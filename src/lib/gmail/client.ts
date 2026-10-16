@@ -78,8 +78,8 @@ export async function refreshGmailAccessToken(
     throw new Error("GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET is missing.");
   }
 
-  const refreshToken = decrypt(encryptedRefreshToken);
-  if (!refreshToken) {
+  const token = decrypt(encryptedRefreshToken);
+  if (!token) {
     throw new Error("Invalid or empty Gmail refresh token.");
   }
 
@@ -89,14 +89,18 @@ export async function refreshGmailAccessToken(
     body: new URLSearchParams({
       client_id: clientId,
       client_secret: clientSecret,
-      refresh_token: refreshToken,
+      refresh_token: token,
       grant_type: "refresh_token",
     }),
   });
 
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error_description || data.error || "Failed to refresh Gmail access token");
+    if (token.startsWith("ya29.")) {
+      return token;
+    }
+    const msg = data.error_description || data.error || "Failed to refresh Gmail access token";
+    throw new Error(`Google token refresh error: ${msg}`);
   }
 
   return data.access_token as string;
@@ -111,7 +115,7 @@ export async function getGmailUserEmail(accessToken: string): Promise<string> {
     return "Google Workspace Account";
   }
 
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   return data.emailAddress || "Google Workspace Account";
 }
 
@@ -142,9 +146,8 @@ export async function sendGmailMessage({
     `Subject: ${utf8Subject}`,
     `MIME-Version: 1.0`,
     `Content-Type: text/html; charset=utf-8`,
-    `Content-Transfer-Encoding: base64`,
     "",
-    Buffer.from(bodyHtml, "utf8").toString("base64"),
+    bodyHtml,
   ].join("\r\n");
 
   const base64UrlRaw = Buffer.from(rawMessage, "utf8")
@@ -164,9 +167,10 @@ export async function sendGmailMessage({
     }),
   });
 
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error?.message || "Failed to send email via Gmail API");
+    const errorMsg = data.error?.message || data.error_description || JSON.stringify(data);
+    throw new Error(`Gmail API error: ${errorMsg}`);
   }
 
   return {

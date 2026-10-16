@@ -89,6 +89,7 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.error("[gmail/send] error:", err);
-    return toErrorResponse(err);
+    const message = err instanceof Error ? err.message : "Failed to send email via Gmail";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
