@@ -30,7 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { UpiSupportDialog } from "@/components/layout/upi-support-dialog";
+import { LeadPackOrderDialog } from "./lead-pack-order-dialog";
 
 interface LeadItem {
   id: string;
@@ -232,7 +232,8 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
   const [hasSearched, setHasSearched] = useState(true);
   const [selectedLeadIds, setSelectedLeadIds] = useState<string[]>([]);
   const [importing, setImporting] = useState(false);
-  const [upiOrderOpen, setUpiOrderOpen] = useState(false);
+  const [leadPackDialogOpen, setLeadPackDialogOpen] = useState(false);
+  const [selectedPackAmount, setSelectedPackAmount] = useState<number>(999);
 
   // Active results derived from database or fallback generator
   const currentCategoryLeads =
@@ -344,7 +345,10 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
 
           <Button
             size="sm"
-            onClick={() => setUpiOrderOpen(true)}
+            onClick={() => {
+              setSelectedPackAmount(999);
+              setLeadPackDialogOpen(true);
+            }}
             className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs text-xs"
           >
             <Zap className="h-3.5 w-3.5" />
@@ -619,7 +623,10 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           </div>
 
           <Button
-            onClick={() => setUpiOrderOpen(true)}
+            onClick={() => {
+              setSelectedPackAmount(499);
+              setLeadPackDialogOpen(true);
+            }}
             className="font-bold bg-rose-600 hover:bg-rose-700 text-white shrink-0 gap-1.5 shadow-xs"
           >
             <span>Order Lead Pack (from ₹499)</span>
@@ -629,7 +636,14 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
 
         {/* 3 Pricing Packs */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-          <div className="p-3.5 rounded-xl border border-border bg-card space-y-1">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedPackAmount(499);
+              setLeadPackDialogOpen(true);
+            }}
+            className="p-3.5 rounded-xl border border-border bg-card space-y-1 text-left hover:border-primary/50 hover:bg-muted/40 transition-all cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Starter Outbound</span>
               <span className="text-xs font-black text-emerald-600">₹499</span>
@@ -637,9 +651,16 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
             <p className="text-[11px] text-muted-foreground">
               <strong>250 Verified Leads</strong> • WhatsApp checked • 1-click import to UniCRM
             </p>
-          </div>
+          </button>
 
-          <div className="p-3.5 rounded-xl border-2 border-emerald-500 bg-card space-y-1 shadow-xs relative">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedPackAmount(999);
+              setLeadPackDialogOpen(true);
+            }}
+            className="p-3.5 rounded-xl border-2 border-emerald-500 bg-card space-y-1 shadow-xs relative text-left hover:bg-emerald-500/5 transition-all cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Growth Batch 🚀</span>
               <span className="text-xs font-black text-emerald-600">₹999</span>
@@ -647,9 +668,16 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
             <p className="text-[11px] text-muted-foreground">
               <strong>1,000 Verified Leads</strong> • High ICP match • Direct outbound readiness
             </p>
-          </div>
+          </button>
 
-          <div className="p-3.5 rounded-xl border border-border bg-card space-y-1">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedPackAmount(1999);
+              setLeadPackDialogOpen(true);
+            }}
+            className="p-3.5 rounded-xl border border-border bg-card space-y-1 text-left hover:border-primary/50 hover:bg-muted/40 transition-all cursor-pointer"
+          >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Enterprise Multi-City</span>
               <span className="text-xs font-black text-emerald-600">₹1,999</span>
@@ -657,13 +685,16 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
             <p className="text-[11px] text-muted-foreground">
               <strong>2,500 Verified Leads</strong> • Phone, WhatsApp & Email enrichment
             </p>
-          </div>
+          </button>
         </div>
       </div>
 
-      <UpiSupportDialog
-        open={upiOrderOpen}
-        onOpenChange={setUpiOrderOpen}
+      <LeadPackOrderDialog
+        open={leadPackDialogOpen}
+        onOpenChange={setLeadPackDialogOpen}
+        defaultNiche={niche}
+        defaultCity={city}
+        initialAmount={selectedPackAmount}
       />
     </div>
   );
