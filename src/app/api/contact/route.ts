@@ -187,6 +187,39 @@ export async function POST(req: Request) {
             console.warn('[contact/route] Gmail notification send failed:', gmailErr);
           }
         }
+
+        // 3. Send email via Resend if RESEND_API_KEY is configured
+        if (process.env.RESEND_API_KEY) {
+          try {
+            await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                from: process.env.RESEND_FROM || 'UniCRM Inquiries <onboarding@resend.dev>',
+                to: DESTINATION_EMAIL,
+                reply_to: email,
+                subject: `[UniCRM Lead] ${topic} from ${name}`,
+                html: `
+                  <h3>New Support Desk Inquiry</h3>
+                  <p><strong>Name:</strong> ${name}</p>
+                  <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                  <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
+                  <p><strong>Topic:</strong> ${topic}</p>
+                  <hr/>
+                  <p><strong>Message:</strong></p>
+                  <blockquote style="background:#f4f4f6;padding:12px;border-left:4px solid #10b981;border-radius:4px;">
+                    ${message.replace(/\n/g, '<br/>')}
+                  </blockquote>
+                `,
+              }),
+            });
+          } catch (resendErr) {
+            console.warn('[contact/route] Resend notification failed:', resendErr);
+          }
+        }
       }
     } catch (dbErr) {
       console.warn('[contact/route] Real-time CRM ingestion warning:', dbErr);
