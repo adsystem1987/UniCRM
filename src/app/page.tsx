@@ -160,9 +160,9 @@ export default function LandingPage() {
                   Contact Technical Desk
                 </ContactButton>
               </div>
-              <p className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                Instant 60-second activation • Zero credit card • Locks in free lifetime access before batch cap
+              <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                Instant 60-second activation • Zero credit card required • 100% Free forever for your whole team
               </p>
             </div>
 
@@ -731,13 +731,10 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-2xl font-black text-foreground">DFY UniCRM Core</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
-                    <span className="text-2xl font-bold text-muted-foreground line-through decoration-rose-500/80 decoration-2">
-                      ₹2,999
-                    </span>
                     <span className="text-5xl font-black text-foreground">₹0</span>
-                    <span className="text-sm text-muted-foreground font-semibold">/ lifetime</span>
-                    <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400">
-                      100% OFF Free
+                    <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
+                    <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      Community Edition
                     </span>
                   </div>
 

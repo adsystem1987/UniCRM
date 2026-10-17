@@ -14,7 +14,6 @@ import {
 import { UsersRound, ShieldCheck, Zap, CheckCircle2 } from "lucide-react";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { ModeToggle } from "@/components/layout/mode-toggle";
-import { useServerSlots } from "@/lib/scarcity";
 
 export default function SignupPage() {
   return (
@@ -28,7 +27,6 @@ function SignupPageInner() {
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get("invite");
   const t = useTranslations("SignupPage");
-  const slots = useServerSlots();
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4 py-8">
@@ -51,7 +49,7 @@ function SignupPageInner() {
             )}
           </div>
           <CardTitle className="text-xl text-foreground font-black">
-            {inviteToken ? t("titleJoin") : "Claim Free Lifetime Account"}
+            {inviteToken ? t("titleJoin") : "Create Your Free Workspace"}
           </CardTitle>
           <CardDescription className="text-muted-foreground text-xs">
             {inviteToken
@@ -60,15 +58,12 @@ function SignupPageInner() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {/* Limited Server Capacity Scarcity Alert */}
+          {/* 100% Free Community Badge */}
           {!inviteToken && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 font-medium shadow-xs">
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-              </span>
+            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-400 font-medium shadow-xs">
+              <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
               <span>
-                <strong>Limited Batch Notice:</strong> Only {slots.remaining} free lifetime accounts remaining today due to server bandwidth limits. Complete signup to secure your slot.
+                <strong>100% Free Forever:</strong> Full omnichannel access for your entire team. No credit card required, ever.
               </span>
             </div>
           )}

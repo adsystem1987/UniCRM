@@ -1,45 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { MessageCircle, ArrowRight } from "lucide-react";
+import { MessageCircle, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useServerSlots } from "@/lib/scarcity";
 
 export function ScarcityTopBanner() {
-  const slots = useServerSlots();
-
   return (
-    <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-amber-500/15 border-b border-amber-500/30 px-4 py-2 text-center text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center justify-center gap-2">
+    <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border-b border-emerald-500/20 px-4 py-2 text-center text-xs font-semibold text-emerald-800 dark:text-emerald-300 flex items-center justify-center gap-2">
       <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
       <span>
-        ⚡ Limited Server Capacity: Free signups are capped at {slots.total} businesses per batch to preserve database & AI speed. Only {slots.remaining} free lifetime spots remaining!
+        🌱 100% Free Core Software for everyone • No credit card • Optional Done-For-You technical setup available
       </span>
     </div>
   );
 }
 
 export function ScarcityHeroPill() {
-  const slots = useServerSlots();
-
   return (
-    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 mb-6 shadow-xs">
-      <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-      </span>
+    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 mb-6 shadow-xs">
+      <span className="h-2 w-2 rounded-full bg-emerald-500" />
       <span>
-        High Demand Alert: {slots.percentage}% Free Server Slots Claimed • Only {slots.remaining} Left in Current Batch
+        Open &amp; Free Community CRM • Unlimited Team Seats • Zero Per-Agent Fees
       </span>
     </div>
   );
 }
 
 export function ScarcityCtaButton() {
-  const slots = useServerSlots();
-
   return (
     <Link href="/signup">
       <Button
@@ -47,7 +37,7 @@ export function ScarcityCtaButton() {
         className="h-12 px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base gap-2 shadow-lg shadow-emerald-600/25"
       >
         <MessageCircle className="h-5 w-5" />
-        <span>Claim Free Account ({slots.remaining} Spots Left)</span>
+        <span>Start Free Forever</span>
         <ArrowRight className="h-4 w-4" />
       </Button>
     </Link>
@@ -55,24 +45,14 @@ export function ScarcityCtaButton() {
 }
 
 export function ScarcityAllocationBar() {
-  const slots = useServerSlots();
-
   return (
-    <div className="my-4 p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 space-y-1.5 text-xs">
-      <div className="flex items-center justify-between font-bold text-amber-700 dark:text-amber-400">
-        <span>Server Capacity Allocation</span>
-        <span>
-          {slots.claimed} / {slots.total} Claimed
-        </span>
-      </div>
-      <div className="w-full bg-amber-500/20 rounded-full h-2 overflow-hidden">
-        <div
-          className="bg-amber-500 h-2 rounded-full transition-all duration-500"
-          style={{ width: `${slots.percentage}%` }}
-        />
-      </div>
-      <p className="text-[10px] text-muted-foreground">
-        Free lifetime accounts are batch-restricted to guarantee lightning-fast database & AI speeds for active teams. Only {slots.remaining} slots remain!
+    <div className="my-4 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1 text-xs">
+      <p className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+        100% Genuine Free Core
+      </p>
+      <p className="text-[11px] text-muted-foreground leading-relaxed">
+        No trial period, no card required, and no hidden per-seat fees. Full access to all CRM modules forever.
       </p>
     </div>
   );
