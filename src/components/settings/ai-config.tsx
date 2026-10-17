@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Loader2, Sparkles, CheckCircle2, Trash2, Eye, EyeOff, Zap, KeyRound } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle2, Trash2, Eye, EyeOff, Zap, KeyRound, Lock, CreditCard, Clock } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { canEditSettings } from '@/lib/auth/roles';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { SettingsPanelHead } from './settings-panel-head';
 import { AiKnowledgeCard } from './ai-knowledge';
+import { AiProOrderDialog } from './ai-pro-order-dialog';
 import { AI_PROVIDER_DEFAULT_MODEL } from '@/lib/ai/defaults';
 import type { AiProvider } from '@/lib/ai/types';
 import type { AccountMember } from '@/types';
@@ -89,6 +90,11 @@ export function AiConfig() {
   const [handoffAgentId, setHandoffAgentId] = useState('');
   const [members, setMembers] = useState<AccountMember[]>([]);
 
+  // AI Pro Plan purchase verification state
+  const [isProPaid, setIsProPaid] = useState(false);
+  const [isProPending, setIsProPending] = useState(false);
+  const [aiProOrderOpen, setAiProOrderOpen] = useState(false);
+
   // Guard keyed on the account (not a bare boolean) so an in-place
   // account switch — ownership transfer, multi-account membership —
   // refetches instead of showing the previous account's config. Mirrors
@@ -98,8 +104,27 @@ export function AiConfig() {
   const fetchConfig = useCallback(async () => {
     setLoading(true);
     try {
+      // 1. Check AI Config
       const res = await fetch('/api/ai/config');
       const data = await res.json();
+
+      // 2. Check if account has an active or pending order for Smart Router Pro
+      try {
+        const ordersRes = await fetch('/api/orders');
+        const ordersData = await ordersRes.json();
+        if (ordersRes.ok && Array.isArray(ordersData.orders)) {
+          const proOrders = ordersData.orders.filter(
+            (o: { order_type?: string; item_name?: string; status?: string }) =>
+              (o.order_type === 'ai_subscription' || o.item_name?.includes('Smart Router')) &&
+              o.status !== 'cancelled'
+          );
+          const hasPaid = proOrders.some((o: { status: string }) => o.status === 'paid' || o.status === 'fulfilled');
+          const hasPending = proOrders.some((o: { status: string }) => o.status === 'pending_verification');
+          setIsProPaid(hasPaid);
+          setIsProPending(hasPending);
+        }
+      } catch {}
+
       if (!res.ok) {
         toast.error(data.error ?? t('loadFailed'));
         return;
@@ -430,41 +455,70 @@ export function AiConfig() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 text-[9px] font-black text-indigo-600 dark:text-indigo-400">
-                      ₹59/mo Pro Plan
-                    </span>
-                    <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400">
-                      Active & Ready
-                    </span>
+                    {isProPaid ? (
+                      <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Plan Active &amp; Verified
+                      </span>
+                    ) : isProPending ? (
+                      <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                        <Clock className="h-3 w-3 animate-pulse" />
+                        Payment Pending Verification
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                        <Lock className="h-3 w-3" />
+                        ₹59/mo Pro Pack Required
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Your AI assistant is connected to UniCRM&apos;s Smart Router Pro. Provides zero-configuration intelligent reply drafts, incoming lead qualification, and automated routing for ₹59/month (or connect free Google Gemini below).
+                  {isProPaid
+                    ? "Your AI assistant is connected to UniCRM's Smart Router Pro. Provides zero-configuration intelligent reply drafts, incoming lead qualification, and automated routing."
+                    : isProPending
+                    ? "Your ₹59 payment reference is submitted and pending bank verification. You can check status in Orders & Billing, or use Google Gemini Free in the meantime."
+                    : "Zero-configuration intelligent reply drafts and automated routing for ₹59/month. Direct UPI payment with zero gateway deductions, or switch to Google Gemini Free below for 100% free access."}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleTest}
-                    disabled={disabled || testing}
-                    className="h-8 text-xs font-semibold gap-1.5"
-                  >
-                    {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
-                    Test Smart Router
-                  </Button>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={disabled || saving}
-                    className="h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5"
-                  >
-                    {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                    Save & Activate Agent
-                  </Button>
+                  {isProPaid || isProPending ? (
+                    <>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleTest}
+                        disabled={disabled || testing}
+                        className="h-8 text-xs font-semibold gap-1.5"
+                      >
+                        {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
+                        Test Smart Router
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={disabled || saving}
+                        className="h-8 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5"
+                      >
+                        {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                        Save &amp; Activate Agent
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setAiProOrderOpen(true)}
+                      className="h-8 text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white gap-1.5 shadow-xs"
+                    >
+                      <CreditCard className="h-3.5 w-3.5" />
+                      Purchase AI Pro Pack (₹59/mo)
+                    </Button>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => setShowAdvancedBuiltin(!showAdvancedBuiltin)}
@@ -849,6 +903,16 @@ export function AiConfig() {
           </Button>
         </div>
       </div>
+
+      {/* AI Pro Plan One-Click Zero-Gateway Checkout Dialog */}
+      <AiProOrderDialog
+        open={aiProOrderOpen}
+        onOpenChange={setAiProOrderOpen}
+        onSuccess={() => {
+          setIsProPending(true);
+          void fetchConfig();
+        }}
+      />
     </div>
   );
 }
