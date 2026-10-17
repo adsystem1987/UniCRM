@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentAccount, requireRole } from '@/lib/auth/account';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { supabaseAdmin } from '@/lib/flows/admin-client';
 import { sendOrderNotification } from '@/lib/slack/notify';
 
 export const dynamic = 'force-dynamic';
