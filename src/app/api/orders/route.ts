@@ -42,7 +42,9 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const { supabase, accountId, userId, user } = await getCurrentAccount();
+    const { supabase, accountId, userId } = await getCurrentAccount();
+    const { data: userData } = await supabase.auth.getUser();
+    const userEmail = userData?.user?.email || null;
     const body = await request.json().catch(() => ({}));
 
     const itemName = typeof body.itemName === 'string' ? body.itemName.trim() : '';
@@ -100,7 +102,7 @@ export async function POST(request: Request) {
       whatsappPhone,
       niche: parameters.niche,
       city: parameters.city,
-      userEmail: user?.email,
+      userEmail,
     }).catch((slackErr) => console.warn('[orders POST] slack alert error:', slackErr));
 
     return NextResponse.json({
