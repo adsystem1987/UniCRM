@@ -66,13 +66,20 @@ function readInitialTheme(): ThemeId {
 function readInitialMode(): Mode {
   if (typeof window === "undefined") return DEFAULT_MODE;
   const fromAttr = document.documentElement.dataset.mode;
-  if (isMode(fromAttr)) return fromAttr;
+  if (isMode(fromAttr)) {
+    document.documentElement.classList.toggle("dark", fromAttr === "dark");
+    return fromAttr;
+  }
   try {
     const stored = localStorage.getItem(MODE_STORAGE_KEY);
-    if (isMode(stored)) return stored;
+    if (isMode(stored)) {
+      document.documentElement.classList.toggle("dark", stored === "dark");
+      return stored;
+    }
   } catch {
     // localStorage can throw in private-browsing / sandboxed contexts.
   }
+  document.documentElement.classList.toggle("dark", DEFAULT_MODE === "dark");
   return DEFAULT_MODE;
 }
 
@@ -97,6 +104,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setModeState(next);
     if (typeof document !== "undefined") {
       document.documentElement.dataset.mode = next;
+      document.documentElement.classList.toggle("dark", next === "dark");
     }
     try {
       localStorage.setItem(MODE_STORAGE_KEY, next);
@@ -124,6 +132,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         if (isMode(e.newValue) && e.newValue !== mode) {
           setModeState(e.newValue);
           document.documentElement.dataset.mode = e.newValue;
+          document.documentElement.classList.toggle("dark", e.newValue === "dark");
         }
       }
     }

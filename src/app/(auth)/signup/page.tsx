@@ -60,7 +60,7 @@ function SignupPageInner() {
         <CardContent className="space-y-5">
           {/* 100% Free Community Badge */}
           {!inviteToken && (
-            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-400 font-medium shadow-xs">
+            <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-900 dark:text-emerald-200 font-medium shadow-xs">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
               <span>
                 <strong>100% Free Forever:</strong> Full omnichannel access for your entire team. No credit card required, ever.
