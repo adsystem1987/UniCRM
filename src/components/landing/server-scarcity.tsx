@@ -12,7 +12,7 @@ export function ScarcityTopBanner() {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
       </span>
       <span>
-        🌱 100% Free Core Software for everyone • No credit card • Optional Done-For-You technical setup available
+        🌱 Funded by you and our community members — keeping UniCRM 100% free for everyone to use • Zero credit card required
       </span>
     </div>
   );
@@ -23,7 +23,7 @@ export function ScarcityHeroPill() {
     <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 mb-6 shadow-xs">
       <span className="h-2 w-2 rounded-full bg-emerald-500" />
       <span>
-        Open &amp; Free Community CRM • Unlimited Team Seats • Zero Per-Agent Fees
+        Funded by You &amp; Our Community • 100% Free Forever • Unlimited Team Seats
       </span>
     </div>
   );
@@ -49,10 +49,10 @@ export function ScarcityAllocationBar() {
     <div className="my-4 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1 text-xs">
       <p className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-        100% Genuine Free Core
+        Funded by You &amp; Our Community
       </p>
       <p className="text-[11px] text-muted-foreground leading-relaxed">
-        No trial period, no card required, and no hidden per-seat fees. Full access to all CRM modules forever.
+        Kept alive and 100% free for everyone by voluntary community supporters and optional Done-For-You technical setup. Zero software subscriptions.
       </p>
     </div>
   );
