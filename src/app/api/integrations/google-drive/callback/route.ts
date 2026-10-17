@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   if (errorParam) {
     console.error("[google-drive/callback] Google error:", errorParam);
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gdrive_error=${encodeURIComponent(errorParam)}`
+      `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${encodeURIComponent(errorParam)}`
     );
   }
 
@@ -34,7 +34,7 @@ export async function GET(request: Request) {
 
   if (!code || !rawState) {
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gdrive_error=missing_code_or_state`
+      `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=missing_code_or_state`
     );
   }
 
@@ -47,7 +47,7 @@ export async function GET(request: Request) {
   } catch (err) {
     console.error("[google-drive/callback] State parse error:", err);
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gdrive_error=invalid_state`
+      `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=invalid_state`
     );
   }
 
@@ -80,18 +80,18 @@ export async function GET(request: Request) {
     if (dbError) {
       console.error("[google-drive/callback] DB upsert error:", dbError);
       return NextResponse.redirect(
-        `${origin}/settings?tab=integrations&gdrive_error=${encodeURIComponent(dbError.message)}`
+        `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${encodeURIComponent(dbError.message)}`
       );
     }
 
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gdrive=connected`
+      `${origin}/settings?tab=integrations&subtab=gdrive&gdrive=connected`
     );
   } catch (err) {
     console.error("[google-drive/callback] Auth exchange error:", err);
     const message = err instanceof Error ? err.message : "Failed to connect Google Drive";
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gdrive_error=${encodeURIComponent(message)}`
+      `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${encodeURIComponent(message)}`
     );
   }
 }

@@ -26,6 +26,6 @@ export async function GET(request: Request) {
     console.error("[gmail/auth] error:", err);
     const origin = new URL(request.url).origin;
     const errorMsg = err instanceof Error ? encodeURIComponent(err.message) : "Failed to start Gmail authentication";
-    return NextResponse.redirect(`${origin}/settings?tab=integrations&error=${errorMsg}`);
+    return NextResponse.redirect(`${origin}/settings?tab=integrations&subtab=email&gmail_error=${errorMsg}`);
   }
 }

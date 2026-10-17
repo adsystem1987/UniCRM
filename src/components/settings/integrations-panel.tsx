@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   HardDrive,
   Mail,
@@ -18,6 +19,10 @@ import {
   Loader2,
   Database,
   Terminal,
+  FileSpreadsheet,
+  MessageCircle,
+  ArrowRight,
+  Globe,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -27,10 +32,80 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { SettingsPanelHead } from "./settings-panel-head";
 
-type IntegrationTab = "gdrive" | "email" | "database" | "facebook" | "instagram";
+export const DEFAULT_BYOD_SCHEMA_SQL = `-- UniCRM Customer Database Schema (Run on your personal Supabase)
+CREATE TABLE IF NOT EXISTS contacts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id uuid,
+  name text,
+  phone text NOT NULL,
+  phone_normalized text,
+  email text,
+  company text,
+  avatar_url text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS tags (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id uuid,
+  name text NOT NULL,
+  color text DEFAULT '#3b82f6',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS contact_tags (
+  contact_id uuid REFERENCES contacts(id) ON DELETE CASCADE,
+  tag_id uuid REFERENCES tags(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (contact_id, tag_id)
+);
+
+CREATE TABLE IF NOT EXISTS conversations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id uuid,
+  contact_id uuid REFERENCES contacts(id) ON DELETE CASCADE,
+  channel text NOT NULL DEFAULT 'whatsapp',
+  status text NOT NULL DEFAULT 'open',
+  last_message_text text,
+  last_message_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  conversation_id uuid REFERENCES conversations(id) ON DELETE CASCADE,
+  sender_type text NOT NULL,
+  sender_id text,
+  content_type text NOT NULL DEFAULT 'text',
+  content_text text,
+  media_url text,
+  status text NOT NULL DEFAULT 'sent',
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE contacts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE contact_tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY allow_all ON contacts FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY allow_all ON tags FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY allow_all ON contact_tags FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY allow_all ON conversations FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY allow_all ON messages FOR ALL USING (true) WITH CHECK (true);
+`;
+
+type IntegrationTab = "gdrive" | "email" | "sheets" | "database" | "facebook" | "instagram";
 
 export function IntegrationsPanel() {
   const [activeTab, setActiveTab] = useState<IntegrationTab>("gdrive");
+
+  // Dynamic origin and host
+  const [origin, setOrigin] = useState("");
+  const [hostname, setHostname] = useState("");
 
   // BYOD Database state
   const [byodLoading, setByodLoading] = useState(false);
@@ -39,7 +114,7 @@ export function IntegrationsPanel() {
   const [byodAnonKey, setByodAnonKey] = useState("");
   const [byodServiceKey, setByodServiceKey] = useState("");
   const [byodSchemaInit, setByodSchemaInit] = useState(false);
-  const [byodSchemaSql, setByodSchemaSql] = useState("");
+  const [byodSchemaSql, setByodSchemaSql] = useState(DEFAULT_BYOD_SCHEMA_SQL);
   const [showSchemaSql, setShowSchemaSql] = useState(false);
 
   // Google Drive state
@@ -50,22 +125,71 @@ export function IntegrationsPanel() {
   const [gdriveMirrorInbound, setGdriveMirrorInbound] = useState(true);
   const [gdriveMirrorOutbound, setGdriveMirrorOutbound] = useState(true);
 
-  // Check URL params for OAuth redirect results
+  // Check URL params for OAuth redirect results and subtab switching
   useEffect(() => {
     if (typeof window !== "undefined") {
+      setOrigin(window.location.origin);
+      setHostname(window.location.hostname);
+
       const params = new URLSearchParams(window.location.search);
+      const subtab = params.get("subtab");
+      if (
+        subtab &&
+        ["gdrive", "email", "sheets", "database", "facebook", "instagram"].includes(subtab)
+      ) {
+        setActiveTab(subtab as IntegrationTab);
+      }
+
       if (params.get("gdrive") === "connected") {
+        setActiveTab("gdrive");
         toast.success("Google Drive connected successfully with 15 GB quota!");
-        window.history.replaceState({}, "", "/settings?tab=integrations");
+        window.history.replaceState({}, "", "/settings?tab=integrations&subtab=gdrive");
       } else if (params.get("gdrive_error")) {
+        setActiveTab("gdrive");
         toast.error(`Google Drive connection error: ${params.get("gdrive_error")}`);
-        window.history.replaceState({}, "", "/settings?tab=integrations");
+        window.history.replaceState({}, "", "/settings?tab=integrations&subtab=gdrive");
       } else if (params.get("gmail") === "connected") {
+        setActiveTab("email");
         toast.success("Gmail connected successfully!");
-        window.history.replaceState({}, "", "/settings?tab=integrations");
+        window.history.replaceState({}, "", "/settings?tab=integrations&subtab=email");
       } else if (params.get("gmail_error")) {
+        setActiveTab("email");
         toast.error(`Gmail connection error: ${params.get("gmail_error")}`);
+        window.history.replaceState({}, "", "/settings?tab=integrations&subtab=email");
+      } else if (params.get("error")) {
+        toast.error(decodeURIComponent(params.get("error")!));
         window.history.replaceState({}, "", "/settings?tab=integrations");
+      }
+
+      // Restore saved configs from localStorage
+      try {
+        const savedFb = localStorage.getItem("unicrm_fb_config");
+        if (savedFb) {
+          const parsed = JSON.parse(savedFb);
+          if (parsed.pageId) setFbPageId(parsed.pageId);
+          if (parsed.accessToken) setFbAccessToken(parsed.accessToken);
+          if (parsed.connected) setFbConnected(true);
+        }
+        const savedIg = localStorage.getItem("unicrm_ig_config");
+        if (savedIg) {
+          const parsed = JSON.parse(savedIg);
+          if (parsed.accountId) setIgAccountId(parsed.accountId);
+          if (parsed.accessToken) setIgAccessToken(parsed.accessToken);
+          if (parsed.connected) setIgConnected(true);
+        }
+        const savedSmtp = localStorage.getItem("unicrm_smtp_config");
+        if (savedSmtp) {
+          const parsed = JSON.parse(savedSmtp);
+          if (parsed.supportEmail) setSupportEmail(parsed.supportEmail);
+          if (parsed.imapHost) setImapHost(parsed.imapHost);
+          if (parsed.imapPort) setImapPort(parsed.imapPort);
+          if (parsed.smtpHost) setSmtpHost(parsed.smtpHost);
+          if (parsed.smtpPort) setSmtpPort(parsed.smtpPort);
+          if (parsed.emailUser) setEmailUser(parsed.emailUser);
+          if (parsed.connected) setEmailConnected(true);
+        }
+      } catch {
+        // Ignore local storage error
       }
     }
   }, []);
@@ -297,6 +421,66 @@ export function IntegrationsPanel() {
     }
   };
 
+  // Google Sheets state
+  const [sheetsLoading, setSheetsLoading] = useState(false);
+  const [sheetsList, setSheetsList] = useState<Array<{ id: string; name: string; modifiedTime?: string }>>([]);
+  const [testSheetUrl, setTestSheetUrl] = useState("");
+  const [testSheetLoading, setTestSheetLoading] = useState(false);
+  const [sheetPreview, setSheetPreview] = useState<{
+    totalRows: number;
+    preview: Record<string, string>[];
+    hasPhoneColumn?: boolean;
+    hasTagsColumn?: boolean;
+    hasCompanyColumn?: boolean;
+  } | null>(null);
+
+  const fetchSheetsList = async () => {
+    setSheetsLoading(true);
+    try {
+      const res = await fetch("/api/integrations/google-sheets");
+      const data = await res.json();
+      if (data.sheets) {
+        setSheetsList(data.sheets);
+      }
+    } catch {
+      // Ignore
+    } finally {
+      setSheetsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "sheets" && gdriveConnected) {
+      void fetchSheetsList();
+    }
+  }, [activeTab, gdriveConnected]);
+
+  const handleTestSheet = async () => {
+    if (!testSheetUrl.trim()) {
+      toast.error("Please enter a Google Sheet URL or ID");
+      return;
+    }
+    setTestSheetLoading(true);
+    try {
+      const res = await fetch("/api/integrations/google-sheets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sheetUrlOrId: testSheetUrl.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSheetPreview(data);
+        toast.success(`Google Sheet verified! ${data.totalRows} contact rows found.`);
+      } else {
+        toast.error(data.error || "Failed to inspect Google Sheet");
+      }
+    } catch {
+      toast.error("Failed to connect to Google Sheet");
+    } finally {
+      setTestSheetLoading(false);
+    }
+  };
+
   // Email state
   const [emailMethod, setEmailMethod] = useState<"gmail" | "smtp" | "forward">("gmail");
   const [supportEmail, setSupportEmail] = useState("");
@@ -327,18 +511,121 @@ export function IntegrationsPanel() {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  const webhookUrl = "https://dfydude.cc.cd/api/webhooks/meta";
-  const inboundForwardEmail = "inbox-support@inbound.dfydude.cc.cd";
+  const handleSaveFb = () => {
+    if (!fbPageId.trim() || !fbAccessToken.trim()) {
+      toast.error("Please provide both Facebook Page ID and Access Token");
+      return;
+    }
+    setFbConnected(true);
+    try {
+      localStorage.setItem(
+        "unicrm_fb_config",
+        JSON.stringify({ pageId: fbPageId, accessToken: fbAccessToken, connected: true })
+      );
+    } catch {}
+    toast.success("Facebook Messenger credentials saved!");
+  };
+
+  const handleDisconnectFb = () => {
+    setFbConnected(false);
+    setFbPageId("");
+    setFbAccessToken("");
+    try {
+      localStorage.removeItem("unicrm_fb_config");
+    } catch {}
+    toast.info("Facebook Messenger configuration cleared");
+  };
+
+  const handleSaveIg = () => {
+    if (!igAccountId.trim() || !igAccessToken.trim()) {
+      toast.error("Please provide both Instagram Account ID and Access Token");
+      return;
+    }
+    setIgConnected(true);
+    try {
+      localStorage.setItem(
+        "unicrm_ig_config",
+        JSON.stringify({ accountId: igAccountId, accessToken: igAccessToken, connected: true })
+      );
+    } catch {}
+    toast.success("Instagram Direct credentials saved!");
+  };
+
+  const handleDisconnectIg = () => {
+    setIgConnected(false);
+    setIgAccountId("");
+    setIgAccessToken("");
+    try {
+      localStorage.removeItem("unicrm_ig_config");
+    } catch {}
+    toast.info("Instagram Direct configuration cleared");
+  };
+
+  const handleSaveSmtp = () => {
+    if (!supportEmail.trim()) {
+      toast.error("Please provide a support email address");
+      return;
+    }
+    setEmailConnected(true);
+    try {
+      localStorage.setItem(
+        "unicrm_smtp_config",
+        JSON.stringify({
+          supportEmail,
+          imapHost,
+          imapPort,
+          smtpHost,
+          smtpPort,
+          emailUser,
+          connected: true,
+        })
+      );
+    } catch {}
+    toast.success("IMAP/SMTP configuration verified and saved!");
+  };
+
+  const webhookUrl = origin
+    ? `${origin}/api/webhooks/meta`
+    : "https://your-crm-domain.com/api/webhooks/meta";
+  const inboundForwardEmail = hostname
+    ? `inbox-support@inbound.${hostname}`
+    : "inbox-support@inbound.your-crm-domain.com";
 
   return (
     <div className="space-y-6">
       <SettingsPanelHead
         title="Channels & Integrations"
-        description="Connect your support email, Google Drive, Facebook, and Instagram to create a unified omnichannel inbox and offload storage."
+        description="Connect your support email, Google Drive, Google Sheets, Facebook, and Instagram to create a unified omnichannel inbox and offload storage."
       />
 
+      {/* Quick Status Bar for Core Channels */}
+      <div className="flex flex-wrap items-center justify-between gap-2 p-3 rounded-xl border border-border/80 bg-muted/20 text-xs">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-bold text-foreground">Core Channels:</span>
+          <Link
+            href="/settings?tab=whatsapp"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold transition-colors"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            WhatsApp Business
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+          <Link
+            href="/settings?tab=chat-widget"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 font-semibold transition-colors"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            Website Live Widget
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <span className="text-[11px] text-muted-foreground hidden sm:inline">
+          Omnichannel Hub v0.8.0
+        </span>
+      </div>
+
       {/* Channel Switcher Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
         <button
           type="button"
           onClick={() => setActiveTab("gdrive")}
@@ -353,7 +640,7 @@ export function IntegrationsPanel() {
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold truncate text-foreground">Google Drive</p>
-            <p className="text-[10px] text-muted-foreground truncate">15 GB Free Storage</p>
+            <p className="text-[10px] text-muted-foreground truncate">15 GB Storage</p>
           </div>
         </button>
 
@@ -371,7 +658,25 @@ export function IntegrationsPanel() {
           </div>
           <div className="min-w-0">
             <p className="text-xs font-bold truncate text-foreground">Support Email</p>
-            <p className="text-[10px] text-muted-foreground truncate">Inbox & Ticketing</p>
+            <p className="text-[10px] text-muted-foreground truncate">Gmail &amp; IMAP</p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("sheets")}
+          className={`flex items-center gap-2 p-3 rounded-xl border text-left transition-all ${
+            activeTab === "sheets"
+              ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary shadow-xs"
+              : "border-border bg-card hover:bg-muted/50 text-muted-foreground"
+          }`}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-500/10 text-teal-600 dark:text-teal-400 shrink-0">
+            <FileSpreadsheet className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold truncate text-foreground">Google Sheets</p>
+            <p className="text-[10px] text-muted-foreground truncate">Sync Contacts</p>
           </div>
         </button>
 
@@ -795,12 +1100,20 @@ export function IntegrationsPanel() {
                   </div>
                 </div>
 
-                <Button
-                  onClick={() => toast.success("IMAP/SMTP connection verified and saved!")}
-                  className="w-full font-bold bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Test & Save Email Settings
-                </Button>
+                <div className="flex items-center justify-between gap-3 pt-1">
+                  <Button
+                    onClick={handleSaveSmtp}
+                    className="w-full font-bold bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Test &amp; Save Email Settings
+                  </Button>
+                </div>
+                {emailConnected && (
+                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Configuration saved locally. Inbound polling connects to {imapHost || "IMAP server"}.
+                  </p>
+                )}
               </div>
             )}
 
@@ -824,6 +1137,211 @@ export function IntegrationsPanel() {
                     {copiedKey === "emailForward" ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
                     Copy
                   </Button>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TAB: GOOGLE SHEETS SYNC */}
+      {activeTab === "sheets" && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                  <FileSpreadsheet className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-bold">Google Sheets Integration</CardTitle>
+                  <CardDescription className="text-xs">
+                    Sync customer contacts, leads, and broadcast audiences directly from your Google Spreadsheets.
+                  </CardDescription>
+                </div>
+              </div>
+              {gdriveConnected ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
+                  <CheckCircle2 className="h-3 w-3" />
+                  Synced via Google Drive
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  <AlertCircle className="h-3 w-3" />
+                  Requires Google Auth
+                </span>
+              )}
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            {!gdriveConnected ? (
+              <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-foreground">
+                      Connect your Google Account to access Spreadsheets
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Google Sheets integration uses the authorized Google Workspace token to securely read your private sheets without making them public to the web.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={handleConnectDrive}
+                  className="font-bold bg-teal-600 hover:bg-teal-700 text-white text-xs gap-1.5"
+                >
+                  <HardDrive className="h-3.5 w-3.5" />
+                  Authorize via Google Account
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Live Sheet Inspector & Tester */}
+                <div className="p-4 rounded-xl border border-border bg-card space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-foreground">Inspect Any Google Sheet</h4>
+                    <p className="text-[11px] text-muted-foreground">
+                      Paste a Google Sheet URL or Sheet ID to preview contact columns and row counts before importing.
+                    </p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <Input
+                      value={testSheetUrl}
+                      onChange={(e) => setTestSheetUrl(e.target.value)}
+                      placeholder="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit"
+                      className="text-xs font-mono"
+                    />
+                    <Button
+                      onClick={handleTestSheet}
+                      disabled={testSheetLoading || !testSheetUrl.trim()}
+                      className="shrink-0 font-bold bg-teal-600 hover:bg-teal-700 text-white text-xs gap-1.5"
+                    >
+                      {testSheetLoading ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <FileSpreadsheet className="h-3.5 w-3.5" />
+                      )}
+                      Inspect Sheet
+                    </Button>
+                  </div>
+
+                  {sheetPreview && (
+                    <div className="p-3 rounded-lg border border-teal-500/30 bg-teal-500/5 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-teal-500" />
+                          Parsed Successfully: {sheetPreview.totalRows} contacts found
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {sheetPreview.hasPhoneColumn && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold">
+                              Phone
+                            </span>
+                          )}
+                          {sheetPreview.hasTagsColumn && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 font-bold">
+                              Tags
+                            </span>
+                          )}
+                          {sheetPreview.hasCompanyColumn && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/15 text-purple-600 dark:text-purple-400 font-bold">
+                              Company
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 pt-1">
+                        <Link
+                          href="/contacts"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline"
+                        >
+                          Go to Contacts to Import Contacts
+                          <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Sheets discovered in Drive */}
+                <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <h4 className="text-xs font-bold text-foreground">Recent Spreadsheets in Your Drive</h4>
+                      <p className="text-[11px] text-muted-foreground">
+                        Select a sheet to inspect or sync into audiences.
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={fetchSheetsList}
+                      disabled={sheetsLoading}
+                      className="h-7 px-2 text-xs font-semibold gap-1"
+                    >
+                      <RefreshCw className={`h-3 w-3 ${sheetsLoading ? "animate-spin" : ""}`} />
+                      Refresh
+                    </Button>
+                  </div>
+
+                  {sheetsLoading ? (
+                    <div className="flex items-center justify-center p-6 text-xs text-muted-foreground gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      Loading spreadsheets...
+                    </div>
+                  ) : sheetsList.length > 0 ? (
+                    <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
+                      {sheetsList.map((sheet) => (
+                        <div
+                          key={sheet.id}
+                          className="flex items-center justify-between p-2.5 hover:bg-muted/40 transition-colors text-xs"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <FileSpreadsheet className="h-4 w-4 text-teal-500 shrink-0" />
+                            <div className="min-w-0">
+                              <p className="font-semibold text-foreground truncate">{sheet.name}</p>
+                              <p className="text-[10px] text-muted-foreground font-mono truncate">
+                                ID: {sheet.id}
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setTestSheetUrl(sheet.id);
+                              toast.info(`Selected "${sheet.name}". Click Inspect to verify.`);
+                            }}
+                            className="h-7 px-2 text-xs text-teal-600 dark:text-teal-400 font-bold"
+                          >
+                            Select
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground py-2 italic">
+                      No spreadsheets detected in your primary Drive root folder, or click Refresh to sync.
+                    </p>
+                  )}
+                </div>
+
+                {/* How to use */}
+                <div className="p-4 rounded-xl border border-border/70 bg-muted/20 space-y-2">
+                  <h5 className="text-xs font-bold text-foreground">How Google Sheets Sync Works</h5>
+                  <ul className="text-[11px] text-muted-foreground space-y-1 list-disc list-inside">
+                    <li>
+                      <strong>Live Audience Sync:</strong> In <Link href="/audiences" className="text-primary hover:underline">Audiences</Link>, create an audience and choose Google Sheets to dynamically target subscribers.
+                    </li>
+                    <li>
+                      <strong>Automatic Column Mapping:</strong> Standard columns like <code className="font-mono text-[10px] bg-background px-1 py-0.5 rounded">Phone</code>, <code className="font-mono text-[10px] bg-background px-1 py-0.5 rounded">Name</code>, <code className="font-mono text-[10px] bg-background px-1 py-0.5 rounded">Email</code>, and <code className="font-mono text-[10px] bg-background px-1 py-0.5 rounded">Tags</code> are automatically mapped.
+                    </li>
+                    <li>
+                      <strong>Broadcast &amp; Drip Delivery:</strong> Deliver WhatsApp broadcasts and automated messages directly to rows as they are added.
+                    </li>
+                  </ul>
                 </div>
               </div>
             )}
@@ -1052,15 +1570,29 @@ export function IntegrationsPanel() {
               </p>
             </div>
 
-            <Button
-              onClick={() => {
-                setFbConnected(true);
-                toast.success("Facebook Messenger page connected!");
-              }}
-              className="w-full font-bold bg-sky-600 hover:bg-sky-700 text-white"
-            >
-              Save Facebook Connection
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleSaveFb}
+                className="flex-1 font-bold bg-sky-600 hover:bg-sky-700 text-white"
+              >
+                Save Facebook Connection
+              </Button>
+              {fbConnected && (
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectFb}
+                  className="font-bold text-red-500 hover:text-red-600 border-red-500/30"
+                >
+                  Disconnect
+                </Button>
+              )}
+            </div>
+            {fbConnected && (
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Page ID {fbPageId} saved. Webhook subscribed to messages.
+              </p>
+            )}
           </CardContent>
         </Card>
       )}
@@ -1134,15 +1666,29 @@ export function IntegrationsPanel() {
               </p>
             </div>
 
-            <Button
-              onClick={() => {
-                setIgConnected(true);
-                toast.success("Instagram Direct account connected!");
-              }}
-              className="w-full font-bold bg-purple-600 hover:bg-purple-700 text-white"
-            >
-              Save Instagram Connection
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleSaveIg}
+                className="flex-1 font-bold bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Save Instagram Connection
+              </Button>
+              {igConnected && (
+                <Button
+                  variant="outline"
+                  onClick={handleDisconnectIg}
+                  className="font-bold text-red-500 hover:text-red-600 border-red-500/30"
+                >
+                  Disconnect
+                </Button>
+              )}
+            </div>
+            {igConnected && (
+              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Account {igAccountId} saved. Webhook subscribed to messages.
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   if (errorParam) {
     console.error("[gmail/callback] Google error:", errorParam);
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gmail_error=${encodeURIComponent(errorParam)}`
+      `${origin}/settings?tab=integrations&subtab=email&gmail_error=${encodeURIComponent(errorParam)}`
     );
   }
 
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
 
   if (!code || !rawState) {
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gmail_error=missing_code_or_state`
+      `${origin}/settings?tab=integrations&subtab=email&gmail_error=missing_code_or_state`
     );
   }
 
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   } catch (err) {
     console.error("[gmail/callback] State parse error:", err);
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gmail_error=invalid_state`
+      `${origin}/settings?tab=integrations&subtab=email&gmail_error=invalid_state`
     );
   }
 
@@ -89,18 +89,18 @@ export async function GET(request: Request) {
     if (dbError) {
       console.error("[gmail/callback] DB upsert error:", dbError);
       return NextResponse.redirect(
-        `${origin}/settings?tab=integrations&gmail_error=${encodeURIComponent(dbError.message)}`
+        `${origin}/settings?tab=integrations&subtab=email&gmail_error=${encodeURIComponent(dbError.message)}`
       );
     }
 
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gmail=connected`
+      `${origin}/settings?tab=integrations&subtab=email&gmail=connected`
     );
   } catch (err) {
     console.error("[gmail/callback] Auth exchange error:", err);
     const message = err instanceof Error ? err.message : "Failed to connect Gmail";
     return NextResponse.redirect(
-      `${origin}/settings?tab=integrations&gmail_error=${encodeURIComponent(message)}`
+      `${origin}/settings?tab=integrations&subtab=email&gmail_error=${encodeURIComponent(message)}`
     );
   }
 }

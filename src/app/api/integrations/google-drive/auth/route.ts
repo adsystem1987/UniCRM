@@ -27,6 +27,6 @@ export async function GET(request: Request) {
     console.error("[google-drive/auth] error:", err);
     const origin = new URL(request.url).origin;
     const errorMsg = err instanceof Error ? encodeURIComponent(err.message) : "Failed to start Google Drive authentication";
-    return NextResponse.redirect(`${origin}/settings?tab=integrations&error=${errorMsg}`);
+    return NextResponse.redirect(`${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${errorMsg}`);
   }
 }
