@@ -201,3 +201,85 @@ export async function notifySlackContactLead({
     blocks,
   });
 }
+
+export interface OrderNotificationParams {
+  orderNumber: string;
+  itemName: string;
+  amount: number;
+  currency?: string;
+  utrNumber?: string | null;
+  whatsappPhone: string;
+  niche?: string;
+  city?: string;
+  userEmail?: string | null;
+}
+
+/**
+ * Send an alert to Slack when an order is submitted with UPI / UTR.
+ */
+export async function sendOrderNotification({
+  orderNumber,
+  itemName,
+  amount,
+  currency = "INR",
+  utrNumber,
+  whatsappPhone,
+  niche,
+  city,
+  userEmail,
+}: OrderNotificationParams): Promise<boolean> {
+  const blocks = [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "💰 New Payment Received (Zero-Gateway UPI)",
+        emoji: true,
+      },
+    },
+    {
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Order:* \`${orderNumber}\``,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Amount:* *₹${amount}* (${currency})`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Item:* ${itemName}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*UTR / Ref:* \`${utrNumber || "NOT PROVIDED"}\``,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Customer WhatsApp:* ${whatsappPhone}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Target:* ${niche || "All"} (${city || "All India"})`,
+        },
+      ],
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `👤 Ordered by: ${userEmail || "Anonymous"} | Status: *Pending Bank Verification*`,
+        },
+      ],
+    },
+  ];
+
+  return sendSlackMessage({
+    text: `💰 Payment Alert: ${orderNumber} - ₹${amount} for ${itemName} (UTR: ${utrNumber || "N/A"}) from ${whatsappPhone}`,
+    blocks,
+  });
+}
+

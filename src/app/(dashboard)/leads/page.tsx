@@ -3,7 +3,7 @@ import { LeadFinderView } from "@/components/leads/lead-finder-view";
 export const metadata = {
   title: "UniCRM Smart Lead Finder | UniCRM",
   description:
-    "Discover verified high-converting B2B leads tailored to your Ideal Customer Profile (ICP).",
+    "Discover verified high-converting customer leads tailored to your target audience and Ideal Customer Profile (ICP).",
 };
 
 export default function LeadsPage() {

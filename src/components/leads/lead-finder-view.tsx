@@ -255,7 +255,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
       setHasSearched(true);
       setSelectedLeadIds([]);
       toast.success(
-        `Discovered ${filteredLeads.length} verified B2B leads matching your ICP!`
+        `Discovered ${filteredLeads.length} verified leads matching your target audience!`
       );
     }, 600);
   };
@@ -338,7 +338,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Discover targeted B2B prospective clients matching your Ideal Customer Profile. Import directly to UniCRM Contacts & launch WhatsApp outbound.
+                Discover targeted prospective buyers and clients matching your Ideal Customer Profile. Import directly to UniCRM Contacts &amp; launch WhatsApp outbound.
               </p>
             </div>
           </div>
@@ -618,7 +618,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               Need 500 to 2,500+ Verified ICP Leads in Your Specific Niche?
             </h3>
             <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
-              We extract and verify hyper-targeted B2B prospective clients matching your exact business parameters (Google Maps, B2B Directories, and Verified WhatsApp accounts) delivered right into your UniCRM instance.
+              We extract and verify hyper-targeted prospective customers matching your exact business parameters (Google Maps, Verified Directories, and Active WhatsApp accounts) delivered right into your UniCRM instance.
             </p>
           </div>
 

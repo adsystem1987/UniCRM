@@ -19,6 +19,7 @@ import { DealsSettings } from '@/components/settings/deals-settings';
 import { MembersTab } from '@/components/settings/members-tab';
 import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
 import { IntegrationsPanel } from '@/components/settings/integrations-panel';
+import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
 import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
@@ -77,6 +78,7 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
+    orders: <OrdersBillingPanel />,
     whatsapp: <WhatsAppConfig />,
     'chat-widget': <ChatWidgetPanel />,
     ai: <AiConfig />,

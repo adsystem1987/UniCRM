@@ -116,18 +116,45 @@ export function LeadPackOrderDialog({
     setStep(2);
   };
 
-  const handleSubmitOrder = (e: React.FormEvent) => {
+  const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemName: `${selectedPack.name} (${selectedPack.leadsCount} Leads)`,
+          amount: selectedPack.amount,
+          whatsappPhone: whatsappPhone.trim(),
+          utrNumber: utrNumber.trim() || null,
+          orderType: "lead_pack",
+          parameters: {
+            niche: targetNiche.trim(),
+            city: targetCity.trim(),
+            leadsCount: selectedPack.leadsCount,
+            packId: selectedPack.id,
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to record order");
+      }
+
       onOpenChange(false);
       setStep(1);
+      setUtrNumber("");
       toast.success(
-        `Order Received! Your ${selectedPack.leadsCount} verified leads for ${targetNiche} in ${targetCity} are being compiled and will be delivered to your UniCRM Contacts within 2-4 hours.`,
-        { duration: 8000 }
+        `Order ${data.orderNumber || ""} Received! We will verify your UPI payment (UTR: ${utrNumber || "N/A"}) and deliver your ${selectedPack.leadsCount} verified leads into UniCRM Contacts within 2-4 hours. Check "Orders & Billing" in Settings anytime.`,
+        { duration: 10000 }
       );
-    }, 600);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to record order. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -146,7 +173,7 @@ export function LeadPackOrderDialog({
                 {step === 1 ? "Curated ICP Lead Pack" : `Complete Payment (₹${selectedPack.amount})`}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground truncate">
-                {step === 1 ? "Verified B2B leads with active WhatsApp" : `${selectedPack.leadsCount} Verified Leads for ${targetNiche}`}
+                {step === 1 ? "Verified prospective customers with active WhatsApp" : `${selectedPack.leadsCount} Verified Leads for ${targetNiche}`}
               </DialogDescription>
             </div>
           </div>
