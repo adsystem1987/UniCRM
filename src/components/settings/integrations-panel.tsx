@@ -23,6 +23,8 @@ import {
   MessageCircle,
   ArrowRight,
   Globe,
+  Headphones,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -98,7 +100,7 @@ CREATE POLICY allow_all ON conversations FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY allow_all ON messages FOR ALL USING (true) WITH CHECK (true);
 `;
 
-type IntegrationTab = "gdrive" | "email" | "sheets" | "database" | "facebook" | "instagram";
+type IntegrationTab = "gdrive" | "email" | "sheets" | "database" | "chatwoot" | "facebook" | "instagram";
 
 export function IntegrationsPanel() {
   const [activeTab, setActiveTab] = useState<IntegrationTab>("gdrive");
@@ -135,7 +137,7 @@ export function IntegrationsPanel() {
       const subtab = params.get("subtab");
       if (
         subtab &&
-        ["gdrive", "email", "sheets", "database", "facebook", "instagram"].includes(subtab)
+        ["gdrive", "email", "sheets", "database", "chatwoot", "facebook", "instagram"].includes(subtab)
       ) {
         setActiveTab(subtab as IntegrationTab);
       }
@@ -584,12 +586,90 @@ export function IntegrationsPanel() {
     toast.success("IMAP/SMTP configuration verified and saved!");
   };
 
+  // Chatwoot state
+  const [chatwootLoading, setChatwootLoading] = useState(false);
+  const [chatwootConnected, setChatwootConnected] = useState(false);
+  const [chatwootBaseUrl, setChatwootBaseUrl] = useState("https://app.chatwoot.com");
+  const [chatwootAccountId, setChatwootAccountId] = useState("");
+  const [chatwootInboxId, setChatwootInboxId] = useState("");
+  const [chatwootApiToken, setChatwootApiToken] = useState("");
+  const [chatwootInboxName, setChatwootInboxName] = useState("");
+
+  useEffect(() => {
+    async function checkChatwootStatus() {
+      try {
+        const res = await fetch("/api/integrations/chatwoot/status");
+        const data = await res.json();
+        if (data.connected) {
+          setChatwootConnected(true);
+          setChatwootBaseUrl(data.baseUrl || "https://app.chatwoot.com");
+          setChatwootAccountId(data.accountId || "");
+          setChatwootInboxId(data.inboxId || "");
+        }
+      } catch {}
+    }
+    void checkChatwootStatus();
+  }, []);
+
+  const handleSaveChatwoot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !chatwootBaseUrl.trim() ||
+      !chatwootAccountId.trim() ||
+      !chatwootInboxId.trim() ||
+      !chatwootApiToken.trim()
+    ) {
+      toast.error("Please fill in all Chatwoot fields");
+      return;
+    }
+    setChatwootLoading(true);
+    try {
+      const res = await fetch("/api/integrations/chatwoot/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          baseUrl: chatwootBaseUrl.trim(),
+          accountId: chatwootAccountId.trim(),
+          inboxId: chatwootInboxId.trim(),
+          apiAccessToken: chatwootApiToken.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to connect Chatwoot");
+      }
+      setChatwootConnected(true);
+      setChatwootInboxName(data.inboxName || "Chatwoot Inbox");
+      toast.success("Chatwoot connected! WhatsApp messages will mirror to your live helpdesk.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to connect Chatwoot");
+    } finally {
+      setChatwootLoading(false);
+    }
+  };
+
+  const handleDisconnectChatwoot = async () => {
+    try {
+      await fetch("/api/integrations/chatwoot/status", { method: "DELETE" });
+      setChatwootConnected(false);
+      setChatwootAccountId("");
+      setChatwootInboxId("");
+      setChatwootApiToken("");
+      toast.info("Chatwoot disconnected");
+    } catch {
+      toast.error("Failed to disconnect Chatwoot");
+    }
+  };
+
   const webhookUrl = origin
     ? `${origin}/api/webhooks/meta`
     : "https://your-crm-domain.com/api/webhooks/meta";
   const inboundForwardEmail = hostname
     ? `inbox-support@inbound.${hostname}`
     : "inbox-support@inbound.your-crm-domain.com";
+  const chatwootWebhookUrl = origin
+    ? `${origin}/api/integrations/chatwoot/webhook`
+    : "https://your-crm-domain.com/api/integrations/chatwoot/webhook";
 
   return (
     <div className="space-y-6">
@@ -625,7 +705,7 @@ export function IntegrationsPanel() {
       </div>
 
       {/* Channel Switcher Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
         <button
           type="button"
           onClick={() => setActiveTab("gdrive")}
@@ -695,6 +775,24 @@ export function IntegrationsPanel() {
           <div className="min-w-0">
             <p className="text-xs font-bold truncate text-foreground">Database (BYOD)</p>
             <p className="text-[10px] text-muted-foreground truncate">Personal Supabase</p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("chatwoot")}
+          className={`flex items-center gap-2 p-3 rounded-xl border text-left transition-all ${
+            activeTab === "chatwoot"
+              ? "border-primary bg-primary/10 text-foreground ring-1 ring-primary shadow-xs"
+              : "border-border bg-card hover:bg-muted/50 text-muted-foreground"
+          }`}
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
+            <Headphones className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs font-bold truncate text-foreground">Chatwoot</p>
+            <p className="text-[10px] text-muted-foreground truncate">Live Helpdesk</p>
           </div>
         </button>
 
@@ -1496,6 +1594,244 @@ export function IntegrationsPanel() {
                   {byodSchemaSql}
                 </pre>
               )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TAB: CHATWOOT LIVE HELPDESK & ANTI-BAN COEXISTENCE */}
+      {activeTab === "chatwoot" && (
+        <Card className="border-border">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                  <Headphones className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-bold">
+                    Chatwoot Integration &amp; Anti-Ban Safeguards
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Connect Chatwoot for human agent live chat handoffs and zero-ban omnichannel coexistence.
+                  </CardDescription>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {chatwootConnected ? (
+                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Mirroring Active
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-muted border border-border px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
+                    Not Connected
+                  </span>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            {/* Anti-Ban Architecture & Coexistence Banner */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl border border-indigo-500/20 bg-indigo-500/5">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Recommended Anti-Ban Architecture
+                </span>
+                <p className="text-xs font-bold text-foreground">
+                  UniCRM (Marketing &amp; Pacing) + Chatwoot (Live Support)
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  UniCRM handles broadcasts with human pacing jitter and automatic STOP/DNC opt-outs, while Chatwoot handles human agent replies so customers never click &quot;Report Spam&quot;.
+                </p>
+              </div>
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Dual-Sync Webhook Bridge
+                </span>
+                <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                  Real-time 2-Way Sync
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Incoming WhatsApp messages mirror to Chatwoot inboxes automatically. Agent replies sent from Chatwoot dispatch back through WhatsApp instantly.
+                </p>
+              </div>
+            </div>
+
+            {/* Connection Form */}
+            {chatwootConnected ? (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <p className="text-xs font-bold text-foreground">Chatwoot Helpdesk Connected</p>
+                    </div>
+                    <p className="text-xs font-mono text-muted-foreground">{chatwootBaseUrl}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Account ID: <strong>{chatwootAccountId}</strong> • Inbox ID: <strong>{chatwootInboxId}</strong> {chatwootInboxName ? `(${chatwootInboxName})` : ''}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDisconnectChatwoot}
+                    className="text-xs text-red-500 hover:text-red-600 border-red-500/30 hover:bg-red-500/10 font-bold"
+                  >
+                    Disconnect
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSaveChatwoot} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold">Chatwoot Host URL</Label>
+                    <Input
+                      placeholder="https://app.chatwoot.com"
+                      value={chatwootBaseUrl}
+                      onChange={(e) => setChatwootBaseUrl(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Use app.chatwoot.com or your self-hosted Chatwoot instance.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold">Chatwoot Account ID</Label>
+                    <Input
+                      placeholder="e.g. 1"
+                      value={chatwootAccountId}
+                      onChange={(e) => setChatwootAccountId(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Visible in your Chatwoot URL: /app/accounts/&#123;id&#125;
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold">Chatwoot Target Inbox ID</Label>
+                    <Input
+                      placeholder="e.g. 10"
+                      value={chatwootInboxId}
+                      onChange={(e) => setChatwootInboxId(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Found in Chatwoot → Settings → Inboxes
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold">User / Bot API Access Token</Label>
+                    <Input
+                      type="password"
+                      placeholder="w7xyz..."
+                      value={chatwootApiToken}
+                      onChange={(e) => setChatwootApiToken(e.target.value)}
+                      className="text-xs font-mono"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Found in Chatwoot → Profile Settings → Access Token
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <Button
+                    type="submit"
+                    disabled={
+                      chatwootLoading ||
+                      !chatwootBaseUrl.trim() ||
+                      !chatwootAccountId.trim() ||
+                      !chatwootInboxId.trim() ||
+                      !chatwootApiToken.trim()
+                    }
+                    className="gap-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white"
+                  >
+                    {chatwootLoading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Headphones className="h-3.5 w-3.5" />}
+                    Test &amp; Connect Chatwoot
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {/* Chatwoot Outbound Webhook Relay */}
+            <div className="p-3.5 rounded-xl border border-border bg-muted/30 space-y-2">
+              <Label className="text-xs font-bold">Chatwoot Outbound Webhook Relay URL</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  readOnly
+                  value={chatwootWebhookUrl}
+                  className="text-xs font-mono bg-background"
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => copyToClipboard(chatwootWebhookUrl, "cwWebhook")}
+                  className="h-9 px-3 text-xs font-bold gap-1 shrink-0"
+                >
+                  {copiedKey === "cwWebhook" ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                  Copy
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                In Chatwoot → <strong>Settings → Integrations → Webhooks</strong>, click <em>&quot;Add new webhook&quot;</em>, paste this URL, and subscribe to <code>message_created</code>. When live agents reply in Chatwoot, replies dispatch directly to the customer on WhatsApp.
+              </p>
+            </div>
+
+            {/* Complete Anti-Ban Safeguards Matrix */}
+            <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                <h4 className="text-xs font-bold text-foreground">Active WhatsApp Anti-Ban Safeguards</h4>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                <div className="flex items-start gap-2 p-2.5 rounded-lg border border-border/60 bg-background/80">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-foreground">Automated STOP / Opt-Out Engine</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Replies with STOP or UNSUBSCRIBE automatically tag contacts with DNC and exclude them from all future broadcasts.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-2.5 rounded-lg border border-border/60 bg-background/80">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-foreground">Human Pacing &amp; Jitter Throttling</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Broadcasts employ randomized human-like delay intervals (2s to 8s) to prevent spam detection heuristics.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-2.5 rounded-lg border border-border/60 bg-background/80">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-foreground">24-Hour Policy Window Sentinel</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Freeform promotional messages are restricted outside 24h, enforcing pre-approved Meta templates for safety.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 p-2.5 rounded-lg border border-border/60 bg-background/80">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-foreground">Multi-Agent Live Support Handoff</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Routing live chats to Chatwoot speeds up resolution times, drastically cutting customer &quot;Report &amp; Block&quot; incidents.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -97,10 +97,28 @@ async function fetchExcludedIds(
   db: SupabaseClient,
   audience: AudienceConfig,
 ): Promise<Set<string>> {
-  if (!audience.excludeTagIds || audience.excludeTagIds.length === 0) {
+  const excludeTagIds = new Set(audience.excludeTagIds ?? []);
+
+  // Anti-Ban Protection: Automatically discover and exclude DNC / opted-out contacts
+  try {
+    const { data: dncTags } = await db
+      .from('tags')
+      .select('id')
+      .in('name', ['DNC', 'opted_out', 'opted-out', 'unsubscribed', 'blacklist']);
+
+    if (dncTags && dncTags.length > 0) {
+      for (const t of dncTags) {
+        excludeTagIds.add(t.id);
+      }
+    }
+  } catch (err) {
+    console.warn('[broadcast-audience] Auto DNC tag resolution warning:', err);
+  }
+
+  if (excludeTagIds.size === 0) {
     return new Set();
   }
-  return fetchTaggedContactIds(db, audience.excludeTagIds);
+  return fetchTaggedContactIds(db, Array.from(excludeTagIds));
 }
 
 function hasCustomFieldFilter(

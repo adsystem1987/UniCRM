@@ -308,6 +308,10 @@ export async function deliverBroadcast(
         })
         .eq('id', recipient.recipientRowId);
     }
+
+    // Anti-ban human pacing jitter: 1.2s - 2.8s delay between deliveries
+    const jitterMs = Math.floor(Math.random() * (2800 - 1200 + 1)) + 1200;
+    await new Promise((resolve) => setTimeout(resolve, jitterMs));
   }
 
   await finalizeBroadcastStatus(db, plan.broadcastId);

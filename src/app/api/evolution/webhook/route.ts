@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { mirrorMediaToGoogleDrive } from '@/lib/gdrive/offload';
+import { handleOptOutInbound } from '@/lib/whatsapp/anti-ban';
 
 // Lazy-initialized admin client for webhook delivery
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -150,6 +151,17 @@ export async function POST(req: NextRequest) {
 
     if (!conv) {
       return NextResponse.json({ received: true });
+    }
+
+    // Anti-Ban & Compliance: Process STOP / START opt-out keywords
+    if (!isFromMe && contact?.id && phone) {
+      await handleOptOutInbound(supabase, {
+        accountId,
+        contactId: contact.id,
+        phone,
+        text: messageContent,
+        conversationId: conv.id,
+      });
     }
 
     // 3. Prevent duplicate messages by message_id

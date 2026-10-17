@@ -22,6 +22,8 @@ import {
   handleTemplateWebhookChange,
   isTemplateWebhookField,
 } from '@/lib/whatsapp/template-webhook'
+import { handleOptOutInbound } from '@/lib/whatsapp/anti-ban'
+import { getChatwootConfig, mirrorInboundToChatwoot } from '@/lib/integrations/chatwoot'
 
 // The `after()` callback in POST runs within this route's max duration.
 // Inbound processing can fan out to per-media Meta verification calls, so
@@ -857,6 +859,18 @@ async function processMessage(
   // trigger installed in migration 003).
   await flagBroadcastReplyIfAny(accountId, contactRecord.id)
 
+  // Anti-Ban & Compliance: Process opt-out (STOP) and opt-in (START) triggers
+  const rawInboundText = contentText ?? message.text?.body ?? ''
+  if (rawInboundText && contactRecord.phone) {
+    await handleOptOutInbound(supabaseAdmin(), {
+      accountId,
+      contactId: contactRecord.id,
+      phone: contactRecord.phone,
+      text: rawInboundText,
+      conversationId: conversation.id,
+    })
+  }
+
   // ============================================================
   // Flow runner dispatch.
   //
@@ -1007,6 +1021,21 @@ async function processMessage(
     content_type: contentType,
     text: contentText,
   })
+
+  // Mirror inbound message to Chatwoot for live agent handoff
+  try {
+    const chatwootConfig = await getChatwootConfig(supabaseAdmin(), accountId)
+    if (chatwootConfig && chatwootConfig.enabled && contactRecord.phone) {
+      await mirrorInboundToChatwoot(chatwootConfig, {
+        phone: contactRecord.phone,
+        name: contactRecord.name || undefined,
+        messageText: contentText || `[${message.type}]`,
+        mediaUrl,
+      })
+    }
+  } catch (cwErr) {
+    console.warn('[webhook] Chatwoot mirror warning:', cwErr)
+  }
 }
 
 async function parseMessageContent(
