@@ -9,6 +9,12 @@
 
 ## Project Overview
 **UniCRM (DFY UniCRM)** is an omnichannel CRM and communication platform designed for Indian businesses and global teams.
+- **Production URL**: `https://dfyunicrm.com` (formerly `dfydude.cc.cd`)
+- **Primary Contact Email**: `ravibabu@dfyunicrm.com`
+- **Hosting & Infrastructure Topology**:
+  - **Frontend / Edge**: Hosted on **Vercel** (`https://dfyunicrm.com`). Serverless & edge rendered — zero fixed CPU usage.
+  - **Core Backend Engine**: Hosted on **AWS Cloud Server** (Docker/microservices handling heavy workloads: Evolution API WhatsApp gateway, Whatomate flow engine, WebRTC voice calling, background workers).
+  - **Database & Auth**: Supabase (PostgreSQL, RLS, Storage, Realtime).
 - **Positioning**: 100% Free Forever Core Software funded by community members and optional Done-For-You (DFY) technical services. No predatory subscriptions, no fake scarcity countdowns, no per-seat fees.
 - **Tech Stack**:
   - **Framework**: Next.js 16 (App Router + Turbopack), React 19, TypeScript
