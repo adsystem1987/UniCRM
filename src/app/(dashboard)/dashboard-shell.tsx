@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -9,6 +9,7 @@ import { Header } from "@/components/layout/header";
 import { AccountAccessAlert } from "@/components/layout/account-access-alert";
 import { PresenceHeartbeat } from "@/components/presence/presence-heartbeat";
 import { BrowserNotificationsListener } from "@/components/notifications/browser-notifications-listener";
+import { MandatorySetupModal } from "@/components/layout/mandatory-setup-modal";
 
 // Auth-gated dashboard shell. Extracted from the layout so the layout
 // itself can stay a server component and export metadata (noindex) —
@@ -17,7 +18,46 @@ import { BrowserNotificationsListener } from "@/components/notifications/browser
 function DashboardShellInner({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslations("DashboardShell");
+
+  // Setup verification state (compulsory Google Drive + Supabase BYOD)
+  const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
+  const [supabaseConnected, setSupabaseConnected] = useState(false);
+  const [setupChecked, setSetupChecked] = useState(false);
+  const [setupModalOpen, setSetupModalOpen] = useState(false);
+
+  // Check setup status
+  const checkSetupStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/account/setup-status");
+      if (res.ok) {
+        const data = await res.json();
+        setGoogleDriveConnected(!!data.googleDriveConnected);
+        setSupabaseConnected(!!data.supabaseConnected);
+        setSetupChecked(true);
+
+        // If not fully configured and NOT already on settings page, show mandatory modal
+        if (!data.isFullyConfigured) {
+          if (!pathname?.startsWith("/settings")) {
+            setSetupModalOpen(true);
+          } else {
+            setSetupModalOpen(false);
+          }
+        } else {
+          setSetupModalOpen(false);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (user) {
+      checkSetupStatus();
+    }
+  }, [user, checkSetupStatus]);
 
   // Sidebar drawer state — only used on mobile. On lg+ the sidebar is
   // always visible and this stays at `false` (ignored by the component).
@@ -62,6 +102,14 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      {/* Mandatory Onboarding & Storage/DB Barrier */}
+      <MandatorySetupModal
+        open={setupModalOpen}
+        googleDriveConnected={googleDriveConnected}
+        supabaseConnected={supabaseConnected}
+        onRefresh={checkSetupStatus}
+      />
     </div>
   );
 }
