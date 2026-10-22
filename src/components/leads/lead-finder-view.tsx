@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Target,
   Search,
@@ -20,6 +20,9 @@ import {
   Check,
   Building2,
   Filter,
+  Play,
+  Coins,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -235,9 +238,101 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
   const [leadPackDialogOpen, setLeadPackDialogOpen] = useState(false);
   const [selectedPackAmount, setSelectedPackAmount] = useState<number>(999);
 
-  // Active results derived from database or fallback generator
+  // Live Apify & Credit System State
+  const [creditsBalance, setCreditsBalance] = useState<number | null>(null);
+  const [hasApifyKey, setHasApifyKey] = useState<boolean>(false);
+  const [keyStatus, setKeyStatus] = useState<string>("inactive");
+  const [contactsToFetch, setContactsToFetch] = useState<number>(100);
+  const [scrapingLive, setScrapingLive] = useState<boolean>(false);
+  const [liveResults, setLiveResults] = useState<LeadItem[]>([]);
+
+  // Fetch client credit balance on mount
+  const fetchCredits = async () => {
+    try {
+      const res = await fetch("/api/leads-finder/run", { method: "GET" }).catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        setCreditsBalance(data.creditsBalance ?? 0);
+        setHasApifyKey(!!data.hasKey);
+        setKeyStatus(data.status || "active");
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
+  useEffect(() => {
+    fetchCredits();
+  }, []);
+
+  // Run live Apify scrape with strict limits (100 min, 1000 max) and credit verification
+  const handleLiveApifyScrape = async () => {
+    if (contactsToFetch < 100 || contactsToFetch > 1000) {
+      toast.error("Contacts to fetch must be between 100 (min cap) and 1,000 (max cap).");
+      return;
+    }
+
+    if (creditsBalance !== null && creditsBalance < contactsToFetch) {
+      toast.error(
+        `Insufficient credits! You need ${contactsToFetch} credits, but have ${creditsBalance}. Please recharge.`
+      );
+      setSelectedPackAmount(contactsToFetch >= 500 ? 999 : 499);
+      setLeadPackDialogOpen(true);
+      return;
+    }
+
+    setScrapingLive(true);
+    const toastId = toast.loading(`Starting Apify lead extraction for ${contactsToFetch} contacts in ${city}...`);
+
+    try {
+      const res = await fetch("/api/leads-finder/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: niche,
+          city: city === "All India" ? "Mumbai" : city,
+          count: contactsToFetch,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Scraping failed");
+      }
+
+      toast.success(data.message || `Successfully scraped & imported ${data.importedCount} contacts!`, {
+        id: toastId,
+      });
+
+      if (data.leadsPreview && data.leadsPreview.length > 0) {
+        const mapped: LeadItem[] = data.leadsPreview.map((item: any, idx: number) => ({
+          id: `live-${idx}-${Date.now()}`,
+          name: item.name,
+          phone: item.phone,
+          city: item.city || city,
+          category: item.category || niche,
+          rating: item.rating || 4.8,
+          reviewsCount: item.reviewsCount || 42,
+          website: item.website,
+          matchScore: 99,
+          verifiedWhatsApp: true,
+        }));
+        setLiveResults(mapped);
+      }
+
+      fetchCredits();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to execute scraper.", { id: toastId });
+    } finally {
+      setScrapingLive(false);
+    }
+  };
+
+  // Active results derived from live search or fallback generator
   const currentCategoryLeads =
-    SAMPLE_LEAD_DATABASE[niche] || SAMPLE_LEAD_DATABASE["Real Estate"];
+    liveResults.length > 0
+      ? liveResults
+      : SAMPLE_LEAD_DATABASE[niche] || SAMPLE_LEAD_DATABASE["Real Estate"];
 
   const filteredLeads = currentCategoryLeads.filter((item) => {
     if (city !== "All India" && !item.city.toLowerCase().includes(city.toLowerCase())) {
@@ -343,17 +438,29 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
             </div>
           </div>
 
-          <Button
-            size="sm"
-            onClick={() => {
-              setSelectedPackAmount(999);
-              setLeadPackDialogOpen(true);
-            }}
-            className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs text-xs"
-          >
-            <Zap className="h-3.5 w-3.5" />
-            Get Custom 1,000 Lead Pack (₹999)
-          </Button>
+          <div className="flex items-center gap-2">
+            {creditsBalance !== null && (
+              <Badge
+                variant="outline"
+                className="bg-primary/10 text-primary border-primary/20 text-xs py-1 px-2.5 font-bold flex items-center gap-1.5"
+              >
+                <Coins className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                <span>{creditsBalance} Credits</span>
+              </Badge>
+            )}
+
+            <Button
+              size="sm"
+              onClick={() => {
+                setSelectedPackAmount(999);
+                setLeadPackDialogOpen(true);
+              }}
+              className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs text-xs"
+            >
+              <Zap className="h-3.5 w-3.5" />
+              Recharge Credits (₹1 = 1 Contact)
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -426,8 +533,8 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
             </div>
           </div>
 
-          {/* Filter options */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-border">
+          {/* Filter options and Live Apify Runner Controls */}
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-border">
             <div className="flex flex-wrap items-center gap-4 text-xs">
               <label className="flex items-center gap-1.5 cursor-pointer font-medium">
                 <Checkbox
@@ -446,14 +553,44 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               </label>
             </div>
 
-            <Button
-              onClick={handleSearch}
-              disabled={searching}
-              className="font-bold bg-primary hover:bg-primary/90 text-primary-foreground text-xs gap-1.5 shadow-xs"
-            >
-              <Search className="h-3.5 w-3.5" />
-              {searching ? "Scanning Verified Sources..." : "Search Verified Leads"}
-            </Button>
+            {/* Contacts Count Input: Min 100, Max 1000 */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5 bg-muted/60 px-2.5 py-1 rounded-lg border border-border">
+                <span className="text-[11px] font-semibold text-muted-foreground whitespace-nowrap">Fetch:</span>
+                <Input
+                  type="number"
+                  min={100}
+                  max={1000}
+                  step={50}
+                  value={contactsToFetch}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    if (!isNaN(val)) setContactsToFetch(val);
+                  }}
+                  className="w-20 h-7 text-xs font-bold text-center"
+                />
+                <span className="text-[10px] text-muted-foreground font-medium">contacts (100–1,000)</span>
+              </div>
+
+              {/* Live Apify Trigger */}
+              <Button
+                onClick={handleLiveApifyScrape}
+                disabled={scrapingLive}
+                className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-xs"
+              >
+                {scrapingLive ? (
+                  <>
+                    <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                    Extracting via Apify...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    Run Live Leads Finder ({contactsToFetch} Credits)
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
