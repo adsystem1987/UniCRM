@@ -11,12 +11,15 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const { user } = await getCurrentAccount();
-    if (!user || !user.email) {
+    const { supabase, userId } = await getCurrentAccount();
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email;
+
+    if (!email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const config = await getClientLeadConfig(user.email);
+    const config = await getClientLeadConfig(email);
     if (!config) {
       return NextResponse.json({
         hasKey: false,
@@ -46,8 +49,11 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const { supabase, accountId, user } = await getCurrentAccount();
-    if (!user || !user.email) {
+    const { supabase, accountId } = await getCurrentAccount();
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email;
+
+    if (!email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -69,7 +75,7 @@ export async function POST(request: Request) {
     }
 
     // Check Google Sheet for Client's Dedicated Apify Token & Credit Balance
-    const clientConfig = await getClientLeadConfig(user.email);
+    const clientConfig = await getClientLeadConfig(email);
     if (!clientConfig) {
       return NextResponse.json(
         { error: "No dedicated Apify key or credit allocation found. Please contact support to activate your key." },
@@ -128,7 +134,7 @@ export async function POST(request: Request) {
       },
     }));
 
-    // Upsert or insert into contacts
+    // Upsert into contacts
     const { error: insertError } = await supabase.from("contacts").upsert(contactInserts, {
       onConflict: "account_id,phone",
       ignoreDuplicates: true,
@@ -137,7 +143,7 @@ export async function POST(request: Request) {
     if (insertError) {
       console.error("[leads-finder/run] contacts insert error:", insertError);
       // Fallback normal insert
-      await supabase.from("contacts").insert(contactInserts).catch(() => null);
+      await supabase.from("contacts").insert(contactInserts);
     }
 
     return NextResponse.json({
