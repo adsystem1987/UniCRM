@@ -86,7 +86,8 @@ const THEME_BOOT_SCRIPT = `
     var MODE_DEFAULT = ${JSON.stringify(DEFAULT_MODE)};
     var MODES = ${JSON.stringify(MODES)};
     var savedMode = localStorage.getItem(MODE_KEY);
-    var currentMode = MODES.indexOf(savedMode) !== -1 ? savedMode : MODE_DEFAULT;
+    var systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var currentMode = MODES.indexOf(savedMode) !== -1 ? savedMode : (systemPrefersDark ? 'dark' : 'light');
     d.dataset.mode = currentMode;
     if (currentMode === "dark") {
       d.classList.add("dark");
@@ -94,10 +95,14 @@ const THEME_BOOT_SCRIPT = `
       d.classList.remove("dark");
     }
   } catch (_e) {
+    var sysDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var fallbackMode = sysDark ? 'dark' : 'light';
     d.dataset.theme = ${JSON.stringify(DEFAULT_THEME)};
-    d.dataset.mode = ${JSON.stringify(DEFAULT_MODE)};
-    if (${JSON.stringify(DEFAULT_MODE)} === "dark") {
+    d.dataset.mode = fallbackMode;
+    if (fallbackMode === "dark") {
       d.classList.add("dark");
+    } else {
+      d.classList.remove("dark");
     }
   }
 })();

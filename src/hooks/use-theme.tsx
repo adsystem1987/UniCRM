@@ -79,8 +79,16 @@ function readInitialMode(): Mode {
   } catch {
     // localStorage can throw in private-browsing / sandboxed contexts.
   }
-  document.documentElement.classList.toggle("dark", DEFAULT_MODE === "dark");
-  return DEFAULT_MODE;
+
+  // System preference detection (Sun / Light vs Moon / Dark)
+  const systemPrefersDark =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const systemMode: Mode = systemPrefersDark ? "dark" : "light";
+  document.documentElement.dataset.mode = systemMode;
+  document.documentElement.classList.toggle("dark", systemMode === "dark");
+  return systemMode;
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -117,8 +125,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setMode(mode === "dark" ? "light" : "dark");
   }, [mode, setMode]);
 
-  // Sync from other tabs — change theme or mode in tab A, tab B
-  // catches up without a refresh.
+  // Sync from other tabs & listen for OS system theme changes (Light / Dark)
   useEffect(() => {
     function onStorage(e: StorageEvent) {
       if (e.key === STORAGE_KEY) {
@@ -136,8 +143,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
       }
     }
+
+    // Listen for OS system theme change if user hasn't explicitly chosen a mode in localStorage
+    const mediaQuery = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)");
+    function onSystemThemeChange(e: MediaQueryListEvent) {
+      try {
+        const hasManualChoice = localStorage.getItem(MODE_STORAGE_KEY);
+        if (!hasManualChoice) {
+          const nextMode: Mode = e.matches ? "dark" : "light";
+          setModeState(nextMode);
+          document.documentElement.dataset.mode = nextMode;
+          document.documentElement.classList.toggle("dark", nextMode === "dark");
+        }
+      } catch {
+        // Ignore
+      }
+    }
+
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    if (mediaQuery?.addEventListener) {
+      mediaQuery.addEventListener("change", onSystemThemeChange);
+    }
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      if (mediaQuery?.removeEventListener) {
+        mediaQuery.removeEventListener("change", onSystemThemeChange);
+      }
+    };
   }, [theme, mode]);
 
   return (
