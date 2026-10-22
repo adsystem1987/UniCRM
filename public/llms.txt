@@ -1,0 +1,22 @@
+# DFY UniCRM
+
+> Single-Click Omnichannel CRM, WhatsApp Calling & Unified Support Inbox with Zero Monthly Software Subscriptions.
+
+## Overview
+DFY UniCRM (Done-For-You UniCRM) is a self-hostable and managed omnichannel customer relationship management system tailored for Indian businesses, fast-growing startups, and global teams.
+
+- Canonical URL: https://dfyunicrm.com
+- Contact Email: ravibabu@dfyunicrm.com
+- Primary Channels: WhatsApp (Business & Gateway API), Instagram Direct, Facebook Messenger, Support Email Inboxes, and WhatsApp Voice Calling with IVR.
+
+## Core Capabilities
+- **Omnichannel Unified Inbox**: Consolidates WhatsApp chats, Instagram DMs, Facebook messages, and support emails into one single real-time dashboard.
+- **WhatsApp Audio Calling with Node-based IVR**: Automated call routing, greeting, interactive menu choices, and automatic Google Drive voice recording sync.
+- **AI-Powered Customer Routing & Replies**: Seamless LLM integration (OpenAI, Gemini, Anthropic, DeepSeek, custom gateways) for auto-tagging, sentiment detection, automated replies, and agent assistance.
+- **Self-Hostable with Zero Subscription Lock-in**: Full data ownership with Supabase/PostgreSQL backend, Next.js architecture, and self-hosted Evolution WhatsApp API option.
+- **Enterprise Features**: Multi-agent collaboration, live status, canned responses, team invitations, contact management, analytics, and activity logging.
+
+## Contact & Support
+- Primary Contact: Ravi Babu
+- Email: ravibabu@dfyunicrm.com
+- Website: https://dfyunicrm.com

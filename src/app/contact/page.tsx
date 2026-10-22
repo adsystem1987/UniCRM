@@ -127,7 +127,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-black text-foreground">Contact Support Desk</h1>
-                  <p className="text-xs text-muted-foreground">Inquiries are sent to ravibabuche@dfydude.online</p>
+                  <p className="text-xs text-muted-foreground">Inquiries are sent to ravibabu@dfyunicrm.com</p>
                 </div>
               </div>
 

@@ -39,13 +39,56 @@ export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
   description:
     "Single-click omnichannel CRM for Indian businesses and global teams. Connect WhatsApp, Instagram, Facebook, Support Email Inboxes, and WhatsApp Calling with node-based IVR & Google Drive storage. Zero software subscriptions.",
+  alternates: {
+    canonical: "https://dfyunicrm.com",
+  },
+  openGraph: {
+    title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
+    description:
+      "Single-click omnichannel CRM for Indian businesses and global teams. Zero software subscriptions.",
+    url: "https://dfyunicrm.com",
+    siteName: "DFY UniCRM",
+    type: "website",
+  },
 };
 
 export default function LandingPage() {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://dfyunicrm.com/#organization",
+        "name": "DFY UniCRM",
+        "url": "https://dfyunicrm.com",
+        "email": "ravibabu@dfyunicrm.com",
+        "description": "Done-For-You Omnichannel CRM, WhatsApp Calling & Unified Support Inbox with zero subscription fees."
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://dfyunicrm.com/#software",
+        "name": "DFY UniCRM",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, Cloud, Self-Hosted",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Single-click omnichannel CRM for Indian businesses and global teams. Connect WhatsApp, Instagram, Facebook, Support Email Inboxes, and WhatsApp Calling with node-based IVR."
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
+      {/* Structured Schema Data for SEO, GEO & AI Search Engines */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Optional Google Tag Manager (GTM) */}
       {gtmId && (
         <>
@@ -882,7 +925,7 @@ export default function LandingPage() {
               <div className="rounded-2xl border border-border/60 bg-card p-6">
                 <h4 className="font-bold text-foreground">How do I reach support if I need help?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Click the Contact Support button or write to ravibabuche@dfydude.online. We respond to every inquiry directly.
+                  Click the Contact Support button or write to ravibabu@dfyunicrm.com. We respond to every inquiry directly.
                 </p>
               </div>
             </div>
@@ -910,7 +953,7 @@ export default function LandingPage() {
               href="/contact"
               className="text-emerald-500 font-medium hover:underline"
             >
-              Contact Support: ravibabuche@dfydude.online
+              Contact Support: ravibabu@dfyunicrm.com
             </Link>
           </div>
         </div>

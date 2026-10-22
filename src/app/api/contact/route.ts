@@ -5,7 +5,7 @@ import { notifySlackContactLead } from '@/lib/slack/notify';
 
 export const dynamic = 'force-dynamic';
 
-const DESTINATION_EMAIL = 'ravibabuche@dfydude.online';
+const DESTINATION_EMAIL = 'ravibabu@dfyunicrm.com';
 
 export async function POST(req: Request) {
   try {
