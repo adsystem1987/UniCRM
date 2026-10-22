@@ -38,17 +38,13 @@ export function MandatorySetupModal({
   supabaseConnected,
   onRefresh,
 }: MandatorySetupModalProps) {
-  const [supportDialogOpen, setSupportDialogOpen] = useState(false);
-
   return (
-    <>
-      <Dialog open={open} onOpenChange={() => {}}>
-        <DialogContent
-          className="w-full sm:max-w-xl p-6 bg-card border-border shadow-2xl [&>button]:hidden"
-          onInteractOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-        >
-          <DialogHeader className="space-y-2">
+    <Dialog open={open} onOpenChange={() => {}}>
+      <DialogContent
+        className="w-full sm:max-w-xl p-6 bg-card border-border shadow-2xl [&>button]:hidden"
+        showCloseButton={false}
+      >
+        <DialogHeader className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="h-9 w-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
                 <ShieldAlert className="h-5 w-5" />
@@ -202,12 +198,5 @@ export function MandatorySetupModal({
           </div>
         </DialogContent>
       </Dialog>
-
-      <UpiSupportDialog
-        open={supportDialogOpen}
-        onOpenChange={setSupportDialogOpen}
-        preselectedTab="dfy"
-      />
-    </>
-  );
+    );
 }

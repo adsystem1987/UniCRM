@@ -19,15 +19,19 @@ export async function GET() {
     const googleDriveConnected = !!googleToken;
 
     // 2. Check BYOD Supabase Connection
-    const { data: byodConfig } = await supabase
-      .from("byod_configs")
-      .select("id, is_active, supabase_url")
-      .eq("account_id", accountId)
-      .eq("is_active", true)
-      .maybeSingle()
-      .catch(() => ({ data: null }));
+    let supabaseConnected = false;
+    try {
+      const { data: byodConfig } = await supabase
+        .from("byod_configs")
+        .select("id, is_active, supabase_url")
+        .eq("account_id", accountId)
+        .eq("is_active", true)
+        .maybeSingle();
 
-    const supabaseConnected = !!(byodConfig && byodConfig.supabase_url);
+      supabaseConnected = !!(byodConfig && byodConfig.supabase_url);
+    } catch {
+      supabaseConnected = false;
+    }
 
     return NextResponse.json({
       googleDriveConnected,
