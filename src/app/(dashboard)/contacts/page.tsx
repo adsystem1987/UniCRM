@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 import type { Contact, Tag, ContactTag } from '@/types';
@@ -380,17 +381,18 @@ export default function ContactsPage() {
             <Upload className="size-4" />
             {t('importBtn')}
           </GatedButton>
-          <Button
-            variant="outline"
-            onClick={() => setLeadFinderOpen(true)}
-            className="border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary gap-1.5"
-          >
-            <Target className="size-4" />
-            <span>Find Leads (ICP)</span>
-            <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">
-              AI
-            </span>
-          </Button>
+          <Link href="/leads">
+            <Button
+              variant="outline"
+              className="border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary gap-1.5"
+            >
+              <Target className="size-4" />
+              <span>Find Leads (₹1/Lead)</span>
+              <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">
+                New
+              </span>
+            </Button>
+          </Link>
           <GatedButton
             canAct={canEdit}
             gateReason={tGate('reasons.addOrImportContacts')}
