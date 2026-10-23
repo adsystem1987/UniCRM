@@ -1,55 +1,87 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageSquare, X, Send, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
-interface WebsiteWhatsAppWidgetProps {
-  phoneNumber?: string;
+interface WebsiteLiveChatWidgetProps {
   brandName?: string;
   supportTitle?: string;
   welcomeMessage?: string;
-  prefilledText?: string;
 }
 
 export function WebsiteWhatsAppWidget({
-  phoneNumber = "919000000000",
   brandName = "DFY UniCRM Support",
-  supportTitle = "Typically replies within a few minutes",
-  welcomeMessage = "Hello! 👋 Welcome to DFY UniCRM. Need help with setup, WhatsApp API, or live demo? Let us know!",
-  prefilledText = "Hi DFY UniCRM team! I have a question about the CRM platform.",
-}: WebsiteWhatsAppWidgetProps) {
+  supportTitle = "Online • Instant Support",
+  welcomeMessage = "Hello! 👋 Welcome to DFY UniCRM. Have a question about WhatsApp calling, setup, or features? Message us right here!",
+}: WebsiteLiveChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [userMessage, setUserMessage] = useState("");
+  const [name, setName] = useState("");
+  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  const cleanPhone = phoneNumber.replace(/[^0-9]/g, "");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim()) {
+      toast.error("Please enter a message.");
+      return;
+    }
 
-  const handleSendMessage = () => {
-    const textToSend = userMessage.trim() || prefilledText;
-    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(textToSend)}`;
-    window.open(url, "_blank", "noopener,noreferrer");
-    setIsOpen(false);
-    setUserMessage("");
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          name: name.trim() || "Website Visitor",
+          email: emailOrPhone.includes("@") ? emailOrPhone.trim() : "visitor@dfyunicrm.com",
+          phone: !emailOrPhone.includes("@") ? emailOrPhone.trim() : "",
+          topic: "Website Live Chat",
+          message: message.trim(),
+        }),
+      });
+
+      if (res.ok) {
+        setSent(true);
+        toast.success("Message sent directly to UniCRM Inbox!");
+      } else {
+        toast.error("Failed to deliver message. Please try again.");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleReset = () => {
+    setSent(false);
+    setMessage("");
+    setName("");
+    setEmailOrPhone("");
   };
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
-      {/* Expanded Chat Box */}
+      {/* Expanded Native UniCRM Live Chat Box */}
       {isOpen && (
-        <div className="mb-3 w-[calc(100vw-2.5rem)] max-w-sm rounded-2xl border border-border/80 bg-background shadow-2xl overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-5">
+        <div className="mb-3 w-[calc(100vw-2.5rem)] max-w-sm rounded-2xl border border-border bg-card shadow-2xl overflow-hidden transition-all duration-200 animate-in fade-in slide-in-from-bottom-5">
           {/* Header */}
-          <div className="bg-[#075E54] dark:bg-[#075E54] text-white p-4 flex items-center justify-between">
+          <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center font-bold text-white border border-white/20">
-                  <MessageCircle className="h-5 w-5 fill-current" />
+                <div className="h-10 w-10 rounded-full bg-primary-foreground/10 flex items-center justify-center font-bold text-primary-foreground border border-primary-foreground/20">
+                  <MessageSquare className="h-5 w-5" />
                 </div>
-                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-[#075E54]" />
+                <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-primary" />
               </div>
               <div>
-                <h3 className="font-bold text-sm tracking-tight text-white leading-tight">
+                <h3 className="font-bold text-sm tracking-tight leading-tight">
                   {brandName}
                 </h3>
-                <p className="text-[11px] text-white/80 leading-tight">
+                <p className="text-[11px] opacity-90 leading-tight">
                   {supportTitle}
                 </p>
               </div>
@@ -58,58 +90,103 @@ export function WebsiteWhatsAppWidget({
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="h-8 w-8 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              className="h-8 w-8 rounded-full flex items-center justify-center opacity-80 hover:opacity-100 hover:bg-primary-foreground/10 transition-colors"
               aria-label="Close chat"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          {/* Chat Background / Message area */}
-          <div className="p-4 bg-[#EFEAE2] dark:bg-muted/40 min-h-[140px] flex flex-col justify-end">
-            <div className="bg-white dark:bg-card text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[85%] text-xs leading-relaxed space-y-1">
-              <span className="font-bold text-[10px] text-emerald-600 block">
+          {/* Chat Content Body */}
+          <div className="p-4 bg-muted/30 min-h-[160px] flex flex-col justify-end space-y-3">
+            {/* System Welcome Bubble */}
+            <div className="bg-background border border-border text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[90%] text-xs leading-relaxed space-y-1">
+              <span className="font-bold text-[10px] text-primary flex items-center gap-1">
+                <Sparkles className="h-3 w-3" />
                 {brandName}
               </span>
               <p>{welcomeMessage}</p>
               <span className="text-[9px] text-muted-foreground block text-right">
-                Just now
+                Live
               </span>
             </div>
+
+            {/* Success state */}
+            {sent && (
+              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 rounded-xl p-3 text-xs space-y-2">
+                <div className="flex items-center gap-1.5 font-bold">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  <span>Message delivered to our CRM team!</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Our agents will respond to you right away.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="text-[11px] font-bold text-primary hover:underline"
+                >
+                  Send another message
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Input & Send button */}
-          <div className="p-3 bg-background border-t border-border flex items-center gap-2">
-            <input
-              type="text"
-              value={userMessage}
-              onChange={(e) => setUserMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSendMessage();
-              }}
-              placeholder="Type your message..."
-              className="flex-1 text-xs bg-muted/60 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-emerald-500"
-            />
-            <button
-              type="button"
-              onClick={handleSendMessage}
-              className="h-8 w-8 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-white flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0"
-              aria-label="Send WhatsApp Message"
-            >
-              <Send className="h-3.5 w-3.5 fill-current" />
-            </button>
-          </div>
+          {/* Input & Form Area */}
+          {!sent && (
+            <form onSubmit={handleSubmit} className="p-3 bg-card border-t border-border space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Your Name (optional)"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <input
+                  type="text"
+                  placeholder="Email or WhatsApp"
+                  value={emailOrPhone}
+                  onChange={(e) => setEmailOrPhone(e.target.value)}
+                  className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type your message..."
+                  className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  disabled={submitting || !message.trim()}
+                  className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 disabled:opacity-50"
+                  aria-label="Send Message"
+                >
+                  {submitting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Send className="h-3.5 w-3.5" />
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       )}
 
-      {/* Floating WhatsApp Action Pill / Button */}
+      {/* Floating Action Pill */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-white px-4 py-3 shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 group font-bold text-xs"
-        aria-label="Chat on WhatsApp"
+        className="flex items-center gap-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-95 font-bold text-xs"
+        aria-label="Chat with us"
       >
-        <MessageCircle className="h-5 w-5 fill-current" />
+        <MessageSquare className="h-5 w-5" />
         <span className="hidden sm:inline font-bold">Chat with us</span>
       </button>
     </div>
