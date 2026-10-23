@@ -12,7 +12,10 @@ import {
   Pencil,
   RotateCcw,
   Upload,
+  Sparkles,
+  CheckCircle2,
 } from 'lucide-react';
+import { STARTER_TEMPLATES } from '@/lib/whatsapp/starter-templates';
 import { createClient } from '@/lib/supabase/client';
 import {
   uploadAccountMedia,
@@ -159,6 +162,7 @@ export function TemplateManager() {
   // Resumable-Upload handle.
   const [uploadingHeader, setUploadingHeader] = useState(false);
   const headerFileRef = useRef<HTMLInputElement>(null);
+  const [deployingStarters, setDeployingStarters] = useState(false);
 
   // Body variable indices — `[1, 2, 3]` for "{{1}} {{2}} {{3}}". We
   // re-run the extractor on every render to keep the sample-value rows
@@ -399,6 +403,50 @@ export function TemplateManager() {
     }
   }
 
+  async function handleDeployStarterPack() {
+    setDeployingStarters(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const starter of STARTER_TEMPLATES) {
+      try {
+        const payload = {
+          name: starter.name,
+          category: starter.category,
+          language: starter.language,
+          body_text: starter.body_text,
+          footer_text: starter.footer_text,
+          buttons: starter.buttons,
+          sample_values: starter.sample_values,
+        };
+
+        const res = await fetch('/api/whatsapp/templates/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (e) {
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(
+        `Successfully submitted ${successCount} starter template${successCount > 1 ? 's' : ''} to Meta for approval!`
+      );
+      await fetchTemplates();
+    } else {
+      toast.error('Failed to submit starter templates. Please check your Meta WhatsApp credentials in Settings.');
+    }
+    setDeployingStarters(false);
+  }
+
   // The patch type unions every field across button variants. The
   // conditional rendering below ensures only fields valid for the
   // current button's `type` reach this function, so the runtime
@@ -566,14 +614,72 @@ export function TemplateManager() {
       />
 
       {templates.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-muted-foreground text-sm">{t('noTemplates')}</p>
-            <p className="text-muted-foreground text-xs mt-1">
-              {t('createFirst')}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="space-y-4">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="size-5 text-primary" />
+                    <h3 className="font-semibold text-foreground text-base">
+                      Deploy Starter Templates Pack
+                    </h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground max-w-2xl">
+                    No approved templates in your WhatsApp account yet? Deploy 5 battle-tested, pre-built templates (Lead Welcome, Appointment Reminder, Payment Confirmation, Follow-up, Feedback Survey) directly to Meta for quick approval.
+                  </p>
+                </div>
+                <Button
+                  onClick={handleDeployStarterPack}
+                  disabled={deployingStarters}
+                  className="shrink-0 gap-2 font-medium"
+                >
+                  {deployingStarters ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Submitting to Meta...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="size-4" />
+                      Deploy 5 Starter Templates
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 pt-4 border-t border-border/50 text-xs">
+                {STARTER_TEMPLATES.map((item) => (
+                  <div
+                    key={item.name}
+                    className="p-2.5 rounded-md border border-border/60 bg-background/50 flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-foreground">{item.displayName}</span>
+                        <Badge variant="outline" className="text-[10px] py-0 px-1">
+                          {item.category}
+                        </Badge>
+                      </div>
+                      <p className="text-muted-foreground line-clamp-2">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-8 text-center">
+              <p className="text-muted-foreground text-sm">{t('noTemplates')}</p>
+              <p className="text-muted-foreground text-xs mt-1">
+                {t('createFirst')}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       ) : (
         <div className="grid gap-3 xl:grid-cols-2">
           {templates.map((template) => {
