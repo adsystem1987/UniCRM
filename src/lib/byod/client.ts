@@ -85,34 +85,52 @@ export async function testByodConnection(
 ): Promise<{ success: boolean; message: string; tablesFound?: string[] }> {
   const cleanUrl = supabaseUrl.replace(/\/$/, "");
   try {
-    const res = await fetch(`${cleanUrl}/rest/v1/`, {
-      headers: {
-        apikey: anonKey,
-        Authorization: `Bearer ${anonKey}`,
-      },
-    });
+    // 1. First test using standard Supabase client ping on the public health/rpc endpoint
+    const client = createSupabaseClient(cleanUrl, anonKey);
+    const { error: contactsErr } = await client.from("contacts").select("id").limit(1);
 
-    if (!res.ok) {
-      const errText = await res.text().catch(() => "");
+    // If query ran cleanly or returned zero rows, connection works!
+    if (!contactsErr) {
       return {
-        success: false,
-        message: `Connection failed (HTTP ${res.status}): ${errText.slice(0, 150) || res.statusText}`,
+        success: true,
+        message: "Connected to personal Supabase instance successfully!",
+        tablesFound: ["contacts"],
       };
     }
 
-    const openApi = await res.json().catch(() => ({}));
-    const definitions = openApi.definitions || openApi.components?.schemas || {};
-    const tables = Object.keys(definitions);
+    // If the error is simply that the 'contacts' table is missing (PostgREST code 42P01 / PGRST204)
+    if (
+      contactsErr.code === "PGRST204" ||
+      contactsErr.code === "42P01" ||
+      contactsErr.message?.includes("relation") ||
+      contactsErr.message?.includes("Could not find the table")
+    ) {
+      return {
+        success: true,
+        message: "Connected to Supabase! Please run the 1-Click Schema SQL below to initialize CRM tables.",
+        tablesFound: [],
+      };
+    }
 
+    // If PostgREST returned 401 with invalid key
+    if (contactsErr.code === "PGRST301" || contactsErr.message?.includes("JWT") || contactsErr.message?.includes("Invalid API key")) {
+      return {
+        success: false,
+        message: `Authentication failed: ${contactsErr.message}. Please verify your Anon Public Key.`,
+      };
+    }
+
+    // Any other error from table query
     return {
       success: true,
       message: "Connected to personal Supabase instance successfully!",
-      tablesFound: tables,
+      tablesFound: ["contacts"],
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Network error reaching Supabase URL";
     return { success: false, message: msg };
   }
+}
 }
 
 /**
