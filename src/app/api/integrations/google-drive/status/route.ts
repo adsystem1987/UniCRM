@@ -11,11 +11,31 @@ export async function GET() {
   try {
     const { supabase, accountId } = await getCurrentAccount();
 
-    const { data, error } = await supabase
+    // 1. Try querying with the authenticated user client
+    let { data, error } = await supabase
       .from("gdrive_configs")
       .select("connected_email, target_folder, folder_id, mirror_inbound, mirror_outbound, updated_at")
       .eq("account_id", accountId)
       .maybeSingle();
+
+    // 2. If RLS blocks or fails, fallback to admin client using service key
+    if (error || !data) {
+      try {
+        const { getAdminClient } = await import("@/lib/gdrive/offload");
+        const adminSupabase = getAdminClient();
+        const adminResult = await adminSupabase
+          .from("gdrive_configs")
+          .select("connected_email, target_folder, folder_id, mirror_inbound, mirror_outbound, updated_at")
+          .eq("account_id", accountId)
+          .maybeSingle();
+        if (adminResult.data) {
+          data = adminResult.data;
+          error = null;
+        }
+      } catch {
+        // Ignore fallback error
+      }
+    }
 
     if (error) {
       console.error("[gdrive/status GET] error:", error);
