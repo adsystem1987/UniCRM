@@ -3,7 +3,8 @@
 ## Global Agent Rules (STRICT)
 - **Git Push Approval**: NEVER run `git push` automatically. Always ask the user for explicit approval and wait for their confirmation before pushing.
 - **Git Staging**: Always stage exact modified files only. NEVER run `git add -A` or `git add .`.
-- **Primary Branch**: `staging` is the active deployment branch deployed to Vercel.
+- **Branch & Promotion Rule**: ONLY commit and push to the `staging` branch (`origin/staging`). NEVER push to or merge into `main`. The user personally verifies staging and promotes to production (`main`).
+- **Primary Branch**: `staging` is the sole development and push target for agents.
 
 ---
 
