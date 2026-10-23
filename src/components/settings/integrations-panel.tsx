@@ -144,8 +144,10 @@ export function IntegrationsPanel() {
 
       if (params.get("gdrive") === "connected") {
         setActiveTab("gdrive");
+        setGdriveConnected(true);
         toast.success("Google Drive connected successfully with 15 GB quota!");
         window.history.replaceState({}, "", "/settings?tab=integrations&subtab=gdrive");
+        void checkDriveStatus();
       } else if (params.get("gdrive_error")) {
         setActiveTab("gdrive");
         toast.error(`Google Drive connection error: ${params.get("gdrive_error")}`);
@@ -197,30 +199,31 @@ export function IntegrationsPanel() {
   }, []);
 
   // Fetch actual Google Drive connection status from DB
-  useEffect(() => {
-    async function checkDriveStatus() {
-      setGdriveLoading(true);
-      try {
-        const res = await fetch("/api/integrations/google-drive/status");
-        const data = await res.json();
-        if (data.connected) {
-          setGdriveConnected(true);
-          setGdriveEmail(data.email || "");
-          if (data.target_folder) setGdriveFolder(data.target_folder);
-          if (typeof data.mirror_inbound === "boolean") setGdriveMirrorInbound(data.mirror_inbound);
-          if (typeof data.mirror_outbound === "boolean") setGdriveMirrorOutbound(data.mirror_outbound);
-        } else {
-          setGdriveConnected(false);
-          setGdriveEmail("");
-        }
-      } catch {
+  const checkDriveStatus = useCallback(async () => {
+    setGdriveLoading(true);
+    try {
+      const res = await fetch("/api/integrations/google-drive/status");
+      const data = await res.json();
+      if (data.connected) {
+        setGdriveConnected(true);
+        setGdriveEmail(data.email || "");
+        if (data.target_folder) setGdriveFolder(data.target_folder);
+        if (typeof data.mirror_inbound === "boolean") setGdriveMirrorInbound(data.mirror_inbound);
+        if (typeof data.mirror_outbound === "boolean") setGdriveMirrorOutbound(data.mirror_outbound);
+      } else {
         setGdriveConnected(false);
-      } finally {
-        setGdriveLoading(false);
+        setGdriveEmail("");
       }
+    } catch {
+      setGdriveConnected(false);
+    } finally {
+      setGdriveLoading(false);
     }
-    void checkDriveStatus();
   }, []);
+
+  useEffect(() => {
+    void checkDriveStatus();
+  }, [checkDriveStatus]);
 
   const handleConnectDrive = () => {
     window.location.href = "/api/integrations/google-drive/auth";
