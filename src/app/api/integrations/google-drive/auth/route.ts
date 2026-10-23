@@ -8,9 +8,12 @@ export async function GET(request: Request) {
   try {
     const { accountId, userId } = await requireRole("admin");
 
+    // Determine canonical origin (prefer NEXT_PUBLIC_SITE_URL to prevent port/header mismatches)
+    const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
     const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
     const proto = request.headers.get("x-forwarded-proto") || "https";
-    const origin = host ? `${proto}://${host}` : new URL(request.url).origin;
+    const headerOrigin = host ? `${proto}://${host}` : new URL(request.url).origin;
+    const origin = envOrigin || headerOrigin;
     const redirectUri = `${origin}/api/integrations/google-drive/callback`;
 
     // State encodes accountId and userId with a timestamp

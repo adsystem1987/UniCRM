@@ -17,9 +17,11 @@ function getAdminClient() {
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const envOrigin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "");
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
   const proto = request.headers.get("x-forwarded-proto") || "https";
-  const origin = host ? `${proto}://${host}` : url.origin;
+  const headerOrigin = host ? `${proto}://${host}` : url.origin;
+  const origin = envOrigin || headerOrigin;
 
   const errorParam = url.searchParams.get("error");
   if (errorParam) {
@@ -80,7 +82,7 @@ export async function GET(request: Request) {
     if (dbError) {
       console.error("[google-drive/callback] DB upsert error:", dbError);
       return NextResponse.redirect(
-        `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${encodeURIComponent(dbError.message)}`
+        `${origin}/settings?tab=integrations&subtab=gdrive&gdrive_error=${encodeURIComponent(dbError.message || dbError.details || "Database save failed")}`
       );
     }
 
