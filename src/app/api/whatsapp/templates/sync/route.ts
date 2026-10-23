@@ -25,6 +25,8 @@ const t = getT('Api')
  * they remain visible so the user can notice drift and clean up.
  */
 
+export const dynamic = 'force-dynamic';
+
 const META_API_VERSION = 'v21.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
 

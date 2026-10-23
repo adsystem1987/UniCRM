@@ -314,8 +314,29 @@ export function TemplateManager() {
     if (!user) return;
     setSyncing(true);
     try {
-      const res = await fetch('/api/whatsapp/templates/sync', { method: 'POST' });
-      const data = await res.json();
+      const res = await fetch('/api/whatsapp/templates/sync', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+          throw new Error(
+            res.status === 401 || res.status === 403
+              ? "Session expired or unauthorized. Please refresh and log in again."
+              : `Server returned an HTML error page (HTTP ${res.status}). Please check Vercel function logs.`
+          );
+        }
+        throw new Error(`Invalid response format from server (HTTP ${res.status}): ${text.slice(0, 100)}`);
+      }
+
       if (!res.ok) {
         throw new Error(data?.error || t('syncFailedHttp', { status: res.status }));
       }
