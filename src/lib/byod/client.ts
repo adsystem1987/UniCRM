@@ -131,7 +131,6 @@ export async function testByodConnection(
     return { success: false, message: msg };
   }
 }
-}
 
 /**
  * Initialize schema on the customer's Supabase project using their service role key
