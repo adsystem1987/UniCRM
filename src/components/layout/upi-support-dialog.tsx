@@ -128,7 +128,7 @@ export function UpiSupportDialog({
     `Hi DFY UniCRM team! I just contributed ₹${effectiveAmount}/month via UPI to support the project (UPI ID: ${upiId}).\n\nMy Payment Ref/UTR:\nPlease send me the 50+ WhatsApp Business Templates & Automation Pack! 🙌`
   )}`;
 
-  const claimEmailUri = `mailto:ravibabu@dfyunicrm.com?subject=${encodeURIComponent(
+  const claimEmailUri = `mailto:help@dfyunicrm.com?subject=${encodeURIComponent(
     `DFY UniCRM Monthly Supporter Perks Claim (₹${effectiveAmount}/mo)`
   )}&body=${encodeURIComponent(
     `Hi Ravi,\n\nI just contributed ₹${effectiveAmount}/month via UPI to support DFY UniCRM!\n\nPayee UPI ID: ${upiId}\nMy UPI Transaction ID / UTR:\n\nPlease send the 50+ WhatsApp Business Templates and 3 Automation Flows to this email address.\n\nThank you!`
@@ -515,7 +515,7 @@ export function UpiSupportDialog({
               <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[11px] text-muted-foreground">
                 <span>Questions before booking?</span>
                 <a
-                  href="mailto:ravibabu@dfyunicrm.com?subject=UniCRM%20DFY%20Setup%20Inquiry"
+                  href="mailto:help@dfyunicrm.com?subject=UniCRM%20DFY%20Setup%20Inquiry"
                   className="font-semibold text-primary hover:underline flex items-center gap-1"
                 >
                   <Mail className="h-3 w-3" />

@@ -6,7 +6,7 @@
 DFY UniCRM (Done-For-You UniCRM) is a self-hostable and managed omnichannel customer relationship management system tailored for Indian businesses, fast-growing startups, and global teams.
 
 - Canonical URL: https://dfyunicrm.com
-- Contact Email: ravibabu@dfyunicrm.com
+- Contact Email: help@dfyunicrm.com
 - Primary Channels: WhatsApp (Business & Gateway API), Instagram Direct, Facebook Messenger, Support Email Inboxes, and WhatsApp Voice Calling with IVR.
 
 ## Core Capabilities
@@ -18,5 +18,5 @@ DFY UniCRM (Done-For-You UniCRM) is a self-hostable and managed omnichannel cust
 
 ## Contact & Support
 - Primary Contact: Ravi Babu
-- Email: ravibabu@dfyunicrm.com
+- Email: help@dfyunicrm.com
 - Website: https://dfyunicrm.com

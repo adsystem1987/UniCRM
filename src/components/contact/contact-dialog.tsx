@@ -101,7 +101,7 @@ export function ContactDialog({
             </div>
             <h3 className="text-lg font-bold text-foreground">Message Received!</h3>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-              Thank you, <strong>{name}</strong>. Your inquiry has been forwarded directly to <strong>ravibabu@dfyunicrm.com</strong>. We will respond as quickly as possible.
+              Thank you, <strong>{name}</strong>. Your inquiry has been forwarded directly to <strong>help@dfyunicrm.com</strong>. We will respond as quickly as possible.
             </p>
             <Button onClick={handleReset} className="mt-4 font-bold">
               Done
@@ -188,7 +188,7 @@ export function ContactDialog({
 
             <div className="pt-2 flex items-center justify-between gap-3">
               <span className="text-xs text-muted-foreground">
-                Sent to: ravibabu@dfyunicrm.com
+                Sent to: help@dfyunicrm.com
               </span>
               <Button type="submit" disabled={submitting} className="font-bold gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
                 {submitting ? (

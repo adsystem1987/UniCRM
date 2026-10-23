@@ -49,4 +49,4 @@ If you prefer a hands-off experience:
 2. **Official Meta Cloud API (WABA)**: Zero block risk for high-volume automated notifications.
 3. **1-on-1 DFY Setup (₹1,000 One-time)**: Our engineers join you on Google Meet to configure Google Drive storage, Supabase database, and WhatsApp gateway.
 
-Contact: **ravibabu@dfyunicrm.com** | Support inside UniCRM
+Contact: **help@dfyunicrm.com** | Support inside UniCRM

@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { WebsiteWhatsAppWidget } from "@/components/layout/website-whatsapp-widget";
 import {
   ScarcityTopBanner,
   ScarcityHeroPill,
@@ -63,7 +64,7 @@ export default function LandingPage() {
         "@id": "https://dfyunicrm.com/#organization",
         "name": "DFY UniCRM",
         "url": "https://dfyunicrm.com",
-        "email": "ravibabu@dfyunicrm.com",
+        "email": "help@dfyunicrm.com",
         "description": "Done-For-You Omnichannel CRM, WhatsApp Calling & Unified Support Inbox with zero subscription fees."
       },
       {
@@ -117,14 +118,14 @@ export default function LandingPage() {
 
       {/* Navigation */}
       <header className="sticky top-0 z-50 w-full bg-background/90 backdrop-blur-xs border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+          <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 min-w-0">
             <img
               src="/logo.png"
               alt="DFY UniCRM"
-              className="h-9 w-9 object-contain"
+              className="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0"
             />
-            <span className="text-xl font-black tracking-tight text-foreground">DFY UniCRM</span>
+            <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">DFY UniCRM</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-muted-foreground">
@@ -136,17 +137,17 @@ export default function LandingPage() {
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <ModeToggle />
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            <ModeToggle className="h-8 w-8 sm:h-10 sm:w-10" />
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground px-2 sm:px-3 text-xs sm:text-sm">
                 Sign In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5 shadow-xs">
-                Start Free
-                <ArrowRight className="h-4 w-4" />
+              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1 sm:gap-1.5 shadow-xs px-2.5 sm:px-3 text-xs sm:text-sm">
+                <span>Start Free</span>
+                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </Link>
           </div>
@@ -925,7 +926,7 @@ export default function LandingPage() {
               <div className="rounded-2xl border border-border/60 bg-card p-6">
                 <h4 className="font-bold text-foreground">How do I reach support if I need help?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  Click the Contact Support button or write to ravibabu@dfyunicrm.com. We respond to every inquiry directly.
+                  Click the Contact Support button or write to help@dfyunicrm.com. We respond to every inquiry directly.
                 </p>
               </div>
             </div>
@@ -953,11 +954,14 @@ export default function LandingPage() {
               href="/contact"
               className="text-emerald-500 font-medium hover:underline"
             >
-              Contact Support: ravibabu@dfyunicrm.com
+              Contact Support: help@dfyunicrm.com
             </Link>
           </div>
         </div>
       </footer>
+
+      {/* Floating Website WhatsApp Chat Widget */}
+      <WebsiteWhatsAppWidget />
     </div>
   );
 }
