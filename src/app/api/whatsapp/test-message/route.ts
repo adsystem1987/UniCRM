@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         message: 'Test message sent successfully to your WhatsApp!',
-        whatsapp_message_id: metaRes.messages?.[0]?.id,
+        whatsapp_message_id: metaRes.messageId,
         sent_to: recipientPhone,
       });
     } catch (metaErr: any) {
