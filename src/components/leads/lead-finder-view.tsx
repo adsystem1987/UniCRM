@@ -677,7 +677,8 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             selectedLeadIds.length === filteredLeads.length &&
                             filteredLeads.length > 0
                           }
-                          onCheckedChange={(c) => handleSelectAll(!!c)}
+                          onCheckedChange={(c) => handleSelectAll(c === true)}
+                          className="border-muted-foreground/50 data-[checked]:border-primary"
                         />
                       </th>
                       <th className="p-3">Business / Prospect</th>
@@ -694,14 +695,16 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                       return (
                         <tr
                           key={lead.id}
-                          className={`hover:bg-muted/40 transition-colors ${
+                          onClick={() => handleToggleLead(lead.id)}
+                          className={`hover:bg-muted/40 transition-colors cursor-pointer select-none ${
                             isSelected ? "bg-primary/5" : ""
                           }`}
                         >
-                          <td className="p-3">
+                          <td className="p-3" onClick={(e) => e.stopPropagation()}>
                             <Checkbox
                               checked={isSelected}
                               onCheckedChange={() => handleToggleLead(lead.id)}
+                              className="border-muted-foreground/50 data-[checked]:border-primary"
                             />
                           </td>
                           <td className="p-3">
