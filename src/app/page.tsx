@@ -204,12 +204,6 @@ export default function LandingPage() {
                   <span>Talk to Founders</span>
                 </ContactButton>
               </div>
-                  icon="headphones"
-                  defaultTopic="General Inquiry"
-                >
-                  Contact Technical Desk
-                </ContactButton>
-              </div>
               <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                 Funded by our community • 100% Free forever for everyone • Zero credit card required
