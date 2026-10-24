@@ -14,6 +14,7 @@ import { assertConversationInAccount } from '@/lib/whatsapp/conversation-scope'
 import {
   resolveTemplateRow,
   templateContentText,
+  templateHeaderMediaUrl,
 } from '@/lib/whatsapp/template-body'
 import { supabaseAdmin } from './admin-client'
 import { getT } from '@/lib/i18n/translate'
@@ -238,6 +239,7 @@ async function sendViaMeta(input: SendInput): Promise<{ whatsapp_message_id: str
     sender_type: 'bot',
     content_type,
     content_text,
+    media_url: templateHeaderMediaUrl(templateRow),
     template_name,
     message_id: waMessageId,
     status: 'sent',

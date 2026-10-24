@@ -55,7 +55,14 @@ import { AiThreadBanner } from "./ai-thread-banner";
 import { VoiceCallModal } from "./voice-call-modal";
 
 import { buildReplyPreview } from "./reply-quote";
-import { renderTemplateBody } from "@/lib/whatsapp/template-body";
+import {
+  renderTemplateBody,
+  templateHeaderMediaUrl,
+} from "@/lib/whatsapp/template-body";
+import {
+  matchMessageTemplate,
+  templateNamesInMessages,
+} from "@/lib/whatsapp/template-message-view";
 import { contactHandle } from "@/lib/whatsapp/wa-identity";
 import { toast } from "sonner";
 
@@ -179,6 +186,35 @@ export function MessageThread({
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [reactions, setReactions] = useState<MessageReaction[]>([]);
+  const [sentTemplates, setSentTemplates] = useState<MessageTemplate[]>([]);
+  const sentTemplateNames = useMemo(
+    () => templateNamesInMessages(messages).join("\n"),
+    [messages],
+  );
+  useEffect(() => {
+    if (!sentTemplateNames) return;
+
+    const supabase = createClient();
+    let cancelled = false;
+
+    (async () => {
+      const { data, error } = await supabase
+        .from("message_templates")
+        .select("*")
+        .in("name", sentTemplateNames.split("\n"));
+
+      if (cancelled) return;
+      if (error) {
+        console.error("Failed to fetch sent templates:", error);
+        return;
+      }
+      setSentTemplates((data as MessageTemplate[]) ?? []);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [sentTemplateNames]);
   // Purely visual spin state for the manual-refresh button. The actual
   // refetch is fire-and-forget through `onRefresh` (which bumps the
   // parent's resyncToken); the 700ms spin is just feedback so the click
@@ -684,6 +720,7 @@ export function MessageThread({
         sender_type: "agent",
         content_type: "template",
         content_text: renderedBody,
+        media_url: templateHeaderMediaUrl(template) ?? undefined,
         template_name: template.name,
         status: "sending",
         created_at: new Date().toISOString(),
@@ -1161,6 +1198,11 @@ export function MessageThread({
                       >
                         <MessageBubble
                           message={msg}
+                          template={
+                            msg.content_type === "template"
+                              ? matchMessageTemplate(msg, sentTemplates)
+                              : null
+                          }
                           reply={reply}
                           reactions={msgReactions}
                           currentUserId={user?.id}

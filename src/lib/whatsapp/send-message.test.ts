@@ -346,6 +346,44 @@ describe('sendMessageToConversation — template persistence (#483)', () => {
     expect(captured.message?.content_text).toBeNull();
     expect(captured.conversation?.last_message_text).toBe('[template]');
   });
+
+  it('stores the header image so the Inbox can render it (#655)', async () => {
+    const captured: CapturedWrites = {};
+    await sendMessageToConversation(
+      sendPathDb(
+        [
+          {
+            ...TEMPLATE_ROW,
+            header_type: 'image',
+            header_media_url: 'https://cdn.example.com/banner.png',
+          },
+        ],
+        captured
+      ),
+      'acct-1',
+      {
+        conversationId: 'cv-1',
+        messageType: 'template',
+        templateName: 'order_update',
+        templateParams: ['A123', 'Friday'],
+      }
+    );
+    expect(captured.message?.media_url).toBe(
+      'https://cdn.example.com/banner.png'
+    );
+  });
+
+  it('stores no media for a template without a media header', async () => {
+    const captured: CapturedWrites = {};
+    await sendMessageToConversation(sendPathDb([TEMPLATE_ROW], captured), 'acct-1', {
+      conversationId: 'cv-1',
+      messageType: 'template',
+      templateName: 'order_update',
+      templateParams: ['A123', 'Friday'],
+      mediaUrl: 'https://cdn.example.com/ignored.png',
+    });
+    expect(captured.message?.media_url).toBeNull();
+  });
 });
 
 // ============================================================

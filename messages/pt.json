@@ -42,7 +42,8 @@
     "defaultAvatar": "Avatar",
     "menuProfile": "Perfil",
     "menuSettings": "Configurações",
-    "menuSignOut": "Sair"
+    "menuSignOut": "Sair",
+    "orders": "Pedidos e Pagamentos"
   },
   "Header": {
     "dashboard": "Painel",
