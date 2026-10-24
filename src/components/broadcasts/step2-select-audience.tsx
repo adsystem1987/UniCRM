@@ -344,17 +344,17 @@ export function Step2SelectAudience({
                     option.type === 'csv' ? audience.csvContacts : undefined,
                 })
               }
-              className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+              className={`group/card flex items-start gap-3 rounded-2xl border p-4 text-left transition-all duration-200 active:translate-y-px ${
                 isSelected
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                  : 'border-border bg-card/50 hover:border-border'
+                  ? 'border-foreground bg-surface shadow-xs ring-1 ring-border'
+                  : 'border-border bg-card hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-hover/40'
               }`}
             >
               <div
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border ${
                   isSelected
-                    ? 'bg-primary/10 text-primary'
-                    : 'bg-muted text-muted-foreground'
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'bg-surface border-border text-foreground'
                 }`}
               >
                 <Icon className="h-4 w-4" />

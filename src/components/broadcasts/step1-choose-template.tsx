@@ -92,10 +92,10 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
               <button
                 key={template.id}
                 onClick={() => onSelect(template)}
-                className={`flex flex-col gap-3 rounded-xl border p-4 text-left transition-all ${
+                className={`group/card flex flex-col gap-3 rounded-2xl border p-4 text-left transition-all duration-200 active:translate-y-px ${
                   isSelected
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                    : 'border-border bg-card/50 hover:border-border hover:bg-card'
+                    ? 'border-foreground bg-surface shadow-xs ring-1 ring-border'
+                    : 'border-border bg-card hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-hover/40'
                 }`}
               >
                 <div className="flex items-start justify-between">
