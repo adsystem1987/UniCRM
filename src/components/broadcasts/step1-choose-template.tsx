@@ -8,9 +8,9 @@ import { Loader2, FileText, ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 const categoryColors: Record<string, string> = {
-  Marketing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Utility: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  Authentication: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+  Marketing: 'bg-status-violet-bg text-status-violet border-status-violet-border',
+  Utility: 'bg-status-info-bg text-status-info border-status-info-border',
+  Authentication: 'bg-status-warning-bg text-status-warning border-status-warning-border',
 };
 
 interface Step1Props {
@@ -92,10 +92,10 @@ export function Step1ChooseTemplate({ selectedTemplate, onSelect, onNext, onBack
               <button
                 key={template.id}
                 onClick={() => onSelect(template)}
-                className={`flex flex-col gap-3 rounded-xl border p-4 text-left transition-all ${
+                className={`group/card flex flex-col gap-3 rounded-2xl border p-4 text-left transition-all duration-200 active:translate-y-px ${
                   isSelected
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
-                    : 'border-border bg-card/50 hover:border-border hover:bg-card'
+                    ? 'border-foreground bg-surface shadow-xs ring-1 ring-border'
+                    : 'border-border bg-card hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-hover/40'
                 }`}
               >
                 <div className="flex items-start justify-between">

@@ -48,6 +48,36 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-soft: var(--primary-soft);
   --color-primary-soft-2: var(--primary-soft-2);
+
+  /* Semantic Status Tokens (UniCRM Clean Contrast System) */
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-warning-border: var(--status-warning-border);
+
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-border: var(--status-info-border);
+
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-success-border: var(--status-success-border);
+
+  --color-status-violet: var(--status-violet);
+  --color-status-violet-bg: var(--status-violet-bg);
+  --color-status-violet-border: var(--status-violet-border);
+
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-bg: var(--status-danger-bg);
+  --color-status-danger-border: var(--status-danger-border);
+
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -88,66 +118,135 @@
 
 :root,
 html[data-mode="dark"] {
-  --background: oklch(0.13 0.01 260);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0.01 260);
-  --card-2: oklch(0.205 0.01 260);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0.01 260);
-  --popover-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.22 0.01 260);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0.01 260);
-  --muted-foreground: oklch(0.65 0.01 260);
-  --accent: oklch(0.22 0.01 260);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.28 0.01 260);
-  --input: oklch(0.28 0.01 260);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #080808;
+  --foreground: #f5f5f5;
+  --card: #141414;
+  --card-2: #191919;
+  --card-foreground: #f5f5f5;
+  --popover: #161616;
+  --popover-foreground: #f5f5f5;
+  --primary: #f5f5f5;
+  --primary-foreground: #080808;
+  --primary-hover: #ffffff;
+  --secondary: #151515;
+  --secondary-foreground: #f5f5f5;
+  --muted: #111111;
+  --muted-foreground: #929292;
+  --accent: #191919;
+  --accent-foreground: #f5f5f5;
+  --destructive: #df656b;
+  --border: #292929;
+  --border-subtle: #1d1d1d;
+  --border-strong: #3a3a3a;
+  --input: #292929;
+  --ring: #f5f5f5;
   --radius: 0.625rem;
-  --sidebar: oklch(0.16 0.01 260);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.22 0.01 260);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.28 0.01 260);
+  --sidebar: #080808;
+  --sidebar-foreground: #f5f5f5;
+  --sidebar-accent: #191919;
+  --sidebar-accent-foreground: #f5f5f5;
+  --sidebar-border: #292929;
+  --sidebar-primary: #f5f5f5;
+  --sidebar-primary-foreground: #080808;
+  --sidebar-ring: #f5f5f5;
+
+  --surface: #111111;
+  --surface-hover: #191919;
+  --surface-active: #202020;
+  --surface-raised: #141414;
+  --surface-subtle: #0b0b0b;
+
+  /* UniCRM Semantic Status Tokens - Dark (Moon) */
+  --status-warning: #c99a3b;
+  --status-warning-bg: #1d180d;
+  --status-warning-border: #493a1d;
+
+  --status-info: #6f96e8;
+  --status-info-bg: #101725;
+  --status-info-border: #283b62;
+
+  --status-success: #42b991;
+  --status-success-bg: #0d1b16;
+  --status-success-border: #204638;
+
+  --status-violet: #9482df;
+  --status-violet-bg: #161126;
+  --status-violet-border: #3b2c63;
+
+  --status-danger: #df656b;
+  --status-danger-bg: #211113;
+  --status-danger-border: #4b2428;
 }
 
 html[data-mode="light"] {
-  --background: oklch(0.99 0.002 260);
-  --foreground: oklch(0.21 0.01 260);
-  --card: oklch(1 0 0);
-  --card-2: oklch(0.985 0.002 260);
-  --card-foreground: oklch(0.21 0.01 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.01 260);
-  --secondary: oklch(0.967 0.003 260);
-  --secondary-foreground: oklch(0.25 0.01 260);
-  --muted: oklch(0.967 0.003 260);
-  --muted-foreground: oklch(0.52 0.015 260);
-  --accent: oklch(0.96 0.004 260);
-  --accent-foreground: oklch(0.25 0.01 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0.004 260);
-  --input: oklch(0.922 0.004 260);
-  --chart-2: oklch(0.6 0.1 260);
-  --chart-3: oklch(0.7 0.06 260);
-  --chart-4: oklch(0.8 0.04 260);
-  --chart-5: oklch(0.87 0.03 260);
+  --background: #ffffff;
+  --foreground: #191c1f;
+  --card: #ffffff;
+  --card-2: #f6f6f6;
+  --card-foreground: #191c1f;
+  --popover: #ffffff;
+  --popover-foreground: #191c1f;
+  --primary: #191c1f;
+  --primary-foreground: #ffffff;
+  --primary-hover: #080808;
+  --secondary: #f1f1f1;
+  --secondary-foreground: #1f2226;
+  --muted: #f6f6f6;
+  --muted-foreground: #70757b;
+  --accent: #eeeeee;
+  --accent-foreground: #1f2226;
+  --destructive: #dc3545;
+  --border: #d8d8d8;
+  --border-subtle: #ededed;
+  --border-strong: #b8b8b8;
+  --input: #d8d8d8;
+  --ring: #191c1f;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.002 260);
-  --sidebar-foreground: oklch(0.21 0.01 260);
-  --sidebar-accent: oklch(0.96 0.004 260);
-  --sidebar-accent-foreground: oklch(0.25 0.01 260);
-  --sidebar-border: oklch(0.922 0.004 260);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #191c1f;
+  --sidebar-accent: #eeeeee;
+  --sidebar-accent-foreground: #191c1f;
+  --sidebar-border: #d8d8d8;
+  --sidebar-primary: #191c1f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-ring: #191c1f;
+
+  --surface: #f6f6f6;
+  --surface-hover: #eeeeee;
+  --surface-active: #e5e5e5;
+  --surface-raised: #ffffff;
+  --surface-subtle: #fafafa;
+
+  /* UniCRM Semantic Status Tokens - Light (Sun) */
+  --status-warning: #a97800;
+  --status-warning-bg: #fff8e6;
+  --status-warning-border: #eed79b;
+
+  --status-info: #276ef1;
+  --status-info-bg: #eef4ff;
+  --status-info-border: #c6d8ff;
+
+  --status-success: #008f68;
+  --status-success-bg: #edf9f5;
+  --status-success-border: #b9e7d8;
+
+  --status-violet: #7c5ce5;
+  --status-violet-bg: #f4f0ff;
+  --status-violet-border: #dcd0ff;
+
+  --status-danger: #dc3545;
+  --status-danger-bg: #fff1f2;
+  --status-danger-border: #fecdd3;
 }
 
-/* ---- ACCENT: primary color ---- */
+/* ---- ACCENT: primary color (Optional Accent Themes) ---- */
 
-:root,
+html[data-theme="monochrome"] {
+  /* Inherits directly from data-mode:
+   * Dark Mode (Moon): solid white #f5f5f5 with black text #080808
+   * Light Mode (Sun): solid dark charcoal #191c1f with white text #ffffff */
+}
+
 html[data-theme="violet"] {
   --primary: oklch(0.526 0.247 293);
   --primary-foreground: oklch(0.985 0 0);
@@ -226,6 +325,8 @@ html[data-theme="rose"] {
   }
   html {
     @apply font-sans;
+    /* Smooth theme transition between Sun (Light) and Moon (Dark) */
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
 }
 
@@ -254,6 +355,13 @@ html[data-theme="rose"] {
   animation: enter-snappy 200ms var(--ease-snappy) forwards;
 }
 
+/* UniCRM Dot Grid Pattern */
+.mkt-dots {
+  background-image: radial-gradient(color-mix(in oklab, var(--foreground) 14%, transparent) 1px, transparent 1px);
+  background-position: -1px -1px;
+  background-size: 22px 22px;
+}
+
 @keyframes enter-snappy {
   from {
     opacity: 0;
@@ -264,3 +372,277 @@ html[data-theme="rose"] {
     transform: scale(1) translateY(0);
   }
 }
+
+/* ============================================================
+ * UniCRM Typography System (.type-*)
+ * ============================================================ */
+
+.type-display {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  font-size: clamp(2.5rem, 5.4vw, 4.6rem);
+  line-height: 1.02;
+}
+
+.type-page-title {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.type-title {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.type-heading {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.type-subheading {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.type-body {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.type-body-muted {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.type-code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.type-overline {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.type-label {
+  letter-spacing: -0.005em;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ============================================================
+ * UniCRM Kinetic Animations & Ambient Floats
+ * ============================================================ */
+
+@keyframes slide-blur-up {
+  0% {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-blur-up {
+  animation: slide-blur-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes unicrm-shimmer-sweep {
+  0%, 8% {
+    transform: translate(-100%) skew(-20deg);
+  }
+  45%, 100% {
+    transform: translate(400%) skew(-20deg);
+  }
+}
+
+@keyframes cta-shimmer-sweep {
+  0% {
+    transform: translateX(-200%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(350%) skewX(-20deg);
+  }
+}
+
+@keyframes cta-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.18);
+  }
+}
+
+.unicrm-shimmer,
+.unit-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.unicrm-shimmer::after,
+.unit-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: unicrm-shimmer-sweep 6s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes activation-ping {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  40%, 100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.activation-ping {
+  animation: activation-ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes sms-float-a {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes sms-float-b {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+.sms-float-a {
+  animation: sms-float-a 24s ease-in-out infinite;
+}
+
+.sms-float-b {
+  animation: sms-float-b 28s ease-in-out infinite;
+}
+
+/* ============================================================
+ * Libraries.dev (Jakub Antalík) Next-Gen UI Effects
+ * Border Beam traveling light, Thinking Orbs & Voice Glow
+ * ============================================================ */
+
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-beam-spin {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+
+.border-beam {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-beam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0deg,
+    transparent 280deg,
+    color-mix(in oklab, var(--foreground) 75%, transparent) 330deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-beam-spin 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes thinking-orb-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  33% {
+    transform: translate(6px, -4px) scale(1.08);
+    opacity: 0.85;
+  }
+  66% {
+    transform: translate(-4px, 5px) scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.thinking-orb {
+  filter: blur(12px);
+  animation: thinking-orb-float 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes voice-glow-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scaleY(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scaleY(1.15);
+  }
+}
+
+.voice-glow {
+  background: radial-gradient(
+    50% 100% at 50% 100%,
+    color-mix(in oklab, var(--foreground) 25%, transparent) 0%,
+    transparent 100%
+  );
+  animation: voice-glow-pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+

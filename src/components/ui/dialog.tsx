@@ -60,7 +60,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-6 text-sm text-popover-foreground shadow-2xl ring-1 ring-border/50 outline-none sm:max-w-md transition-all duration-150 ease-out data-open:opacity-100 data-open:scale-100 data-closed:opacity-0 data-closed:scale-95 will-change-transform",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl bg-card p-6 text-sm text-card-foreground ring-1 ring-border shadow-2xl outline-none sm:max-w-md transition-all duration-150 ease-out data-open:opacity-100 data-open:scale-100 data-closed:opacity-0 data-closed:scale-95 will-change-transform",
           className
         )}
         {...props}
@@ -111,7 +111,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        "-mx-6 -mb-6 flex flex-col-reverse gap-2 rounded-b-2xl border-t border-border bg-surface-subtle p-4 sm:flex-row sm:justify-end",
         className
       )}
       {...props}

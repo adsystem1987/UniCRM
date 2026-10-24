@@ -387,7 +387,7 @@ export default function ContactsPage() {
               className="border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary gap-1.5"
             >
               <Target className="size-4" />
-              <span>Find Leads (₹1/Lead)</span>
+              <span>Find Leads</span>
               <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded-full font-semibold uppercase">
                 New
               </span>

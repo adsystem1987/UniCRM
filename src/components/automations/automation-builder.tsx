@@ -33,6 +33,8 @@ import {
   ArrowUp,
   MousePointerClick,
   List,
+  Mail,
+  Bot,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -111,6 +113,8 @@ const STEP_META: Record<AutomationStepType, StepMeta> = {
   send_buttons: { label: "send_buttons", icon: MousePointerClick, border: "border-l-primary" },
   send_list: { label: "send_list", icon: List, border: "border-l-primary" },
   send_template: { label: "send_template", icon: FileText, border: "border-l-primary" },
+  send_email: { label: "send_email", icon: Mail, border: "border-l-primary" },
+  ai_outreach_reply: { label: "ai_outreach_reply", icon: Bot, border: "border-l-primary" },
   add_tag: { label: "add_tag", icon: Tag, border: "border-l-primary" },
   remove_tag: { label: "remove_tag", icon: TagIcon, border: "border-l-primary" },
   assign_conversation: { label: "assign_conversation", icon: UserCheck, border: "border-l-primary" },
@@ -127,6 +131,8 @@ const ADDABLE_STEPS: AutomationStepType[] = [
   "send_buttons",
   "send_list",
   "send_template",
+  "send_email",
+  "ai_outreach_reply",
   "add_tag",
   "remove_tag",
   "assign_conversation",

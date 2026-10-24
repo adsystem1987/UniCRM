@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import { ContactDialog } from "./contact-dialog";
 import { Mail, MessageCircle, Headphones } from "lucide-react";
 
 interface ContactButtonProps {
-  variant?: "default" | "outline" | "ghost";
-  size?: "default" | "sm" | "lg";
+  variant?: ComponentProps<typeof Button>["variant"];
+  size?: ComponentProps<typeof Button>["size"];
   className?: string;
   children?: React.ReactNode;
   defaultTopic?: string;

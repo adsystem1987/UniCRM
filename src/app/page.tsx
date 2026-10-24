@@ -138,16 +138,16 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <ModeToggle className="h-8 w-8 sm:h-10 sm:w-10" />
+            <ModeToggle className="h-9 w-9" />
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground px-2 sm:px-3 text-xs sm:text-sm">
+              <Button variant="ghost" size="sm" className="font-medium text-muted-foreground hover:text-foreground px-3 text-sm rounded-full">
                 Sign In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1 sm:gap-1.5 shadow-xs px-2.5 sm:px-3 text-xs sm:text-sm">
-                <span>Start Free</span>
-                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Button size="sm" className="bg-primary text-primary-foreground font-medium gap-1.5 px-3.5 text-sm rounded-full hover:opacity-90 active:opacity-80 active:translate-y-px">
+                <span>Start for free</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
@@ -157,74 +157,74 @@ export default function LandingPage() {
       {/* Hero Section */}
       <main className="flex-1">
         <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border/40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div aria-hidden="true" className="mkt-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_55%_at_50%_40%,black,transparent)]" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             {/* Urgency Capacity Pill */}
             <ScarcityHeroPill />
 
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[1.12] max-w-5xl mx-auto">
-              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-emerald-600 dark:text-emerald-400">In one single CRM.</span>
+            <h1 className="type-display max-w-5xl mx-auto text-foreground animate-slide-blur-up">
+              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-muted-foreground font-normal">In one single CRM.</span>
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
+            <p className="type-body-muted mt-6 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
               Why pay ₹15,000 every month juggling Wati, Zendesk, and call center tools? Handle your WhatsApp messaging, WhatsApp voice calls, Instagram DMs, Facebook messages, and support emails with zero per-seat fees.
             </p>
 
             {/* Channels Strip */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Messaging
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" /> WhatsApp Messaging
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <PhoneCall className="h-3.5 w-3.5" /> WhatsApp Calling & IVR
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <PhoneCall className="h-3.5 w-3.5 text-[#25D366]" /> WhatsApp Calling & IVR
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                <Camera className="h-3.5 w-3.5" /> Instagram DMs
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Camera className="h-3.5 w-3.5 text-[#E4405F]" /> Instagram DMs
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                <Share2 className="h-3.5 w-3.5" /> Facebook Messenger
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Share2 className="h-3.5 w-3.5 text-[#1877F2]" /> Facebook Messenger
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                <Mail className="h-3.5 w-3.5" /> Support Email Inbox
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Mail className="h-3.5 w-3.5 text-[#EA4335]" /> Support Email Inbox
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
-                <HardDrive className="h-3.5 w-3.5" /> Google Drive (15GB Free)
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Google Drive (15GB Free)
               </span>
             </div>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-2.5">
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full sm:w-auto">
                 <ScarcityCtaButton />
                 <ContactButton
                   variant="outline"
                   size="lg"
-                  className="h-12 px-7 rounded-xl font-bold text-base shadow-xs"
-                  icon="headphones"
-                  defaultTopic="General Inquiry"
+                  className="w-full sm:w-auto h-11 px-5 rounded-full font-medium text-base border-border hover:border-border-strong hover:bg-surface-hover active:bg-surface-active active:translate-y-px"
                 >
-                  Contact Technical Desk
+                  <Headphones className="h-4 w-4 mr-2 text-muted-foreground" />
+                  <span>Talk to Founders</span>
                 </ContactButton>
               </div>
-              <p className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+              <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-[#25D366]" />
                 Funded by our community • 100% Free forever for everyone • Zero credit card required
               </p>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm font-semibold text-muted-foreground">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs sm:text-sm font-medium text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-[#25D366]" />
                 <span>Zero Per-Seat Costs</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-[#25D366]" />
                 <span>Instant QR Code & Meta Cloud API</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-[#25D366]" />
                 <span>Free Multi-Model AI Gateway</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-500" />
+                <Check className="h-4 w-4 text-[#25D366]" />
                 <span>Inbound & Outbound Voice Calling</span>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function LandingPage() {
         <section id="calling" className="py-16 md:py-24 border-b border-border/40 bg-card/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 mb-3">
+              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-surface text-foreground border border-border mb-3">
                 Industry First • WhatsApp Voice Stack
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
@@ -249,13 +249,13 @@ export default function LandingPage() {
             {/* 3 Interactive Feature Columns */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Feature 01: Inbound & Outbound Calling */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black text-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-foreground font-mono text-sm border border-border">
                       01
                     </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground bg-surface border border-border px-2 py-0.5 rounded-full">
                       Live Calling
                     </span>
                   </div>
@@ -316,19 +316,19 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-blue-500 flex items-center gap-1">
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Browser WebRTC & SIP Support
                 </div>
               </div>
 
               {/* Feature 02: Routing Node-Based IVR */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 font-black text-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-foreground font-mono text-sm border border-border">
                       02
                     </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground bg-surface border border-border px-2 py-0.5 rounded-full">
                       Visual Routing
                     </span>
                   </div>
@@ -370,13 +370,13 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-500 flex items-center gap-1">
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1">
                   <CheckCircle2 className="h-3.5 w-3.5" /> No-Code Visual Flow Editor
                 </div>
               </div>
 
               {/* Feature 03: Encrypted Recordings */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-blue-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 font-black text-sm">
@@ -429,7 +429,7 @@ export default function LandingPage() {
         <section id="channels" className="py-16 md:py-24 border-b border-border/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-3">
+              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-surface text-foreground border border-border mb-3">
                 Unified Omnichannel Inbox
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
@@ -499,7 +499,7 @@ export default function LandingPage() {
             </div>
 
             {/* Google Drive BYOS Banner */}
-            <div className="mt-8 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="mt-8 rounded-3xl border border-border bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                   <HardDrive className="h-3.5 w-3.5" />
@@ -514,7 +514,7 @@ export default function LandingPage() {
               </div>
 
               <Link href="/signup" className="shrink-0">
-                <Button className="h-11 px-6 font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-2">
+                <Button className="h-11 px-6 font-bold bg-primary hover:opacity-90 active:opacity-80 text-primary-foreground rounded-full gap-2">
                   Connect in 1 Click
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -542,7 +542,7 @@ export default function LandingPage() {
               {/* Feature 1 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-border flex items-center justify-center text-emerald-500 mb-6">
                     <QrCode className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
@@ -558,7 +558,7 @@ export default function LandingPage() {
               {/* Feature 2 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
@@ -574,7 +574,7 @@ export default function LandingPage() {
               {/* Feature 3 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-border flex items-center justify-center text-blue-500 mb-6">
                     <PhoneCall className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">WhatsApp Voice & IVR Calls</h3>
@@ -606,7 +606,7 @@ export default function LandingPage() {
               {/* Feature 5 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-border flex items-center justify-center text-amber-500 mb-6">
                     <Zap className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">No-Code Flow Builder</h3>
@@ -642,7 +642,7 @@ export default function LandingPage() {
         <section id="why-free" className="py-16 md:py-24 border-b border-border/40 bg-gradient-to-b from-background via-emerald-500/[0.03] to-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-14">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-3">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-surface text-foreground border border-border mb-3">
                 <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
                 Our Community Promise
               </span>
@@ -656,7 +656,7 @@ export default function LandingPage() {
 
             {/* 4 Pillars of Zero Cost */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-emerald-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="h-11 w-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-600 dark:text-emerald-400 font-black mb-4">
                     ₹0
@@ -672,7 +672,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-blue-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="h-11 w-11 rounded-2xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center text-blue-600 dark:text-blue-400 font-black mb-4">
                     <QrCode className="h-5 w-5" />
@@ -688,7 +688,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-purple-500/40 transition-all">
+              <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-xs flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="h-11 w-11 rounded-2xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-purple-600 dark:text-purple-400 font-black mb-4">
                     <Zap className="h-5 w-5" />
@@ -722,7 +722,7 @@ export default function LandingPage() {
             </div>
 
             {/* Inspiring Bottom Banner: Transparent Community Model */}
-            <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 p-6 sm:p-8 text-center space-y-3">
+            <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-border bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 p-6 sm:p-8 text-center space-y-3">
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="h-4 w-4" />
                 Funded by You &amp; Our Community
@@ -768,7 +768,7 @@ export default function LandingPage() {
               <div className="rounded-3xl border border-border/70 bg-card p-8 flex flex-col justify-between shadow-sm">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface text-foreground border border-border">
                       Community-Funded
                     </span>
                     <span className="text-xs font-semibold text-muted-foreground">Free Forever</span>
@@ -777,7 +777,7 @@ export default function LandingPage() {
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
                     <span className="text-5xl font-black text-foreground">₹0</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
-                    <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="rounded-full bg-emerald-500/15 border border-border px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                       Community Edition
                     </span>
                   </div>
@@ -827,8 +827,8 @@ export default function LandingPage() {
               </div>
 
               {/* Plan 2: ₹1,000/mo Optional Done-For-You Pro Support */}
-              <div className="relative rounded-3xl border-2 border-emerald-500 bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
-                <div className="absolute -top-3.5 right-8 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white">
+              <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
+                <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
                   100% Optional Service
                 </div>
 
@@ -874,7 +874,8 @@ export default function LandingPage() {
 
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <ContactButton
-                    className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                    variant="cta"
+                    className="w-full h-11 text-base font-bold"
                     defaultTopic="Optional Pro Support (₹1,000/mo)"
                     icon="message"
                   >

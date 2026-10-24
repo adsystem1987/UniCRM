@@ -18,10 +18,10 @@ interface Action {
 }
 
 const ACTIONS: Action[] = [
-  { labelKey: 'newContact', href: '/contacts', icon: UserPlus, tint: 'text-primary' },
-  { labelKey: 'newDeal', href: '/pipelines', icon: Briefcase, tint: 'text-blue-400' },
-  { labelKey: 'newBroadcast', href: '/broadcasts/new', icon: Radio, tint: 'text-amber-400' },
-  { labelKey: 'newAutomation', href: '/automations/new', icon: Zap, tint: 'text-primary' },
+  { labelKey: 'newContact', href: '/contacts', icon: UserPlus, tint: 'text-foreground' },
+  { labelKey: 'newDeal', href: '/pipelines', icon: Briefcase, tint: 'text-foreground' },
+  { labelKey: 'newBroadcast', href: '/broadcasts/new', icon: Radio, tint: 'text-foreground' },
+  { labelKey: 'newAutomation', href: '/automations/new', icon: Zap, tint: 'text-foreground' },
 ]
 
 export function QuickActions() {
@@ -35,12 +35,12 @@ export function QuickActions() {
           <Link
             key={a.href}
             href={a.href}
-            className="group flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 transition-colors hover:border-border hover:bg-muted/60"
+            className="group relative overflow-hidden flex items-center gap-3 rounded-full border border-border/80 bg-card px-4 py-2.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/25 hover:bg-surface-hover/50 hover:shadow-md hover:shadow-black/5 active:translate-y-0 active:scale-[0.98]"
           >
-            <div className={`flex h-9 w-9 items-center justify-center rounded-lg bg-muted ${a.tint}`}>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface border border-border/80 text-foreground shadow-xs transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6">
               <Icon className="h-4 w-4" />
             </div>
-            <span className="text-sm font-medium text-foreground">{t(a.labelKey as string)}</span>
+            <span className="text-sm font-medium text-foreground transition-colors group-hover:text-foreground">{t(a.labelKey as string)}</span>
           </Link>
         )
       })}

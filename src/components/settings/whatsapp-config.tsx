@@ -15,6 +15,10 @@ import {
   RotateCcw,
   Cloud,
   QrCode,
+  Send,
+  ShieldCheck,
+  Activity,
+  Gauge,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -25,6 +29,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { SettingsPanelHead } from './settings-panel-head';
 import {
   Accordion,
@@ -32,6 +37,14 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import type { WhatsAppConfig as WhatsAppConfigType } from '@/types';
 import { EvolutionQrConnect } from './evolution-qr-connect';
 
@@ -83,10 +96,20 @@ export function WhatsAppConfig() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [sendingTestMessage, setSendingTestMessage] = useState(false);
+  const [showTestDialog, setShowTestDialog] = useState(false);
+  const [testRecipientPhone, setTestRecipientPhone] = useState('');
   const [resetting, setResetting] = useState(false);
   const [showToken, setShowToken] = useState(false);
   const [config, setConfig] = useState<WhatsAppConfigType | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('unknown');
+  const [phoneInfo, setPhoneInfo] = useState<{
+    verified_name?: string;
+    display_phone_number?: string;
+    quality_rating?: string;
+    messaging_limit_tier?: string;
+    code_verification_status?: string;
+  } | null>(null);
   const [resetReason, setResetReason] = useState<ResetReason>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
   // Structured details of the last failed Meta call (health check or
@@ -213,6 +236,9 @@ export function WhatsAppConfig() {
 
           if (payload.connected) {
             setConnectionStatus('connected');
+            if (payload.phone_info) {
+              setPhoneInfo(payload.phone_info);
+            }
             setResetReason(null);
             setStatusMessage('');
             setStatusMeta(null);
@@ -405,6 +431,35 @@ export function WhatsAppConfig() {
     }
   }
 
+  async function handleSendTestMessage() {
+    const cleaned = testRecipientPhone.replace(/[^0-9]/g, '');
+    if (!cleaned || cleaned.length < 10) {
+      toast.error('Please enter a valid phone number with country code (e.g. 919876543210).');
+      return;
+    }
+
+    try {
+      setSendingTestMessage(true);
+      const res = await fetch('/api/whatsapp/test-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipientPhone: cleaned }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        toast.error(data.error || 'Failed to send test message');
+      } else {
+        toast.success('Test message sent to your WhatsApp successfully!');
+        setShowTestDialog(false);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Error sending test message');
+    } finally {
+      setSendingTestMessage(false);
+    }
+  }
+
   async function handleTestConnection() {
     try {
       setTesting(true);
@@ -413,6 +468,9 @@ export function WhatsAppConfig() {
 
       if (payload.connected) {
         setConnectionStatus('connected');
+        if (payload.phone_info) {
+          setPhoneInfo(payload.phone_info);
+        }
         setResetReason(null);
         setStatusMessage('');
         setStatusMeta(null);
@@ -731,6 +789,69 @@ export function WhatsAppConfig() {
           {connectionStatus !== 'connected' && statusMeta && renderMetaDetails(statusMeta)}
         </Alert>
 
+        {/* Live Meta Account Health Monitor Chips */}
+        {connectionStatus === 'connected' && phoneInfo && (
+          <div className="bg-muted/40 border border-border rounded-lg p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Activity className="size-3.5 text-primary" />
+                Meta Live Health Monitor
+              </span>
+              {phoneInfo.verified_name && (
+                <span className="text-xs font-medium text-foreground bg-background px-2 py-0.5 rounded border border-border">
+                  {phoneInfo.verified_name}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              {/* Quality Rating */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="size-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Quality Rating</span>
+                </div>
+                <Badge
+                  variant="outline"
+                  className={
+                    phoneInfo.quality_rating === 'GREEN'
+                      ? 'border-emerald-800 text-emerald-400 bg-emerald-950/30'
+                      : phoneInfo.quality_rating === 'YELLOW'
+                      ? 'border-amber-800 text-amber-400 bg-amber-950/30'
+                      : phoneInfo.quality_rating === 'RED'
+                      ? 'border-red-800 text-red-400 bg-red-950/30'
+                      : 'border-border text-foreground'
+                  }
+                >
+                  {phoneInfo.quality_rating || 'UNKNOWN'}
+                </Badge>
+              </div>
+
+              {/* Messaging Tier Limit */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Gauge className="size-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Daily Tier</span>
+                </div>
+                <Badge variant="outline" className="border-border text-foreground">
+                  {phoneInfo.messaging_limit_tier?.replace('TIER_', '') || 'STANDARD'}
+                </Badge>
+              </div>
+
+              {/* Verified Phone Status */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-3.5 text-emerald-500" />
+                  <span className="text-xs text-muted-foreground">Phone Number</span>
+                </div>
+                <span className="text-xs font-mono text-foreground font-medium">
+                  {phoneInfo.display_phone_number || 'Connected'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Registration Status — the "is it actually live?" check.
             Credentials being valid is necessary but not sufficient;
             without a successful /register call the number won't
@@ -1012,54 +1133,66 @@ export function WhatsAppConfig() {
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 pt-2">
           <Button
+            variant="cta"
             onClick={handleSave}
             disabled={saving}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {saving ? (
               <>
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin mr-1.5" />
                 {t('saving')}
               </>
             ) : (
               t('saveConfig')
             )}
           </Button>
+
           <Button
             variant="outline"
             onClick={handleTestConnection}
             disabled={testing || !config}
-            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             {testing ? (
               <>
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin mr-1.5" />
                 {t('testing')}
               </>
             ) : (
               <>
-                <Zap className="size-4" />
+                <Zap className="size-4 mr-1.5" />
                 {t('testConnection')}
               </>
             )}
           </Button>
+
+          {config && (
+            <Button
+              variant="outline"
+              onClick={() => setShowTestDialog(true)}
+              className="border-emerald-700/60 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+            >
+              <Send className="size-4 mr-1.5" />
+              Send Test Message
+            </Button>
+          )}
+
           {config && (
             <Button
               variant="outline"
               onClick={handleReset}
               disabled={resetting}
-              className="border-red-900 text-red-400 hover:text-red-300 hover:bg-red-950/40"
+              className="border-destructive/30 text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               {resetting ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin mr-1.5" />
                   {t('resetting')}
                 </>
               ) : (
                 <>
-                  <RotateCcw className="size-4" />
+                  <RotateCcw className="size-4 mr-1.5" />
                   {t('resetConfig')}
                 </>
               )}
@@ -1164,6 +1297,60 @@ export function WhatsAppConfig() {
       </div>
     </div>
   )}
+
+  {/* Send Test WhatsApp Message Modal */}
+  <Dialog open={showTestDialog} onOpenChange={setShowTestDialog}>
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Send Test WhatsApp Message</DialogTitle>
+        <DialogDescription>
+          Send a direct ping message from your Meta Cloud API to your personal phone number to verify live delivery.
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-4 py-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="test-phone-input">Your WhatsApp Phone Number</Label>
+          <Input
+            id="test-phone-input"
+            placeholder="e.g. 919876543210 (country code + number)"
+            value={testRecipientPhone}
+            onChange={(e) => setTestRecipientPhone(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Include country code with no + or spaces (e.g. 91 for India).
+          </p>
+        </div>
+      </div>
+
+      <DialogFooter className="flex sm:justify-end gap-2 pt-2">
+        <Button
+          variant="outline"
+          onClick={() => setShowTestDialog(false)}
+          disabled={sendingTestMessage}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="cta"
+          onClick={handleSendTestMessage}
+          disabled={sendingTestMessage || !testRecipientPhone.trim()}
+        >
+          {sendingTestMessage ? (
+            <>
+              <Loader2 className="size-4 animate-spin mr-1.5" />
+              Sending...
+            </>
+          ) : (
+            <>
+              <Send className="size-4 mr-1.5" />
+              Send Ping
+            </>
+          )}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </section>
   );
 }

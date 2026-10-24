@@ -130,11 +130,19 @@ export default function DashboardPage() {
       <UpiSupportBanner />
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('description')}
-        </p>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="type-page-title text-foreground tracking-tight">{t('title')}</h1>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+            {t('description')}
+          </p>
+        </div>
       </div>
 
       {/* Interactive Onboarding Checklist for new users */}

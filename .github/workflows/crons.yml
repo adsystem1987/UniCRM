@@ -1,0 +1,30 @@
+name: Scheduled Cron Tasks
+
+on:
+  schedule:
+    # Run every 10 minutes to drain automations, flow sweeps, and onboarding queue
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allows manual trigger anytime from GitHub Actions UI
+
+jobs:
+  run-cron-tasks:
+    name: Trigger Cron Endpoints
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Automations Cron (every 10m)
+        run: |
+          echo "Triggering automations cron..."
+          curl -f -s -m 30 -X GET "https://dfyunicrm.com/api/automations/cron" \
+            -H "x-cron-secret: ${{ secrets.AUTOMATION_CRON_SECRET }}" || echo "Automations cron ping failed or not configured"
+
+      - name: Trigger Flow Timeout Sweep (every 10m)
+        run: |
+          echo "Triggering flow timeout sweep..."
+          curl -f -s -m 30 -X GET "https://dfyunicrm.com/api/flows/cron" \
+            -H "x-cron-secret: ${{ secrets.AUTOMATION_CRON_SECRET }}" || echo "Flow sweep ping failed or not configured"
+
+      - name: Trigger Onboarding Sequence (every 10m / hourly checks)
+        run: |
+          echo "Triggering onboarding queue..."
+          curl -f -s -m 30 -X GET "https://dfyunicrm.com/api/cron/onboarding" \
+            -H "x-cron-secret: ${{ secrets.AUTOMATION_CRON_SECRET }}" || echo "Onboarding cron ping failed or not configured"

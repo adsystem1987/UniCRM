@@ -369,44 +369,61 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
     );
   };
 
-  const handleImportToContacts = async () => {
+  const [launchingOutreach, setLaunchingOutreach] = useState(false);
+
+  const handleImportToContacts = async (launchOutreach = false) => {
     const leadsToImport = filteredLeads.filter((l) =>
       selectedLeadIds.length > 0 ? selectedLeadIds.includes(l.id) : true
     );
 
     if (leadsToImport.length === 0) {
-      toast.error("Please select at least one lead to import.");
+      toast.error("Please select at least one lead.");
       return;
     }
 
-    setImporting(true);
+    if (launchOutreach) {
+      setLaunchingOutreach(true);
+    } else {
+      setImporting(true);
+    }
 
     try {
-      if (user) {
-        // Attempt to insert into contacts table
-        const contactsToInsert = leadsToImport.map((lead) => ({
-          user_id: user.id,
-          name: lead.name,
-          phone: lead.phone.replace(/[^0-9]/g, ""),
-          company: lead.category,
-        }));
+      const res = await fetch("/api/leads/import-and-outreach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leads: leadsToImport.map((lead) => ({
+            name: lead.name,
+            phone: lead.phone,
+            city: lead.city,
+            category: lead.category,
+            rating: lead.rating,
+          })),
+          enrollInSequence: launchOutreach,
+        }),
+      });
 
-        await supabase.from("contacts").upsert(contactsToInsert, {
-          onConflict: "user_id,phone",
-          ignoreDuplicates: true,
-        });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to process leads");
       }
 
-      toast.success(
-        `Successfully imported ${leadsToImport.length} verified leads into UniCRM Contacts!`
-      );
+      if (launchOutreach) {
+        toast.success(
+          `Imported ${data.importedCount || leadsToImport.length} leads and initiated WhatsApp Omnichannel outreach!`
+        );
+      } else {
+        toast.success(
+          `Successfully imported ${data.importedCount || leadsToImport.length} leads into UniCRM Contacts!`
+        );
+      }
       setSelectedLeadIds([]);
-    } catch {
-      toast.success(
-        `Imported ${leadsToImport.length} leads into Contacts for outbound campaigns!`
-      );
+    } catch (err: any) {
+      console.error("Import error:", err);
+      toast.error(err.message || "Failed to import leads");
     } finally {
       setImporting(false);
+      setLaunchingOutreach(false);
     }
   };
 
@@ -426,7 +443,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 </h2>
                 <Badge
                   variant="outline"
-                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-bold uppercase"
+                  className="bg-emerald-500/10 text-[#008f68] dark:text-[#42b991] dark:text-emerald-400 border-emerald-500/20 text-[10px] font-bold uppercase"
                 >
                   <Sparkles className="h-3 w-3 mr-1" />
                   Verified ICP Prospector
@@ -455,7 +472,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 setSelectedPackAmount(999);
                 setLeadPackDialogOpen(true);
               }}
-              className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs text-xs"
+              className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 gap-1.5 shadow-xs text-xs"
             >
               <Zap className="h-3.5 w-3.5" />
               Recharge Credits (₹1 = 1 Contact)
@@ -576,7 +593,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <Button
                 onClick={handleLiveApifyScrape}
                 disabled={scrapingLive}
-                className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-xs"
+                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5 shadow-xs"
               >
                 {scrapingLive ? (
                   <>
@@ -615,14 +632,34 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={handleImportToContacts}
-                disabled={importing || filteredLeads.length === 0}
-                className="font-bold text-xs gap-1.5 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                onClick={() => handleImportToContacts(false)}
+                disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                className="font-bold text-xs gap-1.5 border-border text-foreground hover:border-border-strong hover:bg-surface-hover"
               >
                 <Download className="h-3.5 w-3.5" />
                 {selectedLeadIds.length > 0
-                  ? `Import (${selectedLeadIds.length}) to Contacts`
-                  : "Import All to Contacts"}
+                  ? `Import (${selectedLeadIds.length})`
+                  : "Import All"}
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleImportToContacts(true)}
+                disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
+              >
+                {launchingOutreach ? (
+                  <>
+                    <RefreshCw className="h-3 w-3 animate-spin" />
+                    Launching...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-3 w-3" />
+                    {selectedLeadIds.length > 0
+                      ? `Launch Outreach (${selectedLeadIds.length})`
+                      : "Launch Outreach for All"}
+                  </>
+                )}
               </Button>
             </div>
           </CardHeader>
@@ -640,7 +677,8 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             selectedLeadIds.length === filteredLeads.length &&
                             filteredLeads.length > 0
                           }
-                          onCheckedChange={(c) => handleSelectAll(!!c)}
+                          onCheckedChange={(c) => handleSelectAll(c === true)}
+                          className="border-muted-foreground/50 data-[checked]:border-primary"
                         />
                       </th>
                       <th className="p-3">Business / Prospect</th>
@@ -661,11 +699,14 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             isSelected ? "bg-primary/5" : ""
                           }`}
                         >
-                          <td className="p-3">
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={() => handleToggleLead(lead.id)}
-                            />
+                          <td className="p-3 w-10">
+                            <label className="flex items-center justify-center cursor-pointer p-1 -m-1">
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => handleToggleLead(lead.id)}
+                                className="border-muted-foreground/60 data-[checked]:border-primary"
+                              />
+                            </label>
                           </td>
                           <td className="p-3">
                             <div className="font-bold text-foreground">
@@ -676,7 +717,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                                 href={lead.website}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 mt-0.5"
+                                className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 mt-0.5 w-fit"
                               >
                                 <Globe className="h-2.5 w-2.5" />
                                 {lead.website.replace("https://", "")}
@@ -684,7 +725,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             )}
                           </td>
                           <td className="p-3">
-                            <div className="flex items-center gap-1.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            <div className="flex items-center gap-1.5 font-mono font-bold text-[#008f68] dark:text-[#42b991] dark:text-emerald-400">
                               <Phone className="h-3 w-3" />
                               <span>{lead.phone}</span>
                             </div>
@@ -711,7 +752,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             </div>
                           </td>
                           <td className="p-3 text-right">
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-[#008f68] dark:text-[#42b991] dark:text-emerald-400 border border-emerald-500/20">
                               {lead.matchScore}% Match
                             </span>
                           </td>
@@ -731,11 +772,33 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
-                  onClick={handleImportToContacts}
-                  className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
+                  variant="outline"
+                  onClick={() => handleImportToContacts(false)}
+                  disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                  className="font-medium text-xs gap-1.5"
                 >
-                  <Send className="h-3 w-3" />
-                  Import & Launch WhatsApp Outbound
+                  <Download className="h-3 w-3" />
+                  Import to Contacts
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleImportToContacts(true)}
+                  disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                  className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
+                >
+                  {launchingOutreach ? (
+                    <>
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      Launching...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3 w-3" />
+                      {selectedLeadIds.length > 0
+                        ? `Launch Outreach (${selectedLeadIds.length})`
+                        : "Launch Outreach for All"}
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -764,7 +827,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               setSelectedPackAmount(499);
               setLeadPackDialogOpen(true);
             }}
-            className="font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shrink-0 gap-1.5 shadow-sm active:scale-[0.98] border border-emerald-400/20"
+            className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 shrink-0 gap-1.5 shadow-sm active:scale-[0.98] border border-emerald-400/20"
           >
             <span>Order Lead Pack (from ₹499)</span>
             <ArrowRight className="h-4 w-4" />
@@ -783,7 +846,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Starter Outbound</span>
-              <span className="text-xs font-black text-emerald-600">₹499</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹499</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>250 Verified Leads</strong> • WhatsApp checked • 1-click import to UniCRM
@@ -800,7 +863,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Growth Batch 🚀</span>
-              <span className="text-xs font-black text-emerald-600">₹999</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹999</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>1,000 Verified Leads</strong> • High ICP match • Direct outbound readiness
@@ -817,7 +880,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Enterprise Multi-City</span>
-              <span className="text-xs font-black text-emerald-600">₹1,999</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹1,999</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>2,500 Verified Leads</strong> • Phone, WhatsApp & Email enrichment

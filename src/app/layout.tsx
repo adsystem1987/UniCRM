@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages, getTranslations } from 'next-intl/server';
-import { Inter } from "next/font/google";
+import { Inter, DM_Sans, Source_Code_Pro } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -17,6 +17,16 @@ import {
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-heading",
+  subsets: ["latin"],
+});
+
+const sourceCodePro = Source_Code_Pro({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -120,21 +130,16 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-theme={DEFAULT_THEME}
-      data-mode={DEFAULT_MODE}
-      className={`${inter.variable} ${DEFAULT_MODE === 'dark' ? 'dark' : ''} h-full antialiased`}
-      // The `theme-boot` script below rewrites `data-theme` and
-      // `data-mode` on <html> from localStorage before React hydrates,
-      // so for any non-default choice the client DOM intentionally
-      // differs from the server-rendered defaults. suppressHydration-
-      // Warning silences the expected mismatch — it only applies to
-      // this element's own attributes, so genuine mismatches in
-      // children still surface.
+      className={`${inter.variable} ${dmSans.variable} ${sourceCodePro.variable} h-full antialiased`}
+      // The inline theme-boot script below rewrites `data-theme` and
+      // `data-mode` (plus the 'dark' class) on <html> immediately before
+      // first render, matching user device preference (prefers-color-scheme)
+      // or saved choice without flashing.
       suppressHydrationWarning
     >
       <head>
-        <Script
+        <script
           id="theme-boot"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }}
         />
         {/* Google Analytics (gtag.js) */}
