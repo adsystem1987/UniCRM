@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dialog"
 import { AUTOMATION_TEMPLATES, type TemplateSlug } from "@/lib/automations/templates"
 import { triggerMeta, formatRelative, isKnownTrigger } from "@/lib/automations/trigger-meta"
+import { BorderBeam } from "@/components/ui/border-beam"
 import { cn } from "@/lib/utils"
 
 const TEMPLATE_ORDER: TemplateSlug[] = [
@@ -175,7 +176,8 @@ export default function AutomationsPage() {
           canAct={canCreate}
           gateReason={tGate("reasons.createAutomations")}
           onClick={() => router.push("/automations/new")}
-          className="rounded-full shadow-sm active:translate-y-px"
+          variant="cta"
+          size="default"
         >
           <Plus className="h-4 w-4 mr-1.5" />
           {t("create")}
@@ -205,9 +207,12 @@ export default function AutomationsPage() {
                   )}
                 >
                   {isFeatured && (
-                    <span className="absolute top-4 right-4 rounded-full bg-foreground text-background px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase shadow-xs">
-                      Featured
-                    </span>
+                    <>
+                      <BorderBeam size={180} duration={6} borderWidth={1.5} />
+                      <span className="absolute top-4 right-4 rounded-full bg-foreground text-background px-2.5 py-0.5 text-[10px] font-bold tracking-wider uppercase shadow-xs">
+                        Featured
+                      </span>
+                    </>
                   )}
                   <div className="mb-3.5 flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-foreground border border-border/80 shadow-xs group-hover:scale-105 group-hover:border-foreground/30 transition-all duration-200">
                     <Icon className="h-5 w-5" />

@@ -8,7 +8,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:opacity-90 active:opacity-80",
+        default:
+          "relative overflow-hidden bg-primary text-primary-foreground shadow-[inset_0_1px_0_0_rgba(255,255,255,0.18)] hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.14)] active:translate-y-0 active:scale-[0.98] transition-all duration-200",
+        cta:
+          "relative overflow-hidden bg-primary text-primary-foreground font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25),0_2px_8px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),0_8px_24px_rgba(0,0,0,0.22)] dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.35),0_0_28px_rgba(255,255,255,0.25)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 after:content-[''] after:absolute after:inset-0 after:w-1/2 after:h-full after:bg-gradient-to-r after:from-transparent after:via-white/20 dark:after:via-white/30 after:to-transparent after:-translate-x-[200%] hover:after:animate-[cta-shimmer-sweep_0.75s_ease-out] after:pointer-events-none",
+        shimmer:
+          "relative overflow-hidden bg-primary text-primary-foreground font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)] hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-[0_0_24px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98] transition-all duration-200 unicrm-shimmer",
+        glow:
+          "relative overflow-hidden bg-primary text-primary-foreground font-semibold shadow-[0_0_16px_rgba(0,0,0,0.1)] dark:shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_28px_rgba(0,0,0,0.2)] dark:hover:shadow-[0_0_32px_rgba(255,255,255,0.3)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200",
         outline:
           "border-border bg-background text-foreground hover:border-border-strong hover:bg-surface-hover active:bg-surface-active aria-expanded:border-border-strong aria-expanded:bg-surface-hover dark:bg-transparent",
         secondary:
