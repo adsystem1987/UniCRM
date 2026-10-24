@@ -48,6 +48,28 @@
   --color-primary-hover: var(--primary-hover);
   --color-primary-soft: var(--primary-soft);
   --color-primary-soft-2: var(--primary-soft-2);
+
+  /* Semantic Status Tokens (Unitpost / Clean Contrast System) */
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-warning-border: var(--status-warning-border);
+
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-border: var(--status-info-border);
+
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-success-border: var(--status-success-border);
+
+  --color-status-violet: var(--status-violet);
+  --color-status-violet-bg: var(--status-violet-bg);
+  --color-status-violet-border: var(--status-violet-border);
+
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-bg: var(--status-danger-bg);
+  --color-status-danger-border: var(--status-danger-border);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -88,61 +110,104 @@
 
 :root,
 html[data-mode="dark"] {
-  --background: oklch(0.13 0.01 260);
+  --background: oklch(0.12 0.01 260);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0.01 260);
-  --card-2: oklch(0.205 0.01 260);
+  --card: oklch(0.15 0.01 260);
+  --card-2: oklch(0.18 0.01 260);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0.01 260);
+  --popover: oklch(0.15 0.01 260);
   --popover-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.22 0.01 260);
+  --secondary: oklch(0.20 0.01 260);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.22 0.01 260);
-  --muted-foreground: oklch(0.65 0.01 260);
-  --accent: oklch(0.22 0.01 260);
+  --muted: oklch(0.19 0.01 260);
+  --muted-foreground: oklch(0.68 0.01 260);
+  --accent: oklch(0.20 0.01 260);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.28 0.01 260);
-  --input: oklch(0.28 0.01 260);
+  --border: oklch(0.24 0.01 260);
+  --input: oklch(0.24 0.01 260);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.16 0.01 260);
+  --sidebar: oklch(0.14 0.01 260);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.22 0.01 260);
+  --sidebar-accent: oklch(0.20 0.01 260);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.28 0.01 260);
+  --sidebar-border: oklch(0.24 0.01 260);
+
+  /* Unitpost Semantic Status Tokens - Dark (Moon) */
+  --status-warning: #c99a3b;
+  --status-warning-bg: #1d180d;
+  --status-warning-border: #493a1d;
+
+  --status-info: #6f96e8;
+  --status-info-bg: #101725;
+  --status-info-border: #283b62;
+
+  --status-success: #42b991;
+  --status-success-bg: #0d1b16;
+  --status-success-border: #204638;
+
+  --status-violet: #9482df;
+  --status-violet-bg: #161126;
+  --status-violet-border: #3b2c63;
+
+  --status-danger: #df656b;
+  --status-danger-bg: #211113;
+  --status-danger-border: #4b2428;
 }
 
 html[data-mode="light"] {
-  --background: oklch(0.99 0.002 260);
-  --foreground: oklch(0.21 0.01 260);
-  --card: oklch(1 0 0);
-  --card-2: oklch(0.985 0.002 260);
-  --card-foreground: oklch(0.21 0.01 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.01 260);
-  --secondary: oklch(0.967 0.003 260);
-  --secondary-foreground: oklch(0.25 0.01 260);
-  --muted: oklch(0.967 0.003 260);
-  --muted-foreground: oklch(0.52 0.015 260);
-  --accent: oklch(0.96 0.004 260);
-  --accent-foreground: oklch(0.25 0.01 260);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0.004 260);
-  --input: oklch(0.922 0.004 260);
+  --background: #ffffff;
+  --foreground: #191c1f;
+  --card: #ffffff;
+  --card-2: #f6f6f6;
+  --card-foreground: #191c1f;
+  --popover: #ffffff;
+  --popover-foreground: #191c1f;
+  --secondary: #f1f1f1;
+  --secondary-foreground: #1f2226;
+  --muted: #f6f6f6;
+  --muted-foreground: #70757b;
+  --accent: #f0f0f0;
+  --accent-foreground: #1f2226;
+  --destructive: #dc3545;
+  --border: #e2e4e8;
+  --input: #e2e4e8;
   --chart-2: oklch(0.6 0.1 260);
   --chart-3: oklch(0.7 0.06 260);
   --chart-4: oklch(0.8 0.04 260);
   --chart-5: oklch(0.87 0.03 260);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0.002 260);
-  --sidebar-foreground: oklch(0.21 0.01 260);
-  --sidebar-accent: oklch(0.96 0.004 260);
-  --sidebar-accent-foreground: oklch(0.25 0.01 260);
-  --sidebar-border: oklch(0.922 0.004 260);
+  --sidebar: #fafafa;
+  --sidebar-foreground: #191c1f;
+  --sidebar-accent: #f0f0f0;
+  --sidebar-accent-foreground: #1f2226;
+  --sidebar-border: #e2e4e8;
+
+  /* Unitpost Semantic Status Tokens - Light (Sun) */
+  --status-warning: #946800;
+  --status-warning-bg: #fff8e6;
+  --status-warning-border: #eed79b;
+
+  --status-info: #1b5edb;
+  --status-info-bg: #eef4ff;
+  --status-info-border: #c6d8ff;
+
+  --success: #008f68;
+  --status-success: #00825e;
+  --status-success-bg: #edf9f5;
+  --status-success-border: #b9e7d8;
+
+  --status-violet: #6c47d9;
+  --status-violet-bg: #f4f0ff;
+  --status-violet-border: #dcd0ff;
+
+  --status-danger: #cf2233;
+  --status-danger-bg: #fff1f2;
+  --status-danger-border: #fecdd3;
 }
 
 /* ---- ACCENT: primary color ---- */
@@ -226,6 +291,8 @@ html[data-theme="rose"] {
   }
   html {
     @apply font-sans;
+    /* Smooth theme transition between Sun (Light) and Moon (Dark) */
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
 }
 
