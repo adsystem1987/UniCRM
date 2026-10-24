@@ -38,6 +38,7 @@ import {
   safeNextPath,
 } from '@/lib/auth/callback';
 import { notifySlackNewSignup } from '@/lib/slack/notify';
+import { sendWelcomeEmail } from '@/lib/email/sender';
 
 // Session exchange is per-request by definition; never prerender.
 export const dynamic = 'force-dynamic';
@@ -87,9 +88,23 @@ export async function GET(request: Request) {
     if (isRecentSignup && !alreadyNotified) {
       void supabase.auth
         .updateUser({
-          data: { slack_signup_notified: true },
+          data: { slack_signup_notified: true, welcome_email_sent: true },
         })
         .catch(() => {});
+
+      const userName =
+        (user.user_metadata?.full_name as string) ||
+        (user.user_metadata?.name as string) ||
+        (user.email ? user.email.split('@')[0] : 'there');
+
+      if (user.email) {
+        void sendWelcomeEmail({
+          to: user.email,
+          name: userName,
+        }).catch((err) => {
+          console.error('[WelcomeEmail] Failed to send welcome email via Unitpost:', err);
+        });
+      }
 
       void notifySlackNewSignup({
         name:
