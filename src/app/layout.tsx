@@ -68,8 +68,11 @@ const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#020617",
-  colorScheme: "dark light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#080808" },
+  ],
+  colorScheme: "light dark",
 };
 
 // Inline boot script — runs before React hydrates so the user's
