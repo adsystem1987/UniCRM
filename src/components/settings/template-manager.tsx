@@ -406,7 +406,7 @@ export function TemplateManager() {
   async function handleDeployStarterPack() {
     setDeployingStarters(true);
     let successCount = 0;
-    let failCount = 0;
+    const errors: string[] = [];
 
     for (const starter of STARTER_TEMPLATES) {
       try {
@@ -426,13 +426,14 @@ export function TemplateManager() {
           body: JSON.stringify(payload),
         });
 
+        const data = await res.json().catch(() => ({}));
         if (res.ok) {
           successCount++;
         } else {
-          failCount++;
+          errors.push(`${starter.name}: ${data?.error || res.statusText}`);
         }
       } catch (e) {
-        failCount++;
+        errors.push(`${starter.name}: ${e instanceof Error ? e.message : 'Network error'}`);
       }
     }
 
@@ -441,8 +442,13 @@ export function TemplateManager() {
         `Successfully submitted ${successCount} starter template${successCount > 1 ? 's' : ''} to Meta for approval!`
       );
       await fetchTemplates();
-    } else {
-      toast.error('Failed to submit starter templates. Please check your Meta WhatsApp credentials in Settings.');
+    }
+    
+    if (errors.length > 0) {
+      console.warn('[handleDeployStarterPack] errors:', errors);
+      if (successCount === 0) {
+        toast.error(`Submission failed: ${errors[0]}`);
+      }
     }
     setDeployingStarters(false);
   }
@@ -596,6 +602,19 @@ export function TemplateManager() {
         description={t('description')}
         action={
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={handleDeployStarterPack}
+              disabled={deployingStarters}
+              title="Deploy all 5 pre-built starter templates to Meta"
+            >
+              {deployingStarters ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Sparkles className="size-4 text-primary" />
+              )}
+              {deployingStarters ? 'Deploying...' : 'Deploy Starter Pack'}
+            </Button>
             <Button
               variant="outline"
               onClick={handleSyncFromMeta}
