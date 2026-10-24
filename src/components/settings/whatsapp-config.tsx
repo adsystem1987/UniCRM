@@ -1133,35 +1133,35 @@ export function WhatsAppConfig() {
         )}
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 pt-2">
           <Button
+            variant="cta"
             onClick={handleSave}
             disabled={saving}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             {saving ? (
               <>
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin mr-1.5" />
                 {t('saving')}
               </>
             ) : (
               t('saveConfig')
             )}
           </Button>
+
           <Button
             variant="outline"
             onClick={handleTestConnection}
             disabled={testing || !config}
-            className="border-border text-muted-foreground hover:text-foreground hover:bg-muted"
           >
             {testing ? (
               <>
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin mr-1.5" />
                 {t('testing')}
               </>
             ) : (
               <>
-                <Zap className="size-4" />
+                <Zap className="size-4 mr-1.5" />
                 {t('testConnection')}
               </>
             )}
@@ -1171,7 +1171,7 @@ export function WhatsAppConfig() {
             <Button
               variant="outline"
               onClick={() => setShowTestDialog(true)}
-              className="border-emerald-800/60 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30"
+              className="border-emerald-700/60 text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
             >
               <Send className="size-4 mr-1.5" />
               Send Test Message
@@ -1183,16 +1183,16 @@ export function WhatsAppConfig() {
               variant="outline"
               onClick={handleReset}
               disabled={resetting}
-              className="border-red-900 text-red-400 hover:text-red-300 hover:bg-red-950/40"
+              className="border-destructive/30 text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               {resetting ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="size-4 animate-spin mr-1.5" />
                   {t('resetting')}
                 </>
               ) : (
                 <>
-                  <RotateCcw className="size-4" />
+                  <RotateCcw className="size-4 mr-1.5" />
                   {t('resetConfig')}
                 </>
               )}
@@ -1323,7 +1323,7 @@ export function WhatsAppConfig() {
         </div>
       </div>
 
-      <DialogFooter className="flex sm:justify-end gap-2">
+      <DialogFooter className="flex sm:justify-end gap-2 pt-2">
         <Button
           variant="outline"
           onClick={() => setShowTestDialog(false)}
@@ -1332,6 +1332,7 @@ export function WhatsAppConfig() {
           Cancel
         </Button>
         <Button
+          variant="cta"
           onClick={handleSendTestMessage}
           disabled={sendingTestMessage || !testRecipientPhone.trim()}
         >
