@@ -64,24 +64,13 @@ export const recipientStatusConfig: Record<RecipientStatus, StatusDisplay> = {
     label: "read",
     classes: "bg-primary/15 text-primary border-primary/30",
   },
+  replied: {
+    label: "replied",
+    classes: "bg-status-violet-bg text-status-violet border-status-violet-border",
+  },
   failed: {
     label: "failed",
     classes: "bg-status-danger-bg text-status-danger border-status-danger-border",
-  },
-};
-    classes: "bg-primary/10 text-primary border-primary/20",
-  },
-  read: {
-    label: "read",
-    classes: "bg-primary/10 text-primary border-primary/20",
-  },
-  replied: {
-    label: "replied",
-    classes: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  },
-  failed: {
-    label: "failed",
-    classes: "bg-red-500/10 text-red-400 border-red-500/20",
   },
 };
 
