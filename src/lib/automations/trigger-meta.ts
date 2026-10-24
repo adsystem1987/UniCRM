@@ -12,28 +12,28 @@ export interface TriggerMeta {
  */
 export const TRIGGER_META: Record<AutomationTriggerType, TriggerMeta> = {
   new_message_received: {
-    pillClass: 'border-blue-500/30 bg-blue-500/10 text-blue-300',
+    pillClass: 'border-status-info-border bg-status-info-bg text-status-info',
   },
   first_inbound_message: {
-    pillClass: 'border-teal-500/30 bg-teal-500/10 text-teal-300',
+    pillClass: 'border-status-success-border bg-status-success-bg text-status-success',
   },
   keyword_match: {
-    pillClass: 'border-purple-500/30 bg-purple-500/10 text-purple-300',
+    pillClass: 'border-status-violet-border bg-status-violet-bg text-status-violet',
   },
   new_contact_created: {
     pillClass: 'border-primary/30 bg-primary/10 text-primary',
   },
   conversation_assigned: {
-    pillClass: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-300',
+    pillClass: 'border-status-info-border bg-status-info-bg text-status-info',
   },
   tag_added: {
-    pillClass: 'border-amber-500/30 bg-amber-500/10 text-amber-300',
+    pillClass: 'border-status-warning-border bg-status-warning-bg text-status-warning',
   },
   time_based: {
-    pillClass: 'border-slate-500/30 bg-slate-500/10 text-muted-foreground',
+    pillClass: 'border-border bg-muted text-muted-foreground',
   },
   interactive_reply: {
-    pillClass: 'border-pink-500/30 bg-pink-500/10 text-pink-300',
+    pillClass: 'border-status-violet-border bg-status-violet-bg text-status-violet',
   },
 }
 
@@ -44,7 +44,7 @@ export function isKnownTrigger(t: string): t is AutomationTriggerType {
 export function triggerMeta(t: AutomationTriggerType | string): TriggerMeta {
   return (
     TRIGGER_META[t as AutomationTriggerType] ?? {
-      pillClass: 'border-slate-500/30 bg-slate-500/10 text-muted-foreground',
+      pillClass: 'border-border bg-muted text-muted-foreground',
     }
   )
 }
