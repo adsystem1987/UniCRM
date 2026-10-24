@@ -541,3 +541,88 @@ html[data-theme="rose"] {
 .sms-float-b {
   animation: sms-float-b 28s ease-in-out infinite;
 }
+
+/* ============================================================
+ * Libraries.dev (Jakub Antalík) Next-Gen UI Effects
+ * Border Beam traveling light, Thinking Orbs & Voice Glow
+ * ============================================================ */
+
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-beam-spin {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+
+.border-beam {
+  position: relative;
+  overflow: hidden;
+}
+
+.border-beam::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0deg,
+    transparent 280deg,
+    color-mix(in oklab, var(--foreground) 75%, transparent) 330deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-beam-spin 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes thinking-orb-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  33% {
+    transform: translate(6px, -4px) scale(1.08);
+    opacity: 0.85;
+  }
+  66% {
+    transform: translate(-4px, 5px) scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.thinking-orb {
+  filter: blur(12px);
+  animation: thinking-orb-float 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes voice-glow-pulse {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scaleY(0.9);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scaleY(1.15);
+  }
+}
+
+.voice-glow {
+  background: radial-gradient(
+    50% 100% at 50% 100%,
+    color-mix(in oklab, var(--foreground) 25%, transparent) 0%,
+    transparent 100%
+  );
+  animation: voice-glow-pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
