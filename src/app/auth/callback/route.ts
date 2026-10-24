@@ -39,6 +39,7 @@ import {
 } from '@/lib/auth/callback';
 import { notifySlackNewSignup } from '@/lib/slack/notify';
 import { sendWelcomeEmail } from '@/lib/email/sender';
+import { queueUserOnboarding } from '@/lib/email/onboarding-queue';
 
 // Session exchange is per-request by definition; never prerender.
 export const dynamic = 'force-dynamic';
@@ -108,6 +109,15 @@ export async function GET(request: Request) {
               data: { welcome_email_sent: true },
             })
             .catch(() => {});
+
+          // Queue automated Touchpoint 2 (24h) and Touchpoint 3 (72h)
+          void queueUserOnboarding({
+            userId: user.id,
+            email: user.email,
+            name: userName,
+          }).catch((queueErr) => {
+            console.error('[Auth/Callback] Failed to queue onboarding follow-ups:', queueErr);
+          });
         }
       } catch (emailErr) {
         console.error('[Auth/Callback] Failed to send welcome email:', emailErr);

@@ -15,6 +15,7 @@ import {
   RotateCcw,
   Cloud,
   QrCode,
+  Send,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -32,6 +33,14 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '@/components/ui/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import type { WhatsAppConfig as WhatsAppConfigType } from '@/types';
 import { EvolutionQrConnect } from './evolution-qr-connect';
 
@@ -83,6 +92,9 @@ export function WhatsAppConfig() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [sendingTestMessage, setSendingTestMessage] = useState(false);
+  const [showTestDialog, setShowTestDialog] = useState(false);
+  const [testRecipientPhone, setTestRecipientPhone] = useState('');
   const [resetting, setResetting] = useState(false);
   const [showToken, setShowToken] = useState(false);
   const [config, setConfig] = useState<WhatsAppConfigType | null>(null);
@@ -402,6 +414,35 @@ export function WhatsAppConfig() {
       toast.error(t('saveFailed'));
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleSendTestMessage() {
+    const cleaned = testRecipientPhone.replace(/[^0-9]/g, '');
+    if (!cleaned || cleaned.length < 10) {
+      toast.error('Please enter a valid phone number with country code (e.g. 919876543210).');
+      return;
+    }
+
+    try {
+      setSendingTestMessage(true);
+      const res = await fetch('/api/whatsapp/test-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipientPhone: cleaned }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        toast.error(data.error || 'Failed to send test message');
+      } else {
+        toast.success('Test message sent to your WhatsApp successfully!');
+        setShowTestDialog(false);
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Error sending test message');
+    } finally {
+      setSendingTestMessage(false);
     }
   }
 
@@ -1045,6 +1086,18 @@ export function WhatsAppConfig() {
               </>
             )}
           </Button>
+
+          {config && (
+            <Button
+              variant="outline"
+              onClick={() => setShowTestDialog(true)}
+              className="border-emerald-800/60 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/30"
+            >
+              <Send className="size-4 mr-1.5" />
+              Send Test Message
+            </Button>
+          )}
+
           {config && (
             <Button
               variant="outline"
@@ -1164,6 +1217,59 @@ export function WhatsAppConfig() {
       </div>
     </div>
   )}
+
+  {/* Send Test WhatsApp Message Modal */}
+  <Dialog open={showTestDialog} onOpenChange={setShowTestDialog}>
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>Send Test WhatsApp Message</DialogTitle>
+        <DialogDescription>
+          Send a direct ping message from your Meta Cloud API to your personal phone number to verify live delivery.
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-4 py-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="test-phone-input">Your WhatsApp Phone Number</Label>
+          <Input
+            id="test-phone-input"
+            placeholder="e.g. 919876543210 (country code + number)"
+            value={testRecipientPhone}
+            onChange={(e) => setTestRecipientPhone(e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            Include country code with no + or spaces (e.g. 91 for India).
+          </p>
+        </div>
+      </div>
+
+      <DialogFooter className="flex sm:justify-end gap-2">
+        <Button
+          variant="outline"
+          onClick={() => setShowTestDialog(false)}
+          disabled={sendingTestMessage}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSendTestMessage}
+          disabled={sendingTestMessage || !testRecipientPhone.trim()}
+        >
+          {sendingTestMessage ? (
+            <>
+              <Loader2 className="size-4 animate-spin mr-1.5" />
+              Sending...
+            </>
+          ) : (
+            <>
+              <Send className="size-4 mr-1.5" />
+              Send Ping
+            </>
+          )}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </section>
   );
 }
