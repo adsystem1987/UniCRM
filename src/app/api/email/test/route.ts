@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { sendWelcomeEmail, sendEmail } from "@/lib/email/sender";
+import {
+  sendWelcomeEmail,
+  sendWhatsAppFollowupEmail,
+  sendDfyPitchEmail,
+} from "@/lib/email/sender";
 
 export const dynamic = "force-dynamic";
 
@@ -22,15 +26,21 @@ export async function POST(req: Request) {
     }
 
     const name = body.name || user?.user_metadata?.full_name || "UniCRM Founder";
+    const type = body.type || "welcome"; // "welcome" | "whatsapp" | "dfy"
 
-    const result = await sendWelcomeEmail({
-      to: recipient,
-      name,
-    });
+    let result;
+    if (type === "whatsapp") {
+      result = await sendWhatsAppFollowupEmail({ to: recipient, name });
+    } else if (type === "dfy") {
+      result = await sendDfyPitchEmail({ to: recipient, name });
+    } else {
+      result = await sendWelcomeEmail({ to: recipient, name });
+    }
 
     return NextResponse.json({
       status: result.success ? "delivered" : "failed",
       provider: result.provider,
+      template: type,
       id: result.id,
       error: result.error,
       sentTo: recipient,
@@ -44,6 +54,7 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const targetEmail = searchParams.get("to");
+  const templateType = searchParams.get("type") || "welcome"; // "welcome" | "whatsapp" | "dfy"
 
   const unitpostKey =
     process.env.UNITPOST_API_KEY?.trim() ||
@@ -64,14 +75,20 @@ export async function GET(req: Request) {
 
   if (targetEmail) {
     const name = searchParams.get("name") || "UniCRM Test User";
-    const result = await sendWelcomeEmail({
-      to: targetEmail,
-      name,
-    });
+    let result;
+
+    if (templateType === "whatsapp") {
+      result = await sendWhatsAppFollowupEmail({ to: targetEmail, name });
+    } else if (templateType === "dfy") {
+      result = await sendDfyPitchEmail({ to: targetEmail, name });
+    } else {
+      result = await sendWelcomeEmail({ to: targetEmail, name });
+    }
 
     return NextResponse.json({
       status: result.success ? "delivered" : "failed",
       provider: result.provider,
+      template: templateType,
       id: result.id,
       error: result.error,
       sentTo: targetEmail,
@@ -85,7 +102,9 @@ export async function GET(req: Request) {
     status: "ok",
     unitpostConfigured: hasUnitpostKey,
     fromAddress,
+    availableTemplates: ["welcome", "whatsapp", "dfy"],
     detectedEnvKeys: availableEmailKeys,
-    instructions: "Add ?to=your-email@gmail.com to this URL to trigger an instant test welcome email.",
+    instructions: "Add ?to=your-email@gmail.com&type=welcome|whatsapp|dfy to test any email template.",
   });
 }
+
