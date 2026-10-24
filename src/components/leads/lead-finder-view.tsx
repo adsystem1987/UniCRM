@@ -369,44 +369,61 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
     );
   };
 
-  const handleImportToContacts = async () => {
+  const [launchingOutreach, setLaunchingOutreach] = useState(false);
+
+  const handleImportToContacts = async (launchOutreach = false) => {
     const leadsToImport = filteredLeads.filter((l) =>
       selectedLeadIds.length > 0 ? selectedLeadIds.includes(l.id) : true
     );
 
     if (leadsToImport.length === 0) {
-      toast.error("Please select at least one lead to import.");
+      toast.error("Please select at least one lead.");
       return;
     }
 
-    setImporting(true);
+    if (launchOutreach) {
+      setLaunchingOutreach(true);
+    } else {
+      setImporting(true);
+    }
 
     try {
-      if (user) {
-        // Attempt to insert into contacts table
-        const contactsToInsert = leadsToImport.map((lead) => ({
-          user_id: user.id,
-          name: lead.name,
-          phone: lead.phone.replace(/[^0-9]/g, ""),
-          company: lead.category,
-        }));
+      const res = await fetch("/api/leads/import-and-outreach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leads: leadsToImport.map((lead) => ({
+            name: lead.name,
+            phone: lead.phone,
+            city: lead.city,
+            category: lead.category,
+            rating: lead.rating,
+          })),
+          enrollInSequence: launchOutreach,
+        }),
+      });
 
-        await supabase.from("contacts").upsert(contactsToInsert, {
-          onConflict: "user_id,phone",
-          ignoreDuplicates: true,
-        });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to process leads");
       }
 
-      toast.success(
-        `Successfully imported ${leadsToImport.length} verified leads into UniCRM Contacts!`
-      );
+      if (launchOutreach) {
+        toast.success(
+          `Imported ${data.importedCount || leadsToImport.length} leads and initiated WhatsApp Omnichannel outreach!`
+        );
+      } else {
+        toast.success(
+          `Successfully imported ${data.importedCount || leadsToImport.length} leads into UniCRM Contacts!`
+        );
+      }
       setSelectedLeadIds([]);
-    } catch {
-      toast.success(
-        `Imported ${leadsToImport.length} leads into Contacts for outbound campaigns!`
-      );
+    } catch (err: any) {
+      console.error("Import error:", err);
+      toast.error(err.message || "Failed to import leads");
     } finally {
       setImporting(false);
+      setLaunchingOutreach(false);
     }
   };
 
@@ -615,14 +632,34 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <Button
                 size="sm"
                 variant="outline"
-                onClick={handleImportToContacts}
-                disabled={importing || filteredLeads.length === 0}
+                onClick={() => handleImportToContacts(false)}
+                disabled={importing || launchingOutreach || filteredLeads.length === 0}
                 className="font-bold text-xs gap-1.5 border-border text-foreground hover:border-border-strong hover:bg-surface-hover"
               >
                 <Download className="h-3.5 w-3.5" />
                 {selectedLeadIds.length > 0
-                  ? `Import (${selectedLeadIds.length}) to Contacts`
-                  : "Import All to Contacts"}
+                  ? `Import (${selectedLeadIds.length})`
+                  : "Import All"}
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => handleImportToContacts(true)}
+                disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
+              >
+                {launchingOutreach ? (
+                  <>
+                    <RefreshCw className="h-3 w-3 animate-spin" />
+                    Launching...
+                  </>
+                ) : (
+                  <>
+                    <Send className="h-3 w-3" />
+                    {selectedLeadIds.length > 0
+                      ? `Launch Outreach (${selectedLeadIds.length})`
+                      : "Launch Outreach for All"}
+                  </>
+                )}
               </Button>
             </div>
           </CardHeader>
@@ -731,11 +768,33 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <div className="flex items-center gap-2">
                 <Button
                   size="sm"
-                  onClick={handleImportToContacts}
+                  variant="outline"
+                  onClick={() => handleImportToContacts(false)}
+                  disabled={importing || launchingOutreach || filteredLeads.length === 0}
+                  className="font-medium text-xs gap-1.5"
+                >
+                  <Download className="h-3 w-3" />
+                  Import to Contacts
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => handleImportToContacts(true)}
+                  disabled={importing || launchingOutreach || filteredLeads.length === 0}
                   className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
                 >
-                  <Send className="h-3 w-3" />
-                  Import & Launch WhatsApp Outbound
+                  {launchingOutreach ? (
+                    <>
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      Launching...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3 w-3" />
+                      {selectedLeadIds.length > 0
+                        ? `Launch Outreach (${selectedLeadIds.length})`
+                        : "Launch Outreach for All"}
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
