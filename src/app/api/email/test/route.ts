@@ -45,8 +45,22 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const targetEmail = searchParams.get("to");
 
-  const hasUnitpostKey = Boolean(process.env.UNITPOST_API_KEY);
+  const unitpostKey =
+    process.env.UNITPOST_API_KEY?.trim() ||
+    process.env.UNITPOST_KEY?.trim() ||
+    process.env.UNIT_POST_API_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_UNITPOST_API_KEY?.trim();
+
+  const hasUnitpostKey = Boolean(unitpostKey);
   const fromAddress = process.env.UNITPOST_FROM || "UniCRM <hello@mail.dfyunicrm.com>";
+
+  const availableEmailKeys = Object.keys(process.env).filter(
+    (k) =>
+      k.toUpperCase().includes("UNIT") ||
+      k.toUpperCase().includes("POST") ||
+      k.toUpperCase().includes("EMAIL") ||
+      k.toUpperCase().includes("RESEND")
+  );
 
   if (targetEmail) {
     const name = searchParams.get("name") || "UniCRM Test User";
@@ -63,6 +77,7 @@ export async function GET(req: Request) {
       sentTo: targetEmail,
       fromAddress,
       unitpostKeyPresent: hasUnitpostKey,
+      detectedEnvKeys: availableEmailKeys,
     });
   }
 
@@ -70,6 +85,7 @@ export async function GET(req: Request) {
     status: "ok",
     unitpostConfigured: hasUnitpostKey,
     fromAddress,
+    detectedEnvKeys: availableEmailKeys,
     instructions: "Add ?to=your-email@gmail.com to this URL to trigger an instant test welcome email.",
   });
 }
