@@ -874,7 +874,8 @@ export default function LandingPage() {
 
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <ContactButton
-                    className="w-full h-11 bg-primary hover:opacity-90 active:opacity-80 text-primary-foreground rounded-full font-bold"
+                    variant="cta"
+                    className="w-full h-11 text-base font-bold"
                     defaultTopic="Optional Pro Support (₹1,000/mo)"
                     icon="message"
                   >
