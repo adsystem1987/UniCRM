@@ -70,8 +70,8 @@ export interface ThemeMeta {
 export const THEMES: ReadonlyArray<ThemeMeta> = [
   {
     id: "monochrome",
-    name: "Unitpost Monochrome",
-    tagline: "The Unitpost default — high-contrast black & white developer aesthetic.",
+    name: "UniCRM Monochrome",
+    tagline: "The UniCRM default — high-contrast black & white aesthetic.",
     swatch: "#f5f5f5",
   },
   {

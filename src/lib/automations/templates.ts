@@ -11,7 +11,7 @@ export type TemplateSlug =
   | 'out_of_office'
   | 'lead_qualifier'
   | 'follow_up_reminder'
-  | 'unitpost_omnichannel_outreach'
+  | 'unicrm_omnichannel_outreach'
 
 export interface TemplateStepSeed {
   step_type: AutomationStepType
@@ -134,9 +134,9 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
       },
     ],
   },
-  unitpost_omnichannel_outreach: {
-    slug: 'unitpost_omnichannel_outreach',
-    name: 'Unitpost Omnichannel Drip & AI Agent Qualifier',
+  unicrm_omnichannel_outreach: {
+    slug: 'unicrm_omnichannel_outreach',
+    name: 'UniCRM Omnichannel Drip & AI Agent Qualifier',
     description: 'Multi-step outreach sequence: WhatsApp intro with spintax -> 24h wait -> Support email follow-up -> AI autonomous qualification on reply.',
     trigger_type: 'new_contact_created',
     trigger_config: {},

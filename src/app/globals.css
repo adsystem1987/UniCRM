@@ -49,7 +49,7 @@
   --color-primary-soft: var(--primary-soft);
   --color-primary-soft-2: var(--primary-soft-2);
 
-  /* Semantic Status Tokens (Unitpost / Clean Contrast System) */
+  /* Semantic Status Tokens (UniCRM Clean Contrast System) */
   --color-status-warning: var(--status-warning);
   --color-status-warning-bg: var(--status-warning-bg);
   --color-status-warning-border: var(--status-warning-border);
@@ -156,7 +156,7 @@ html[data-mode="dark"] {
   --surface-raised: #141414;
   --surface-subtle: #0b0b0b;
 
-  /* Unitpost Semantic Status Tokens - Dark (Moon) */
+  /* UniCRM Semantic Status Tokens - Dark (Moon) */
   --status-warning: #c99a3b;
   --status-warning-bg: #1d180d;
   --status-warning-border: #493a1d;
@@ -217,7 +217,7 @@ html[data-mode="light"] {
   --surface-raised: #ffffff;
   --surface-subtle: #fafafa;
 
-  /* Unitpost Semantic Status Tokens - Light (Sun) */
+  /* UniCRM Semantic Status Tokens - Light (Sun) */
   --status-warning: #a97800;
   --status-warning-bg: #fff8e6;
   --status-warning-border: #eed79b;
@@ -355,7 +355,7 @@ html[data-theme="rose"] {
   animation: enter-snappy 200ms var(--ease-snappy) forwards;
 }
 
-/* Unitpost Dot Grid Pattern */
+/* UniCRM Dot Grid Pattern */
 .mkt-dots {
   background-image: radial-gradient(color-mix(in oklab, var(--foreground) 14%, transparent) 1px, transparent 1px);
   background-position: -1px -1px;
@@ -374,7 +374,7 @@ html[data-theme="rose"] {
 }
 
 /* ============================================================
- * Unitpost Typography System (.type-*)
+ * UniCRM Typography System (.type-*)
  * ============================================================ */
 
 .type-display {
@@ -451,7 +451,7 @@ html[data-theme="rose"] {
 }
 
 /* ============================================================
- * Unitpost Kinetic Animations & Ambient Floats
+ * UniCRM Kinetic Animations & Ambient Floats
  * ============================================================ */
 
 @keyframes slide-blur-up {
@@ -471,7 +471,7 @@ html[data-theme="rose"] {
   animation: slide-blur-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes unit-shimmer-sweep {
+@keyframes unicrm-shimmer-sweep {
   0%, 8% {
     transform: translate(-100%) skew(-20deg);
   }
@@ -480,10 +480,12 @@ html[data-theme="rose"] {
   }
 }
 
+.unicrm-shimmer,
 .unit-shimmer {
   position: relative;
   overflow: hidden;
 }
+.unicrm-shimmer::after,
 .unit-shimmer::after {
   content: "";
   position: absolute;
@@ -497,7 +499,7 @@ html[data-theme="rose"] {
     rgba(255, 255, 255, 0.08) 50%,
     transparent 100%
   );
-  animation: unit-shimmer-sweep 6s infinite ease-in-out;
+  animation: unicrm-shimmer-sweep 6s infinite ease-in-out;
   pointer-events: none;
 }
 
