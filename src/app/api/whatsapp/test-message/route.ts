@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireRole, toErrorResponse } from '@/lib/auth/account';
-import { sendWhatsAppTextMessage } from '@/lib/whatsapp/meta-api';
+import { sendTextMessage } from '@/lib/whatsapp/meta-api';
 import { decrypt } from '@/lib/whatsapp/encryption';
 import { checkRateLimit, rateLimitResponse, RATE_LIMITS } from '@/lib/rate-limit';
 
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       'Hello from UniCRM! Your Meta WhatsApp Cloud API connection is active and sending successfully.';
 
     try {
-      const metaRes = await sendWhatsAppTextMessage({
+      const metaRes = await sendTextMessage({
         phoneNumberId: config.phone_number_id,
         accessToken,
         to: recipientPhone,
