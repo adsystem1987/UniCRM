@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 
 export function ScarcityTopBanner() {
   return (
-    <div className="bg-emerald-500/10 border-b border-emerald-500/20 px-4 py-2 text-center text-xs font-semibold text-emerald-900 dark:text-emerald-200 flex items-center justify-center gap-2">
+    <div className="bg-surface border-b border-border px-4 py-2 text-center text-xs font-medium text-muted-foreground flex items-center justify-center gap-2">
       <span className="relative flex h-2 w-2 shrink-0">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
       </span>
       <span>
-        🌱 Funded by you and our community members — keeping UniCRM 100% free for everyone to use • Zero credit card required
+        Funded by our community — keeping UniCRM 100% free for everyone to use • Zero software fees
       </span>
     </div>
   );
@@ -20,10 +20,10 @@ export function ScarcityTopBanner() {
 
 export function ScarcityHeroPill() {
   return (
-    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 mb-6 shadow-xs">
-      <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0" />
+    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-surface border border-border text-foreground mb-6 shadow-xs">
+      <span className="h-2 w-2 rounded-full bg-[#25D366] shrink-0" />
       <span>
-        Funded by You &amp; Our Community • 100% Free Forever • Unlimited Team Seats
+        Live &amp; Community Funded • 100% Free Forever • Unlimited Team Seats
       </span>
     </div>
   );
@@ -46,12 +46,12 @@ export function ScarcityCtaButton() {
 
 export function ScarcityAllocationBar() {
   return (
-    <div className="my-4 p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 space-y-1 text-xs">
-      <p className="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1.5">
-        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+    <div className="my-4 p-3.5 rounded-2xl border border-border bg-surface text-xs">
+      <p className="font-semibold text-foreground flex items-center gap-1.5">
+        <CheckCircle2 className="h-3.5 w-3.5 text-[#25D366] shrink-0" />
         Funded by You &amp; Our Community
       </p>
-      <p className="text-[11px] text-muted-foreground leading-relaxed">
+      <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
         Kept alive and 100% free for everyone by voluntary community supporters and optional Done-For-You technical setup. Zero software subscriptions.
       </p>
     </div>
