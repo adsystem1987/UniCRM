@@ -366,3 +366,172 @@ html[data-theme="rose"] {
     transform: scale(1) translateY(0);
   }
 }
+
+/* ============================================================
+ * Unitpost Typography System (.type-*)
+ * ============================================================ */
+
+.type-display {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  font-size: clamp(2.5rem, 5.4vw, 4.6rem);
+  line-height: 1.02;
+}
+
+.type-page-title {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  line-height: 1.1;
+}
+
+.type-title {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.type-heading {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  font-size: 1.125rem;
+  line-height: 1.35;
+}
+
+.type-subheading {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.type-body {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.type-body-muted {
+  color: var(--muted-foreground);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.type-code {
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.type-overline {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.type-label {
+  letter-spacing: -0.005em;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ============================================================
+ * Unitpost Kinetic Animations & Ambient Floats
+ * ============================================================ */
+
+@keyframes slide-blur-up {
+  0% {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-blur-up {
+  animation: slide-blur-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes unit-shimmer-sweep {
+  0%, 8% {
+    transform: translate(-100%) skew(-20deg);
+  }
+  45%, 100% {
+    transform: translate(400%) skew(-20deg);
+  }
+}
+
+.unit-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.unit-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: unit-shimmer-sweep 6s infinite ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes activation-ping {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  40%, 100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.activation-ping {
+  animation: activation-ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes sms-float-a {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes sms-float-b {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+.sms-float-a {
+  animation: sms-float-a 24s ease-in-out infinite;
+}
+
+.sms-float-b {
+  animation: sms-float-b 28s ease-in-out infinite;
+}

@@ -162,11 +162,11 @@ export default function LandingPage() {
             {/* Urgency Capacity Pill */}
             <ScarcityHeroPill />
 
-            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[1.12] max-w-5xl mx-auto">
+            <h1 className="type-display max-w-5xl mx-auto text-foreground animate-slide-blur-up">
               All your WhatsApp chats, calls, social DMs & support emails. <span className="text-muted-foreground font-normal">In one single CRM.</span>
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
+            <p className="type-body-muted mt-6 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
               Why pay ₹15,000 every month juggling Wati, Zendesk, and call center tools? Handle your WhatsApp messaging, WhatsApp voice calls, Instagram DMs, Facebook messages, and support emails with zero per-seat fees.
             </p>
 
