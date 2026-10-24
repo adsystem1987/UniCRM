@@ -37,7 +37,7 @@ const SUPPORT_TIERS = [
 export function UpiSupportDialog({
   open,
   onOpenChange,
-  upiId = process.env.NEXT_PUBLIC_UPI_ID || "dfydude@axl",
+  upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi",
   payeeName = process.env.NEXT_PUBLIC_UPI_PAYEE_NAME || "UniCRM",
 }: UpiSupportDialogProps) {
   const [selectedAmount, setSelectedAmount] = useState<string>("29");

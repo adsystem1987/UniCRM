@@ -46,7 +46,7 @@ export function AiProOrderDialog({
 
   const amount = 59;
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi";
-  const payeeName = "DFY UniCRM";
+  const payeeName = process.env.NEXT_PUBLIC_UPI_PAYEE_NAME || "UniCRM";
   const paymentNote = "UniCRM AI Smart Router Pro (1 Month)";
 
   const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${amount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;

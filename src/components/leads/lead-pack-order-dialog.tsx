@@ -93,7 +93,7 @@ export function LeadPackOrderDialog({
   const [qrLoaded, setQrLoaded] = useState(false);
 
   const upiId = process.env.NEXT_PUBLIC_UPI_ID || "ravibabuche@oksbi";
-  const payeeName = "DFY UniCRM";
+  const payeeName = process.env.NEXT_PUBLIC_UPI_PAYEE_NAME || "UniCRM";
   const paymentNote = `UniCRM Lead Pack (${selectedPack.leadsCount} Leads - ${targetNiche})`;
 
   const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${selectedPack.amount}&cu=INR&tn=${encodeURIComponent(paymentNote)}`;
