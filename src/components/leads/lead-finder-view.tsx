@@ -695,17 +695,18 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                       return (
                         <tr
                           key={lead.id}
-                          onClick={() => handleToggleLead(lead.id)}
-                          className={`hover:bg-muted/40 transition-colors cursor-pointer select-none ${
+                          className={`hover:bg-muted/40 transition-colors ${
                             isSelected ? "bg-primary/5" : ""
                           }`}
                         >
-                          <td className="p-3" onClick={(e) => e.stopPropagation()}>
-                            <Checkbox
-                              checked={isSelected}
-                              onCheckedChange={() => handleToggleLead(lead.id)}
-                              className="border-muted-foreground/50 data-[checked]:border-primary"
-                            />
+                          <td className="p-3 w-10">
+                            <label className="flex items-center justify-center cursor-pointer p-1 -m-1">
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => handleToggleLead(lead.id)}
+                                className="border-muted-foreground/60 data-[checked]:border-primary"
+                              />
+                            </label>
                           </td>
                           <td className="p-3">
                             <div className="font-bold text-foreground">
@@ -716,7 +717,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                                 href={lead.website}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 mt-0.5"
+                                className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 mt-0.5 w-fit"
                               >
                                 <Globe className="h-2.5 w-2.5" />
                                 {lead.website.replace("https://", "")}
