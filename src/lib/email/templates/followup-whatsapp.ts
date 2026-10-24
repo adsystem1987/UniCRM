@@ -45,7 +45,7 @@ export function renderWhatsAppFollowupEmailHtml({
   <p>
     Best regards,<br>
     Ravi<br>
-    Founder, UniCRM<br>
+    GoToPerson, UniCRM<br>
     <a href="https://dfyunicrm.com" style="color: #2563eb; text-decoration: underline;">https://dfyunicrm.com</a>
   </p>
 </body>

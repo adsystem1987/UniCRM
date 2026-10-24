@@ -133,7 +133,7 @@ export async function sendWelcomeEmail({
     to,
     subject: `Welcome to UniCRM — your workspace is ready`,
     html,
-    text: `Hi ${name},\n\nThank you for signing up for UniCRM. Your workspace is active and ready to use at https://dfyunicrm.com/dashboard.\n\nThree quick steps to get started:\n1. Connect WhatsApp in Settings > WhatsApp\n2. Add contacts via CSV or Find Leads\n3. Set up an outreach sequence in Automations\n\nIf you have any questions or want our team to handle the technical setup (Rs. 1,000/mo), feel free to reply directly to this email.\n\nBest regards,\nRavi\nFounder, UniCRM`,
+    text: `Hi ${name},\n\nThank you for signing up for UniCRM. Your workspace is active and ready to use at https://dfyunicrm.com/dashboard.\n\nThree quick steps to get started:\n1. Connect WhatsApp in Settings > WhatsApp\n2. Add contacts via CSV or Find Leads\n3. Set up an outreach sequence in Automations\n\nIf you have any questions or want our team to handle the technical setup (Rs. 1,000/mo), feel free to reply directly to this email.\n\nBest regards,\nRavi\nGoToPerson, UniCRM\nhttps://dfyunicrm.com`,
   });
 }
 
@@ -157,7 +157,7 @@ export async function sendWhatsAppFollowupEmail({
     to,
     subject: `Quick check-in regarding WhatsApp setup on UniCRM`,
     html,
-    text: `Hi ${name},\n\nI wanted to check in quickly and see if you had a chance to connect your WhatsApp number to UniCRM.\n\nMost users set this up in about three minutes in Settings > WhatsApp using Meta Developer credentials.\n\nIf you run into any friction or error codes, just reply to this email and I will help you sort it out.\n\nBest regards,\nRavi\nFounder, UniCRM`,
+    text: `Hi ${name},\n\nI wanted to check in quickly and see if you had a chance to connect your WhatsApp number to UniCRM.\n\nMost users set this up in about three minutes in Settings > WhatsApp using Meta Developer credentials.\n\nIf you run into any friction or error codes, just reply to this email and I will help you sort it out.\n\nBest regards,\nRavi\nGoToPerson, UniCRM\nhttps://dfyunicrm.com`,
   });
 }
 
@@ -181,7 +181,7 @@ export async function sendDfyPitchEmail({
     to,
     subject: `Optional hands-on help with your UniCRM setup`,
     html,
-    text: `Hi ${name},\n\nI wanted to write a brief note to clarify how we work and offer help if you need it.\n\nUniCRM software is 100% free forever. If your team would prefer not to spend time on Meta verification, WhatsApp template approvals, or AI sequence setup, our engineers handle everything for Rs. 1,000/month.\n\nCancel anytime with zero lock-in.\n\nIf you would like us to take this off your plate, learn more at https://dfyunicrm.com/contact or reply directly to this email.\n\nBest regards,\nRavi\nFounder, UniCRM`,
+    text: `Hi ${name},\n\nI wanted to write a brief note to clarify how we work and offer help if you need it.\n\nUniCRM software is 100% free forever. If your team would prefer not to spend time on Meta verification, WhatsApp template approvals, or AI sequence setup, our engineers handle everything for Rs. 1,000/month.\n\nCancel anytime with zero lock-in.\n\nIf you would like us to take this off your plate, learn more at https://dfyunicrm.com/contact or reply directly to this email.\n\nBest regards,\nRavi\nGoToPerson, UniCRM\nhttps://dfyunicrm.com`,
   });
 }
 
