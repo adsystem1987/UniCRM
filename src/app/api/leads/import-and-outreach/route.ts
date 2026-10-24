@@ -111,9 +111,11 @@ export async function POST(request: Request) {
             triggerType: 'new_contact_created',
             contactId: contact.id,
             context: {
-              lead_source: 'smart_lead_finder',
-              city: lead.city,
-              category: lead.category,
+              vars: {
+                lead_source: 'smart_lead_finder',
+                city: lead.city,
+                category: lead.category,
+              },
             },
           }).catch((err) => {
             console.error('[Leads/Outreach] Error dispatching automation:', err);
