@@ -241,6 +241,12 @@ html[data-mode="light"] {
 
 /* ---- ACCENT: primary color (Optional Accent Themes) ---- */
 
+html[data-theme="monochrome"] {
+  /* Inherits directly from data-mode:
+   * Dark Mode (Moon): solid white #f5f5f5 with black text #080808
+   * Light Mode (Sun): solid dark charcoal #191c1f with white text #ffffff */
+}
+
 html[data-theme="violet"] {
   --primary: oklch(0.526 0.247 293);
   --primary-foreground: oklch(0.985 0 0);
