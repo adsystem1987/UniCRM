@@ -499,7 +499,7 @@ export default function LandingPage() {
             </div>
 
             {/* Google Drive BYOS Banner */}
-            <div className="mt-8 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="mt-8 rounded-3xl border border-border bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                   <HardDrive className="h-3.5 w-3.5" />
@@ -542,7 +542,7 @@ export default function LandingPage() {
               {/* Feature 1 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-border flex items-center justify-center text-emerald-500 mb-6">
                     <QrCode className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
@@ -558,7 +558,7 @@ export default function LandingPage() {
               {/* Feature 2 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
@@ -574,7 +574,7 @@ export default function LandingPage() {
               {/* Feature 3 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-border flex items-center justify-center text-blue-500 mb-6">
                     <PhoneCall className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">WhatsApp Voice & IVR Calls</h3>
@@ -606,7 +606,7 @@ export default function LandingPage() {
               {/* Feature 5 */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-border flex items-center justify-center text-amber-500 mb-6">
                     <Zap className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">No-Code Flow Builder</h3>
@@ -722,7 +722,7 @@ export default function LandingPage() {
             </div>
 
             {/* Inspiring Bottom Banner: Transparent Community Model */}
-            <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 p-6 sm:p-8 text-center space-y-3">
+            <div className="mt-10 max-w-4xl mx-auto rounded-3xl border border-border bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 p-6 sm:p-8 text-center space-y-3">
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                 <ShieldCheck className="h-4 w-4" />
                 Funded by You &amp; Our Community
@@ -777,7 +777,7 @@ export default function LandingPage() {
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
                     <span className="text-5xl font-black text-foreground">₹0</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
-                    <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="rounded-full bg-emerald-500/15 border border-border px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                       Community Edition
                     </span>
                   </div>
@@ -828,7 +828,7 @@ export default function LandingPage() {
 
               {/* Plan 2: ₹1,000/mo Optional Done-For-You Pro Support */}
               <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
-                <div className="absolute -top-3.5 right-8 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-white">
+                <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
                   100% Optional Service
                 </div>
 
