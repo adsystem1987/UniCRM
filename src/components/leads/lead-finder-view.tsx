@@ -426,7 +426,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 </h2>
                 <Badge
                   variant="outline"
-                  className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-bold uppercase"
+                  className="bg-emerald-500/10 text-[#008f68] dark:text-[#42b991] dark:text-emerald-400 border-emerald-500/20 text-[10px] font-bold uppercase"
                 >
                   <Sparkles className="h-3 w-3 mr-1" />
                   Verified ICP Prospector
@@ -455,7 +455,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 setSelectedPackAmount(999);
                 setLeadPackDialogOpen(true);
               }}
-              className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 shadow-xs text-xs"
+              className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 gap-1.5 shadow-xs text-xs"
             >
               <Zap className="h-3.5 w-3.5" />
               Recharge Credits (₹1 = 1 Contact)
@@ -576,7 +576,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               <Button
                 onClick={handleLiveApifyScrape}
                 disabled={scrapingLive}
-                className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 shadow-xs"
+                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5 shadow-xs"
               >
                 {scrapingLive ? (
                   <>
@@ -617,7 +617,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 variant="outline"
                 onClick={handleImportToContacts}
                 disabled={importing || filteredLeads.length === 0}
-                className="font-bold text-xs gap-1.5 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
+                className="font-bold text-xs gap-1.5 border-border text-foreground hover:border-border-strong hover:bg-surface-hover"
               >
                 <Download className="h-3.5 w-3.5" />
                 {selectedLeadIds.length > 0
@@ -684,7 +684,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             )}
                           </td>
                           <td className="p-3">
-                            <div className="flex items-center gap-1.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                            <div className="flex items-center gap-1.5 font-mono font-bold text-[#008f68] dark:text-[#42b991] dark:text-emerald-400">
                               <Phone className="h-3 w-3" />
                               <span>{lead.phone}</span>
                             </div>
@@ -711,7 +711,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                             </div>
                           </td>
                           <td className="p-3 text-right">
-                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                            <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-[#008f68] dark:text-[#42b991] dark:text-emerald-400 border border-emerald-500/20">
                               {lead.matchScore}% Match
                             </span>
                           </td>
@@ -732,7 +732,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 <Button
                   size="sm"
                   onClick={handleImportToContacts}
-                  className="font-bold bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5"
+                  className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
                 >
                   <Send className="h-3 w-3" />
                   Import & Launch WhatsApp Outbound
@@ -764,7 +764,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               setSelectedPackAmount(499);
               setLeadPackDialogOpen(true);
             }}
-            className="font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shrink-0 gap-1.5 shadow-sm active:scale-[0.98] border border-emerald-400/20"
+            className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 shrink-0 gap-1.5 shadow-sm active:scale-[0.98] border border-emerald-400/20"
           >
             <span>Order Lead Pack (from ₹499)</span>
             <ArrowRight className="h-4 w-4" />
@@ -783,7 +783,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Starter Outbound</span>
-              <span className="text-xs font-black text-emerald-600">₹499</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹499</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>250 Verified Leads</strong> • WhatsApp checked • 1-click import to UniCRM
@@ -800,7 +800,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Growth Batch 🚀</span>
-              <span className="text-xs font-black text-emerald-600">₹999</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹999</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>1,000 Verified Leads</strong> • High ICP match • Direct outbound readiness
@@ -817,7 +817,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-foreground">Enterprise Multi-City</span>
-              <span className="text-xs font-black text-emerald-600">₹1,999</span>
+              <span className="text-xs font-black text-[#008f68] dark:text-[#42b991]">₹1,999</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
               <strong>2,500 Verified Leads</strong> • Phone, WhatsApp & Email enrichment
