@@ -491,6 +491,8 @@ export type AutomationStepType =
   | 'send_buttons'
   | 'send_list'
   | 'send_template'
+  | 'send_email'
+  | 'ai_outreach_reply'
   | 'add_tag'
   | 'remove_tag'
   | 'assign_conversation'
@@ -614,6 +616,19 @@ export interface ConditionStepConfig {
   value?: string;
 }
 
+export interface SendEmailStepConfig {
+  subject: string;
+  body_html: string;
+  from_name?: string;
+}
+
+export interface AiOutreachReplyStepConfig {
+  goal?: 'qualify_lead' | 'book_meeting' | 'answer_faq';
+  system_instructions?: string;
+  auto_tag_on_interest?: string;
+  auto_create_deal?: boolean;
+}
+
 export interface SendWebhookStepConfig {
   url: string;
   headers?: Record<string, string>;
@@ -625,6 +640,8 @@ export type AutomationStepConfig =
   | SendButtonsStepConfig
   | SendListStepConfig
   | SendTemplateStepConfig
+  | SendEmailStepConfig
+  | AiOutreachReplyStepConfig
   | TagStepConfig
   | AssignConversationStepConfig
   | UpdateContactFieldStepConfig

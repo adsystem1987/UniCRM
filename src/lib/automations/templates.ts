@@ -11,6 +11,7 @@ export type TemplateSlug =
   | 'out_of_office'
   | 'lead_qualifier'
   | 'follow_up_reminder'
+  | 'unitpost_omnichannel_outreach'
 
 export interface TemplateStepSeed {
   step_type: AutomationStepType
@@ -129,6 +130,40 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
         step_type: 'send_message',
         step_config: {
           text: t('follow_up_reminder.text'),
+        },
+      },
+    ],
+  },
+  unitpost_omnichannel_outreach: {
+    slug: 'unitpost_omnichannel_outreach',
+    name: 'Unitpost Omnichannel Drip & AI Agent Qualifier',
+    description: 'Multi-step outreach sequence: WhatsApp intro with spintax -> 24h wait -> Support email follow-up -> AI autonomous qualification on reply.',
+    trigger_type: 'new_contact_created',
+    trigger_config: {},
+    steps: [
+      {
+        step_type: 'send_message',
+        step_config: {
+          text: '{Hi|Hello|Hey} {{contact.name}}, {saw your business online|noticed your profile} and wanted to reach out regarding our omnichannel CRM & WhatsApp calling tools. {Are you exploring automation this quarter?|Quick question if you have 2 mins?}',
+        },
+      },
+      {
+        step_type: 'wait',
+        step_config: { amount: 1, unit: 'days' },
+      },
+      {
+        step_type: 'send_email',
+        step_config: {
+          subject: '{Quick follow-up|Checking in}: WhatsApp automation for your team',
+          body_html: '<p>{Hi|Hello} {{contact.name}},</p><p>Wanted to follow up on my WhatsApp message regarding all-in-one messaging and calling with zero software subscriptions.</p><p>Best regards,<br/>UniCRM Outreach</p>',
+        },
+      },
+      {
+        step_type: 'ai_outreach_reply',
+        step_config: {
+          goal: 'qualify_lead',
+          system_instructions: 'Qualify if the business needs WhatsApp messaging or calling. Offer to connect with founders or schedule a demo.',
+          auto_create_deal: true,
         },
       },
     ],

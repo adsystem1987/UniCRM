@@ -17,6 +17,8 @@ import type {
   WaitStepConfig,
   CreateDealStepConfig,
   AssignConversationStepConfig,
+  SendEmailStepConfig,
+  AiOutreachReplyStepConfig,
 } from '@/types'
 import { supabaseAdmin } from './admin-client'
 import { addContactTagIfAbsent } from '@/lib/contacts/tag-write'
@@ -25,6 +27,8 @@ import { engineSendText, engineSendTemplate, engineSendInteractive } from './met
 import { validateInteractivePayload } from '@/lib/whatsapp/interactive'
 import { isDeliverableUrl } from '@/lib/webhooks/ssrf'
 import { getT } from '@/lib/i18n/translate'
+import { parseSpintax } from '@/lib/broadcast-spintax'
+import { sendGmailMessage, refreshGmailAccessToken } from '@/lib/gmail/client'
 
 /** Step errors land in automation_logs and are shown on the logs page. */
 const tErr = getT('LibErrors.engine')
@@ -645,7 +649,7 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
     case 'send_message': {
       const cfg = step.step_config as SendMessageStepConfig
       if (!args.contactId) throw new Error(tErr('needsContact', { step: 'send_message' }))
-      const text = interpolate(cfg.text, args)
+      const text = parseSpintax(interpolate(cfg.text, args))
       if (!text.trim()) throw new Error(tErr('emptyText'))
       const conversationId = await resolveConversationId(args)
       const { whatsapp_message_id } = await engineSendText({
@@ -900,6 +904,105 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
         .eq('account_id', args.automation.account_id)
         .eq('contact_id', args.contactId)
       return 'conversation closed'
+    }
+
+    case 'send_email': {
+      const cfg = step.step_config as SendEmailStepConfig
+      if (!args.contactId) throw new Error('send_email requires a contact.')
+      
+      // Fetch contact details (specifically email)
+      const { data: contact } = await db
+        .from('contacts')
+        .select('name, email')
+        .eq('id', args.contactId)
+        .single()
+
+      if (!contact?.email) {
+        return 'skipped: contact has no email'
+      }
+
+      // Check account Gmail integration
+      const { data: gConfig } = await db
+        .from('gmail_configs')
+        .select('*')
+        .eq('account_id', args.automation.account_id)
+        .eq('status', 'connected')
+        .single()
+
+      if (!gConfig?.encrypted_refresh_token || !gConfig?.email_address) {
+        return 'skipped: no connected Gmail account on workspace'
+      }
+
+      const accessToken = await refreshGmailAccessToken(gConfig.encrypted_refresh_token)
+      const subject = parseSpintax(interpolate(cfg.subject, args))
+      const bodyHtml = parseSpintax(interpolate(cfg.body_html, args))
+
+      const { id } = await sendGmailMessage({
+        accessToken,
+        fromEmail: gConfig.email_address,
+        fromName: cfg.from_name || gConfig.from_name || 'UniCRM Outreach',
+        to: contact.email,
+        subject,
+        bodyHtml,
+      })
+
+      return `email sent via Gmail (${id})`
+    }
+
+    case 'ai_outreach_reply': {
+      const cfg = step.step_config as AiOutreachReplyStepConfig
+      if (!args.contactId) throw new Error('ai_outreach_reply requires a contact.')
+      const conversationId = await resolveConversationId(args)
+
+      // Fetch conversation & recent context
+      const { data: msgs } = await db
+        .from('messages')
+        .select('content, direction')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+      const history = (msgs || []).reverse().map((m) => `${m.direction === 'inbound' ? 'Customer' : 'Agent'}: ${m.content}`).join('\n')
+
+      // Use AI Gateway
+      try {
+        const { getAiGatewayProvider } = await import('@/lib/ai/gateway')
+        const provider = await getAiGatewayProvider(args.automation.account_id)
+        if (!provider) {
+          return 'skipped: no active AI model gateway'
+        }
+
+        const prompt = `You are an automated B2B outreach & lead qualification agent.
+Goal: ${cfg.goal || 'qualify_lead'}.
+Special Instructions: ${cfg.system_instructions || 'Be concise, helpful, and guide customer to next steps.'}
+
+Conversation history:
+${history}
+
+Draft a friendly, professional response (max 3 sentences) directly addressing the customer:`
+
+        const aiResponse = await provider.complete({ prompt, maxTokens: 150 })
+        const replyText = aiResponse.text?.trim()
+
+        if (replyText) {
+          await engineSendText({
+            accountId: args.automation.account_id,
+            userId: args.automation.user_id,
+            conversationId,
+            contactId: args.contactId,
+            text: replyText,
+          })
+
+          if (cfg.auto_tag_on_interest) {
+            await addContactTagIfAbsent(db, args.contactId, cfg.auto_tag_on_interest)
+          }
+
+          return `ai outreach replied: ${replyText.slice(0, 30)}...`
+        }
+      } catch (err) {
+        return `ai outreach error: ${err instanceof Error ? err.message : String(err)}`
+      }
+      return 'ai outreach step processed'
     }
 
     default:
