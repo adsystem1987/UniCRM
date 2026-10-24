@@ -962,27 +962,30 @@ async function runStep(step: AutomationStep, args: ExecuteArgs): Promise<string>
         .order('created_at', { ascending: false })
         .limit(5)
 
-      const history = (msgs || []).reverse().map((m) => `${m.direction === 'inbound' ? 'Customer' : 'Agent'}: ${m.content}`).join('\n')
+      const history = (msgs || []).reverse().map((m) => ({
+        role: m.direction === 'inbound' ? ('user' as const) : ('assistant' as const),
+        content: m.content,
+      }))
 
-      // Use AI Gateway
       try {
-        const { getAiGatewayProvider } = await import('@/lib/ai/gateway')
-        const provider = await getAiGatewayProvider(args.automation.account_id)
-        if (!provider) {
-          return 'skipped: no active AI model gateway'
+        const { loadAiConfig } = await import('@/lib/ai/config')
+        const { generateReply } = await import('@/lib/ai/generate')
+        const aiConfig = await loadAiConfig(db, args.automation.account_id, { requireActive: false })
+        if (!aiConfig) {
+          return 'skipped: no AI config available'
         }
 
-        const prompt = `You are an automated B2B outreach & lead qualification agent.
+        const systemPrompt = `You are an automated B2B outreach & lead qualification agent.
 Goal: ${cfg.goal || 'qualify_lead'}.
 Special Instructions: ${cfg.system_instructions || 'Be concise, helpful, and guide customer to next steps.'}
+Keep your response short (max 2-3 sentences), friendly, and conversational.`
 
-Conversation history:
-${history}
-
-Draft a friendly, professional response (max 3 sentences) directly addressing the customer:`
-
-        const aiResponse = await provider.complete({ prompt, maxTokens: 150 })
-        const replyText = aiResponse.text?.trim()
+        const aiResponse = await generateReply({
+          config: aiConfig,
+          systemPrompt,
+          messages: history.length > 0 ? history : [{ role: 'user', content: args.context.message_text || 'Hello' }],
+        })
+        const replyText = aiResponse.reply?.trim()
 
         if (replyText) {
           await engineSendText({
@@ -994,7 +997,11 @@ Draft a friendly, professional response (max 3 sentences) directly addressing th
           })
 
           if (cfg.auto_tag_on_interest) {
-            await addContactTagIfAbsent(db, args.contactId, cfg.auto_tag_on_interest)
+            await addContactTagIfAbsent(db, {
+              accountId: args.automation.account_id,
+              contactId: args.contactId,
+              tagId: cfg.auto_tag_on_interest,
+            })
           }
 
           return `ai outreach replied: ${replyText.slice(0, 30)}...`

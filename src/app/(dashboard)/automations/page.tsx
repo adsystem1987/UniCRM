@@ -45,6 +45,7 @@ import { triggerMeta, formatRelative, isKnownTrigger } from "@/lib/automations/t
 import { cn } from "@/lib/utils"
 
 const TEMPLATE_ORDER: TemplateSlug[] = [
+  "unitpost_omnichannel_outreach",
   "welcome_message",
   "out_of_office",
   "lead_qualifier",
@@ -52,6 +53,7 @@ const TEMPLATE_ORDER: TemplateSlug[] = [
 ]
 
 const TEMPLATE_ICON: Record<TemplateSlug, typeof Zap> = {
+  unitpost_omnichannel_outreach: Sparkles,
   welcome_message: MessageCircle,
   out_of_office: Clock,
   lead_qualifier: Users,
