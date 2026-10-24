@@ -16,6 +16,9 @@ import {
   Cloud,
   QrCode,
   Send,
+  ShieldCheck,
+  Activity,
+  Gauge,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -26,6 +29,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import { SettingsPanelHead } from './settings-panel-head';
 import {
   Accordion,
@@ -99,6 +103,13 @@ export function WhatsAppConfig() {
   const [showToken, setShowToken] = useState(false);
   const [config, setConfig] = useState<WhatsAppConfigType | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('unknown');
+  const [phoneInfo, setPhoneInfo] = useState<{
+    verified_name?: string;
+    display_phone_number?: string;
+    quality_rating?: string;
+    messaging_limit_tier?: string;
+    code_verification_status?: string;
+  } | null>(null);
   const [resetReason, setResetReason] = useState<ResetReason>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
   // Structured details of the last failed Meta call (health check or
@@ -225,6 +236,9 @@ export function WhatsAppConfig() {
 
           if (payload.connected) {
             setConnectionStatus('connected');
+            if (payload.phone_info) {
+              setPhoneInfo(payload.phone_info);
+            }
             setResetReason(null);
             setStatusMessage('');
             setStatusMeta(null);
@@ -454,6 +468,9 @@ export function WhatsAppConfig() {
 
       if (payload.connected) {
         setConnectionStatus('connected');
+        if (payload.phone_info) {
+          setPhoneInfo(payload.phone_info);
+        }
         setResetReason(null);
         setStatusMessage('');
         setStatusMeta(null);
@@ -771,6 +788,69 @@ export function WhatsAppConfig() {
           )}
           {connectionStatus !== 'connected' && statusMeta && renderMetaDetails(statusMeta)}
         </Alert>
+
+        {/* Live Meta Account Health Monitor Chips */}
+        {connectionStatus === 'connected' && phoneInfo && (
+          <div className="bg-muted/40 border border-border rounded-lg p-3.5 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Activity className="size-3.5 text-primary" />
+                Meta Live Health Monitor
+              </span>
+              {phoneInfo.verified_name && (
+                <span className="text-xs font-medium text-foreground bg-background px-2 py-0.5 rounded border border-border">
+                  {phoneInfo.verified_name}
+                </span>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              {/* Quality Rating */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="size-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Quality Rating</span>
+                </div>
+                <Badge
+                  variant="outline"
+                  className={
+                    phoneInfo.quality_rating === 'GREEN'
+                      ? 'border-emerald-800 text-emerald-400 bg-emerald-950/30'
+                      : phoneInfo.quality_rating === 'YELLOW'
+                      ? 'border-amber-800 text-amber-400 bg-amber-950/30'
+                      : phoneInfo.quality_rating === 'RED'
+                      ? 'border-red-800 text-red-400 bg-red-950/30'
+                      : 'border-border text-foreground'
+                  }
+                >
+                  {phoneInfo.quality_rating || 'UNKNOWN'}
+                </Badge>
+              </div>
+
+              {/* Messaging Tier Limit */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Gauge className="size-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Daily Tier</span>
+                </div>
+                <Badge variant="outline" className="border-border text-foreground">
+                  {phoneInfo.messaging_limit_tier?.replace('TIER_', '') || 'STANDARD'}
+                </Badge>
+              </div>
+
+              {/* Verified Phone Status */}
+              <div className="bg-background/80 border border-border rounded-md p-2 flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-3.5 text-emerald-500" />
+                  <span className="text-xs text-muted-foreground">Phone Number</span>
+                </div>
+                <span className="text-xs font-mono text-foreground font-medium">
+                  {phoneInfo.display_phone_number || 'Connected'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Registration Status — the "is it actually live?" check.
             Credentials being valid is necessary but not sufficient;
