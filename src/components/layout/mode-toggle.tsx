@@ -28,7 +28,7 @@ export function ModeToggle({ className }: { className?: string }) {
       aria-label={switchLabel}
       title={switchLabel}
       className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-transparent text-muted-foreground transition-all hover:bg-surface-hover hover:text-foreground active:bg-surface-active active:translate-y-px",
         className,
       )}
     >

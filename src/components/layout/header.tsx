@@ -64,7 +64,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
           type="button"
           onClick={onOpenSidebar}
           aria-label={t("openMenu")}
-          className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden shrink-0"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-surface-hover hover:text-foreground active:bg-surface-active active:translate-y-px lg:hidden shrink-0"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -78,7 +78,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
 
         <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center gap-2 rounded-md px-1 py-1 transition-colors hover:bg-muted/70 focus:bg-muted/70 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
+          className="flex items-center gap-2 rounded-full px-1.5 py-1 transition-all hover:bg-surface-hover focus:bg-surface-hover focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none data-popup-open:bg-surface-hover sm:gap-2.5 sm:pl-1.5 sm:pr-3 border border-transparent hover:border-border"
           aria-label={t("openAccountMenu")}
         >
           <Avatar className="size-8">

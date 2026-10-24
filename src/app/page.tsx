@@ -138,16 +138,16 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <ModeToggle className="h-8 w-8 sm:h-10 sm:w-10" />
+            <ModeToggle className="h-9 w-9" />
             <Link href="/login">
-              <Button variant="ghost" size="sm" className="font-semibold text-muted-foreground hover:text-foreground px-2 sm:px-3 text-xs sm:text-sm">
+              <Button variant="ghost" size="sm" className="font-medium text-muted-foreground hover:text-foreground px-3 text-sm rounded-full">
                 Sign In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1 sm:gap-1.5 shadow-xs px-2.5 sm:px-3 text-xs sm:text-sm">
-                <span>Start Free</span>
-                <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <Button size="sm" className="bg-primary text-primary-foreground font-medium gap-1.5 px-3.5 text-sm rounded-full hover:opacity-90 active:opacity-80 active:translate-y-px">
+                <span>Start for free</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
@@ -157,12 +157,13 @@ export default function LandingPage() {
       {/* Hero Section */}
       <main className="flex-1">
         <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28 border-b border-border/40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div aria-hidden="true" className="mkt-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_55%_at_50%_40%,black,transparent)]" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             {/* Urgency Capacity Pill */}
             <ScarcityHeroPill />
 
             <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-foreground leading-[1.12] max-w-5xl mx-auto">
-              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-emerald-600 dark:text-emerald-400">In one single CRM.</span>
+              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-primary">In one single CRM.</span>
             </h1>
 
             <p className="mt-6 text-lg sm:text-xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
@@ -171,33 +172,38 @@ export default function LandingPage() {
 
             {/* Channels Strip */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 max-w-2xl mx-auto">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <MessageCircle className="h-3.5 w-3.5" /> WhatsApp Messaging
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <MessageCircle className="h-3.5 w-3.5 text-emerald-500" /> WhatsApp Messaging
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                <PhoneCall className="h-3.5 w-3.5" /> WhatsApp Calling & IVR
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <PhoneCall className="h-3.5 w-3.5 text-blue-500" /> WhatsApp Calling & IVR
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                <Camera className="h-3.5 w-3.5" /> Instagram DMs
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Camera className="h-3.5 w-3.5 text-purple-500" /> Instagram DMs
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
-                <Share2 className="h-3.5 w-3.5" /> Facebook Messenger
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Share2 className="h-3.5 w-3.5 text-sky-500" /> Facebook Messenger
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                <Mail className="h-3.5 w-3.5" /> Support Email Inbox
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Mail className="h-3.5 w-3.5 text-amber-500" /> Support Email Inbox
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20">
-                <HardDrive className="h-3.5 w-3.5" /> Google Drive (15GB Free)
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <HardDrive className="h-3.5 w-3.5 text-teal-500" /> Google Drive (15GB Free)
               </span>
             </div>
 
             <div className="mt-8 flex flex-col items-center justify-center gap-2.5">
-              <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-3 w-full sm:w-auto">
                 <ScarcityCtaButton />
                 <ContactButton
                   variant="outline"
                   size="lg"
-                  className="h-12 px-7 rounded-xl font-bold text-base shadow-xs"
+                  className="w-full sm:w-auto h-11 px-5 rounded-full font-medium text-base border-border hover:border-border-strong hover:bg-surface-hover active:bg-surface-active active:translate-y-px"
+                >
+                  <Headphones className="h-4 w-4 mr-2" />
+                  <span>Talk to Founders</span>
+                </ContactButton>
+              </div>
                   icon="headphones"
                   defaultTopic="General Inquiry"
                 >

@@ -31,14 +31,14 @@ export function ScarcityHeroPill() {
 
 export function ScarcityCtaButton() {
   return (
-    <Link href="/signup">
+    <Link href="/signup" className="w-full sm:w-auto">
       <Button
         size="lg"
-        className="h-12 px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base gap-2 shadow-lg shadow-emerald-600/25"
+        className="w-full sm:w-auto h-11 px-5 rounded-full bg-primary text-primary-foreground font-medium text-base gap-2 hover:opacity-90 active:opacity-80 active:translate-y-px shadow-xs"
       >
-        <MessageCircle className="h-5 w-5" />
-        <span>Start Free Forever</span>
-        <ArrowRight className="h-4 w-4" />
+        <MessageCircle className="h-4 w-4" />
+        <span>Start for free</span>
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Button>
     </Link>
   );

@@ -70,6 +70,14 @@
   --color-status-danger-bg: var(--status-danger-bg);
   --color-status-danger-border: var(--status-danger-border);
 
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -136,6 +144,12 @@ html[data-mode="dark"] {
   --sidebar-accent-foreground: #f5f5f5;
   --sidebar-border: #292929;
 
+  --surface: #111111;
+  --surface-hover: #191919;
+  --surface-active: #202020;
+  --surface-raised: #141414;
+  --surface-subtle: #0b0b0b;
+
   /* Unitpost Semantic Status Tokens - Dark (Moon) */
   --status-warning: #c99a3b;
   --status-warning-bg: #1d180d;
@@ -184,6 +198,12 @@ html[data-mode="light"] {
   --sidebar-accent: #eeeeee;
   --sidebar-accent-foreground: #191c1f;
   --sidebar-border: #d8d8d8;
+
+  --surface: #f6f6f6;
+  --surface-hover: #eeeeee;
+  --surface-active: #e5e5e5;
+  --surface-raised: #ffffff;
+  --surface-subtle: #fafafa;
 
   /* Unitpost Semantic Status Tokens - Light (Sun) */
   --status-warning: #a97800;
@@ -316,6 +336,13 @@ html[data-theme="rose"] {
 /* Snappy entrance for dialogs and popovers (scale 0.96 -> 1, never 0) */
 .animate-in-snappy {
   animation: enter-snappy 200ms var(--ease-snappy) forwards;
+}
+
+/* Unitpost Dot Grid Pattern */
+.mkt-dots {
+  background-image: radial-gradient(color-mix(in oklab, var(--foreground) 14%, transparent) 1px, transparent 1px);
+  background-position: -1px -1px;
+  background-size: 22px 22px;
 }
 
 @keyframes enter-snappy {
