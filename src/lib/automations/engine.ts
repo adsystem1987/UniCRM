@@ -985,7 +985,7 @@ Keep your response short (max 2-3 sentences), friendly, and conversational.`
           systemPrompt,
           messages: history.length > 0 ? history : [{ role: 'user', content: args.context.message_text || 'Hello' }],
         })
-        const replyText = aiResponse.reply?.trim()
+        const replyText = aiResponse.text?.trim()
 
         if (replyText) {
           await engineSendText({

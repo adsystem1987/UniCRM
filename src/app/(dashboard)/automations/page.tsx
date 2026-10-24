@@ -16,6 +16,7 @@ import {
   Users,
   PhoneCall,
   Loader2,
+  Sparkles,
 } from "lucide-react"
 
 import { createClient } from "@/lib/supabase/client"
