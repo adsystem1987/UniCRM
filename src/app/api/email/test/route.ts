@@ -41,13 +41,35 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const targetEmail = searchParams.get("to");
+
   const hasUnitpostKey = Boolean(process.env.UNITPOST_API_KEY);
   const fromAddress = process.env.UNITPOST_FROM || "UniCRM <hello@mail.dfyunicrm.com>";
+
+  if (targetEmail) {
+    const name = searchParams.get("name") || "UniCRM Test User";
+    const result = await sendWelcomeEmail({
+      to: targetEmail,
+      name,
+    });
+
+    return NextResponse.json({
+      status: result.success ? "delivered" : "failed",
+      provider: result.provider,
+      id: result.id,
+      error: result.error,
+      sentTo: targetEmail,
+      fromAddress,
+      unitpostKeyPresent: hasUnitpostKey,
+    });
+  }
+
   return NextResponse.json({
     status: "ok",
     unitpostConfigured: hasUnitpostKey,
     fromAddress,
-    instructions: "POST to /api/email/test with JSON { to: 'your-email@domain.com' } to send a live test email.",
+    instructions: "Add ?to=your-email@gmail.com to this URL to trigger an instant test welcome email.",
   });
 }

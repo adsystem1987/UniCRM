@@ -21,8 +21,11 @@ export interface SendEmailResponse {
  * Routes through Unitpost (verified domain mail.dfyunicrm.com) or Resend fallback.
  */
 export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailResponse> {
-  const unitpostKey = process.env.UNITPOST_API_KEY;
-  const resendKey = process.env.RESEND_API_KEY;
+  const unitpostKey =
+    process.env.UNITPOST_API_KEY?.trim() ||
+    process.env.UNITPOST_KEY?.trim() ||
+    process.env.UNIT_POST_API_KEY?.trim();
+  const resendKey = process.env.RESEND_API_KEY?.trim();
 
   const defaultFrom =
     opts.from ||
@@ -37,10 +40,11 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailRespon
     try {
       let lastId = "";
       for (const recipient of recipients) {
+        console.log(`[Email/Unitpost] Sending to ${recipient} from ${defaultFrom}...`);
         const res = await fetch("https://www.unitpost.com/api/v1/email", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${unitpostKey.trim()}`,
+            Authorization: `Bearer ${unitpostKey}`,
             "Content-Type": "application/json",
             "User-Agent": "UniCRM-App/1.0",
           },
@@ -62,6 +66,7 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailRespon
 
         const data = await res.json().catch(() => ({}));
         lastId = (data.id || data.message_id || "") as string;
+        console.log(`[Email/Unitpost] Successfully delivered to ${recipient}! ID: ${lastId}`);
       }
       return { success: true, id: lastId, provider: "unitpost" };
     } catch (err: any) {

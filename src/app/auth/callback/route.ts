@@ -78,33 +78,49 @@ export async function GET(request: Request) {
     return relativeRedirect(loginFailurePath('link_invalid'));
   }
 
-  // Detect and notify Slack on new user registration (created within the last 5 minutes)
+  // Detect and handle new user onboarding & notification
   if (data?.user) {
     const user = data.user;
     const createdAtMs = new Date(user.created_at).getTime();
-    const isRecentSignup = Math.abs(Date.now() - createdAtMs) < 5 * 60 * 1000;
+    const isRecentSignup = Math.abs(Date.now() - createdAtMs) < 15 * 60 * 1000;
     const alreadyNotified = Boolean(user.user_metadata?.slack_signup_notified);
+    const welcomeSent = Boolean(user.user_metadata?.welcome_email_sent);
 
-    if (isRecentSignup && !alreadyNotified) {
-      void supabase.auth
-        .updateUser({
-          data: { slack_signup_notified: true, welcome_email_sent: true },
-        })
-        .catch(() => {});
-
+    // 1. Send Welcome Email via Unitpost (guaranteed delivery)
+    if (user.email && !welcomeSent) {
       const userName =
         (user.user_metadata?.full_name as string) ||
         (user.user_metadata?.name as string) ||
-        (user.email ? user.email.split('@')[0] : 'there');
+        (user.email.split('@')[0]) ||
+        'there';
 
-      if (user.email) {
-        void sendWelcomeEmail({
+      try {
+        console.log(`[Auth/Callback] Sending welcome email to ${user.email} via Unitpost...`);
+        const emailResult = await sendWelcomeEmail({
           to: user.email,
           name: userName,
-        }).catch((err) => {
-          console.error('[WelcomeEmail] Failed to send welcome email via Unitpost:', err);
         });
+        console.log(`[Auth/Callback] Welcome email result for ${user.email}:`, emailResult);
+
+        if (emailResult.success) {
+          await supabase.auth
+            .updateUser({
+              data: { welcome_email_sent: true },
+            })
+            .catch(() => {});
+        }
+      } catch (emailErr) {
+        console.error('[Auth/Callback] Failed to send welcome email:', emailErr);
       }
+    }
+
+    // 2. Slack Alert for team
+    if (isRecentSignup && !alreadyNotified) {
+      void supabase.auth
+        .updateUser({
+          data: { slack_signup_notified: true },
+        })
+        .catch(() => {});
 
       void notifySlackNewSignup({
         name:
