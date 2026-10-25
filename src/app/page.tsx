@@ -26,6 +26,7 @@ import {
   CheckCircle2,
   Compass,
   Target,
+  Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";

@@ -49,7 +49,7 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency, isPlatformOwner, currentAccount } = useAuth();
+  const { defaultCurrency, isPlatformOwner, accountId } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -86,7 +86,7 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
-    'business-page': <BusinessPageEditor accountId={currentAccount?.id || ''} />,
+    'business-page': <BusinessPageEditor accountId={accountId || ''} />,
     blueprints: <IndustryBlueprintsPanel />,
     orders: <OrdersBillingPanel />,
     whatsapp: <WhatsAppConfig />,
