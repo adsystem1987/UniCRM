@@ -6,6 +6,7 @@
 - **Branch & Promotion Rule**: ONLY commit and push to the `staging` branch (`origin/staging`). NEVER push to or merge into `main`. The user personally verifies staging and promotes to production (`main`).
 - **Primary Branch**: `staging` is the sole development and push target for agents.
 - **Deployment Workflow**: Once all changes are pushed to `staging` and the Vercel build is green, our work is DONE. Do NOT suggest creating PRs, merging to main, or any production promotion steps. The user handles staging → main promotion independently. The agent's finish line is: **pushed to staging + build green = task complete**.
+- **Proprietary Moat & Public Copy Rule (STRICT)**: NEVER showcase, expose, or name-drop internal tech stack libraries, third-party vendor names, or open-source architectures (e.g., `gbrain`, `Apify`, `Supabase`, `Groq`, `Evolution API`, `Whatomate`, `Postgres`, etc.) on public marketing pages, index page copy, landing components, or transactional customer emails. Always translate technical features into customer-centric proprietary terms (e.g., *"Smart Client Memory"*, *"Smart Lead Discovery"*, *"UniCRM Real-Time Voice Gateway"*, *"Private Cloud Storage"*). Keep technical implementations confidential to safeguard against competitors copying our roadmap.
 
 ---
 
@@ -132,22 +133,22 @@
     2. **Bring Your Own Storage (BYOS)**: Complete data sovereignty. Photos, voice recordings, PDFs, and invoices stream directly into the customer's own Google Drive (15 GB free) and Supabase instance.
     3. **First-Party Meta WhatsApp Cloud API**: Direct Graph API access with zero middleman per-message markups, automated template sync, and built-in anti-ban jitter algorithms.
     4. **Turnkey Industry Blueprints**: 1-click deployable business workflows (Real Estate, D2C, Education, Professional Services) combining Meta templates, smart IVR, and outreach.
-    5. **AI Memory Dossiers ("gbrain")**: Automated markdown customer briefing dossiers synthesizing conversation sentiment, customer pain points, and recommended closing actions directly into the contact inbox. Modeled after Garry Tan's open-source gbrain framework ("reads like an intelligence dossier crossed with a therapist's notes, not a LinkedIn scrape").
+    5. **Smart Client Memory Profiles**: Automated customer briefing dossiers synthesizing conversation sentiment, customer pain points, and recommended closing actions directly into the contact inbox.
     6. **Automated GDrive BYOS Invoicing**: Instant professional PDF/HTML invoices generated on order confirmation and stored directly in `/DFY UniCRM Attachments/Invoices/`.
 
 ---
 
-## AI Memory Dossiers Architecture (Garry Tan / gbrain)
+## Smart Client Memory Architecture
 - **Specification**:
   - Ground truth structured Markdown stored per contact (`contacts.ai_dossier` and `contacts.ai_dossier_updated_at`).
   - Synthesizes: Contact basic facts, tags, deals (values & pipeline stages), CRM notes, and recent WhatsApp conversation turns.
-  - Generates: Executive Psychological Read, Operating State & Context, What They're Building & Buying, Core Motivations & Pain Points, Communication Style & Psychological Tells, Strategic Playbook & Next Pitch Angle.
+  - Generates: Executive Read, Operating State & Context, What They're Building & Buying, Core Motivations & Pain Points, Communication Style, Strategic Playbook & Next Pitch Angle.
 - **Components**:
   - `src/lib/ai/dossier.ts`: Core prompt engine & synthesis function.
   - `src/app/api/contacts/[id]/dossier/route.ts`: GET & POST endpoints with rate limiting & BYO AI model execution.
-  - `src/components/ui/markdown-renderer.tsx`: Lightweight, secure markdown parser for dossiers.
-  - `src/components/contacts/contact-detail-view.tsx`: Dedicated "AI Dossier" tab with on-demand refresh.
-  - `src/components/inbox/contact-sidebar.tsx`: Live collapsible "AI Memory Dossier" widget in inbox sidebar.
+  - `src/components/ui/markdown-renderer.tsx`: Lightweight, secure markdown parser for memory dossiers.
+  - `src/components/contacts/contact-detail-view.tsx`: Dedicated "Smart Memory" tab with on-demand refresh.
+  - `src/components/inbox/contact-sidebar.tsx`: Live collapsible "Smart Client Memory" widget in inbox sidebar.
   - `supabase/migrations/056_contact_ai_dossier.sql`: DB schema migration for dossier fields and ai_usage_log mode.
 
 ---
