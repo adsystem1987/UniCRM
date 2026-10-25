@@ -146,8 +146,8 @@ export function IndustryBlueprintsPanel() {
   return (
     <div className="space-y-6">
       <SettingsPanelHead
-        title="Turnkey Industry Blueprints"
-        description="1-Click pre-configured pipelines, lead tags, and high-converting WhatsApp message templates tailored for your exact industry."
+        title="1-Click Industry Setup"
+        description="Pick your business type to automatically set up your sales pipeline, customer tags, and high-converting WhatsApp message scripts in 1 click."
       />
 
       {/* Top Banner & Region Selector */}
@@ -372,16 +372,16 @@ export function IndustryBlueprintsPanel() {
                     className="h-8 text-xs font-bold gap-1"
                   >
                     {isInstalling ? (
-                      <span>Installing...</span>
+                      <span>Applying...</span>
                     ) : isInstalled ? (
                       <>
                         <Check className="h-3.5 w-3.5 text-emerald-500" />
-                        Re-Apply Pack
+                        Re-Apply Setup
                       </>
                     ) : (
                       <>
                         <ArrowRight className="h-3.5 w-3.5" />
-                        1-Click Install
+                        1-Click Setup
                       </>
                     )}
                   </Button>

@@ -29,6 +29,7 @@ import {
   Heart,
   Target,
   Receipt,
+  Compass,
 } from "lucide-react";
 
 import type { AccountRole } from "@/lib/auth/roles";
@@ -101,6 +102,7 @@ const navItems: NavItem[] = [
   { href: "/contacts", labelKey: "contacts", icon: Users },
   { href: "/leads", labelKey: "leadFinder", icon: Target, beta: true },
   { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
+  { href: "/settings?tab=blueprints", labelKey: "industrySetup", icon: Compass },
   { href: "/broadcasts", labelKey: "broadcasts", icon: Radio },
   { href: "/automations", labelKey: "automations", icon: Zap },
   { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
