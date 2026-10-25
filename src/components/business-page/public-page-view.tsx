@@ -18,8 +18,10 @@ import { toast } from 'sonner';
 export interface BusinessItem {
   id: string;
   title: string;
+  category?: string;
   description?: string;
   price?: string;
+  badge?: string;
   image_url?: string;
   button_label?: string;
   prefill_message?: string;
@@ -48,6 +50,15 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   const [inquiryNotes, setInquiryNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  // Compute unique categories
+  const categories = ['All', ...Array.from(new Set(page.items.map((it) => it.category).filter(Boolean)))];
+
+  const filteredItems = selectedCategory === 'All'
+    ? page.items
+    : page.items.filter((it) => it.category === selectedCategory);
 
   const cleanWaNumber = page.whatsapp_number.replace(/[^0-9]/g, '');
 
@@ -231,15 +242,34 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             <div className="flex items-center justify-between px-1">
               <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5 uppercase">
                 <Sparkles className="size-4 text-emerald-500" />
-                Featured Services & Offers
+                Featured Services &amp; Offers
               </h2>
               <span className="text-[11px] text-muted-foreground font-medium">
-                {page.items.length} available
+                {filteredItems.length} of {page.items.length} items
               </span>
             </div>
 
+            {/* Category Filter Pills (if categories exist) */}
+            {categories.length > 2 && (
+              <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat as string)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all ${
+                      selectedCategory === cat
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            )}
+
             <div className="space-y-3">
-              {page.items.map((item) => (
+              {filteredItems.map((item) => (
                 <div
                   key={item.id}
                   className="rounded-2xl border border-border bg-card p-4 shadow-xs hover:border-emerald-500/40 transition-all flex flex-col sm:flex-row gap-4 justify-between"
@@ -256,9 +286,16 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       </div>
                     )}
                     <div className="space-y-1">
-                      <h3 className="font-bold text-sm text-foreground">
-                        {item.title}
-                      </h3>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <h3 className="font-bold text-sm text-foreground">
+                          {item.title}
+                        </h3>
+                        {item.badge && (
+                          <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
                       {item.description && (
                         <p className="text-xs text-muted-foreground line-clamp-2">
                           {item.description}

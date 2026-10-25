@@ -23,6 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { BusinessItem } from './public-page-view';
+import { INDUSTRY_PAGE_PRESETS } from '@/lib/business-page/presets';
 
 interface BusinessPageEditorProps {
   accountId: string;
@@ -87,12 +88,26 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
     }
   }, [accountId]);
 
+  const handleApplyPreset = (presetId: string) => {
+    const preset = INDUSTRY_PAGE_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+
+    if (!tagline) setTagline(preset.defaultTagline);
+    if (!about) setAbout(preset.defaultAbout);
+    
+    // Append or replace items
+    setItems(preset.sampleItems);
+    toast.success(`Loaded sample cards for ${preset.name}!`);
+  };
+
   const handleAddItem = () => {
     const newItem: BusinessItem = {
       id: Math.random().toString(36).substring(2, 9),
       title: '',
+      category: '',
       description: '',
       price: '',
+      badge: '',
       button_label: 'Inquire on WhatsApp',
       prefill_message: '',
     };
@@ -368,14 +383,14 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
 
           {/* Section 2: Items / Services / Catalog */}
           <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Sparkles className="size-3.5 text-emerald-500" />
                   2. Offers & Services (Like Instagram Posts)
                 </h4>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
-                  Add the items you want customers to book or order directly on WhatsApp.
+                  Add trips, hotel rooms, cars, menus, or services to receive direct WhatsApp bookings.
                 </p>
               </div>
 
@@ -389,10 +404,28 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
               </Button>
             </div>
 
+            {/* Quick Industry Presets Bar */}
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 space-y-2">
+              <span className="block text-[11px] font-bold text-foreground">
+                🚀 Or 1-Click Load Sample Cards for your Industry:
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {INDUSTRY_PAGE_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => handleApplyPreset(preset.id)}
+                    className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-background hover:bg-muted border border-border text-foreground transition-colors shadow-2xs"
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {items.length === 0 ? (
               <div className="rounded-xl border border-dashed border-border py-8 text-center space-y-2">
                 <p className="text-xs text-muted-foreground">
-                  No offers or services added yet.
+                  No offers or services added yet. Click an industry preset above or add a card manually.
                 </p>
                 <Button
                   size="sm"
@@ -425,13 +458,22 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                       <div className="sm:col-span-2 space-y-1">
-                        <Label className="text-[11px] font-semibold">Offer / Service Name</Label>
+                        <Label className="text-[11px] font-semibold">Offer / Item Title</Label>
                         <Input
                           value={item.title}
                           onChange={(e) => handleUpdateItem(item.id, 'title', e.target.value)}
-                          placeholder="e.g. Airport Drop (Sedan)"
+                          placeholder="e.g. Goa 3N/4D Holiday Package"
+                          className="text-xs bg-background"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[11px] font-semibold">Category Tab</Label>
+                        <Input
+                          value={item.category || ''}
+                          onChange={(e) => handleUpdateItem(item.id, 'category', e.target.value)}
+                          placeholder="e.g. Domestic Trips / Rooms"
                           className="text-xs bg-background"
                         />
                       </div>
@@ -440,25 +482,36 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
                         <Input
                           value={item.price || ''}
                           onChange={(e) => handleUpdateItem(item.id, 'price', e.target.value)}
-                          placeholder="e.g. ₹1,200 fixed"
+                          placeholder="e.g. ₹8,999 / person"
                           className="text-xs bg-background"
                         />
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <Label className="text-[11px] font-semibold">Short Description / Highlights</Label>
-                      <Input
-                        value={item.description || ''}
-                        onChange={(e) => handleUpdateItem(item.id, 'description', e.target.value)}
-                        placeholder="e.g. AC car, toll included, sanitized, 24/7 on-time pickup"
-                        className="text-xs bg-background"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="sm:col-span-2 space-y-1">
+                        <Label className="text-[11px] font-semibold">Short Highlights / Details</Label>
+                        <Input
+                          value={item.description || ''}
+                          onChange={(e) => handleUpdateItem(item.id, 'description', e.target.value)}
+                          placeholder="e.g. 4-star resort, pool, daily breakfast, sightseeing cab included"
+                          className="text-xs bg-background"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-[11px] font-semibold">Feature Badge (Optional)</Label>
+                        <Input
+                          value={item.badge || ''}
+                          onChange={(e) => handleUpdateItem(item.id, 'badge', e.target.value)}
+                          placeholder="e.g. Top Seller • Breakfast Inc."
+                          className="text-xs bg-background"
+                        />
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <Label className="text-[11px] font-semibold">Button Label</Label>
+                        <Label className="text-[11px] font-semibold">WhatsApp Button Label</Label>
                         <Input
                           value={item.button_label || ''}
                           onChange={(e) => handleUpdateItem(item.id, 'button_label', e.target.value)}
@@ -471,7 +524,7 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
                         <Input
                           value={item.image_url || ''}
                           onChange={(e) => handleUpdateItem(item.id, 'image_url', e.target.value)}
-                          placeholder="https://.../car.jpg"
+                          placeholder="https://.../hotel.jpg"
                           className="text-xs bg-background"
                         />
                       </div>
