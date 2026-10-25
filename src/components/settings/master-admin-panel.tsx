@@ -19,6 +19,7 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ interface PlatformAccount {
 }
 
 export function MasterAdminPanel() {
+  const { isPlatformOwner, profileLoading } = useAuth();
   const [accounts, setAccounts] = useState<PlatformAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -47,6 +49,10 @@ export function MasterAdminPanel() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const fetchAccounts = async () => {
+    if (!isPlatformOwner) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/admin/accounts");
@@ -62,8 +68,12 @@ export function MasterAdminPanel() {
   };
 
   useEffect(() => {
-    fetchAccounts();
-  }, []);
+    if (!profileLoading && isPlatformOwner) {
+      fetchAccounts();
+    } else if (!profileLoading && !isPlatformOwner) {
+      setLoading(false);
+    }
+  }, [profileLoading, isPlatformOwner]);
 
   const handleUpdateStatus = async (
     accountId: string,
@@ -123,6 +133,20 @@ export function MasterAdminPanel() {
     const matchesStatus = statusFilter === "all" || acc.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
+  if (!profileLoading && !isPlatformOwner) {
+    return (
+      <Card className="p-8 text-center border-border/80 bg-muted/20">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive mb-3">
+          <ShieldAlert className="h-6 w-6" />
+        </div>
+        <h3 className="text-base font-semibold text-foreground">Access Restricted</h3>
+        <p className="mt-1 text-sm text-muted-foreground max-w-sm mx-auto">
+          The Platform Owner console is reserved for platform super administrators. Your account does not have sufficient platform-level permissions.
+        </p>
+      </Card>
+    );
+  }
 
   const getStatusBadge = (status: PlatformAccount["status"]) => {
     switch (status) {

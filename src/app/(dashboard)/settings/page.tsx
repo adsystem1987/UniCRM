@@ -47,7 +47,7 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency } = useAuth();
+  const { defaultCurrency, isPlatformOwner } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -55,7 +55,12 @@ function SettingsPageInner() {
   // section — deep-linkable, and it keeps the existing links in the
   // app sidebar/header working. Legacy tab values (tags, custom-fields)
   // resolve onto their new home; unknown/empty → the Overview landing.
-  const section = resolveSection(searchParams.get('tab'));
+  // Guard: if a normal user deep links to master-admin, fallback to overview.
+  const rawTab = searchParams.get('tab');
+  const section =
+    rawTab === 'master-admin' && !isPlatformOwner
+      ? 'overview'
+      : resolveSection(rawTab);
 
   const go = (next: SettingsSection) => {
     const params = new URLSearchParams(searchParams.toString());
