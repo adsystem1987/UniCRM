@@ -22,6 +22,7 @@ import { IntegrationsPanel } from '@/components/settings/integrations-panel';
 import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
 import { MasterAdminPanel } from '@/components/settings/master-admin-panel';
 import { IndustryBlueprintsPanel } from '@/components/settings/industry-blueprints-panel';
+import { BusinessPageEditor } from '@/components/business-page/business-page-editor';
 import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
@@ -48,7 +49,7 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency, isPlatformOwner } = useAuth();
+  const { defaultCurrency, isPlatformOwner, currentAccount } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -85,6 +86,7 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
+    'business-page': <BusinessPageEditor accountId={currentAccount?.id || ''} />,
     blueprints: <IndustryBlueprintsPanel />,
     orders: <OrdersBillingPanel />,
     whatsapp: <WhatsAppConfig />,

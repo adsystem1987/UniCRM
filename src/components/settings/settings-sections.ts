@@ -16,6 +16,7 @@ import {
   Receipt,
   ShieldAlert,
   Compass,
+  Globe,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -32,6 +33,7 @@ export const SETTINGS_SECTIONS = [
   'profile',
   'security',
   'appearance',
+  'business-page',
   'blueprints',
   'orders',
   'whatsapp',
@@ -64,6 +66,7 @@ export const SECTION_META: Record<SettingsSection, SectionMeta> = {
   profile: { id: 'profile', label: 'Your profile', icon: User, group: 'account' },
   security: { id: 'security', label: 'Login & security', icon: Shield, group: 'account' },
   appearance: { id: 'appearance', label: 'Appearance', icon: Palette, group: 'account' },
+  'business-page': { id: 'business-page', label: 'Business Micro-Page', icon: Globe, group: 'workspace' },
   blueprints: { id: 'blueprints', label: '1-Click Industry Setup', icon: Compass, group: 'workspace' },
   orders: { id: 'orders', label: 'Orders & Billing', icon: Receipt, group: 'account' },
   whatsapp: { id: 'whatsapp', label: 'WhatsApp', icon: PlugZap, group: 'workspace' },

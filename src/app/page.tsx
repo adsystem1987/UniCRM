@@ -565,10 +565,30 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {/* Feature 1 */}
+              {/* Feature 1: Instant Business Micro-Page */}
+              <div className="rounded-3xl border border-emerald-500/40 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-emerald-500 transition-colors relative overflow-hidden">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
+                  New
+                </div>
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-6">
+                    <Globe className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Instant Business Micro-Page</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    No website? Launch your mobile page and catalog in 60 seconds just like posting an Instagram story. Share your link on Google Maps, Facebook Ads, or print a QR code—inquiries land directly in UniCRM.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500 flex items-center justify-between">
+                  <span>Zero code &amp; hosting required</span>
+                  <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
+                </div>
+              </div>
+
+              {/* Feature 2: Dual WhatsApp Gateways */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-border flex items-center justify-center text-emerald-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-teal-500/10 border border-border flex items-center justify-center text-teal-500 mb-6">
                     <QrCode className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
@@ -576,7 +596,7 @@ export default function LandingPage() {
                     Connect instantly by scanning a QR code with your mobile phone (100% free WhatsApp Web Gateway), or plug in your official Meta Cloud API for high-volume enterprise campaigns.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500">
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-400">
                   Zero setup friction
                 </div>
               </div>
