@@ -5,6 +5,7 @@
 - **Git Staging**: Always stage exact modified files only. NEVER run `git add -A` or `git add .`.
 - **Branch & Promotion Rule**: ONLY commit and push to the `staging` branch (`origin/staging`). NEVER push to or merge into `main`. The user personally verifies staging and promotes to production (`main`).
 - **Primary Branch**: `staging` is the sole development and push target for agents.
+- **Deployment Workflow**: Once all changes are pushed to `staging` and the Vercel build is green, our work is DONE. Do NOT suggest creating PRs, merging to main, or any production promotion steps. The user handles staging → main promotion independently. The agent's finish line is: **pushed to staging + build green = task complete**.
 
 ---
 
@@ -164,6 +165,21 @@
   - `src/app/api/auth/phone-verify/route.ts`: GET & POST status & code regeneration endpoints.
   - `src/components/layout/phone-verification-modal.tsx`: Auto-polling barrier dialog.
   - `supabase/migrations/057_phone_verification_onboarding.sql`: Schema migration for `phone`, `phone_verified`, and `verification_code`.
+
+---
+
+## Google Drive Payment Receipt Delivery (BYOS Invoicing)
+- **Zero-Storage-Cost Receipt Pipeline**:
+  - Automatically triggers when an order is verified (`paid` or `fulfilled`) in `PATCH /api/orders` or manually synced.
+  - Generates a standalone, print-optimized HTML payment receipt with clean UniCRM Unitpost styling, official `receipt_number` (e.g. `REC-202610-0001`), payment mode (Direct UPI QR / Intent), banking UTR reference, item details, and non-tax payment disclaimer.
+  - Connects to user's or platform owner's connected Google Drive (`src/lib/gdrive/client.ts`), creates the `/DFY UniCRM Attachments/Receipts/` subfolder, and uploads `Receipt-REC-YYYYMM-XXXX-ORD-YYYY.html`.
+  - Sets public reader access on the Drive file and persists `receipt_number`, `receipt_gdrive_file_id`, and `receipt_gdrive_url` (webViewLink) on the `orders` row.
+  - Provides a 1-click **"Drive"** button and standalone viewable `/api/orders/[id]/receipt` endpoint in `/settings?tab=orders`.
+- **Components**:
+  - `src/lib/invoice/receipt-template.ts`: Standalone responsive HTML payment receipt generator with tax notice note.
+  - `src/lib/invoice/delivery.ts`: Automated Google Drive subfolder creation, buffer upload, and DB updater.
+  - `src/app/api/orders/[id]/receipt/route.ts`: GET for viewing/printing, POST for on-demand Google Drive upload & sync.
+  - `supabase/migrations/058_order_receipt_gdrive.sql`: Database schema migration adding receipt tracking fields and auto-numbering trigger.
 
 ---
 

@@ -20,6 +20,8 @@ import {
   XCircle,
   QrCode,
   ArrowRight,
+  Cloud,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -46,6 +48,10 @@ interface OrderRecord {
   };
   status: "pending_verification" | "paid" | "fulfilled" | "cancelled";
   admin_notes: string | null;
+  receipt_number?: string | null;
+  receipt_gdrive_url?: string | null;
+  receipt_gdrive_file_id?: string | null;
+  receipt_generated_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -58,6 +64,7 @@ export function OrdersBillingPanel() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [syncingReceiptId, setSyncingReceiptId] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -114,6 +121,33 @@ export function OrdersBillingPanel() {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
+  const handleSyncToDrive = async (orderId: string) => {
+    setSyncingReceiptId(orderId);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/receipt`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to deliver receipt to Google Drive");
+      }
+      toast.success(
+        data.driveUrl
+          ? "Receipt uploaded and synced to Google Drive!"
+          : "Receipt recorded. Connect Google Drive to auto-upload."
+      );
+      void fetchOrders();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Sync failed");
+    } finally {
+      setSyncingReceiptId(null);
+    }
+  };
+
+  const handlePrintReceipt = (order: OrderRecord) => {
+    window.open(`/api/orders/${order.id}/receipt`, "_blank");
+  };
+
   const filteredOrders = orders.filter((o) => {
     const matchesSearch =
       o.order_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -158,48 +192,6 @@ export function OrdersBillingPanel() {
           </span>
         );
     }
-  };
-
-  const handlePrintReceipt = (order: OrderRecord) => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Receipt - ${order.order_number}</title>
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 40px; color: #1e293b; max-width: 600px; margin: 0 auto; }
-            .header { border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px; }
-            .title { font-size: 24px; font-weight: 800; color: #0f172a; }
-            .row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
-            .label { color: #64748b; font-weight: 600; }
-            .val { font-weight: 700; }
-            .total { font-size: 18px; font-weight: 900; color: #059669; border-top: 2px solid #e2e8f0; padding-top: 15px; margin-top: 15px; }
-            .footer { margin-top: 40px; font-size: 12px; color: #94a3b8; text-align: center; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="title">UniCRM Payment Receipt</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Zero-Gateway Direct Payment</div>
-          </div>
-          <div class="row"><span class="label">Order Number:</span><span class="val">${order.order_number}</span></div>
-          <div class="row"><span class="label">Date:</span><span class="val">${new Date(order.created_at).toLocaleString()}</span></div>
-          <div class="row"><span class="label">Item:</span><span class="val">${order.item_name}</span></div>
-          <div class="row"><span class="label">Target Parameters:</span><span class="val">${order.parameters?.niche || "All"} (${order.parameters?.city || "All India"})</span></div>
-          <div class="row"><span class="label">Customer WhatsApp:</span><span class="val">${order.whatsapp_phone}</span></div>
-          <div class="row"><span class="label">Payment Mode:</span><span class="val">Direct UPI QR / Intent</span></div>
-          <div class="row"><span class="label">UPI Reference / UTR:</span><span class="val" style="font-family: monospace;">${order.utr_number || "Pending"}</span></div>
-          <div class="row"><span class="label">Status:</span><span class="val" style="text-transform: uppercase;">${order.status.replace("_", " ")}</span></div>
-          <div class="row total"><span class="label" style="color: #0f172a;">Total Paid:</span><span>₹${order.amount.toFixed(2)}</span></div>
-          <div class="footer">Thank you for supporting UniCRM. All payments are verified via banking UTR.</div>
-          <script>window.print();</script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
   };
 
   return (
@@ -372,16 +364,52 @@ export function OrdersBillingPanel() {
 
                   {/* Actions & Status Management */}
                   <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-                    {/* Print / Download Receipt */}
+                    {/* View / Print Receipt */}
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => handlePrintReceipt(order)}
                       className="h-8 px-2.5 text-xs font-semibold gap-1 text-muted-foreground hover:text-foreground"
+                      title="View printable payment receipt"
                     >
                       <Receipt className="h-3.5 w-3.5" />
                       Receipt
                     </Button>
+
+                    {/* Google Drive Delivery Link / Sync */}
+                    {order.receipt_gdrive_url ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        asChild
+                        className="h-8 px-2.5 text-xs font-semibold gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10"
+                      >
+                        <a
+                          href={order.receipt_gdrive_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="View receipt stored in Google Drive"
+                        >
+                          <Cloud className="h-3.5 w-3.5 text-blue-500" />
+                          <span>Drive</span>
+                          <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                        </a>
+                      </Button>
+                    ) : ["paid", "fulfilled"].includes(order.status) ? (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={syncingReceiptId === order.id}
+                        onClick={() => handleSyncToDrive(order.id)}
+                        className="h-8 px-2 text-xs font-medium gap-1 text-muted-foreground hover:text-foreground"
+                        title="Upload receipt to Google Drive"
+                      >
+                        <Cloud className={`h-3.5 w-3.5 ${syncingReceiptId === order.id ? "animate-pulse" : ""}`} />
+                        <span className="hidden sm:inline">
+                          {syncingReceiptId === order.id ? "Syncing..." : "Sync Drive"}
+                        </span>
+                      </Button>
+                    ) : null}
 
                     {/* Admin Status Controls */}
                     {isAdmin && (

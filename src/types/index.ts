@@ -774,3 +774,37 @@ export interface CallLog {
   contact?: Contact;
 }
 
+
+// ============================================================
+// Orders & Payment Receipts (Google Drive BYOS)
+// ============================================================
+
+export type OrderStatus = 'pending_verification' | 'paid' | 'fulfilled' | 'cancelled';
+
+export interface OrderRecord {
+  id: string;
+  account_id: string;
+  user_id?: string | null;
+  order_number: string;
+  order_type: string;
+  item_name: string;
+  amount: number;
+  currency: string;
+  payment_method: string;
+  utr_number: string | null;
+  whatsapp_phone: string;
+  parameters: {
+    niche?: string;
+    city?: string;
+    leads_count?: number;
+    packId?: string;
+  };
+  status: OrderStatus;
+  admin_notes: string | null;
+  receipt_number?: string | null;
+  receipt_gdrive_url?: string | null;
+  receipt_gdrive_file_id?: string | null;
+  receipt_generated_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
