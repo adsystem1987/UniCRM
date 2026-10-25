@@ -33,7 +33,7 @@ const COMPARISON_ROWS = [
   {
     feature: "Customer Memory & Context",
     oldWay: "Scattered notes across WhatsApp chats and memory lapses",
-    uniWay: "gbrain AI Dossiers: Remembers every customer's budget & preferences",
+    uniWay: "Smart Client Memory: Remembers every customer's budget, notes & preferences automatically",
   },
 ];
 

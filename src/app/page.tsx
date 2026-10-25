@@ -587,9 +587,9 @@ export default function LandingPage() {
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">AI Customer Memory &amp; Dossiers</h3>
+                  <h3 className="text-xl font-bold text-foreground">Smart Client Memory &amp; Profiles</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Powered by Garry Tan&apos;s gbrain architecture. Automatically remembers every client&apos;s budget, specific preferences, and conversation history right in your WhatsApp chat sidebar.
+                    Automatically remembers every client&apos;s budget, specific preferences, and past conversation history right in your WhatsApp chat sidebar so you always close deals with full context.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">

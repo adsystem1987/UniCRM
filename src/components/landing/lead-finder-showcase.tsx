@@ -438,7 +438,7 @@ export function LeadFinderShowcase() {
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-              <span><strong>AI Memory Dossier:</strong> Learns customer preferences as they chat.</span>
+              <span><strong>Smart Client Memory:</strong> Learns customer preferences &amp; budget as they chat.</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
