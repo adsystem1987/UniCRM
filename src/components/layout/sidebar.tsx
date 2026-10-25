@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,6 +18,7 @@ import {
   Radio,
   Settings,
   Shield,
+  ShieldAlert,
   User,
   UserCog,
   Users,
@@ -122,7 +123,9 @@ import { useTranslations } from "next-intl";
 export function Sidebar({ open = false, onClose }: SidebarProps) {
   const t = useTranslations("Sidebar");
   const pathname = usePathname();
-  const { profile, profileLoading, account, accountRole, signOut } = useAuth();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams?.get("tab");
+  const { profile, profileLoading, account, accountRole, isPlatformOwner, signOut } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
   // Only surface the account-name strip when it actually carries
@@ -288,7 +291,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
           <ul className="flex flex-col gap-1">
             {bottomNavItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
+              const isActive = pathname.startsWith(item.href) && currentTab !== "master-admin";
               return (
                 <li key={item.href}>
                   <Link
@@ -306,6 +309,25 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                 </li>
               );
             })}
+            {isPlatformOwner && (
+              <li>
+                <Link
+                  href="/settings?tab=master-admin"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
+                    pathname.startsWith("/settings") && currentTab === "master-admin"
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                >
+                  <ShieldAlert className="h-4 w-4 text-amber-500" />
+                  <span className="flex-1">{t("platformOwner")}</span>
+                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-400">
+                    Owner
+                  </span>
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
 

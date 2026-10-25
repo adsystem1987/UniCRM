@@ -13,6 +13,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { DEFAULT_CURRENCY } from "@/lib/currency";
+import { isMasterAdminEmail } from "@/lib/auth/master-admin";
 import {
   canEditSettings as canEditSettingsFor,
   canManageMembers as canManageMembersFor,
@@ -124,6 +125,8 @@ interface AuthContextValue {
   isAgent: boolean;
   /** True if `accountRole === 'viewer'`. */
   isViewer: boolean;
+  /** True if the user is a platform owner (brosir2019@gmail.com, help@dfyunicrm.com). */
+  isPlatformOwner: boolean;
   /** True if the caller can manage members (admin+). */
   canManageMembers: boolean;
   /** True if the caller can edit account-wide settings (admin+). */
@@ -400,6 +403,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // dependencies downstream.
   const derived = useMemo(() => {
     const role = profile?.account_role ?? null;
+    const isPlatformOwner = isMasterAdminEmail(user?.email || profile?.email);
     return {
       accountRole: role,
       accountId: profile?.account_id ?? null,
@@ -407,11 +411,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAdmin: role === "admin",
       isAgent: role === "agent",
       isViewer: role === "viewer",
+      isPlatformOwner,
       canManageMembers: role ? canManageMembersFor(role) : false,
       canEditSettings: role ? canEditSettingsFor(role) : false,
       canSendMessages: role ? canSendMessagesFor(role) : false,
     };
-  }, [profile?.account_role, profile?.account_id]);
+  }, [profile?.account_role, profile?.account_id, profile?.email, user?.email]);
 
   // Signed out is not a broken account — the shell redirects to /login
   // before anything reads this.
@@ -478,6 +483,7 @@ export function useAuth(): AuthContextValue {
       isAdmin: false,
       isAgent: false,
       isViewer: false,
+      isPlatformOwner: false,
       canManageMembers: false,
       canEditSettings: false,
       canSendMessages: false,

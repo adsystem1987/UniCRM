@@ -29,6 +29,8 @@
     "automations": "자동화",
     "flows": "플로우",
     "aiAgents": "AI 에이전트",
+    "orders": "주문 및 결제",
+    "platformOwner": "플랫폼 소유자",
     "settings": "설정",
     "beta": "베타",
     "unreadConversations": "읽지 않은 대화 {count}건",
