@@ -24,6 +24,8 @@ import {
   Volume2,
   Sliders,
   CheckCircle2,
+  Compass,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
@@ -35,6 +37,8 @@ import {
   ScarcityCtaButton,
   ScarcityAllocationBar,
 } from "@/components/landing/server-scarcity";
+import { LeadFinderShowcase } from "@/components/landing/lead-finder-showcase";
+import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showcase";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -128,12 +132,13 @@ export default function LandingPage() {
             <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">DFY UniCRM</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-muted-foreground">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-muted-foreground">
+            <a href="#leads" className="hover:text-foreground transition-colors font-semibold text-primary">Find Leads</a>
+            <a href="#industries" className="hover:text-foreground transition-colors">Industry Setup</a>
             <a href="#channels" className="hover:text-foreground transition-colors">Channels</a>
-            <a href="#calling" className="hover:text-foreground transition-colors">Calling & IVR</a>
+            <a href="#calling" className="hover:text-foreground transition-colors">Calling &amp; IVR</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#why-free" className="hover:text-foreground transition-colors">Why 100% Free?</a>
-            <a href="#support-plan" className="hover:text-foreground transition-colors">DFY Setup (₹1,000)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
@@ -188,7 +193,13 @@ export default function LandingPage() {
                 <Mail className="h-3.5 w-3.5 text-[#EA4335]" /> Support Email Inbox
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
-                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Google Drive (15GB Free)
+                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Google Drive Storage &amp; Receipts
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Target className="h-3.5 w-3.5 text-primary" /> Smart Lead Finder
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Compass className="h-3.5 w-3.5 text-purple-500" /> 1-Click Industry Setup
               </span>
             </div>
 
@@ -506,10 +517,10 @@ export default function LandingPage() {
                   Bring Your Own Storage (BYOS)
                 </div>
                 <h3 className="text-xl md:text-2xl font-black text-foreground">
-                  Connect Google Drive — Get 15 GB Free Media Storage
+                  Connect Google Drive — 15 GB Free Storage &amp; Auto-Receipts
                 </h3>
                 <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                  By connecting your personal or business Google Drive (15 GB free), UniCRM streams all photos, voice recordings, PDFs, and call audio into your own cloud folder. Zero storage limits on your CRM server!
+                  By connecting your personal or business Google Drive (15 GB free), UniCRM streams all customer photos, voice notes, PDFs, call audio, and automated payment receipts into your own cloud folder. Zero storage limits on your CRM server!
                 </p>
               </div>
 
@@ -520,6 +531,13 @@ export default function LandingPage() {
                 </Button>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: SMART LEAD FINDER SHOWCASE */}
+        <section id="leads" className="py-16 md:py-24 border-b border-border/40 bg-card/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <LeadFinderShowcase />
           </div>
         </section>
 
@@ -561,13 +579,13 @@ export default function LandingPage() {
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
+                  <h3 className="text-xl font-bold text-foreground">AI Customer Memory &amp; Dossiers</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Powered by internal smart AI routing. Get intelligent draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying $20/seat.
+                    Powered by Garry Tan&apos;s gbrain architecture. Automatically remembers every client&apos;s budget, specific preferences, and conversation history right in your WhatsApp chat sidebar.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">
-                  Token-compressed & fast
+                  Instant context on every chat
                 </div>
               </div>
 
@@ -635,6 +653,13 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: 1-CLICK INDUSTRY SETUP */}
+        <section id="industries" className="py-16 md:py-24 border-b border-border/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <IndustrySetupShowcase />
           </div>
         </section>
 
