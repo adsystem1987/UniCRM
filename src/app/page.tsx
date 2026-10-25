@@ -41,6 +41,7 @@ import {
 import { LeadFinderShowcase } from "@/components/landing/lead-finder-showcase";
 import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showcase";
 import { ComparisonBanner } from "@/components/landing/comparison-banner";
+import { BusinessPageShowcase } from "@/components/landing/business-page-showcase";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -547,6 +548,13 @@ export default function LandingPage() {
         <section id="leads" className="py-16 md:py-24 border-b border-border/40 bg-card/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <LeadFinderShowcase />
+          </div>
+        </section>
+
+        {/* SECTION: INSTANT BUSINESS MICRO-PAGE & CATALOG SHOWCASE */}
+        <section id="catalog" className="py-16 md:py-24 border-b border-border/40 bg-linear-to-b from-background via-emerald-500/5 to-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <BusinessPageShowcase />
           </div>
         </section>
 
