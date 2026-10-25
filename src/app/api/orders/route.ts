@@ -2,33 +2,42 @@ import { NextResponse } from 'next/server';
 import { getCurrentAccount, requireRole } from '@/lib/auth/account';
 import { supabaseAdmin } from '@/lib/flows/admin-client';
 import { sendOrderNotification } from '@/lib/slack/notify';
+import { isMasterAdminEmail } from '@/lib/auth/master-admin';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/orders
- * Returns list of orders for the current user's account.
- * Admins/owners see all account orders; regular members see their account orders.
+ * Returns list of orders.
+ * Platform master admins (e.g. brosir2019@gmail.com) see all platform orders.
+ * Regular account members see their own account orders.
  */
 export async function GET() {
   try {
     const { supabase, accountId, role } = await getCurrentAccount();
+    const { data: userData } = await supabase.auth.getUser();
+    const callerEmail = userData?.user?.email || null;
+    const isMasterAdmin = isMasterAdminEmail(callerEmail);
 
-    const { data: orders, error } = await supabase
-      .from('orders')
-      .select('*')
-      .eq('account_id', accountId)
-      .order('created_at', { ascending: false });
+    let query = isMasterAdmin
+      ? supabaseAdmin().from('orders').select('*')
+      : supabase.from('orders').select('*').eq('account_id', accountId);
+
+    const { data: orders, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
-      // Table might not exist yet if migration hasn't run; return empty list gracefully
       console.warn('[orders GET] database query error:', error.message);
-      return NextResponse.json({ orders: [], isAdmin: ['owner', 'admin'].includes(role) });
+      return NextResponse.json({
+        orders: [],
+        isAdmin: ['owner', 'admin'].includes(role) || isMasterAdmin,
+        isMasterAdmin,
+      });
     }
 
     return NextResponse.json({
       orders: orders || [],
-      isAdmin: ['owner', 'admin'].includes(role),
+      isAdmin: ['owner', 'admin'].includes(role) || isMasterAdmin,
+      isMasterAdmin,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unauthorized';
@@ -122,7 +131,15 @@ export async function POST(request: Request) {
  */
 export async function PATCH(request: Request) {
   try {
-    const { accountId } = await requireRole('admin');
+    const { supabase, accountId, role } = await getCurrentAccount();
+    const { data: userData } = await supabase.auth.getUser();
+    const callerEmail = userData?.user?.email || null;
+    const isMasterAdmin = isMasterAdminEmail(callerEmail);
+
+    if (!isMasterAdmin && !['owner', 'admin'].includes(role)) {
+      return NextResponse.json({ error: 'Admin permissions required' }, { status: 403 });
+    }
+
     const body = await request.json().catch(() => ({}));
 
     const orderId = typeof body.orderId === 'string' ? body.orderId.trim() : '';
@@ -136,16 +153,20 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const { data: updated, error } = await supabaseAdmin()
+    let updateQuery = supabaseAdmin()
       .from('orders')
       .update({
         status,
         ...(adminNotes !== null ? { admin_notes: adminNotes } : {}),
       })
-      .eq('id', orderId)
-      .eq('account_id', accountId)
-      .select()
-      .single();
+      .eq('id', orderId);
+
+    // If not master admin, scope to caller's account
+    if (!isMasterAdmin) {
+      updateQuery = updateQuery.eq('account_id', accountId);
+    }
+
+    const { data: updated, error } = await updateQuery.select().single();
 
     if (error) {
       console.error('[orders PATCH] update error:', error);

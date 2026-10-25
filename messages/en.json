@@ -1789,11 +1789,13 @@
       "fields": "Fields & tags",
       "deals": "Deals & currency",
       "members": "Team members",
-      "api": "API keys"
+      "api": "API keys",
+      "master-admin": "Master Admin"
     },
     "groups": {
       "account": "Account",
-      "workspace": "Workspace"
+      "workspace": "Workspace",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "Your profile",

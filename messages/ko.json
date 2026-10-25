@@ -1787,11 +1787,13 @@
       "members": "팀원",
       "api": "API 키",
       "ai": "AI 어시스턴트",
-      "integrations": "채널 및 연동"
+      "integrations": "채널 및 연동",
+      "master-admin": "Master Admin"
     },
     "groups": {
       "account": "계정",
-      "workspace": "워크스페이스"
+      "workspace": "워크스페이스",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "내 프로필",

@@ -1787,11 +1787,13 @@
       "members": "Miembros del equipo",
       "api": "Claves de API",
       "ai": "Asistente de IA",
-      "integrations": "Canales e Integraciones"
+      "integrations": "Canales e Integraciones",
+      "master-admin": "Master Admin"
     },
     "groups": {
       "account": "Cuenta",
-      "workspace": "Espacio de trabajo"
+      "workspace": "Espacio de trabajo",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "Tu perfil",

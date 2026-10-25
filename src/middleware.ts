@@ -86,10 +86,35 @@ export async function middleware(request: NextRequest) {
   // Every top-level route under src/app/(dashboard)/ belongs here —
   // middleware.test.ts reads that directory and fails on a missing one.
   const protectedPaths = ['/dashboard', '/inbox', '/contacts', '/leads', '/pipelines', '/broadcasts', '/automations', '/flows', '/agents', '/notifications', '/settings']
-  if (!user && protectedPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
+  const isProtectedPath = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path));
+
+  if (!user && isProtectedPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return withRefreshedCookies(NextResponse.redirect(url))
+  }
+
+  // Check account suspension status for authenticated dashboard users
+  if (user && isProtectedPath && user.email !== 'brosir2019@gmail.com' && user.email !== 'help@dfyunicrm.com') {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('account_id')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (profile?.account_id) {
+      const { data: account } = await supabase
+        .from('accounts')
+        .select('status')
+        .eq('id', profile.account_id)
+        .maybeSingle();
+
+      if (account?.status === 'suspended') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/suspended';
+        return withRefreshedCookies(NextResponse.redirect(url));
+      }
+    }
   }
 
   // API routes that need auth (not webhooks)
