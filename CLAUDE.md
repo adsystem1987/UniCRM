@@ -151,6 +151,22 @@
 
 ---
 
+## Free WhatsApp Inbound Handshake & Onboarding Gate (Anti-Spam Barrier)
+- **Problem**: Open signups allow bots or disposable accounts to flood server resources and see internal dashboard views.
+- **Solution (Zero-Cost WhatsApp Handshake)**:
+  - When an unverified user signs in via Google OAuth, `PhoneVerificationModal` blocks dashboard interaction.
+  - Generates a unique 6-digit handshake code (`ACT-XXXXXX`).
+  - The user taps **"Send & Verify via WhatsApp"**, which opens `https://wa.me/917019139417?text=Verify%20ACT-XXXXXX...`.
+  - On sending, the inbound webhook (`src/app/api/whatsapp/webhook/route.ts`) checks `handlePhoneVerificationHandshake()`, captures the sender's real phone, marks `profiles.phone_verified = true`, and the dashboard unlocks automatically in real time via polling.
+  - Platform Owners (`brosir2019@gmail.com`, `help@dfyunicrm.com`) bypass this gate automatically.
+- **Components**:
+  - `src/lib/auth/phone-handshake.ts`: Webhook parser & validator for incoming activation codes.
+  - `src/app/api/auth/phone-verify/route.ts`: GET & POST status & code regeneration endpoints.
+  - `src/components/layout/phone-verification-modal.tsx`: Auto-polling barrier dialog.
+  - `supabase/migrations/057_phone_verification_onboarding.sql`: Schema migration for `phone`, `phone_verified`, and `verification_code`.
+
+---
+
 ## Key Directories & Structure
 - `src/app/`: Next.js App Router
   - `(auth)/`: Authentication routes (`/login`, `/signup`)

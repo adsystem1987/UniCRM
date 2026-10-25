@@ -283,6 +283,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           beta_features: data.beta_features ?? [],
           account_id: data.account_id ?? null,
           account_role: accountRole,
+          phone: data.phone ?? null,
+          phone_verified: data.phone_verified ?? false,
+          verification_code: data.verification_code ?? null,
         });
         setAccount(accountRow);
         if (!data.account_id || !accountRole) {

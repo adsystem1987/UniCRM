@@ -45,6 +45,13 @@ export interface Profile {
    * `@/lib/auth/roles` rather than comparing this string directly.
    */
   account_role?: AccountRole;
+  /** User contact phone number. */
+  phone?: string | null;
+  /** Whether the user has verified their phone/WhatsApp number. */
+  phone_verified?: boolean;
+  /** One-time verification code for WhatsApp onboarding handshake. */
+  verification_code?: string | null;
+  verification_code_expires_at?: string | null;
   created_at: string;
 }
 

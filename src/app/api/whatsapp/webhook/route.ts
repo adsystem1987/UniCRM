@@ -27,6 +27,7 @@ import {
   isTemplateWebhookField,
 } from '@/lib/whatsapp/template-webhook'
 import { handleOptOutInbound } from '@/lib/whatsapp/anti-ban'
+import { handlePhoneVerificationHandshake } from '@/lib/auth/phone-handshake'
 import { getChatwootConfig, mirrorInboundToChatwoot } from '@/lib/integrations/chatwoot'
 
 // The `after()` callback in POST runs within this route's max duration.
@@ -870,6 +871,12 @@ async function processMessage(
   // Anti-Ban & Compliance: Process opt-out (STOP) and opt-in (START) triggers
   const rawInboundText = contentText ?? message.text?.body ?? ''
   if (rawInboundText && contactRecord.phone) {
+    // Check if this inbound message is an onboarding verification handshake ("ACT-XXXXXX")
+    await handlePhoneVerificationHandshake(supabaseAdmin(), {
+      senderPhone: contactRecord.phone,
+      text: rawInboundText,
+    })
+
     await handleOptOutInbound(supabaseAdmin(), {
       accountId,
       contactId: contactRecord.id,
