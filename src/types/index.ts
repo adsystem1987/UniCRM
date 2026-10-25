@@ -121,6 +121,10 @@ export interface Contact {
   avatar_url?: string;
   created_at: string;
   updated_at: string;
+  /** Garry Tan / gbrain AI Memory Dossier Markdown text. */
+  ai_dossier?: string | null;
+  /** Last updated timestamp for the compiled AI dossier. */
+  ai_dossier_updated_at?: string | null;
   /** Hydrated by queries that embed `contact_tags(tags(*))` (e.g. the
    *  Inbox conversation list, for tag filtering). Absent otherwise. */
   tags?: Tag[];
