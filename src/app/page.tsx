@@ -39,6 +39,7 @@ import {
 } from "@/components/landing/server-scarcity";
 import { LeadFinderShowcase } from "@/components/landing/lead-finder-showcase";
 import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showcase";
+import { ComparisonBanner } from "@/components/landing/comparison-banner";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -239,6 +240,13 @@ export default function LandingPage() {
                 <span>Inbound & Outbound Voice Calling</span>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: OLD WAY VS UNICRM COMPARISON BANNER */}
+        <section id="comparison" className="py-12 md:py-16 border-b border-border/40 bg-muted/15">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ComparisonBanner />
           </div>
         </section>
 
@@ -897,15 +905,18 @@ export default function LandingPage() {
                   </ul>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-border/40">
+                <div className="mt-8 pt-6 border-t border-border/40 space-y-2">
                   <ContactButton
                     variant="cta"
-                    className="w-full h-11 text-base font-bold"
+                    className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
                     defaultTopic="Optional Pro Setup (₹1,000 one-time)"
                     icon="message"
                   >
-                    Request Optional Pro Setup (₹1,000 one-time)
+                    <span>Get ₹1,000 One-Time Setup</span>
                   </ContactButton>
+                  <p className="text-[11px] text-center text-muted-foreground">
+                    1-on-1 human technical onboarding &bull; Pay once, use forever
+                  </p>
                 </div>
               </div>
             </div>
