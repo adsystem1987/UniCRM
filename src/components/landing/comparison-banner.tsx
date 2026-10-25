@@ -6,34 +6,34 @@ import { Button } from "@/components/ui/button";
 
 const COMPARISON_ROWS = [
   {
+    feature: "Booking Commissions & Middleman Cuts",
+    oldWay: "Aggregators & portals take 15% to 30% of your hard-earned booking money",
+    uniWay: "0% Commission Forever: Keep 100% of your earnings directly in your bank account",
+  },
+  {
+    feature: "Client Numbers & Repeat Retention",
+    oldWay: "Portals mask client phone numbers so you can never contact them again for repeat business",
+    uniWay: "Direct WhatsApp Client Ownership: Every customer is saved into your CRM for lifetime repeat orders",
+  },
+  {
+    feature: "Cancellations, Fake Inquiries & Wrong Pins",
+    oldWay: "Casual one-click cancellations, fake bot leads shared with 10 competitors, wrong GPS map pins",
+    uniWay: "Direct Human Reality: Live GPS location sharing on WhatsApp, verified human intent, zero bot leads",
+  },
+  {
     feature: "Monthly Software Subscriptions",
-    oldWay: "₹15,000–₹35,000 / month across 4 different tools",
-    uniWay: "100% Free Core Software • Zero monthly subscription fees",
+    oldWay: "₹15,000–₹35,000 / month across 4 different disjointed tools",
+    uniWay: "100% Free Core Software • Zero monthly subscription fees or seat penalties",
   },
   {
-    feature: "Team Member & Agent Seats",
-    oldWay: "₹1,500 to ₹3,000 charged for every additional agent",
-    uniWay: "Unlimited Team Seats • Invite sales, support & ops with zero fees",
-  },
-  {
-    feature: "Customer Photos, Audio & Document Storage",
-    oldWay: "Strict 1 GB server caps or expensive cloud storage add-ons",
-    uniWay: "Bring-Your-Own-Storage: 15 GB Free directly in your Google Drive",
+    feature: "Business Website & Catalog",
+    oldWay: "₹20,000+ to build a website, plus hosting, SSL and developers just to show your cars, rooms or packages",
+    uniWay: "Instant Mobile Micro-Page & Catalog: Launch in 60s like an Instagram post with printable QR code",
   },
   {
     feature: "CRM Onboarding & Pipeline Setup",
-    oldWay: "Blank empty software — takes 3 to 7 days of manual setup",
-    uniWay: "1-Click Industry Setup: Ready in 10 seconds with pre-built stages & scripts",
-  },
-  {
-    feature: "Finding New Paying Customers",
-    oldWay: "Buying expensive dirty CSV lists with fake numbers & spam bans",
-    uniWay: "Smart Lead Finder: Pre-verified WhatsApp numbers with tailored icebreakers",
-  },
-  {
-    feature: "Customer Memory & Context",
-    oldWay: "Scattered notes across WhatsApp chats and memory lapses",
-    uniWay: "Smart Client Memory: Remembers every customer's budget, notes & preferences automatically",
+    oldWay: "Blank empty software — takes 3 to 7 days of manual setup and training",
+    uniWay: "1-Click Industry Setup: Pre-built stages, WhatsApp scripts & tags ready in 10 seconds",
   },
 ];
 
@@ -61,8 +61,8 @@ export function ComparisonBanner() {
               <X className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-sm font-black text-foreground">The Old Fragmented Stack</div>
-              <div className="text-[11px] text-muted-foreground">Wati + Zendesk + Apollo + Apollo add-ons</div>
+              <div className="text-sm font-black text-foreground">The Old Way: Portals &amp; Legacy CRMs</div>
+              <div className="text-[11px] text-muted-foreground">High commissions, masked numbers, fake portal leads</div>
             </div>
           </div>
 
@@ -82,19 +82,19 @@ export function ComparisonBanner() {
         </div>
 
         {/* The UniCRM Way */}
-        <div className="rounded-2xl border-2 border-primary/40 bg-primary/[0.02] dark:bg-primary/[0.05] p-5 sm:p-6 space-y-4 shadow-sm relative">
-          <div className="flex items-center justify-between pb-3 border-b border-primary/20">
+        <div className="rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/[0.02] dark:bg-emerald-500/[0.05] p-5 sm:p-6 space-y-4 shadow-sm relative">
+          <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-xs shrink-0">
                 <Check className="h-4 w-4" />
               </div>
               <div>
-                <div className="text-sm font-black text-foreground">The UniCRM Way</div>
-                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">100% Free Core &bull; Community Funded</div>
+                <div className="text-sm font-black text-foreground">The UniCRM Direct Way</div>
+                <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">0% Commission &bull; 100% Direct WhatsApp</div>
               </div>
             </div>
             <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-              Zero Lock-In
+              Direct Connection
             </span>
           </div>
 
