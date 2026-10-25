@@ -123,6 +123,19 @@
 
 ---
 
+## Strategic Market Positioning & Unfair Advantages vs Competitors
+- **Competitor Landscape Analysis (e.g., `dfycrm.com`, GoHighLevel Resellers, Wati, AiSensy)**:
+  - **The Competitor Trap**: Heavy \$97–\$297/mo subscription tiers, exorbitant per-seat user fees, markup taxes on every SMS/call/message (Twilio/LC Phone reselling), closed databases with severe data lock-in, and shallow chatbot wrappers with zero memory context.
+  - **The UniCRM Differentiation**:
+    1. **100% Free Core Software & Zero Seat Tax**: Add unlimited team agents without penalty.
+    2. **Bring Your Own Storage (BYOS)**: Complete data sovereignty. Photos, voice recordings, PDFs, and invoices stream directly into the customer's own Google Drive (15 GB free) and Supabase instance.
+    3. **First-Party Meta WhatsApp Cloud API**: Direct Graph API access with zero middleman per-message markups, automated template sync, and built-in anti-ban jitter algorithms.
+    4. **Turnkey Industry Blueprints**: 1-click deployable business workflows (Real Estate, D2C, Education, Professional Services) combining Meta templates, smart IVR, and outreach.
+    5. **AI Memory Dossiers ("gbrain")**: Automated markdown customer briefing dossiers synthesizing conversation sentiment, customer pain points, and recommended closing actions directly into the contact inbox.
+    6. **Automated GDrive BYOS Invoicing**: Instant professional PDF/HTML invoices generated on order confirmation and stored directly in `/DFY UniCRM Attachments/Invoices/`.
+
+---
+
 ## Key Directories & Structure
 - `src/app/`: Next.js App Router
   - `(auth)/`: Authentication routes (`/login`, `/signup`)
