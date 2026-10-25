@@ -299,6 +299,8 @@ export async function POST() {
         buttons: parsedButtons.length ? parsedButtons : null,
         sample_values: sampleValues,
         status: normalizeStatus(t.status),
+        submission_error: null,
+        rejection_reason: null,
         meta_template_id: t.id,
         quality_score: normalizeQualityScore(t.quality_score),
         updated_at: new Date().toISOString(),
