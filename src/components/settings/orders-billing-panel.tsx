@@ -381,19 +381,13 @@ export function OrdersBillingPanel() {
                       <Button
                         size="sm"
                         variant="outline"
-                        asChild
+                        onClick={() => window.open(order.receipt_gdrive_url!, "_blank")}
                         className="h-8 px-2.5 text-xs font-semibold gap-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border-blue-500/30 bg-blue-500/5 hover:bg-blue-500/10"
+                        title="View receipt stored in Google Drive"
                       >
-                        <a
-                          href={order.receipt_gdrive_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="View receipt stored in Google Drive"
-                        >
-                          <Cloud className="h-3.5 w-3.5 text-blue-500" />
-                          <span>Drive</span>
-                          <ExternalLink className="h-2.5 w-2.5 opacity-70" />
-                        </a>
+                        <Cloud className="h-3.5 w-3.5 text-blue-500" />
+                        <span>Drive</span>
+                        <ExternalLink className="h-2.5 w-2.5 opacity-70" />
                       </Button>
                     ) : ["paid", "fulfilled"].includes(order.status) ? (
                       <Button
