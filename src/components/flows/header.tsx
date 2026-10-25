@@ -86,11 +86,11 @@ export function EditorHeader() {
         <StatusChip status={state.status} />
         {dirty && (
           <span
-            className="inline-flex shrink-0 items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-amber-300"
+            className="inline-flex shrink-0 items-center gap-1.5 text-[10px] font-medium uppercase tracking-wide text-amber-700 dark:text-amber-300"
             title={t("unsavedHint")}
             aria-live="polite"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-600 dark:bg-amber-400" />
             {t("edited")}
           </span>
         )}

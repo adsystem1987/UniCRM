@@ -44,9 +44,9 @@ const ROLE_CHIP: Record<
   owner: {
     icon: Crown,
     labelKey: "roleOwner",
-    // Amber: scarce, immutable, "the boss" — gets visual emphasis.
+    // Amber: scarce, immutable, "the boss" — gets visual emphasis with high light/dark contrast.
     className:
-      "border-amber-500/40 bg-amber-500/10 text-amber-300",
+      "border-amber-600/30 bg-amber-500/15 text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300",
   },
   admin: {
     icon: Shield,
@@ -259,7 +259,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                     {item.beta && (
                       <span
                         aria-label={t("beta")}
-                        className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-300"
+                        className="rounded-full border border-amber-600/30 bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300"
                       >
                         {t("beta")}
                       </span>
@@ -320,9 +320,9 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
                       : "text-muted-foreground hover:bg-muted hover:text-foreground",
                   )}
                 >
-                  <ShieldAlert className="h-4 w-4 text-amber-500" />
+                  <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-500" />
                   <span className="flex-1">{t("platformOwner")}</span>
-                  <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-400">
+                  <span className="rounded-full border border-amber-600/30 bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
                     Owner
                   </span>
                 </Link>

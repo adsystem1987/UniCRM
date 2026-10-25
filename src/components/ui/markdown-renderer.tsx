@@ -61,7 +61,7 @@ export function MarkdownRenderer({ content, className = '' }: MarkdownRendererPr
       elements.push(
         <div
           key={`quote-${index}`}
-          className="my-3 rounded-lg border-l-4 border-amber-500/80 bg-amber-500/10 px-3.5 py-2.5 text-xs italic text-amber-200/90 leading-normal"
+          className="my-3 rounded-lg border-l-4 border-amber-600 bg-amber-500/15 px-3.5 py-2.5 text-xs italic text-amber-900 leading-normal dark:border-amber-500/80 dark:bg-amber-500/10 dark:text-amber-200/90"
         >
           {formatInline(quoteText)}
         </div>

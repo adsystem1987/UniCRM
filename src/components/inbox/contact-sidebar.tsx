@@ -249,19 +249,19 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
           <div className="my-4 border-t border-border" />
 
           {/* Garry Tan gbrain AI Intelligence Dossier */}
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
+          <div className="rounded-xl border border-amber-600/30 bg-amber-500/10 p-3 dark:border-amber-500/20 dark:bg-amber-500/5">
             <div className="flex items-center justify-between">
               <button
                 type="button"
                 onClick={() => setDossierExpanded((prev) => !prev)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-amber-300 hover:text-amber-200"
+                className="flex items-center gap-1.5 text-xs font-semibold text-amber-800 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200"
               >
-                <BrainCircuit className="size-3.5 text-amber-400" />
+                <BrainCircuit className="size-3.5 text-amber-700 dark:text-amber-400" />
                 <span>AI Memory Dossier</span>
                 {dossierExpanded ? (
-                  <ChevronDown className="size-3 text-amber-400/80" />
+                  <ChevronDown className="size-3 text-amber-700/80 dark:text-amber-400/80" />
                 ) : (
-                  <ChevronRight className="size-3 text-amber-400/80" />
+                  <ChevronRight className="size-3 text-amber-700/80 dark:text-amber-400/80" />
                 )}
               </button>
               <button
@@ -269,10 +269,10 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 disabled={generatingDossier}
                 onClick={handleGenerateDossier}
                 title="Synthesize AI dossier"
-                className="rounded p-1 text-muted-foreground hover:bg-amber-500/10 hover:text-amber-300 disabled:opacity-50"
+                className="rounded p-1 text-muted-foreground hover:bg-amber-500/10 hover:text-amber-800 dark:hover:text-amber-300 disabled:opacity-50"
               >
                 {generatingDossier ? (
-                  <Loader2 className="size-3 animate-spin text-amber-400" />
+                  <Loader2 className="size-3 animate-spin text-amber-600 dark:text-amber-400" />
                 ) : (
                   <RefreshCw className="size-3" />
                 )}
@@ -282,8 +282,8 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
             {dossierExpanded && (
               <div className="mt-2.5">
                 {generatingDossier ? (
-                  <div className="flex items-center gap-2 py-3 text-xs text-amber-300/80">
-                    <Loader2 className="size-3.5 animate-spin text-amber-400" />
+                  <div className="flex items-center gap-2 py-3 text-xs text-amber-800/80 dark:text-amber-300/80">
+                    <Loader2 className="size-3.5 animate-spin text-amber-600 dark:text-amber-400" />
                     <span>Analyzing relationship texture...</span>
                   </div>
                 ) : dossier ? (
@@ -299,7 +299,7 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                       size="sm"
                       variant="ghost"
                       onClick={handleGenerateDossier}
-                      className="mt-1.5 h-6 text-[11px] font-medium text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+                      className="mt-1.5 h-6 text-[11px] font-medium text-amber-700 hover:bg-amber-500/10 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
                     >
                       <Sparkles className="mr-1 size-3" />
                       Generate Dossier
