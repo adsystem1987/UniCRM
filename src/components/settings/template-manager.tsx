@@ -749,7 +749,7 @@ export function TemplateManager() {
                         {template.footer_text}
                       </p>
                     )}
-                    {(template.rejection_reason || template.submission_error) && (
+                    {statusKey !== 'APPROVED' && (template.rejection_reason || template.submission_error) && (
                       <div className="flex items-start gap-1.5 text-xs text-red-400 bg-red-950/20 border border-red-900/40 rounded px-2 py-1.5">
                         <AlertCircle className="size-3.5 mt-0.5 shrink-0" />
                         <span>

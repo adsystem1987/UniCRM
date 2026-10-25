@@ -30,6 +30,7 @@
     "flows": "Flows",
     "aiAgents": "AI Agents",
     "orders": "Orders & Payments",
+    "platformOwner": "Platform Owner",
     "settings": "Settings",
     "beta": "Beta",
     "unreadConversations": "{count} unread {count, plural, =1 {conversation} other {conversations}}",
@@ -1789,11 +1790,13 @@
       "fields": "Fields & tags",
       "deals": "Deals & currency",
       "members": "Team members",
-      "api": "API keys"
+      "api": "API keys",
+      "master-admin": "Platform Owner"
     },
     "groups": {
       "account": "Account",
-      "workspace": "Workspace"
+      "workspace": "Workspace",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "Your profile",

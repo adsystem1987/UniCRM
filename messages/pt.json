@@ -29,6 +29,8 @@
     "automations": "Automações",
     "flows": "Fluxos",
     "aiAgents": "Agentes de IA",
+    "orders": "Pedidos e pagamentos",
+    "platformOwner": "Proprietário da plataforma",
     "settings": "Configurações",
     "beta": "Beta",
     "unreadConversations": "{count} {count, plural, =1 {conversa não lida} other {conversas não lidas}}",
@@ -1787,11 +1789,13 @@
       "members": "Membros da equipe",
       "api": "Chaves de API",
       "ai": "Assistente de IA",
-      "integrations": "Canais e Integrações"
+      "integrations": "Canais e Integrações",
+      "master-admin": "Platform Owner"
     },
     "groups": {
       "account": "Conta",
-      "workspace": "Espaço de trabalho"
+      "workspace": "Espaço de trabalho",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "Seu perfil",

@@ -20,6 +20,7 @@ import { MembersTab } from '@/components/settings/members-tab';
 import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
 import { IntegrationsPanel } from '@/components/settings/integrations-panel';
 import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
+import { MasterAdminPanel } from '@/components/settings/master-admin-panel';
 import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
@@ -46,7 +47,7 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency } = useAuth();
+  const { defaultCurrency, isPlatformOwner } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -54,7 +55,12 @@ function SettingsPageInner() {
   // section — deep-linkable, and it keeps the existing links in the
   // app sidebar/header working. Legacy tab values (tags, custom-fields)
   // resolve onto their new home; unknown/empty → the Overview landing.
-  const section = resolveSection(searchParams.get('tab'));
+  // Guard: if a normal user deep links to master-admin, fallback to overview.
+  const rawTab = searchParams.get('tab');
+  const section =
+    rawTab === 'master-admin' && !isPlatformOwner
+      ? 'overview'
+      : resolveSection(rawTab);
 
   const go = (next: SettingsSection) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -89,6 +95,7 @@ function SettingsPageInner() {
     deals: <DealsSettings />,
     members: <MembersTab />,
     api: <ApiKeysSettings />,
+    'master-admin': <MasterAdminPanel />,
   };
 
   return (

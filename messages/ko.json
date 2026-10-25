@@ -29,6 +29,8 @@
     "automations": "자동화",
     "flows": "플로우",
     "aiAgents": "AI 에이전트",
+    "orders": "주문 및 결제",
+    "platformOwner": "플랫폼 소유자",
     "settings": "설정",
     "beta": "베타",
     "unreadConversations": "읽지 않은 대화 {count}건",
@@ -1787,11 +1789,13 @@
       "members": "팀원",
       "api": "API 키",
       "ai": "AI 어시스턴트",
-      "integrations": "채널 및 연동"
+      "integrations": "채널 및 연동",
+      "master-admin": "Platform Owner"
     },
     "groups": {
       "account": "계정",
-      "workspace": "워크스페이스"
+      "workspace": "워크스페이스",
+      "master": "Platform Oversight"
     },
     "profile": {
       "title": "내 프로필",

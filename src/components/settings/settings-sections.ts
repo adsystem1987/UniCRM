@@ -14,6 +14,7 @@ import {
   Sparkles,
   MessageCircle,
   Receipt,
+  ShieldAlert,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -41,6 +42,7 @@ export const SETTINGS_SECTIONS = [
   'deals',
   'members',
   'api',
+  'master-admin',
 ] as const;
 
 export type SettingsSection = (typeof SETTINGS_SECTIONS)[number];
@@ -52,7 +54,7 @@ export interface SectionMeta {
   id: SettingsSection;
   label: string;
   icon: LucideIcon;
-  group: 'top' | 'account' | 'workspace';
+  group: 'top' | 'account' | 'workspace' | 'master';
 }
 
 export const SECTION_META: Record<SettingsSection, SectionMeta> = {
@@ -71,12 +73,14 @@ export const SECTION_META: Record<SettingsSection, SectionMeta> = {
   deals: { id: 'deals', label: 'Deals & currency', icon: Coins, group: 'workspace' },
   members: { id: 'members', label: 'Team members', icon: UsersRound, group: 'workspace' },
   api: { id: 'api', label: 'API keys', icon: KeyRound, group: 'workspace' },
+  'master-admin': { id: 'master-admin', label: 'Platform Owner', icon: ShieldAlert, group: 'master' },
 };
 
 export const RAIL_GROUPS: { label: string | null; group: SectionMeta['group'] }[] = [
   { label: null, group: 'top' },
   { label: 'Account', group: 'account' },
   { label: 'Workspace', group: 'workspace' },
+  { label: 'Platform Oversight', group: 'master' },
 ];
 
 function isSection(value: string | null): value is SettingsSection {

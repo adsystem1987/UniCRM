@@ -285,6 +285,7 @@ import { POST } from './route'
 import { getMediaUrl, downloadMedia } from '@/lib/whatsapp/meta-api'
 import { findExistingContact } from '@/lib/contacts/dedupe'
 import { handleTemplateWebhookChange } from '@/lib/whatsapp/template-webhook'
+import { MAX_WEBHOOK_BODY_BYTES } from '@/lib/whatsapp/webhook-body'
 
 const mockGetMediaUrl = vi.mocked(getMediaUrl)
 const mockDownloadMedia = vi.mocked(downloadMedia)
@@ -299,6 +300,14 @@ const TEXT_MESSAGE = {
 }
 
 const LEGACY_CONTACTS = [{ wa_id: '15551230000', profile: { name: 'Ada' } }]
+
+function signedPost(body: BodyInit) {
+  return new Request('http://localhost/api/whatsapp/webhook', {
+    method: 'POST',
+    headers: { 'x-hub-signature-256': 'sha256=stub' },
+    body,
+  })
+}
 
 function inboundRequest(
   message: Record<string, unknown> = TEXT_MESSAGE,
@@ -320,10 +329,7 @@ function inboundRequest(
       },
     ],
   }
-  return {
-    text: async () => JSON.stringify(body),
-    headers: { get: () => 'sha256=stub' },
-  } as unknown as Request
+  return signedPost(JSON.stringify(body))
 }
 
 async function runWebhook(
@@ -353,10 +359,7 @@ async function runStatusWebhook(status: Record<string, unknown>) {
       },
     ],
   }
-  const res = await POST({
-    text: async () => JSON.stringify(body),
-    headers: { get: () => 'sha256=stub' },
-  } as unknown as Request)
+  const res = await POST(signedPost(JSON.stringify(body)))
   for (const cb of h.state.afterCallbacks) await cb()
   return res
 }
@@ -894,10 +897,7 @@ describe('template-lifecycle webhooks: WABA id is threaded to the handler (#534)
         },
       ],
     }
-    const req = {
-      text: async () => JSON.stringify(body),
-      headers: { get: () => 'sha256=stub' },
-    } as unknown as Request
+    const req = signedPost(JSON.stringify(body))
 
     await POST(req)
     for (const cb of h.state.afterCallbacks) await cb()
@@ -1052,5 +1052,35 @@ describe('inbound webhook: automation waiting for a reply', () => {
     await runWebhook()
 
     expect(h.resumeAwaitingReply).not.toHaveBeenCalled()
+  })
+})
+
+describe('inbound webhook: oversized body cap', () => {
+  it('answers 413 for a body over the cap and schedules no processing', async () => {
+    const before = h.state.afterCallbacks.length
+    const res = (await POST(signedPost('x'.repeat(MAX_WEBHOOK_BODY_BYTES + 1)))) as unknown as {
+      init?: { status?: number }
+    }
+    expect(res.init?.status).toBe(413)
+    expect(h.state.afterCallbacks).toHaveLength(before)
+  })
+
+  it('answers 413 from the declared Content-Length alone', async () => {
+    const before = h.state.afterCallbacks.length
+    const req = new Request('http://localhost/api/whatsapp/webhook', {
+      method: 'POST',
+      headers: { 'content-length': String(MAX_WEBHOOK_BODY_BYTES + 1), 'x-hub-signature-256': 'sha256=stub' },
+      body: '{}',
+    })
+    const res = (await POST(req)) as unknown as { init?: { status?: number } }
+    expect(res.init?.status).toBe(413)
+    expect(h.state.afterCallbacks).toHaveLength(before)
+  })
+
+  it('lets a body at the cap through to JSON parsing', async () => {
+    const res = (await POST(signedPost('x'.repeat(MAX_WEBHOOK_BODY_BYTES)))) as unknown as {
+      init?: { status?: number }
+    }
+    expect(res.init?.status).toBe(400)
   })
 })
