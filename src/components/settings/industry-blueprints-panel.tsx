@@ -356,17 +356,13 @@ export function IndustryBlueprintsPanel() {
 
                 {/* Card Actions */}
                 <div className="pt-2 flex items-center justify-between gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    asChild
-                    className="h-8 text-xs font-medium gap-1 text-muted-foreground hover:text-foreground border-border"
+                  <Link
+                    href={`/leads?niche=${encodeURIComponent(blueprint.leadNiche)}`}
+                    className="inline-flex items-center justify-center h-8 px-2.5 rounded-md text-xs font-medium gap-1 text-muted-foreground hover:text-foreground border border-border bg-card hover:bg-muted/50 transition-colors"
                   >
-                    <Link href={`/leads?niche=${encodeURIComponent(blueprint.leadNiche)}`}>
-                      <Search className="h-3.5 w-3.5 text-primary" />
-                      Find Leads
-                    </Link>
-                  </Button>
+                    <Search className="h-3.5 w-3.5 text-primary" />
+                    Find Leads
+                  </Link>
 
                   <Button
                     size="sm"
