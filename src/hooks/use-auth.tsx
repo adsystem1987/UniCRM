@@ -36,6 +36,9 @@ interface Profile {
   beta_features: string[];
   account_id: string | null;
   account_role: AccountRole | null;
+  phone?: string | null;
+  phone_verified?: boolean;
+  verification_code?: string | null;
 }
 
 interface AccountSummary {
@@ -155,6 +158,9 @@ interface ProfileRow {
   beta_features: string[] | null;
   account_id: string | null;
   account_role: string | null;
+  phone?: string | null;
+  phone_verified?: boolean | null;
+  verification_code?: string | null;
 }
 
 /**
