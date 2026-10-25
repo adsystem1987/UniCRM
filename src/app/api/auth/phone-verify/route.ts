@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
-import { requireAuth, toErrorResponse } from '@/lib/auth/account'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
+import { UnauthorizedError, toErrorResponse } from '@/lib/auth/account'
 
 // 6-digit cryptographic-random alphanumeric code (e.g. "ACT-849201")
 function generateVerificationCode(): string {
@@ -9,7 +10,7 @@ function generateVerificationCode(): string {
 }
 
 function getAdminClient() {
-  return createClient(
+  return createAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
@@ -21,7 +22,17 @@ function getAdminClient() {
  */
 export async function GET() {
   try {
-    const { supabase, userId, user } = await requireAuth()
+    const supabase = await createServerClient()
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser()
+
+    if (userErr || !user) {
+      throw new UnauthorizedError()
+    }
+
+    const userId = user.id
     const admin = getAdminClient()
 
     // Platform owners bypass verification
@@ -88,7 +99,17 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   try {
-    const { userId } = await requireAuth()
+    const supabase = await createServerClient()
+    const {
+      data: { user },
+      error: userErr,
+    } = await supabase.auth.getUser()
+
+    if (userErr || !user) {
+      throw new UnauthorizedError()
+    }
+
+    const userId = user.id
     const admin = getAdminClient()
     const body = await request.json().catch(() => ({}))
 
