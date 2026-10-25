@@ -295,7 +295,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
     }
 
     setScrapingLive(true);
-    const toastId = toast.loading(`Starting Apify lead extraction for ${contactsToFetch} contacts in ${city}...`);
+    const toastId = toast.loading(`Starting Smart Lead discovery for ${contactsToFetch} contacts in ${city}...`);
 
     try {
       const res = await fetch("/api/leads-finder/run", {
@@ -602,7 +602,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 <span className="text-[10px] text-muted-foreground font-medium">contacts (100–1,000)</span>
               </div>
 
-              {/* Live Apify Trigger */}
+              {/* Live Lead Finder Trigger */}
               <Button
                 onClick={handleLiveApifyScrape}
                 disabled={scrapingLive}
@@ -611,7 +611,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 {scrapingLive ? (
                   <>
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                    Extracting via Apify...
+                    Discovering Verified Leads...
                   </>
                 ) : (
                   <>

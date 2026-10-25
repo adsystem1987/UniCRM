@@ -798,7 +798,7 @@ export function ContactDetailView({
                 )}
               </TabsContent>
 
-              {/* AI Dossier Tab (Garry Tan / gbrain) */}
+              {/* Smart Client Memory Tab */}
               <TabsContent value="dossier" className="flex-1 overflow-y-auto px-4 py-3">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between rounded-lg border border-border/80 bg-muted/40 p-3">
@@ -808,7 +808,7 @@ export function ContactDetailView({
                       </div>
                       <div>
                         <h4 className="text-xs font-semibold text-foreground">
-                          AI Executive Intelligence Dossier
+                          Smart Client Memory Profile
                         </h4>
                         <p className="text-[11px] text-muted-foreground">
                           {dossierUpdatedAt
@@ -832,7 +832,7 @@ export function ContactDetailView({
                       ) : (
                         <>
                           <RefreshCw className="size-3.5" />
-                          <span>{dossier ? 'Refresh Dossier' : 'Generate Dossier'}</span>
+                          <span>{dossier ? 'Refresh Memory Profile' : 'Compile Memory Profile'}</span>
                         </>
                       )}
                     </Button>
@@ -842,10 +842,10 @@ export function ContactDetailView({
                     <div className="flex flex-col items-center justify-center py-16 text-center">
                       <Loader2 className="size-8 animate-spin text-amber-400" />
                       <p className="mt-3 text-sm font-medium text-foreground">
-                        Analyzing relationship psychology & conversation turns...
+                        Analyzing relationship signals & conversation turns...
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Extracting operating state, motivations, objections, and tactical playbook.
+                        Extracting key traits, motivations, objections, and tactical playbook.
                       </p>
                     </div>
                   ) : dossier ? (
@@ -858,10 +858,10 @@ export function ContactDetailView({
                         <BrainCircuit className="size-6 text-muted-foreground" />
                       </div>
                       <h4 className="text-sm font-medium text-foreground">
-                        No AI Memory Dossier Compiled Yet
+                        No Smart Memory Profile Compiled Yet
                       </h4>
                       <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-                        Modeled after Garry Tan&apos;s gbrain framework: reads like an intelligence dossier crossed with a therapist&apos;s notes. Facts are table stakes, texture is value.
+                        UniCRM Smart Client Memory synthesizes sentiment, budgets, past objections, and recommended next steps directly from your conversation history.
                       </p>
                       <Button
                         size="sm"
@@ -869,7 +869,7 @@ export function ContactDetailView({
                         className="mt-4 gap-1.5 bg-primary text-primary-foreground text-xs"
                       >
                         <Sparkles className="size-3.5 text-amber-400" />
-                        Generate AI Dossier
+                        Compile Smart Memory Profile
                       </Button>
                     </div>
                   )}

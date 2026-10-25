@@ -165,12 +165,12 @@ export function MandatorySetupModal({
                 </span>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Don’t have time or technical knowledge? Our engineers will join you on Google Meet and complete your Google Drive + Supabase + WhatsApp setup for you.
+                Don’t have time or technical knowledge? Our engineers will join you on Google Meet and complete your Google Drive + Private Cloud Database + WhatsApp setup for you.
               </p>
               <div className="pt-1 flex items-center justify-between">
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(
-                    `Hi Ravi & UniCRM team! I want assistance with the One-Time DFY Technical Setup (₹1,000) for Google Drive + Supabase Database.\n\nMy Business Name:\nEmail:`
+                    `Hi Ravi & UniCRM team! I want assistance with the One-Time DFY Technical Setup (₹1,000) for Google Drive + Private Cloud Database.\n\nMy Business Name:\nEmail:`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
