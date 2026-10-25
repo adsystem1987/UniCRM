@@ -15,6 +15,7 @@ import {
   MessageCircle,
   Receipt,
   ShieldAlert,
+  Compass,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ export const SETTINGS_SECTIONS = [
   'profile',
   'security',
   'appearance',
+  'blueprints',
   'orders',
   'whatsapp',
   'chat-widget',
@@ -62,6 +64,7 @@ export const SECTION_META: Record<SettingsSection, SectionMeta> = {
   profile: { id: 'profile', label: 'Your profile', icon: User, group: 'account' },
   security: { id: 'security', label: 'Login & security', icon: Shield, group: 'account' },
   appearance: { id: 'appearance', label: 'Appearance', icon: Palette, group: 'account' },
+  blueprints: { id: 'blueprints', label: 'Industry Blueprints', icon: Compass, group: 'workspace' },
   orders: { id: 'orders', label: 'Orders & Billing', icon: Receipt, group: 'account' },
   whatsapp: { id: 'whatsapp', label: 'WhatsApp', icon: PlugZap, group: 'workspace' },
   'chat-widget': { id: 'chat-widget', label: 'Website Widget', icon: MessageCircle, group: 'workspace' },

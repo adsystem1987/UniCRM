@@ -21,6 +21,7 @@ import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
 import { IntegrationsPanel } from '@/components/settings/integrations-panel';
 import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
 import { MasterAdminPanel } from '@/components/settings/master-admin-panel';
+import { IndustryBlueprintsPanel } from '@/components/settings/industry-blueprints-panel';
 import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
@@ -84,6 +85,7 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
+    blueprints: <IndustryBlueprintsPanel />,
     orders: <OrdersBillingPanel />,
     whatsapp: <WhatsAppConfig />,
     'chat-widget': <ChatWidgetPanel />,

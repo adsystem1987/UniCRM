@@ -183,6 +183,20 @@
 
 ---
 
+## Turnkey Industry Blueprints Architecture
+- **Problem**: New businesses struggle configuring custom CRM pipelines, tags, and WhatsApp scripts from scratch, leading to dirty/unorganized lead data.
+- **Solution (1-Click Industry Packs with Global & Regional Adaptation)**:
+  - 12 pre-configured industry blueprints: Interior Design, Loan Providers (DSA), Real Estate, Home Services (Solar/HVAC), Legal/Tax (CA/CPA), Digital Agencies, Auto Dealerships, Clinics/Med-Spas, Travel/Visa, Weddings/Events, Luxury D2C, Fitness Coaches.
+  - **Dynamic Regional Adaptation**: Toggle between 🇮🇳 India (INR/BHK/CIBIL), 🇺🇸 USA & UK (USD/Remodel/FICO), 🇦🇪 UAE & GCC (AED/Villa/Ejari), and 🌍 Global terminology.
+  - **1-Click Installation**: Creates a dedicated Pipeline, seeds custom pipeline stages, lead tags, and high-converting WhatsApp message scripts.
+  - **Direct Lead Finder Synergy**: Each blueprint connects directly to `/leads?niche=...` so clients get instant, pre-filtered, clean leads matching their industry.
+- **Components**:
+  - `src/lib/blueprints/catalog.ts`: Master catalog of 12 industries with regional stages, tags, templates, and lead niches.
+  - `src/app/api/blueprints/install/route.ts`: Installer API creating pipelines, stages, tags, and message templates.
+  - `src/components/settings/industry-blueprints-panel.tsx`: Interactive hub at `/settings?tab=blueprints` with regional toggle and preview tabs.
+
+---
+
 ## Key Directories & Structure
 - `src/app/`: Next.js App Router
   - `(auth)/`: Authentication routes (`/login`, `/signup`)

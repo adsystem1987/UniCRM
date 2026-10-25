@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Target,
   Search,
@@ -202,13 +203,17 @@ const SAMPLE_LEAD_DATABASE: Record<string, LeadItem[]> = {
 };
 
 const DEFAULT_NICHES = [
-  "Real Estate",
-  "D2C Brands",
-  "Clinics & Healthcare",
-  "Gyms & Fitness",
   "Interior Designers",
+  "Financial Services",
+  "Real Estate",
   "Solar & CleanTech",
   "Law Firms",
+  "D2C Brands",
+  "Automotive",
+  "Clinics & Healthcare",
+  "Travel & Hospitality",
+  "Event Venues",
+  "Gyms & Fitness",
   "Restaurants & Cafes",
 ];
 
@@ -226,8 +231,16 @@ const DEFAULT_CITIES = [
 export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
   const { user } = useAuth();
   const supabase = createClient();
+  const searchParams = useSearchParams();
 
   const [niche, setNiche] = useState("Real Estate");
+
+  useEffect(() => {
+    const qNiche = searchParams?.get("niche");
+    if (qNiche) {
+      setNiche(qNiche);
+    }
+  }, [searchParams]);
   const [city, setCity] = useState("All India");
   const [whatsappOnly, setWhatsappOnly] = useState(true);
   const [highRatingOnly, setHighRatingOnly] = useState(true);
