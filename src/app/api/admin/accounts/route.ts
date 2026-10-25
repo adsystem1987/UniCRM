@@ -16,7 +16,7 @@ export async function GET() {
     const callerEmail = userData?.user?.email || null;
 
     if (!isMasterAdminEmail(callerEmail)) {
-      return NextResponse.json({ error: 'Master Admin privileges required' }, { status: 403 });
+      return NextResponse.json({ error: 'Platform Owner privileges required' }, { status: 403 });
     }
 
     const admin = supabaseAdmin();
@@ -70,7 +70,7 @@ export async function PATCH(request: Request) {
     const callerEmail = userData?.user?.email || null;
 
     if (!isMasterAdminEmail(callerEmail)) {
-      return NextResponse.json({ error: 'Master Admin privileges required' }, { status: 403 });
+      return NextResponse.json({ error: 'Platform Owner privileges required' }, { status: 403 });
     }
 
     const body = await request.json().catch(() => ({}));

@@ -16,7 +16,7 @@
   - **Frontend / Edge**: Hosted on **Vercel** (`https://dfyunicrm.com`). Serverless & edge rendered — zero fixed CPU usage.
   - **Core Backend Engine**: Hosted on **AWS Cloud Server** (Docker/microservices handling heavy workloads: Evolution API WhatsApp gateway, Whatomate flow engine, WebRTC voice calling, background workers).
   - **Database & Auth (Master Instance)**:
-    - **Project Name**: `UniCRM Master Admin`
+    - **Project Name**: `UniCRM Platform Owner`
     - **Project ID**: `ydpkzxxwticxldaumpos`
     - **Region**: `ap-southeast-2` (Oceania - Sydney)
     - Supabase (PostgreSQL, RLS, Storage, Realtime, Auth via Google OAuth).
@@ -108,16 +108,16 @@
 
 ---
 
-## Master Super Admin & Account Lifecycle Architecture
-- **Master Admin Identifiers**:
+## Platform Owner & Account Lifecycle Architecture
+- **Platform Owner Identifiers**:
   - `brosir2019@gmail.com`
   - `help@dfyunicrm.com`
   - Implemented via `isMasterAdminEmail()` in `src/lib/auth/master-admin.ts`.
 - **Global Cross-Tenant Capabilities**:
-  - **Account Lifecycle Controls**: Super admins can view all platform workspaces, inspect tenant member counts & owner emails, and toggle statuses (`active`, `suspended`, `phased_out`) with optional suspension reasons via `/api/admin/accounts`.
-  - **Cross-Tenant Orders Queue**: Master Admins bypass tenant account filtering in `/api/orders` to audit, verify, and fulfill direct UPI orders (AI Smart Router Pro ₹59/mo, Lead Packs) across all platform accounts.
-  - **Suspension Enforcement**: `src/middleware.ts` automatically intercepts users of suspended workspaces and routes them to `/suspended` with a clear explanation and support CTA to `help@dfyunicrm.com`. Master Admin emails bypass this intercept to ensure administrative access is never blocked.
-  - **Admin UI**: Master oversight panel accessible under `/settings?tab=master-admin` (under "Platform Oversight" group in sidebar).
+  - **Account Lifecycle Controls**: Platform owners can view all platform workspaces, inspect tenant member counts & owner emails, and toggle statuses (`active`, `suspended`, `phased_out`) with optional suspension reasons via `/api/admin/accounts`.
+  - **Cross-Tenant Orders Queue**: Platform Owners bypass tenant account filtering in `/api/orders` to audit, verify, and fulfill direct UPI orders (AI Smart Router Pro ₹59/mo, Lead Packs) across all platform accounts.
+  - **Suspension Enforcement**: `src/middleware.ts` automatically intercepts users of suspended workspaces and routes them to `/suspended` with a clear explanation and support CTA to `help@dfyunicrm.com`. Platform Owner emails bypass this intercept to ensure administrative access is never blocked.
+  - **Admin UI**: Platform Owner oversight panel accessible under `/settings?tab=master-admin` (under "Platform Oversight" group in sidebar).
 - **Database Schema**:
   - `supabase/migrations/055_master_admin_and_account_status.sql`: Extends `accounts` with `status text default 'active'`, `suspension_reason text`, and `suspended_at timestamptz`.
 

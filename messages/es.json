@@ -1788,7 +1788,7 @@
       "api": "Claves de API",
       "ai": "Asistente de IA",
       "integrations": "Canales e Integraciones",
-      "master-admin": "Master Admin"
+      "master-admin": "Platform Owner"
     },
     "groups": {
       "account": "Cuenta",

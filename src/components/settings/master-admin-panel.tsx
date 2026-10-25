@@ -153,7 +153,7 @@ export function MasterAdminPanel() {
   return (
     <div className="space-y-6">
       <SettingsPanelHead
-        title="Master Admin — Platform Operations"
+        title="Platform Owner — Operations Console"
         description="Global workspace oversight, tenant lifecycle states, and moderation controls for brosir2019@gmail.com."
       />
 

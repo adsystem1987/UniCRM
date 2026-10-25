@@ -1788,7 +1788,7 @@
       "api": "API 키",
       "ai": "AI 어시스턴트",
       "integrations": "채널 및 연동",
-      "master-admin": "Master Admin"
+      "master-admin": "Platform Owner"
     },
     "groups": {
       "account": "계정",
