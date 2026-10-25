@@ -165,7 +165,7 @@ export function ContactDialog({
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <option value="General Inquiry">General Question about UniCRM</option>
-                <option value="Optional Pro Support (₹1,000/mo)">Optional Done-For-You Pro Setup (₹1,000/mo)</option>
+                <option value="Optional Pro Setup (₹1,000 one-time)">Optional Done-For-You Pro Setup (₹1,000 one-time cost)</option>
                 <option value="Technical Help">Technical Help / Bug Report</option>
                 <option value="Custom Integration">Custom Integration / API</option>
               </select>

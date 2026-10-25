@@ -52,7 +52,7 @@ export function renderWelcomeEmailHtml({
     </p>
 
     <p style="margin: 0 0 20px 0; font-size: 13.5px; color: #52525b; line-height: 1.6; border-left: 2px solid #e4e4e7; padding-left: 14px;">
-      <strong style="color: #18181b;">Optional note:</strong> The software itself is completely free. If you ever want our engineers to take care of the technical side—Meta verification, WhatsApp template approvals, and tailored AI campaigns—we offer hands-on assistance for Rs. 1,000/month. You can review the details here: <a href="${supportWhatsAppUrl}" style="color: #2563eb; text-decoration: underline;">${supportWhatsAppUrl}</a>
+      <strong style="color: #18181b;">Optional note:</strong> The software itself is completely free. If you ever want our engineers to take care of the technical side—Meta verification, WhatsApp template approvals, and tailored AI campaigns—we offer hands-on assistance for Rs. 1,000 (one-time cost per setup). You can review the details here: <a href="${supportWhatsAppUrl}" style="color: #2563eb; text-decoration: underline;">${supportWhatsAppUrl}</a>
     </p>
 
     <p style="margin: 0 0 24px 0; font-size: 14px; color: #18181b;">

@@ -33,7 +33,7 @@ export function renderDfyPitchEmailHtml({
 
     <p style="margin: 0 0 16px 0; font-size: 14px; color: #18181b;">However, many teams simply prefer not to spend their time dealing with technical setup: Meta developer accounts, business document verification, WhatsApp webhook endpoints, template rejections, or Spintax outreach sequences.</p>
 
-    <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #18181b;">For those teams, our engineers provide complete hands-on setup for Rs. 1,000/month:</p>
+    <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #18181b;">For those teams, our engineers provide complete hands-on setup for Rs. 1,000 (one-time cost per setup):</p>
 
     <div style="background-color: #fbfbfa; border: 1px solid #e4e4e7; border-radius: 8px; padding: 14px 16px; margin: 0 0 18px 0; font-size: 13.5px; line-height: 1.6; color: #27272a;">
       &bull; End-to-end Meta Business Manager verification &amp; phone registration<br>

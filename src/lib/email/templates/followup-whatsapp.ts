@@ -42,7 +42,7 @@ export function renderWhatsAppFollowupEmailHtml({
     <p style="margin: 0 0 18px 0; font-size: 14px; color: #18181b;">Meta's developer portal can sometimes be confusing with permissions or verification steps. If you run into any friction or error messages, feel free to reply directly to this email with details, and I will help you sort it out.</p>
 
     <p style="margin: 0 0 20px 0; font-size: 13.5px; color: #52525b; line-height: 1.6; border-left: 2px solid #e4e4e7; padding-left: 14px;">
-      If you prefer to have our team handle the entire Meta Business verification and number setup for you, you can request our Done-For-You assistance (Rs. 1,000/mo) here: <a href="${supportWhatsAppUrl}" style="color: #2563eb; text-decoration: underline;">${supportWhatsAppUrl}</a>
+      If you prefer to have our team handle the entire Meta Business verification and number setup for you, you can request our Done-For-You assistance (Rs. 1,000 one-time cost per setup) here: <a href="${supportWhatsAppUrl}" style="color: #2563eb; text-decoration: underline;">${supportWhatsAppUrl}</a>
     </p>
 
     <p style="margin: 0; font-size: 14px; color: #18181b; line-height: 1.5;">

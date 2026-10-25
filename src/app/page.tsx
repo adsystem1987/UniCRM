@@ -862,12 +862,12 @@ export default function LandingPage() {
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
                       Completely Optional Help
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">Stop Anytime</span>
+                    <span className="text-xs font-semibold text-emerald-500">One-Time Setup</span>
                   </div>
                   <h3 className="text-2xl font-black text-foreground">Optional Done-For-You Pro Help</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
+                  <div className="mt-4 flex flex-wrap items-baseline gap-2">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
-                    <span className="text-sm text-muted-foreground font-semibold">/ month</span>
+                    <span className="text-sm text-muted-foreground font-semibold">— one time cost per setup</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
                     The software is 100% free forever. This hands-on assistance is completely optional—only choose it if you want our experts to handle your Meta setup, phone number verification, and templates for you.
@@ -901,10 +901,10 @@ export default function LandingPage() {
                   <ContactButton
                     variant="cta"
                     className="w-full h-11 text-base font-bold"
-                    defaultTopic="Optional Pro Support (₹1,000/mo)"
+                    defaultTopic="Optional Pro Setup (₹1,000 one-time)"
                     icon="message"
                   >
-                    Request Optional Pro Setup (₹1,000/mo)
+                    Request Optional Pro Setup (₹1,000 one-time)
                   </ContactButton>
                 </div>
               </div>
