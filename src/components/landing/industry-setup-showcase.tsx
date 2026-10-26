@@ -83,46 +83,51 @@ export function IndustrySetupShowcase() {
       </div>
 
       {/* Grid of Industry Packs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {PRESET_INDUSTRIES.map((ind) => {
           const Icon = ind.icon;
           return (
             <div
               key={ind.title}
-              className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs hover:border-primary/50 transition-colors flex flex-col justify-between"
+              className="group relative rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-muted/20 p-6 space-y-4 shadow-xl shadow-black/5 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden"
             >
-              <div className="space-y-3">
+              {/* Subtle top card glow */}
+              <div className="absolute -top-12 -right-12 size-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all pointer-events-none" />
+
+              <div className="space-y-3.5 relative z-10">
                 <div className="flex items-center justify-between gap-2">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20">
+                  <div className="h-11 w-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold border border-primary/20 shadow-inner group-hover:scale-105 transition-transform">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
-                    1-Click Ready
+                  <Badge variant="outline" className="text-[10px] font-bold border-primary/20 bg-primary/5 text-primary py-0.5 px-2.5 rounded-full">
+                    ⚡ 1-Click Ready
                   </Badge>
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-sm text-foreground">{ind.title}</h4>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{ind.regionNote}</p>
+                  <h4 className="font-black text-base text-foreground tracking-tight group-hover:text-primary transition-colors">
+                    {ind.title}
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">{ind.regionNote}</p>
                 </div>
 
                 {/* Pipeline Stages Mini Flow */}
-                <div className="rounded-lg bg-muted/40 p-2 border border-border text-[11px] space-y-1">
-                  <div className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
-                    <GitBranch className="h-3 w-3" />
-                    Built-in Pipeline
+                <div className="rounded-xl bg-background/80 backdrop-blur-xs p-3 border border-border/80 text-[11px] space-y-1.5 shadow-2xs">
+                  <div className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1.5">
+                    <GitBranch className="h-3.5 w-3.5 text-primary" />
+                    Built-in Pipeline Blueprint
                   </div>
-                  <div className="font-mono text-foreground font-medium text-[11px]">
+                  <div className="font-mono text-foreground font-semibold text-[11px] leading-snug">
                     {ind.stages}
                   </div>
                 </div>
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
                   {ind.tags.map((t) => (
                     <span
                       key={t}
-                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-surface border border-border text-muted-foreground"
+                      className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-muted/60 border border-border/60 text-muted-foreground"
                     >
                       #{t}
                     </span>
@@ -130,14 +135,17 @@ export function IndustrySetupShowcase() {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-border/60 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground text-[11px]">Includes WhatsApp scripts</span>
+              <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs relative z-10">
+                <span className="text-muted-foreground text-[11px] font-medium flex items-center gap-1">
+                  <Sparkles className="size-3 text-emerald-500" />
+                  Pre-loaded templates
+                </span>
                 <Link
                   href="/signup"
-                  className="font-bold text-primary hover:underline flex items-center gap-1"
+                  className="font-bold text-xs text-primary hover:text-primary/80 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform"
                 >
                   Apply in 1-Click
-                  <ArrowRight className="h-3 w-3" />
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
@@ -146,7 +154,7 @@ export function IndustrySetupShowcase() {
       </div>
 
       {/* Global Regional Callout */}
-      <div className="rounded-2xl border border-border bg-gradient-to-r from-primary/5 via-card to-emerald-500/5 p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="rounded-3xl border border-border/80 bg-gradient-to-r from-primary/10 via-card to-emerald-500/10 p-6 md:p-8 shadow-xl shadow-black/5 flex flex-col sm:flex-row items-center justify-between gap-6 backdrop-blur-xs">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 shrink-0 rounded-xl bg-surface border border-border flex items-center justify-center text-primary">
             <Globe className="h-5 w-5" />
