@@ -29,6 +29,36 @@ export async function GET() {
   try {
     const { supabase, accountId } = await getCurrentAccount()
 
+    // 1. Check account_entitlements for Platform Owner Provisioning
+    let entitlement: {
+      ai_pro_active: boolean
+      ai_pro_expires_at: string | null
+      ai_provider?: string | null
+      ai_model?: string | null
+    } | null = null
+
+    try {
+      const { data: entData } = await supabase
+        .from('account_entitlements')
+        .select('ai_pro_active, ai_pro_expires_at, ai_provider, ai_model')
+        .eq('account_id', accountId)
+        .maybeSingle()
+
+      if (entData && entData.ai_pro_active) {
+        const isNotExpired = !entData.ai_pro_expires_at || new Date(entData.ai_pro_expires_at) > new Date()
+        if (isNotExpired) {
+          entitlement = {
+            ai_pro_active: true,
+            ai_pro_expires_at: entData.ai_pro_expires_at,
+            ai_provider: entData.ai_provider,
+            ai_model: entData.ai_model,
+          }
+        }
+      }
+    } catch (entErr) {
+      console.warn('[ai/config GET] account_entitlements check skipped:', entErr)
+    }
+
     const { data, error } = await supabase
       .from('ai_configs')
       // `api_key` is selected only to derive `has_key` — it is stripped
@@ -47,7 +77,12 @@ export async function GET() {
       )
     }
 
-    if (!data) return NextResponse.json({ configured: false })
+    if (!data) {
+      return NextResponse.json({
+        configured: false,
+        entitlement,
+      })
+    }
     // The keys are selected only to derive the has_* flags; neither is
     // returned to the client.
     const { api_key, embeddings_api_key, ...safe } = data
@@ -55,6 +90,7 @@ export async function GET() {
       configured: true,
       has_key: !!api_key,
       has_embeddings_key: !!embeddings_api_key,
+      entitlement,
       ...safe,
     })
   } catch (err) {
