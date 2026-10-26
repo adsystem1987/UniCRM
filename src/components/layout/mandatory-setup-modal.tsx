@@ -151,26 +151,26 @@ export function MandatorySetupModal({
               </div>
             </div>
 
-            {/* DFY Assistance Banner (₹1,000 One-time Setup) */}
+            {/* Optional 1-on-1 Setup Assistance (₹1,000 One-time Setup + 3 Months Smart AI) */}
             <div className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-background to-amber-500/5 p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-amber-500" />
                   <span className="text-xs font-bold text-foreground">
-                    Need Help? Get 1-on-1 DFY Setup
+                    Optional 1-on-1 Setup Assistance
                   </span>
                 </div>
                 <span className="text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">
                   ₹1,000 One-Time
                 </span>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Don’t have time or technical knowledge? Our engineers will join you on Google Meet and complete your Google Drive + Private Cloud Database + WhatsApp setup for you.
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Prefer not to do the technical setup yourself? Our engineer will join you on Google Meet and complete your Google Drive + Private Cloud Database setup. <strong>Includes 3 months of Smart AI Auto-Reply</strong> for your WhatsApp.
               </p>
               <div className="pt-1 flex items-center justify-between">
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(
-                    `Hi Ravi & UniCRM team! I want assistance with the One-Time DFY Technical Setup (₹1,000) for Google Drive + Private Cloud Database.\n\nMy Business Name:\nEmail:`
+                    `Hi UniCRM Team! I want the One-Time Setup Assistance (₹1,000) on Google Meet with 3 Months Smart AI included.\n\nMy Business Name:\nEmail:`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -181,7 +181,7 @@ export function MandatorySetupModal({
                     className="w-full font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs h-8 gap-1.5 shadow-xs"
                   >
                     <Headphones className="h-3.5 w-3.5" />
-                    Contact Support for ₹1,000 Setup
+                    Request 1-on-1 Setup (₹1,000)
                   </Button>
                 </a>
 

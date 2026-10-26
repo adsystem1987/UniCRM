@@ -913,23 +913,25 @@ export default function LandingPage() {
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Everything in Free Core</strong></span>
+                      <span><strong>Everything in Free Core Software</strong></span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We connect your WhatsApp, Meta API & Social accounts</span>
+                      <span>Live 1-on-1 Google Meet setup with our engineer</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Dedicated technical desk whenever you need assistance</span>
+                      <span>Free Google Drive (15 GB) &amp; Private Database configured for you</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We help write and get your WhatsApp templates approved</span>
+                      <span>WhatsApp Gateway connected &amp; initial catalog cards uploaded</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Priority Support with rapid response times</span>
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                        Includes 3 Months of Smart AI 24/7 Auto-Reply
+                      </span>
                     </li>
                   </ul>
                 </div>
