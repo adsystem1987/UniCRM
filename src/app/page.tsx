@@ -135,13 +135,13 @@ export default function LandingPage() {
             <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">DFY UniCRM</span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-muted-foreground">
-            <a href="#leads" className="hover:text-foreground transition-colors font-semibold text-primary">Find Leads</a>
-            <a href="#industries" className="hover:text-foreground transition-colors">Industry Setup</a>
-            <a href="#channels" className="hover:text-foreground transition-colors">Channels</a>
-            <a href="#calling" className="hover:text-foreground transition-colors">Calling &amp; IVR</a>
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-xs font-mono uppercase tracking-wider text-muted-foreground">
+            <a href="#leads" className="hover:text-foreground transition-colors font-bold text-emerald-500">Find Leads</a>
+            <a href="#catalog" className="hover:text-foreground transition-colors">Micro-Pages</a>
+            <a href="#industries" className="hover:text-foreground transition-colors">1-Click Setup</a>
+            <a href="#calling" className="hover:text-foreground transition-colors">Calling</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#why-free" className="hover:text-foreground transition-colors">Why 100% Free?</a>
+            <a href="#support-plan" className="hover:text-foreground transition-colors">Pricing</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
