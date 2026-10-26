@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SettingsPanelHead } from "./settings-panel-head";
+import { EntitlementDialog } from "./entitlement-dialog";
 
 interface PlatformAccount {
   id: string;
@@ -47,6 +48,7 @@ export function MasterAdminPanel() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedEntitlementAccount, setSelectedEntitlementAccount] = useState<PlatformAccount | null>(null);
 
   const fetchAccounts = async () => {
     if (!isPlatformOwner) {
@@ -308,6 +310,17 @@ export function MasterAdminPanel() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedEntitlementAccount(acc)}
+                      className="h-8 px-2.5 text-xs text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 font-bold gap-1"
+                      title="Manage AI Pro & Lead Credits"
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      <span>Provision</span>
+                    </Button>
+
                     {acc.status === "active" ? (
                       <Button
                         size="sm"
@@ -360,6 +373,17 @@ export function MasterAdminPanel() {
           )}
         </CardContent>
       </Card>
+
+      {/* Client Entitlement Provisioning Modal */}
+      {selectedEntitlementAccount && (
+        <EntitlementDialog
+          open={!!selectedEntitlementAccount}
+          onClose={() => setSelectedEntitlementAccount(null)}
+          accountId={selectedEntitlementAccount.id}
+          accountName={selectedEntitlementAccount.name}
+          ownerEmail={selectedEntitlementAccount.owner_email}
+        />
+      )}
     </div>
   );
 }
