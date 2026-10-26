@@ -21,6 +21,7 @@ import { readCappedBody } from '@/lib/whatsapp/webhook-body'
 import { resumeAwaitingReply, runAutomationsForTrigger } from '@/lib/automations/engine'
 import { dispatchInboundToFlows } from '@/lib/flows/engine'
 import { dispatchInboundToAiReply } from '@/lib/ai/auto-reply'
+import { evaluateTextIntent, applyIntentToContact } from '@/lib/ai/intent-router'
 import { dispatchWebhookEvent } from '@/lib/webhooks/deliver'
 import {
   handleTemplateWebhookChange,
@@ -933,6 +934,23 @@ async function processMessage(
   // Fire-and-forget: a slow or failing automation must not block the
   // webhook's 200 OK response to Meta.
   const inboundText = contentText ?? message.text?.body ?? ''
+
+  // Fast Sub-2ms Single-Pass Intent Evaluation (Laya architecture)
+  // Automatically tag hot leads, pricing queries, or flag human handoff requests
+  if (inboundText.trim()) {
+    try {
+      const intentDecision = evaluateTextIntent(inboundText)
+      if (intentDecision.suggestedTags.length > 0) {
+        await applyIntentToContact(supabaseAdmin(), {
+          accountId,
+          contactId: contactRecord.id,
+          decision: intentDecision,
+        })
+      }
+    } catch (intentErr) {
+      console.warn('[webhook] fast intent router skipped:', intentErr)
+    }
+  }
 
   // An automation parked at a "wait for reply" Send Buttons / Send List
   // step takes this message as its reply — a tap or typed text — and

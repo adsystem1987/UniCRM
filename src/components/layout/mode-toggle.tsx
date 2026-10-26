@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/hooks/use-theme";
@@ -13,14 +14,20 @@ import { useTranslations } from "next-intl";
  * moon shows in dark mode (click → go light); the label always names
  * the destination so screen-reader users hear what the click does.
  *
- * 40×40 hit target to match the header's other touch controls.
+ * Prevents hydration mismatch and uses explicit high-contrast icon styling.
  */
 export function ModeToggle({ className }: { className?: string }) {
   const t = useTranslations("ModeToggle");
   const { mode, toggleMode } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const goingTo = mode === "dark" ? "light" : "dark";
   const switchLabel = t("switchMode", { mode: goingTo });
-  
+
   return (
     <button
       type="button"
@@ -28,14 +35,16 @@ export function ModeToggle({ className }: { className?: string }) {
       aria-label={switchLabel}
       title={switchLabel}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full border border-transparent text-muted-foreground transition-all hover:bg-surface-hover hover:text-foreground active:bg-surface-active active:translate-y-px",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-background/80 text-foreground transition-all hover:bg-surface-hover hover:border-border active:bg-surface-active active:translate-y-px shrink-0",
         className,
       )}
     >
-      {mode === "dark" ? (
-        <Moon className="h-5 w-5" />
+      {!mounted ? (
+        <span className="h-4.5 w-4.5 rounded-full border border-border" />
+      ) : mode === "dark" ? (
+        <Moon className="h-4.5 w-4.5 text-amber-400 fill-amber-400/20" />
       ) : (
-        <Sun className="h-5 w-5" />
+        <Sun className="h-4.5 w-4.5 text-amber-500 fill-amber-500/20" />
       )}
     </button>
   );
