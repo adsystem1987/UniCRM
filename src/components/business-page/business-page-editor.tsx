@@ -645,16 +645,47 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
               </Button>
               <Button
                 onClick={() => {
-                  window.open(
-                    `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
-                      publicUrl
-                    )}`,
-                    '_blank'
-                  );
+                  const printWindow = window.open('', '_blank');
+                  if (!printWindow) return;
+                  printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>${title || 'Business'} - Counter Standee</title>
+                      <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 40px; margin: 0; background: #fff; color: #000; }
+                        .standee { border: 3px solid #000; border-radius: 24px; padding: 40px; max-width: 420px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+                        h1 { font-size: 26px; font-weight: 900; margin: 0 0 8px 0; }
+                        p.tagline { font-size: 14px; color: #444; margin: 0 0 24px 0; font-weight: 600; }
+                        .qr-box { padding: 16px; background: #fff; border: 2px dashed #000; border-radius: 16px; display: inline-block; margin-bottom: 24px; }
+                        .qr-box img { width: 220px; height: 220px; display: block; }
+                        .cta { font-size: 16px; font-weight: 800; background: #10b981; color: #fff; padding: 12px 20px; border-radius: 12px; margin-bottom: 12px; display: inline-block; }
+                        .hint { font-size: 12px; color: #666; font-weight: 500; }
+                        @media print { body { padding: 0; } .standee { box-shadow: none; border: 2px solid #000; } }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="standee">
+                        <h1>${title || 'Our Business'}</h1>
+                        <p class="tagline">${tagline || 'Scan to view our services & chat on WhatsApp'}</p>
+                        <div class="qr-box">
+                          <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(publicUrl)}" alt="QR Code" />
+                        </div>
+                        <br />
+                        <div class="cta">💬 Scan to Chat on WhatsApp</div>
+                        <p class="hint">Open Phone Camera • Scan QR Code • Instant Booking</p>
+                      </div>
+                      <script>
+                        window.onload = function() { window.print(); }
+                      </script>
+                    </body>
+                    </html>
+                  `);
+                  printWindow.document.close();
                 }}
-                className="flex-1 text-xs font-bold bg-primary text-primary-foreground"
+                className="flex-1 text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white"
               >
-                Download HQ
+                Print Standee / Flyer
               </Button>
             </div>
           </div>
