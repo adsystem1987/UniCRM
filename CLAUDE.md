@@ -198,6 +198,45 @@
 
 ---
 
+## Instant Business Micro-Pages & Digital Catalogs (`/p/[slug]`)
+- **Philosophy**: "Post like an Instagram story, launch like a website." Built for local businesses (hotels, cabs, tours, clinics, loans) with zero technical friction.
+- **Key Capabilities**:
+  - Dynamic mobile storefront with business branding, WhatsApp quick-actions, and direct calling.
+  - Category filter pills (`[All]`, `[Domestic Trips]`, `[Rooms]`, `[Suites]`, etc.).
+  - WhatsApp pre-filled messaging with item context and instant CRM lead ingestion tagged `#WebPageLead`.
+  - 1-Click Printable Counter Standee & Flyer generator (`/settings?tab=business-page`).
+- **Files**:
+  - `src/app/p/[slug]/page.tsx`: Public SSR route.
+  - `src/components/business-page/public-page-view.tsx`: Dark studio aesthetic view.
+  - `src/components/business-page/business-page-editor.tsx`: Social-style editor.
+  - `src/lib/business-page/presets.ts`: 1-Click industry presets for 6 target niches.
+  - `src/app/api/business-pages/`: CRUD and callback inquiry ingestion.
+  - `supabase/migrations/059_business_pages.sql`: Database schema & RLS.
+
+---
+
+## Client Entitlements & Platform Owner Provisioning
+- **Location**: `Settings → Platform Oversight` (`/settings?tab=master-admin`), restricted strictly to `isPlatformOwner`.
+- **Features**:
+  - 1-Click AI Smart Auto-Reply activation (+3 Months for ₹1,000 setup / +1 Year) with AES-256 encrypted OmniRoute/LLM key. Client never sees raw key.
+  - 1-Click Lead Discovery Credit top-ups (+500 / +1,000 credits) with automated deduction upon searches.
+- **Files**:
+  - `src/components/settings/entitlement-dialog.tsx`: Admin provisioning desk.
+  - `src/app/api/admin/entitlements/route.ts`: Provisioning endpoint.
+  - `supabase/migrations/060_account_entitlements.sql`: Database schema.
+
+---
+
+## Frontend Design Taste (`taste-skill` Principles)
+- **Anti-AI-Slop Standard**: Avoid generic pastel gradients, centered 3-line headlines with floating icon cards.
+- **Art Direction**:
+  - Rich dark studio foundation (`bg-neutral-900`/`bg-neutral-950`) with subtle structural grid textures.
+  - Pair bold grotesque typography with crisp monospace metadata labels (`font-mono text-emerald-400`).
+  - Tactile, high-contrast CTA buttons and glassmorphism action bars.
+  - Enforced across public marketing showcases and `/p/[slug]` micro-pages.
+
+---
+
 ## Key Directories & Structure
 - `src/app/`: Next.js App Router
   - `(auth)/`: Authentication routes (`/login`, `/signup`)
