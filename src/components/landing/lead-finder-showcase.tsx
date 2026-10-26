@@ -274,7 +274,7 @@ export function LeadFinderShowcase() {
     currentCategory.leads.find((l) => l.id === activeLeadId) || currentCategory.leads[0];
 
   return (
-    <div className="rounded-3xl border border-border bg-card p-6 md:p-10 shadow-sm space-y-8">
+    <div className="rounded-3xl border border-border bg-card p-4 sm:p-6 md:p-10 shadow-sm space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
         <div className="space-y-2">
@@ -282,16 +282,16 @@ export function LeadFinderShowcase() {
             <Target className="h-3.5 w-3.5" />
             Smart Lead Discovery in Action
           </div>
-          <h3 className="text-2xl md:text-3xl font-black text-foreground">
+          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tight">
             Discovered Prospective Leads — Clean &amp; Ready to Close
           </h3>
-          <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl leading-relaxed">
             See how UniCRM finds verified prospective customers for your business, verifies their WhatsApp phone numbers, and suggests the exact message to start the conversation.
           </p>
         </div>
 
-        <Link href="/signup">
-          <Button className="h-10 px-5 text-xs font-bold bg-primary hover:opacity-90 active:opacity-80 text-primary-foreground rounded-full gap-2 shrink-0">
+        <Link href="/signup" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto h-10 px-5 text-xs font-bold bg-primary hover:opacity-90 active:opacity-80 text-primary-foreground rounded-full gap-2 shrink-0">
             <span>Find Leads in Your City</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Button>
@@ -299,7 +299,7 @@ export function LeadFinderShowcase() {
       </div>
 
       {/* Industry Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-1 px-1">
         {Object.entries(INDUSTRY_SHOWCASE).map(([key, item]) => {
           const Icon = item.icon;
           const isSelected = selectedIndustry === key;
@@ -311,13 +311,13 @@ export function LeadFinderShowcase() {
                 setSelectedIndustry(key);
                 setActiveLeadId(item.leads[0].id);
               }}
-              className={`px-3.5 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 whitespace-nowrap transition-all border ${
+              className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 whitespace-nowrap transition-all border shrink-0 ${
                 isSelected
                   ? "bg-primary text-primary-foreground border-primary shadow-xs"
                   : "bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-hover"
               }`}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-4 w-4 shrink-0" />
               <span>{item.label}</span>
             </button>
           );
@@ -331,7 +331,7 @@ export function LeadFinderShowcase() {
           <div className="flex items-center justify-between text-xs text-muted-foreground px-1 font-medium">
             <span>Discovered Leads ({currentCategory.leads.length})</span>
             <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-              <CheckCircle2 className="h-3.5 w-3.5" />
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
               100% WhatsApp Verified
             </span>
           </div>
@@ -343,44 +343,44 @@ export function LeadFinderShowcase() {
                 <div
                   key={lead.id}
                   onClick={() => setActiveLeadId(lead.id)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer ${
+                  className={`p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-xs"
                       : "border-border bg-card hover:border-border-strong hover:bg-muted/30"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-foreground">{lead.name}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-3">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span className="font-bold text-sm text-foreground truncate max-w-[200px] sm:max-w-none">{lead.name}</span>
                         <Badge
                           variant="outline"
-                          className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 font-semibold"
+                          className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 font-semibold whitespace-nowrap"
                         >
                           <MessageCircle className="h-2.5 w-2.5" />
                           WhatsApp Active
                         </Badge>
                       </div>
 
-                      <div className="text-xs text-muted-foreground font-medium">
+                      <div className="text-xs text-muted-foreground font-medium truncate">
                         {lead.category}
                       </div>
 
-                      <div className="flex items-center gap-3 pt-1 text-xs text-muted-foreground">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 opacity-70" />
-                          {lead.city}, {lead.country}
+                          <MapPin className="h-3 w-3 opacity-70 shrink-0" />
+                          <span className="truncate">{lead.city}, {lead.country}</span>
                         </span>
                         <span className="flex items-center gap-1 font-mono text-foreground font-medium">
-                          <Phone className="h-3 w-3 opacity-70 text-emerald-500" />
-                          {lead.phonePreview}
+                          <Phone className="h-3 w-3 opacity-70 text-emerald-500 shrink-0" />
+                          <span>{lead.phonePreview}</span>
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <div className="flex items-center sm:flex-col sm:items-end justify-between sm:justify-start gap-1.5 shrink-0 pt-1 sm:pt-0 border-t border-border/50 sm:border-t-0">
                       <div className="flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                        <Star className="h-3 w-3 fill-amber-500" />
+                        <Star className="h-3 w-3 fill-amber-500 shrink-0" />
                         <span>{lead.rating.toFixed(1)}</span>
                         <span className="text-[10px] text-muted-foreground">({lead.reviews})</span>
                       </div>
@@ -400,29 +400,29 @@ export function LeadFinderShowcase() {
         </div>
 
         {/* Right Column: Pre-written 1-Click WhatsApp Conversation */}
-        <div className="lg:col-span-5 rounded-2xl border border-border bg-gradient-to-b from-card via-card to-muted/20 p-5 space-y-4 shadow-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-border">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center font-bold">
+        <div className="lg:col-span-5 rounded-2xl border border-border bg-gradient-to-b from-card via-card to-muted/20 p-4 sm:p-5 space-y-4 shadow-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-border gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="h-8 w-8 rounded-full bg-[#25D366]/10 text-[#25D366] flex items-center justify-center font-bold shrink-0">
                 <MessageCircle className="h-4 w-4" />
               </div>
-              <div>
-                <div className="text-xs font-bold text-foreground">1-Click Conversation Starter</div>
-                <div className="text-[11px] text-muted-foreground">Zero spam &bull; Polite &bull; High reply rate</div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-foreground truncate">1-Click Conversation Starter</div>
+                <div className="text-[11px] text-muted-foreground truncate">Zero spam &bull; Polite &bull; High reply rate</div>
               </div>
             </div>
-            <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
+            <Badge variant="outline" className="text-[10px] border-border text-muted-foreground shrink-0">
               Ready to Send
             </Badge>
           </div>
 
           {/* Chat Bubble Preview */}
-          <div className="rounded-xl bg-[#25D366]/5 border border-[#25D366]/20 p-4 space-y-2">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-              <span className="font-semibold text-foreground">To: {currentLead?.name}</span>
-              <span className="font-mono text-[10px]">{currentLead?.phonePreview}</span>
+          <div className="rounded-xl bg-[#25D366]/5 border border-[#25D366]/20 p-3.5 sm:p-4 space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground gap-2">
+              <span className="font-semibold text-foreground truncate">To: {currentLead?.name}</span>
+              <span className="font-mono text-[10px] shrink-0">{currentLead?.phonePreview}</span>
             </div>
-            <div className="rounded-lg bg-card p-3 text-xs text-foreground leading-relaxed shadow-2xs border border-border">
+            <div className="rounded-lg bg-card p-3 text-xs text-foreground leading-relaxed shadow-2xs border border-border break-words">
               &ldquo;{currentLead?.sampleScript}&rdquo;
             </div>
             <div className="text-[10px] text-muted-foreground text-right">
