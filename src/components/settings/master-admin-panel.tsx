@@ -17,6 +17,7 @@ import {
   Mail,
   Receipt,
   FileSpreadsheet,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
