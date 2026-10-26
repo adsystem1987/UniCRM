@@ -11,6 +11,7 @@ export default function ContactPage() {
   const [phone, setPhone] = useState("");
   const [topic, setTopic] = useState("General Inquiry");
   const [message, setMessage] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -50,6 +51,7 @@ export default function ContactPage() {
           phone: phone.trim(),
           topic,
           message: message.trim(),
+          company_website_url: companyWebsite.trim(),
         }),
       });
 
@@ -199,6 +201,20 @@ export default function ContactPage() {
                     <option value="Optional Pro Setup (₹1,000 one-time)">Optional Done-For-You Pro Setup (₹1,000 one-time cost)</option>
                     <option value="Technical Help">Technical Help / Bug Report</option>
                   </select>
+                </div>
+
+                {/* Anti-Bot Honeypot Field: Invisible to humans, filled by spam bots */}
+                <div className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                  <label htmlFor="company_website_url">Do not fill this field</label>
+                  <input
+                    id="company_website_url"
+                    name="company_website_url"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={companyWebsite}
+                    onChange={(e) => setCompanyWebsite(e.target.value)}
+                  />
                 </div>
 
                 <div className="space-y-1.5">

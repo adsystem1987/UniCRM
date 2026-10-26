@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     let phone = '';
     let topic = 'General Inquiry';
     let message = '';
+    let honeypot = '';
     const isFormSubmit = !req.headers.get('content-type')?.includes('application/json');
 
     if (isFormSubmit) {
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
       phone = (formData.get('phone') as string)?.trim() || '';
       topic = (formData.get('topic') as string)?.trim() || 'General Inquiry';
       message = (formData.get('message') as string)?.trim() || '';
+      honeypot = (formData.get('company_website_url') as string)?.trim() || '';
     } else {
       const body = await req.json().catch(() => ({}));
       name = body.name?.trim() || '';
@@ -30,6 +32,26 @@ export async function POST(req: Request) {
       phone = body.phone?.trim() || '';
       topic = body.topic || 'General Inquiry';
       message = body.message?.trim() || '';
+      honeypot = body.company_website_url?.trim() || '';
+    }
+
+    // Anti-Bot Protection: Drop spam submissions where the hidden honeypot field was filled
+    if (honeypot) {
+      console.warn('[Contact Support] Dropped automated bot submission matching honeypot:', { name, email, honeypot });
+      if (isFormSubmit) {
+        return NextResponse.redirect(new URL('/contact?success=true&name=Friend', req.url), 303);
+      }
+      return NextResponse.json({ success: true, message: 'Message received.' });
+    }
+
+    // Common spam keyword filters (e.g. backlink / search index spam)
+    const isSpamText = /addwebsite\.pro|google's search index|visible in google search results/i.test(message);
+    if (isSpamText) {
+      console.warn('[Contact Support] Dropped automated spam bot pitch:', { name, email, message });
+      if (isFormSubmit) {
+        return NextResponse.redirect(new URL('/contact?success=true&name=Friend', req.url), 303);
+      }
+      return NextResponse.json({ success: true, message: 'Message received.' });
     }
 
     if (!name || !email || !message) {
