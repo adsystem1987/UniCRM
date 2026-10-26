@@ -198,82 +198,82 @@ export function BusinessPageShowcase() {
       </div>
 
       {/* Interactive Mockup Container */}
-      <div className="max-w-4xl mx-auto rounded-3xl border border-neutral-800 bg-neutral-900/95 backdrop-blur-md p-5 sm:p-8 shadow-2xl space-y-6">
+      <div className="max-w-4xl mx-auto rounded-3xl border border-emerald-500/30 bg-card/60 backdrop-blur-md p-5 sm:p-8 shadow-2xl space-y-6">
         {/* Top Browser Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-neutral-800 pb-4">
-          <div className="flex items-center gap-2 bg-neutral-950 px-3.5 py-1.5 rounded-full border border-neutral-800 text-xs font-mono text-neutral-400 w-full sm:w-auto">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-border pb-4">
+          <div className="flex items-center gap-2 bg-muted/60 px-3.5 py-1.5 rounded-full border border-border text-xs font-mono text-muted-foreground w-full sm:w-auto">
+            <span className="size-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             <span className="truncate">
               https://unicrm.live/p/
-              <strong className="text-white font-bold">{activeTab.slug}</strong>
+              <strong className="text-foreground">{activeTab.slug}</strong>
             </span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-neutral-400 shrink-0 font-mono">
-            <span className="flex items-center gap-1 font-semibold text-emerald-400">
-              <QrCode className="size-3.5" /> Printable QR Flyer
+          <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0">
+            <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
+              <QrCode className="size-3.5" /> Printable QR Included
             </span>
             <span>•</span>
-            <span className="text-neutral-300">0% Commission</span>
+            <span>0% Commission</span>
           </div>
         </div>
 
         {/* Mock Mobile Profile Card */}
-        <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6 shadow-inner space-y-5">
+        <div className="rounded-2xl border border-border bg-background p-5 sm:p-6 shadow-sm space-y-5">
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
-            <div className="size-16 rounded-2xl bg-neutral-800 text-emerald-400 font-mono flex items-center justify-center text-xl font-black border border-neutral-700 shadow-md shrink-0">
+            <div className="size-16 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-xl font-black shadow-md border-2 border-background shrink-0">
               {activeTab.bizName.slice(0, 2).toUpperCase()}
             </div>
             <div className="space-y-1">
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                <h3 className="text-lg font-black text-white">
+                <h3 className="text-lg font-black text-foreground">
                   {activeTab.bizName}
                 </h3>
-                <CheckCircle2 className="size-4 text-emerald-400" />
+                <CheckCircle2 className="size-4 text-emerald-500 fill-emerald-500/20" />
               </div>
-              <p className="text-xs font-semibold text-emerald-400/90">
+              <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 {activeTab.tagline}
               </p>
-              <div className="flex items-center justify-center sm:justify-start gap-3 text-[11px] text-neutral-500 pt-0.5 font-mono">
+              <div className="flex items-center justify-center sm:justify-start gap-4 text-[11px] text-muted-foreground pt-1">
                 <span>📍 Verified City Listing</span>
                 <span>•</span>
-                <span>⭐ 4.9 Direct Rating</span>
+                <span>⭐ 4.9 (120+ WhatsApp Reviews)</span>
               </div>
             </div>
           </div>
 
           {/* Catalog Items Grid */}
           <div className="space-y-3 pt-2">
-            <div className="flex items-center justify-between text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider">
-              <span className="flex items-center gap-1.5 text-emerald-400">
+            <div className="flex items-center justify-between text-xs font-bold text-foreground uppercase tracking-wider">
+              <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                 <Sparkles className="size-3.5" />
-                Featured Offerings &amp; Rates
+                Featured Offerings &amp; Packages
               </span>
-              <span className="text-[10px] text-neutral-500 lowercase">Direct WhatsApp Pre-fill</span>
+              <span className="text-[10px] text-muted-foreground lowercase">Instant WhatsApp prefill</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
               {activeTab.items.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-xl border border-neutral-800 bg-neutral-900/90 p-4 hover:border-neutral-700 transition-all flex flex-col justify-between space-y-3"
+                  className="rounded-xl border border-border bg-card p-4 shadow-2xs hover:border-emerald-500/50 transition-all flex flex-col justify-between space-y-3"
                 >
                   <div className="space-y-1.5">
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-bold text-white leading-snug">
+                      <h4 className="text-sm font-bold text-foreground leading-snug">
                         {item.title}
                       </h4>
                     </div>
-                    <span className="inline-block text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-block text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-md">
                       {item.badge}
                     </span>
-                    <p className="text-xs text-neutral-400 leading-relaxed">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       {item.details}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-neutral-800 flex items-center justify-between gap-2">
-                    <span className="text-xs font-mono font-bold text-emerald-400">
+                  <div className="pt-2 border-t border-border/50 flex items-center justify-between gap-2">
+                    <span className="text-xs font-black text-foreground">
                       {item.price}
                     </span>
                     <button
@@ -281,7 +281,7 @@ export function BusinessPageShowcase() {
                         const url = `https://wa.me/?text=${encodeURIComponent(item.prefill)}`;
                         window.open(url, '_blank', 'noopener,noreferrer');
                       }}
-                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-neutral-800 hover:bg-emerald-500 text-neutral-200 hover:text-neutral-950 transition-colors flex items-center gap-1.5 border border-neutral-700 hover:border-emerald-500"
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center gap-1.5 shadow-xs"
                     >
                       <MessageCircle className="size-3.5 fill-current" />
                       {item.buttonLabel}
