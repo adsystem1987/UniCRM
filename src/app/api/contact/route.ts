@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { getAdminClient } from '@/lib/gdrive/offload';
 import { refreshGmailAccessToken, sendGmailMessage } from '@/lib/gmail/client';
 import { notifySlackContactLead } from '@/lib/slack/notify';
+import { evaluateTextIntent, applyIntentToContact } from '@/lib/ai/intent-router';
+import { loadAiConfig } from '@/lib/ai/config';
+import { generateReply } from '@/lib/ai/generate';
+import { buildSystemPrompt } from '@/lib/ai/defaults';
 
 export const dynamic = 'force-dynamic';
 
@@ -79,6 +83,10 @@ export async function POST(req: Request) {
 
     console.log('[Contact Support Submission]', JSON.stringify(payload, null, 2));
 
+    let aiGeneratedReply: string | null = null;
+    let detectedIntent: string = 'general';
+    let isHotLeadDetected = false;
+
     // 1. Sync in Real-Time to UniCRM Inbox & Contacts
     try {
       const supabase = getAdminClient();
@@ -92,6 +100,11 @@ export async function POST(req: Request) {
       if (account) {
         const accountId = account.id;
         const userId = account.owner_user_id;
+
+        // Fast Intent Evaluation (<2ms)
+        const intentDecision = evaluateTextIntent(`${topic} ${message}`);
+        detectedIntent = intentDecision.intent;
+        isHotLeadDetected = intentDecision.isHotLead;
 
         // Check if contact exists
         let contactId: string | null = null;
@@ -131,6 +144,69 @@ export async function POST(req: Request) {
         }
 
         if (contactId) {
+          // Tag contact with #WebInquiry + Intent Tags (#HotLead, #UrgentBooking, etc.)
+          await applyIntentToContact(supabase, {
+            accountId,
+            contactId,
+            decision: {
+              ...intentDecision,
+              suggestedTags: Array.from(new Set(['WebInquiry', ...intentDecision.suggestedTags])),
+            },
+          });
+
+          // Option B: If AI detects Hot Lead or Urgent Booking, auto-create a deal in the sales pipeline
+          if (intentDecision.isHotLead) {
+            try {
+              // Find the default or active pipeline and its first stage
+              const { data: pipeline } = await supabase
+                .from('pipelines')
+                .select('id')
+                .eq('account_id', accountId)
+                .order('created_at', { ascending: true })
+                .limit(1)
+                .maybeSingle();
+
+              if (pipeline) {
+                const { data: stage } = await supabase
+                  .from('pipeline_stages')
+                  .select('id')
+                  .eq('pipeline_id', pipeline.id)
+                  .order('position', { ascending: true })
+                  .limit(1)
+                  .maybeSingle();
+
+                if (stage) {
+                  // Check if an open deal already exists for this contact
+                  const { data: existingDeal } = await supabase
+                    .from('deals')
+                    .select('id')
+                    .eq('account_id', accountId)
+                    .eq('contact_id', contactId)
+                    .eq('status', 'open')
+                    .maybeSingle();
+
+                  if (!existingDeal) {
+                    await supabase.from('deals').insert({
+                      account_id: accountId,
+                      user_id: userId,
+                      pipeline_id: pipeline.id,
+                      stage_id: stage.id,
+                      contact_id: contactId,
+                      title: `🔥 [Hot Lead] ${name} - ${topic}`,
+                      value: 0,
+                      currency: 'INR',
+                      status: 'open',
+                      notes: `Inbound high-intent web lead.\n\nIntent: ${intentDecision.intent} (Score: ${intentDecision.score})\nTags: ${intentDecision.suggestedTags.join(', ')}\nInquiry: ${message}`,
+                    });
+                    console.log(`[contact/route] Auto-created Pipeline Deal for Hot Lead: ${name}`);
+                  }
+                }
+              }
+            } catch (dealErr) {
+              console.warn('[contact/route] Could not auto-create deal:', dealErr);
+            }
+          }
+
           // Find or create conversation
           let conversationId: string | null = null;
           const { data: existingConv } = await supabase
@@ -186,6 +262,54 @@ export async function POST(req: Request) {
                 unread_count: 1,
               })
               .eq('id', conversationId);
+
+            // Option A: For general queries, generate an instant AI auto-reply
+            try {
+              const aiConfig = await loadAiConfig(supabase, accountId);
+              if (aiConfig && aiConfig.isActive) {
+                const systemPrompt = buildSystemPrompt({
+                  userPrompt: aiConfig.systemPrompt || "You are an expert customer assistant for UniCRM. Answer inquiries politely, clearly, and concisely in under 3 sentences.",
+                  mode: 'auto_reply',
+                });
+
+                const aiResult = await generateReply({
+                  config: aiConfig,
+                  systemPrompt,
+                  messages: [
+                    {
+                      role: 'user',
+                      content: `Customer Name: ${name}\nInquiry: ${message}`,
+                    },
+                  ],
+                });
+
+                if (aiResult?.text && !aiResult.handoff) {
+                  aiGeneratedReply = aiResult.text.trim();
+
+                  // Save AI agent response into CRM conversation thread
+                  await supabase.from('messages').insert({
+                    conversation_id: conversationId,
+                    sender_type: 'agent',
+                    content_type: 'text',
+                    content_text: aiGeneratedReply,
+                    message_id: `ai_${Date.now()}`,
+                    status: 'delivered',
+                  });
+
+                  // Update conversation last message
+                  await supabase
+                    .from('conversations')
+                    .update({
+                      last_message_text: `🤖 ${aiGeneratedReply}`,
+                      last_message_at: new Date().toISOString(),
+                      updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', conversationId);
+                }
+              }
+            } catch (aiErr) {
+              console.warn('[contact/route] AI auto-reply generation skipped:', aiErr);
+            }
           }
         }
 
@@ -280,6 +404,9 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message: `Thank you, ${name}! Your request has been received in real time. We will get back to you shortly.`,
+      aiReply: aiGeneratedReply,
+      intent: detectedIntent,
+      isHotLead: isHotLeadDetected,
     });
   } catch (error) {
     console.error('Error processing contact form:', error);

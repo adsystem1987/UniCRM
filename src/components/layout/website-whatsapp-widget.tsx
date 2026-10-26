@@ -10,6 +10,13 @@ interface WebsiteLiveChatWidgetProps {
   welcomeMessage?: string;
 }
 
+interface ChatMessageItem {
+  id: string;
+  sender: 'system' | 'user' | 'ai';
+  text: string;
+  time: string;
+}
+
 export function WebsiteWhatsAppWidget({
   brandName = "DFY UniCRM Support",
   supportTitle = "Online • Instant Support",
@@ -20,32 +27,78 @@ export function WebsiteWhatsAppWidget({
   const [emailOrPhone, setEmailOrPhone] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [history, setHistory] = useState<ChatMessageItem[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) {
+    const queryText = message.trim();
+    if (!queryText) {
       toast.error("Please enter a message.");
       return;
     }
 
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userMsg: ChatMessageItem = {
+      id: `user_${Date.now()}`,
+      sender: 'user',
+      text: queryText,
+      time: now,
+    };
+
+    setHistory((prev) => [...prev, userMsg]);
+    setMessage("");
     setSubmitting(true);
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           name: name.trim() || "Website Visitor",
           email: emailOrPhone.includes("@") ? emailOrPhone.trim() : "visitor@dfyunicrm.com",
           phone: !emailOrPhone.includes("@") ? emailOrPhone.trim() : "",
           topic: "Website Live Chat",
-          message: message.trim(),
+          message: queryText,
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (res.ok) {
-        setSent(true);
-        toast.success("Message sent directly to UniCRM Inbox!");
+        if (data.aiReply) {
+          // Instant Option A AI Assistant Reply
+          setHistory((prev) => [
+            ...prev,
+            {
+              id: `ai_${Date.now()}`,
+              sender: 'ai',
+              text: data.aiReply,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        } else if (data.isHotLead) {
+          // Hot Lead acknowledgment
+          setHistory((prev) => [
+            ...prev,
+            {
+              id: `ai_${Date.now()}`,
+              sender: 'ai',
+              text: `Thank you, ${name.trim() || 'there'}! We have marked your inquiry as priority. A dedicated specialist is reviewing this right now and will contact you directly.`,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        } else {
+          setHistory((prev) => [
+            ...prev,
+            {
+              id: `ai_${Date.now()}`,
+              sender: 'ai',
+              text: `Message received! Our team has been notified and will reply shortly.`,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        }
+        toast.success("Message received by UniCRM Inbox!");
       } else {
         toast.error("Failed to deliver message. Please try again.");
       }
@@ -57,7 +110,7 @@ export function WebsiteWhatsAppWidget({
   };
 
   const handleReset = () => {
-    setSent(false);
+    setHistory([]);
     setMessage("");
     setName("");
     setEmailOrPhone("");
@@ -98,7 +151,7 @@ export function WebsiteWhatsAppWidget({
           </div>
 
           {/* Chat Content Body */}
-          <div className="p-4 bg-muted/30 min-h-[160px] flex flex-col justify-end space-y-3">
+          <div className="p-4 bg-muted/30 max-h-[320px] overflow-y-auto flex flex-col space-y-3">
             {/* System Welcome Bubble */}
             <div className="bg-background border border-border text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[90%] text-xs leading-relaxed space-y-1">
               <span className="font-bold text-[10px] text-primary flex items-center gap-1">
@@ -111,30 +164,52 @@ export function WebsiteWhatsAppWidget({
               </span>
             </div>
 
-            {/* Success state */}
-            {sent && (
-              <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 rounded-xl p-3 text-xs space-y-2">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  <span>Message delivered to our CRM team!</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground">
-                  Our agents will respond to you right away.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="text-[11px] font-bold text-primary hover:underline"
+            {/* Conversation turns */}
+            {history.map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex flex-col ${
+                  msg.sender === "user" ? "items-end" : "items-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed space-y-1 shadow-2xs ${
+                    msg.sender === "user"
+                      ? "bg-primary text-primary-foreground rounded-tr-xs"
+                      : "bg-card border border-border text-foreground rounded-tl-xs"
+                  }`}
                 >
-                  Send another message
-                </button>
+                  {msg.sender === "ai" && (
+                    <span className="font-bold text-[10px] text-primary flex items-center gap-1">
+                      <Sparkles className="h-2.5 w-2.5" />
+                      AI Assistant
+                    </span>
+                  )}
+                  <p className="whitespace-pre-wrap">{msg.text}</p>
+                  <span
+                    className={`text-[9px] block text-right ${
+                      msg.sender === "user"
+                        ? "text-primary-foreground/75"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {msg.time}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {submitting && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground px-2 py-1">
+                <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                <span className="text-[11px] italic">AI Assistant is thinking...</span>
               </div>
             )}
           </div>
 
           {/* Input & Form Area */}
-          {!sent && (
-            <form onSubmit={handleSubmit} className="p-3 bg-card border-t border-border space-y-2">
+          <form onSubmit={handleSubmit} className="p-3 bg-card border-t border-border space-y-2">
+            {history.length === 0 && (
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="text"
@@ -151,31 +226,43 @@ export function WebsiteWhatsAppWidget({
                   className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                 />
               </div>
+            )}
 
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  required
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Type your message..."
-                  className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Ask anything or request pricing..."
+                className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              <button
+                type="submit"
+                disabled={submitting || !message.trim()}
+                className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 disabled:opacity-50"
+                aria-label="Send Message"
+              >
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Send className="h-3.5 w-3.5" />
+                )}
+              </button>
+            </div>
+            {history.length > 0 && (
+              <div className="flex justify-between items-center pt-1 px-1 text-[10px] text-muted-foreground">
+                <span>Inquiry saved to UniCRM</span>
                 <button
-                  type="submit"
-                  disabled={submitting || !message.trim()}
-                  className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 disabled:opacity-50"
-                  aria-label="Send Message"
+                  type="button"
+                  onClick={handleReset}
+                  className="hover:text-primary transition-colors font-medium"
                 >
-                  {submitting ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Send className="h-3.5 w-3.5" />
-                  )}
+                  Clear chat
                 </button>
               </div>
-            </form>
-          )}
+            )}
+          </form>
         </div>
       )}
 
