@@ -575,7 +575,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {/* Feature 1: Instant Business Micro-Page */}
-              <div className="rounded-3xl border border-emerald-500/40 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-emerald-500 transition-colors relative overflow-hidden">
+              <div className="rounded-3xl border border-emerald-500/40 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-emerald-500 relative overflow-hidden">
                 <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
                   New
                 </div>
@@ -595,7 +595,7 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 2: Dual WhatsApp Gateways */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-teal-500/50">
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-teal-500/10 border border-border flex items-center justify-center text-teal-500 mb-6">
                     <QrCode className="h-6 w-6" />
@@ -610,8 +610,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Feature 2 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 3: Smart Client Memory */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-purple-500/50">
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
@@ -626,8 +626,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Feature 3 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 4: WhatsApp Voice & IVR Calls */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-blue-500/50">
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-border flex items-center justify-center text-blue-500 mb-6">
                     <PhoneCall className="h-6 w-6" />
@@ -642,8 +642,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Feature 4 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 5: Visual Drag & Drop Bot Builder */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-teal-500/50">
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-500 mb-6">
                     <GitBranch className="h-6 w-6" />

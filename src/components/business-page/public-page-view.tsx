@@ -272,7 +272,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               {filteredItems.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-2xl border border-border bg-card p-4 shadow-xs hover:border-emerald-500/40 transition-all flex flex-col sm:flex-row gap-4 justify-between"
+                  className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm hover:shadow-md hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col sm:flex-row gap-4 justify-between"
                 >
                   <div className="flex gap-3.5">
                     {item.image_url && (
