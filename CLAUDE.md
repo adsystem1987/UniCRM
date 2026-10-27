@@ -5,7 +5,11 @@
 - **Git Staging**: Always stage exact modified files only. NEVER run `git add -A` or `git add .`.
 - **Branch & Promotion Rule**: ONLY commit and push to the `staging` branch (`origin/staging`). NEVER push to or merge into `main`. The user personally verifies staging and promotes to production (`main`).
 - **Primary Branch**: `staging` is the sole development and push target for agents.
-- **Deployment Workflow**: Once all changes are pushed to `staging` and the Vercel build is green, our work is DONE. Do NOT suggest creating PRs, merging to main, or any production promotion steps. The user handles staging → main promotion independently. The agent's finish line is: **pushed to staging + build green = task complete**.
+- **Deployment Workflow & Vercel Hobby Quotas**:
+  - **Vercel Hobby Plan Build Limits**: Vercel free/hobby plans enforce strict deployment quotas (typically 100 deployments per day and max build execution concurrency).
+  - **Batch Pushes & Conserve Deployments**: NEVER push incremental, unverified micro-commits that trigger redundant Vercel build pipelines. Batch related edits and features together into single cohesive commits.
+  - **Pre-Push Verification**: Always run local verification (`npx tsc --noEmit` and build checks) locally *before* requesting push approval, ensuring every push yields a green build and avoids burning quota on failed retries.
+  - Once all changes are pushed to `staging` and the Vercel build is green, our work is DONE. Do NOT suggest creating PRs, merging to main, or any production promotion steps. The user handles staging → main promotion independently. The agent's finish line is: **batched push to staging + build green = task complete**.
 - **Proprietary Moat & Public Copy Rule (STRICT)**: NEVER showcase, expose, or name-drop internal tech stack libraries, third-party vendor names, or open-source architectures (e.g., `gbrain`, `Apify`, `Supabase`, `Groq`, `Evolution API`, `Whatomate`, `Postgres`, etc.) on public marketing pages, index page copy, landing components, or transactional customer emails. Always translate technical features into customer-centric proprietary terms (e.g., *"Smart Client Memory"*, *"Smart Lead Discovery"*, *"UniCRM Real-Time Voice Gateway"*, *"Private Cloud Storage"*). Keep technical implementations confidential to safeguard against competitors copying our roadmap.
 
 ---

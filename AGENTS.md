@@ -17,3 +17,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Public Copy & Messaging Standards
 - **No Developer/System Jargon in Public Copy**: Never expose internal developer, backend, or CRM architecture terms to end users or website visitors (e.g., avoid "CRM automations", "database webhook", "trigger flow", "RLS", "Supabase", "Evolution API", "Groq").
 - **Customer-Centric Microcopy**: Keep visitor-facing copy clean, reassuring, and benefit-oriented (e.g., use "Enter your email or WhatsApp so our team can send your reply" instead of "Required to link CRM automations").
+
+# Deployment & Vercel Hobby Quotas
+- **Conserve Vercel Deployments**: Vercel Hobby accounts have strict daily build limits (100 builds/day max).
+- **Batch Git Pushes**: Avoid pushing single small code tweaks or formatting changes. Complete the entire feature/fix, run local verification (`npx tsc --noEmit`), and batch into a single push after getting user approval.
+- **No Redundant Triggers**: Always test thoroughly locally to prevent build failures that burn deployment quotas.
