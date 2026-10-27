@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, X, Send, CheckCircle2, Loader2, Sparkles } from "lucide-react";
+import { MessageSquare, X, Send, Loader2, Sparkles, Phone, ArrowUpRight, ShieldCheck, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 interface WebsiteLiveChatWidgetProps {
   brandName?: string;
   supportTitle?: string;
   welcomeMessage?: string;
+  officialWhatsApp?: string;
 }
 
 interface ChatMessageItem {
@@ -20,7 +21,8 @@ interface ChatMessageItem {
 export function WebsiteWhatsAppWidget({
   brandName = "DFY UniCRM Support",
   supportTitle = "Online • Instant Support",
-  welcomeMessage = "Hello! 👋 Welcome to DFY UniCRM. Have a question about WhatsApp calling, setup, or features? Message us right here!",
+  welcomeMessage = "Hello! 👋 Welcome to DFY UniCRM. Connect directly with our team or get instant answers to your questions.",
+  officialWhatsApp = "917019139417",
 }: WebsiteLiveChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
@@ -29,13 +31,36 @@ export function WebsiteWhatsAppWidget({
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<ChatMessageItem[]>([]);
 
+  // Validation helper: strictly requires email or phone to stop bots & spammers
+  const validateContactMethod = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return false;
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+    const digitsOnly = trimmed.replace(/\D/g, "");
+    const isPhone = digitsOnly.length >= 7 && digitsOnly.length <= 15;
+    return isEmail || isPhone;
+  };
+
+  const isContactValid = validateContactMethod(emailOrPhone);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const queryText = message.trim();
+    const contactInput = emailOrPhone.trim();
+
     if (!queryText) {
       toast.error("Please enter a message.");
       return;
     }
+
+    if (!isContactValid) {
+      toast.error("Please enter a valid Email address or WhatsApp phone number to continue.");
+      return;
+    }
+
+    const isEmail = contactInput.includes("@");
+    const cleanPhone = !isEmail ? contactInput.replace(/[^\d+]/g, "") : "";
+    const cleanEmail = isEmail ? contactInput : "";
 
     const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const userMsg: ChatMessageItem = {
@@ -55,8 +80,8 @@ export function WebsiteWhatsAppWidget({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim() || "Website Visitor",
-          email: emailOrPhone.includes("@") ? emailOrPhone.trim() : "visitor@dfyunicrm.com",
-          phone: !emailOrPhone.includes("@") ? emailOrPhone.trim() : "",
+          email: cleanEmail,
+          phone: cleanPhone,
           topic: "Website Live Chat",
           message: queryText,
         }),
@@ -66,7 +91,6 @@ export function WebsiteWhatsAppWidget({
 
       if (res.ok) {
         if (data.aiReply) {
-          // Instant Option A AI Assistant Reply
           setHistory((prev) => [
             ...prev,
             {
@@ -77,13 +101,12 @@ export function WebsiteWhatsAppWidget({
             },
           ]);
         } else if (data.isHotLead) {
-          // Hot Lead acknowledgment
           setHistory((prev) => [
             ...prev,
             {
               id: `ai_${Date.now()}`,
               sender: 'ai',
-              text: `Thank you, ${name.trim() || 'there'}! We have marked your inquiry as priority. A dedicated specialist is reviewing this right now and will contact you directly.`,
+              text: `Thank you, ${name.trim() || 'there'}! We have marked your inquiry as priority. Our team and automations have received your details and will follow up immediately.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -93,14 +116,14 @@ export function WebsiteWhatsAppWidget({
             {
               id: `ai_${Date.now()}`,
               sender: 'ai',
-              text: `Message received! Our team has been notified and will reply shortly.`,
+              text: `Message received! Our team has been notified and automations have been initiated.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
         }
-        toast.success("Message received by UniCRM Inbox!");
+        toast.success("Verified inquiry received by UniCRM!");
       } else {
-        toast.error("Failed to deliver message. Please try again.");
+        toast.error(data.error || "Failed to deliver message. Please try again.");
       }
     } catch {
       toast.error("Network error. Please try again.");
@@ -115,6 +138,11 @@ export function WebsiteWhatsAppWidget({
     setName("");
     setEmailOrPhone("");
   };
+
+  const waPrefillMessage = name.trim() 
+    ? `Hi UniCRM, I'm ${name.trim()} and I'd like to get started with WhatsApp CRM.`
+    : `Hi UniCRM, I'd like to get started with WhatsApp CRM.`;
+  const waDirectUrl = `https://wa.me/${officialWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waPrefillMessage)}`;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
@@ -150,10 +178,28 @@ export function WebsiteWhatsAppWidget({
             </button>
           </div>
 
+          {/* Quick Direct WhatsApp Handshake Banner (Verified & Instant) */}
+          <div className="bg-emerald-500/10 dark:bg-emerald-950/40 border-b border-emerald-500/20 px-3 py-2 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 text-[11px] font-medium">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span>Direct WhatsApp Handshake</span>
+            </div>
+            <a
+              href={waDirectUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:underline bg-emerald-500/15 hover:bg-emerald-500/25 px-2 py-0.5 rounded-md transition-colors"
+            >
+              <Phone className="h-3 w-3" />
+              <span>Open WhatsApp</span>
+              <ArrowUpRight className="h-3 w-3" />
+            </a>
+          </div>
+
           {/* Chat Content Body */}
-          <div className="p-4 bg-muted/30 max-h-[320px] overflow-y-auto flex flex-col space-y-3">
+          <div className="p-4 bg-muted/30 max-h-[300px] overflow-y-auto flex flex-col space-y-3">
             {/* System Welcome Bubble */}
-            <div className="bg-background border border-border text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[90%] text-xs leading-relaxed space-y-1">
+            <div className="bg-background border border-border text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[92%] text-xs leading-relaxed space-y-1">
               <span className="font-bold text-[10px] text-primary flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 {brandName}
@@ -210,21 +256,37 @@ export function WebsiteWhatsAppWidget({
           {/* Input & Form Area */}
           <form onSubmit={handleSubmit} className="p-3 bg-card border-t border-border space-y-2">
             {history.length === 0 && (
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="Your Name (optional)"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-                <input
-                  type="text"
-                  placeholder="Email or WhatsApp"
-                  value={emailOrPhone}
-                  onChange={(e) => setEmailOrPhone(e.target.value)}
-                  className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                />
+              <div className="space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    placeholder="Your Name (optional)"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                  <input
+                    type="text"
+                    required
+                    placeholder="Email or WhatsApp *"
+                    value={emailOrPhone}
+                    onChange={(e) => setEmailOrPhone(e.target.value)}
+                    className={`text-xs bg-muted/50 border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 transition-colors ${
+                      emailOrPhone.trim().length > 0 && !isContactValid
+                        ? "border-destructive focus:ring-destructive"
+                        : "border-border focus:ring-primary"
+                    }`}
+                  />
+                </div>
+                {emailOrPhone.trim().length > 0 && !isContactValid ? (
+                  <p className="text-[10px] text-destructive leading-tight px-1">
+                    Please provide a valid email (e.g. name@company.com) or phone number (with country code).
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-muted-foreground leading-tight px-1">
+                    🔒 Verification required to prevent spam and link your CRM automations.
+                  </p>
+                )}
               </div>
             )}
 
@@ -234,13 +296,14 @@ export function WebsiteWhatsAppWidget({
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask anything or request pricing..."
-                className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder={isContactValid || history.length > 0 ? "Ask anything or request pricing..." : "Enter Email/Phone above first..."}
+                disabled={history.length === 0 && !isContactValid}
+                className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
-                disabled={submitting || !message.trim()}
-                className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 disabled:opacity-50"
+                disabled={submitting || !message.trim() || (history.length === 0 && !isContactValid)}
+                className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center shadow-xs transition-transform active:scale-95 shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
                 aria-label="Send Message"
               >
                 {submitting ? (
@@ -252,7 +315,10 @@ export function WebsiteWhatsAppWidget({
             </div>
             {history.length > 0 && (
               <div className="flex justify-between items-center pt-1 px-1 text-[10px] text-muted-foreground">
-                <span>Inquiry saved to UniCRM</span>
+                <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                  <ShieldCheck className="h-3 w-3" />
+                  Verified contact inquiry saved
+                </span>
                 <button
                   type="button"
                   onClick={handleReset}

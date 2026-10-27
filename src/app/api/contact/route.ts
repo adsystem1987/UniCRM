@@ -6,6 +6,7 @@ import { evaluateTextIntent, applyIntentToContact } from '@/lib/ai/intent-router
 import { loadAiConfig } from '@/lib/ai/config';
 import { generateReply } from '@/lib/ai/generate';
 import { buildSystemPrompt } from '@/lib/ai/defaults';
+import { runAutomationsForTrigger } from '@/lib/automations/engine';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +59,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true, message: 'Message received.' });
     }
 
-    if (!name || !email || !message) {
+    // Live chat or contact form submission:
+    // Form submits strictly require name, email, message.
+    // Live chat requires name, at least (email OR phone), and message.
+    const hasContactMethod = Boolean(email || phone);
+    if (!name || !message || (!email && isFormSubmit) || !hasContactMethod) {
       if (isFormSubmit) {
         return NextResponse.redirect(
           new URL('/contact?error=missing_fields', req.url),
@@ -66,14 +71,14 @@ export async function POST(req: Request) {
         );
       }
       return NextResponse.json(
-        { error: 'Please provide your name, email, and message.' },
+        { error: 'Please provide your name, a valid email or phone number, and a message.' },
         { status: 400 }
       );
     }
 
     const payload = {
       to: DESTINATION_EMAIL,
-      from: email,
+      from: email || 'No email provided (Phone-only inquiry)',
       name,
       phone: phone || 'Not provided',
       topic,
@@ -108,6 +113,7 @@ export async function POST(req: Request) {
 
         // Check if contact exists
         let contactId: string | null = null;
+        let isNewContact = false;
         if (phone) {
           const { data: byPhone } = await supabase
             .from('contacts')
@@ -135,12 +141,15 @@ export async function POST(req: Request) {
               account_id: accountId,
               user_id: userId,
               name,
-              email,
-              phone: phone || '',
+              email: email || null,
+              phone: phone || null,
             })
             .select('id')
             .single();
-          if (newContact) contactId = newContact.id;
+          if (newContact) {
+            contactId = newContact.id;
+            isNewContact = true;
+          }
         }
 
         if (contactId) {
@@ -209,6 +218,7 @@ export async function POST(req: Request) {
 
           // Find or create conversation
           let conversationId: string | null = null;
+          let isFirstInbound = false;
           const { data: existingConv } = await supabase
             .from('conversations')
             .select('id')
@@ -216,11 +226,12 @@ export async function POST(req: Request) {
             .eq('contact_id', contactId)
             .maybeSingle();
 
-          const messageContent = `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`;
+          const messageContent = `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email || 'Not provided'}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`;
 
           if (existingConv) {
             conversationId = existingConv.id;
           } else {
+            isFirstInbound = true;
             const { data: newConv } = await supabase
               .from('conversations')
               .insert({
@@ -262,6 +273,27 @@ export async function POST(req: Request) {
                 unread_count: 1,
               })
               .eq('id', conversationId);
+
+            // Trigger Automations engine (Welcome Drips, Keyword Auto-Responders, New Contact workflows)
+            try {
+              const triggersToFire: Array<'new_contact_created' | 'first_inbound_message' | 'new_message_received'> = ['new_message_received'];
+              if (isFirstInbound) triggersToFire.unshift('first_inbound_message');
+              if (isNewContact) triggersToFire.unshift('new_contact_created');
+
+              for (const triggerType of triggersToFire) {
+                await runAutomationsForTrigger({
+                  accountId,
+                  triggerType,
+                  contactId,
+                  context: {
+                    message_text: message,
+                    conversation_id: conversationId,
+                  },
+                }).catch((autoErr) => console.error('[contact/route] automation run error:', autoErr));
+              }
+            } catch (autoErr) {
+              console.error('[contact/route] failed to dispatch automations:', autoErr);
+            }
 
             // Option A: For general queries, generate an instant AI auto-reply
             try {
