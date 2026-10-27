@@ -202,6 +202,9 @@ export default function LandingPage() {
                 <Target className="h-3.5 w-3.5 text-primary" /> Smart Lead Finder
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Sparkles className="h-3.5 w-3.5 text-purple-400" /> Self-Learning Memory
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
                 <Compass className="h-3.5 w-3.5 text-purple-500" /> 1-Click Industry Setup
               </span>
             </div>
@@ -574,7 +577,7 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {/* Feature 1: Instant Business Micro-Page */}
+              {/* Feature 1: Instant Business Micro-Page & 1-Click Booking */}
               <div className="rounded-3xl border border-emerald-500/40 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-emerald-500 relative overflow-hidden">
                 <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
                   New
@@ -583,13 +586,13 @@ export default function LandingPage() {
                   <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-6">
                     <Globe className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Instant Business Micro-Page</h3>
+                  <h3 className="text-xl font-bold text-foreground">Instant Business Page &amp; Booking</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    No website? Launch your mobile page and catalog in 60 seconds just like posting an Instagram story. Share your link on Google Maps, Facebook Ads, or print a QR code—inquiries land directly in UniCRM.
+                    Launch your digital storefront in 60 seconds with zero coding. Customers can browse your catalog, book appointments directly from the page, and receive instant automated WhatsApp confirmations and reminders.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500 flex items-center justify-between">
-                  <span>Zero code &amp; hosting required</span>
+                  <span>1-Click Booking + Reminders</span>
                   <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
                 </div>
               </div>
@@ -602,27 +605,27 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Connect instantly by scanning a QR code with your mobile phone (100% free WhatsApp Web Gateway), or plug in your official Meta Cloud API for high-volume enterprise campaigns.
+                    Connect instantly in 10 seconds by scanning a QR code with your phone (100% free with zero Meta setup barriers), or plug in official Meta Cloud API keys for high-volume enterprise broadcast marketing.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-400">
-                  Zero setup friction
+                  Instant QR or Meta Cloud API
                 </div>
               </div>
 
-              {/* Feature 3: Smart Client Memory */}
+              {/* Feature 3: Smart Client Memory & Continuous Learning */}
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-purple-500/50">
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Smart Client Memory &amp; Profiles</h3>
+                  <h3 className="text-xl font-bold text-foreground">Continuous Learning Client Memory</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Automatically remembers every client&apos;s budget, specific preferences, and past conversation history right in your WhatsApp chat sidebar so you always close deals with full context.
+                    Your CRM gets smarter with every conversation. Automatically extracts customer budgets, timelines, buying intentions, and past objections in real-time, giving your agents instant context right inside the chat sidebar.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">
-                  Instant context on every chat
+                  Self-learning intelligence on every chat
                 </div>
               </div>
 
