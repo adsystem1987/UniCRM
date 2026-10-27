@@ -860,20 +860,41 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                       </div>
                     </div>
 
-                    {lead.website && (
-                      <div className="pt-0.5">
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
+                      {lead.website ? (
                         <a
                           href={lead.website}
                           target="_blank"
                           rel="noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 w-fit truncate max-w-full"
+                          className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 truncate max-w-[140px]"
                         >
                           <Globe className="h-2.5 w-2.5 shrink-0" />
                           <span className="truncate">{lead.website.replace("https://", "")}</span>
                         </a>
-                      </div>
-                    )}
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground italic">Direct Contact</span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const cleanNum = lead.phone.replace(/[^0-9]/g, '');
+                          window.open(
+                            `https://wa.me/${cleanNum}?text=${encodeURIComponent(
+                              `Hi ${lead.name}, saw your profile online regarding ${lead.category || 'your services'}. Wanted to connect!`
+                            )}`,
+                            '_blank',
+                            'noopener,noreferrer'
+                          );
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-colors"
+                      >
+                        <Send className="h-2.5 w-2.5" />
+                        Quick Chat
+                      </button>
+                    </div>
                   </div>
                 );
               })}
