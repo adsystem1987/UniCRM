@@ -30,6 +30,7 @@ import {
 import { handleOptOutInbound } from '@/lib/whatsapp/anti-ban'
 import { handlePhoneVerificationHandshake } from '@/lib/auth/phone-handshake'
 import { getChatwootConfig, mirrorInboundToChatwoot } from '@/lib/integrations/chatwoot'
+import { updateContactContinuousMemory } from '@/lib/ai/continuous-memory'
 
 // The `after()` callback in POST runs within this route's max duration.
 // Inbound processing can fan out to per-media Meta verification calls, so
@@ -856,6 +857,15 @@ async function processMessage(
 
   if (convError) {
     console.error('Error updating conversation:', convError)
+  }
+
+  // Continuous Learning Memory: Automatically extract client preferences & budget signals
+  if (contactRecord?.id && contentText) {
+    void updateContactContinuousMemory(supabaseAdmin(), {
+      accountId,
+      contactId: contactRecord.id,
+      messageText: contentText,
+    });
   }
 
   // A customer writing again re-opens the thread (issue #409). Kept as a

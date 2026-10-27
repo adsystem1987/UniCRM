@@ -6,6 +6,7 @@ import { runAutomationsForTrigger } from '@/lib/automations/engine';
 import { dispatchInboundToFlows } from '@/lib/flows/engine';
 import { dispatchInboundToAiReply } from '@/lib/ai/auto-reply';
 import { handlePhoneVerificationHandshake } from '@/lib/auth/phone-handshake';
+import { updateContactContinuousMemory } from '@/lib/ai/continuous-memory';
 
 // Lazy-initialized admin client for webhook delivery
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,6 +241,15 @@ export async function POST(req: NextRequest) {
         senderPhone: phone,
         text: messageContent,
       }).catch((err) => console.error('[evolution-webhook] phone handshake error:', err));
+    }
+
+    // Continuous Learning Memory: Automatically extract client preferences & budget signals
+    if (!isFromMe && contact?.id && messageContent) {
+      void updateContactContinuousMemory(supabase, {
+        accountId,
+        contactId: contact.id,
+        messageText: messageContent,
+      });
     }
 
     // Automatically dispatch CRM Automations, Drips & Flows for inbound WhatsApp
