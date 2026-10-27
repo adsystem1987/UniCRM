@@ -37,15 +37,34 @@ export async function GET() {
       .from('profiles')
       .select('id, email, full_name, account_id, role');
 
+    // Fetch entitlements to surface active status badges directly on the platform list
+    const { data: entitlements } = await admin
+      .from('account_entitlements')
+      .select('account_id, ai_pro_active, ai_pro_expires_at, lead_credits_balance, ai_api_key_encrypted, lead_scraper_token_encrypted');
+
     const accountsWithMeta = (accounts || []).map((acc) => {
       const accMembers = (profiles || []).filter((p) => p.account_id === acc.id);
       const owner = accMembers.find((m) => m.id === acc.owner_user_id) || accMembers[0];
+      const ent = (entitlements || []).find((e) => e.account_id === acc.id);
+
+      const isAiProActive = Boolean(
+        ent?.ai_pro_active &&
+          (!ent.ai_pro_expires_at || new Date(ent.ai_pro_expires_at) > new Date())
+      );
+
       return {
         ...acc,
         status: acc.status || 'active',
         member_count: accMembers.length,
         owner_email: owner?.email || 'Unknown',
         owner_name: owner?.full_name || 'Anonymous',
+        entitlements: {
+          aiProActive: isAiProActive,
+          aiProExpiresAt: ent?.ai_pro_expires_at || null,
+          hasCustomAiKey: Boolean(ent?.ai_api_key_encrypted),
+          leadCredits: ent?.lead_credits_balance || 0,
+          hasCustomScraperToken: Boolean(ent?.lead_scraper_token_encrypted),
+        },
       };
     });
 

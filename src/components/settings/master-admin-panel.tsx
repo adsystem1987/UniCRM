@@ -40,6 +40,13 @@ interface PlatformAccount {
   member_count: number;
   owner_email: string;
   owner_name: string;
+  entitlements?: {
+    aiProActive: boolean;
+    aiProExpiresAt: string | null;
+    hasCustomAiKey: boolean;
+    leadCredits: number;
+    hasCustomScraperToken: boolean;
+  };
 }
 
 export function MasterAdminPanel() {
@@ -287,6 +294,20 @@ export function MasterAdminPanel() {
                       <span className="text-[11px] font-mono text-muted-foreground">
                         {acc.member_count} {acc.member_count === 1 ? "user" : "users"}
                       </span>
+
+                      {/* Entitlement Status Badges */}
+                      {acc.entitlements?.aiProActive ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                          <Sparkles className="size-2.5 fill-current" />
+                          AI Pro Active {acc.entitlements.hasCustomAiKey ? '(Dedicated Key)' : ''}
+                        </span>
+                      ) : null}
+
+                      {acc.entitlements?.leadCredits && acc.entitlements.leadCredits > 0 ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                          🎯 {acc.entitlements.leadCredits} Lead Credits {acc.entitlements.hasCustomScraperToken ? '(Dedicated Scraper)' : ''}
+                        </span>
+                      ) : null}
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">

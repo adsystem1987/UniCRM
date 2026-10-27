@@ -212,19 +212,24 @@ export function EntitlementDialog({
 
               {/* Dedicated OmniRoute Key */}
               <div className="space-y-1.5 pt-1">
-                <Label className="text-[11px] font-semibold flex items-center gap-1.5">
-                  <Key className="size-3 text-muted-foreground" />
-                  OmniRoute / LLM API Key (Encrypted Backend)
+                <Label className="text-[11px] font-semibold flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Key className="size-3 text-muted-foreground" />
+                    Dedicated OmniRoute / LLM API Key
+                  </span>
+                  <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold">
+                    Encrypted Backend
+                  </span>
                 </Label>
                 <Input
                   type="password"
-                  placeholder={data?.ai_api_key_encrypted ? '•••••••••••••••••••• (Active)' : 'Paste dedicated API Key'}
+                  placeholder={data?.ai_api_key_encrypted ? '•••••••••••••••••••• (Active Dedicated Key)' : 'Paste dedicated OmniRoute API key (sk-...)'}
                   value={aiApiKey}
                   onChange={(e) => setAiApiKey(e.target.value)}
                   className="text-xs font-mono bg-background"
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Client never sees this key. Proxied automatically for their WhatsApp AI.
+                  The client NEVER sees this key. It is strictly encrypted and used by UniCRM's AI router to power this client's WhatsApp auto-replies.
                 </p>
               </div>
             </div>
@@ -276,17 +281,25 @@ export function EntitlementDialog({
 
               {/* Dedicated Scraper Runner Token */}
               <div className="space-y-1.5 pt-1">
-                <Label className="text-[11px] font-semibold flex items-center gap-1.5">
-                  <Key className="size-3 text-muted-foreground" />
-                  Dedicated Lead Scraper Token (Optional)
+                <Label className="text-[11px] font-semibold flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Key className="size-3 text-muted-foreground" />
+                    Dedicated Scraper Token (e.g. Apify Token)
+                  </span>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                    Per-Client Allocation
+                  </span>
                 </Label>
                 <Input
                   type="password"
-                  placeholder={data?.lead_scraper_token_encrypted ? '•••••••••••••••••••• (Configured)' : 'Leave empty to use pool token'}
+                  placeholder={data?.lead_scraper_token_encrypted ? '•••••••••••••••••••• (Configured Dedicated Token)' : 'Paste client Apify token (apify_api_...)'}
                   value={leadScraperToken}
                   onChange={(e) => setLeadScraperToken(e.target.value)}
                   className="text-xs font-mono bg-background"
                 />
+                <p className="text-[10px] text-muted-foreground">
+                  When specified, all Lead Finder searches for this client will route directly through their dedicated runner token. If left blank, it falls back to the master shared pool.
+                </p>
               </div>
             </div>
 
