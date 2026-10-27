@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { mirrorMediaToGoogleDrive } from '@/lib/gdrive/offload';
 import { handleOptOutInbound } from '@/lib/whatsapp/anti-ban';
+import { runAutomationsForTrigger } from '@/lib/automations/engine';
+import { dispatchInboundToFlows } from '@/lib/flows/engine';
+import { dispatchInboundToAiReply } from '@/lib/ai/auto-reply';
+import { handlePhoneVerificationHandshake } from '@/lib/auth/phone-handshake';
 
 // Lazy-initialized admin client for webhook delivery
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,6 +65,7 @@ export async function POST(req: NextRequest) {
     // Resolve account_id from instanceName (e.g. acc_dce8cbba)
     const userPrefix = instanceName.replace('acc_', '');
     let accountId: string | null = null;
+    let resolvedUserId: string | undefined = undefined;
 
     if (userPrefix) {
       const { data: profile } = await supabase
@@ -72,6 +77,7 @@ export async function POST(req: NextRequest) {
 
       if (profile?.account_id) {
         accountId = profile.account_id;
+        resolvedUserId = profile.user_id;
       }
     }
 
@@ -79,10 +85,11 @@ export async function POST(req: NextRequest) {
     if (!accountId) {
       const { data: firstAcc } = await supabase
         .from('accounts')
-        .select('id')
+        .select('id, owner_user_id')
         .limit(1)
         .maybeSingle();
       accountId = firstAcc?.id;
+      resolvedUserId = firstAcc?.owner_user_id;
     }
 
     if (!accountId) {
@@ -98,7 +105,9 @@ export async function POST(req: NextRequest) {
       .eq('phone', phone)
       .maybeSingle();
 
+    let isNewContact = false;
     if (!contact) {
+      isNewContact = true;
       const { data: newContact, error: contactError } = await supabase
         .from('contacts')
         .insert({
@@ -129,7 +138,9 @@ export async function POST(req: NextRequest) {
       .eq('contact_id', contact.id)
       .maybeSingle();
 
+    let isFirstInbound = false;
     if (!conv) {
+      isFirstInbound = true;
       const { data: newConv, error: convError } = await supabase
         .from('conversations')
         .insert({
@@ -219,6 +230,73 @@ export async function POST(req: NextRequest) {
           }).catch((err) => console.error('[evolution-webhook] GDrive offload failed:', err));
         } catch (e) {
           console.error('[evolution-webhook] Base64 decode failed:', e);
+        }
+      }
+    }
+
+    // Check for Onboarding Phone Verification Handshake (ACT-XXXXXX)
+    if (!isFromMe && phone && messageContent) {
+      await handlePhoneVerificationHandshake(supabase, {
+        senderPhone: phone,
+        text: messageContent,
+      }).catch((err) => console.error('[evolution-webhook] phone handshake error:', err));
+    }
+
+    // Automatically dispatch CRM Automations, Drips & Flows for inbound WhatsApp
+    if (!isFromMe && contact?.id && conv?.id && messageContent) {
+      // 1. Run Flows Engine (interactive menus, keywords, automated paths)
+      let flowConsumed = false;
+      try {
+        const flowResult = await dispatchInboundToFlows({
+          accountId,
+          userId: resolvedUserId || contact.id,
+          contactId: contact.id,
+          conversationId: conv.id,
+          message: { kind: 'text', text: messageContent, meta_message_id: messageId },
+          isFirstInboundMessage: isFirstInbound,
+        });
+        flowConsumed = flowResult.consumed;
+      } catch (flowErr) {
+        console.error('[evolution-webhook] flow dispatch error:', flowErr);
+      }
+
+      // 2. Run Automations Triggers (new contact, first inbound, new message)
+      try {
+        const triggersToFire: Array<'new_contact_created' | 'first_inbound_message' | 'new_message_received'> = [
+          'new_message_received',
+        ];
+        if (isFirstInbound) triggersToFire.unshift('first_inbound_message');
+        if (isNewContact) triggersToFire.unshift('new_contact_created');
+
+        for (const triggerType of triggersToFire) {
+          await runAutomationsForTrigger({
+            accountId,
+            triggerType,
+            contactId: contact.id,
+            context: {
+              message_text: messageContent,
+              conversation_id: conv.id,
+            },
+          }).catch((autoErr) =>
+            console.error('[evolution-webhook] automation run error:', autoErr)
+          );
+        }
+      } catch (autoErr) {
+        console.error('[evolution-webhook] automations dispatch error:', autoErr);
+      }
+
+      // 3. Fallback AI Smart Auto-Reply (if configured and flow didn't consume)
+      if (!flowConsumed && messageContent.trim()) {
+        try {
+          await dispatchInboundToAiReply({
+            accountId,
+            conversationId: conv.id,
+            contactId: contact.id,
+            configOwnerUserId: resolvedUserId || contact.id,
+            inboundMessageId: messageId,
+          });
+        } catch (aiErr) {
+          console.error('[evolution-webhook] AI auto-reply error:', aiErr);
         }
       }
     }
