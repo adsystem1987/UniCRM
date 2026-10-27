@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next';
+import { getAdminClient } from '@/lib/gdrive/offload';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dfyunicrm.com';
   const currentDate = new Date();
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${siteUrl}`,
       lastModified: currentDate,
@@ -18,4 +19,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
   ];
+
+  try {
+    const admin = getAdminClient();
+    const { data: businessPages } = await admin
+      .from('business_pages')
+      .select('slug, updated_at')
+      .eq('is_published', true)
+      .limit(100);
+
+    const businessRoutes: MetadataRoute.Sitemap = (businessPages || []).map((page) => ({
+      url: `${siteUrl}/p/${page.slug}`,
+      lastModified: page.updated_at ? new Date(page.updated_at) : currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    }));
+
+    return [...staticRoutes, ...businessRoutes];
+  } catch {
+    return staticRoutes;
+  }
 }
