@@ -106,7 +106,7 @@ export function WebsiteWhatsAppWidget({
             {
               id: `ai_${Date.now()}`,
               sender: 'ai',
-              text: `Thank you, ${name.trim() || 'there'}! We have marked your inquiry as priority. Our team and automations have received your details and will follow up immediately.`,
+              text: `Thank you, ${name.trim() || 'there'}! We have marked your inquiry as priority. Our team has received your details and will follow up with you directly.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -116,7 +116,7 @@ export function WebsiteWhatsAppWidget({
             {
               id: `ai_${Date.now()}`,
               sender: 'ai',
-              text: `Message received! Our team has been notified and automations have been initiated.`,
+              text: `Message received! Our team has been notified and will reply shortly.`,
               time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -280,11 +280,11 @@ export function WebsiteWhatsAppWidget({
                 </div>
                 {emailOrPhone.trim().length > 0 && !isContactValid ? (
                   <p className="text-[10px] text-destructive leading-tight px-1">
-                    Please provide a valid email (e.g. name@company.com) or phone number (with country code).
+                    Please provide a valid email (e.g. name@company.com) or WhatsApp phone number.
                   </p>
                 ) : (
                   <p className="text-[10px] text-muted-foreground leading-tight px-1">
-                    🔒 Verification required to prevent spam and link your CRM automations.
+                    🔒 Required so our team can follow up with your reply and prevent spam.
                   </p>
                 )}
               </div>
