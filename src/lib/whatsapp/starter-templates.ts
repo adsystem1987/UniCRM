@@ -67,7 +67,7 @@ export const STARTER_TEMPLATES: Array<
     body_text:
       'Hello {{1}}, we have received your payment of {{2}} for Order #{{3}}. Thank you for doing business with {{4}}!',
     sample_values: {
-      body: ['Alex', '₹1,500', '10842', 'UniCRM'],
+      body: ['Alex', '1500 INR', '10842', 'UniCRM'],
     },
     footer_text: 'Thank you for your business.',
     buttons: [
@@ -103,7 +103,7 @@ export const STARTER_TEMPLATES: Array<
     displayName: 'Customer Feedback & Review',
     description: 'Collect high-converting ratings and reviews after service delivery.',
     name: 'customer_satisfaction_check',
-    category: 'Utility',
+    category: 'Marketing',
     language: 'en_US',
     body_text:
       'Hi {{1}}, thank you for choosing {{2}}! How was your experience with our team today? Your feedback helps us improve.',
