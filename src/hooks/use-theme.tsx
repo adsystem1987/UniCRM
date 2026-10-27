@@ -122,7 +122,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleMode = useCallback(() => {
-    setMode(mode === "dark" ? "light" : "dark");
+    // Read the live active mode from the DOM or state to avoid stale closure state
+    const currentDomMode =
+      typeof document !== "undefined"
+        ? (document.documentElement.dataset.mode as Mode)
+        : mode;
+    const active = currentDomMode === "dark" || currentDomMode === "light" ? currentDomMode : mode;
+    const nextMode: Mode = active === "dark" ? "light" : "dark";
+    setMode(nextMode);
   }, [mode, setMode]);
 
   // Sync from other tabs & listen for OS system theme changes (Light / Dark)
