@@ -114,12 +114,12 @@ export function evaluateTextIntent(text: string): IntentDecision {
   }
 
   if (pricingScore >= 0.45) {
-    tags.push('PricingInquiry');
+    tags.push('PricingInquiry', 'HotLead');
     return {
       intent: 'pricing',
       score: Math.min(0.9, 0.45 + pricingScore),
       suggestedTags: tags,
-      isHotLead: pricingScore >= 0.8,
+      isHotLead: true,
       requiresHuman: false,
     };
   }
