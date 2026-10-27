@@ -251,12 +251,12 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
             {/* Category Filter Pills (if categories exist) */}
             {categories.length > 2 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+              <div className="flex flex-wrap items-center gap-2 pb-1.5">
                 {categories.map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat as string)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                       selectedCategory === cat
                         ? 'bg-emerald-600 text-white shadow-xs'
                         : 'bg-card border border-border text-muted-foreground hover:text-foreground'

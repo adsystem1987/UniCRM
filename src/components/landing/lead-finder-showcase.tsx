@@ -299,7 +299,7 @@ export function LeadFinderShowcase() {
       </div>
 
       {/* Industry Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none -mx-1 px-1">
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 pb-2">
         {Object.entries(INDUSTRY_SHOWCASE).map(([key, item]) => {
           const Icon = item.icon;
           const isSelected = selectedIndustry === key;
@@ -311,13 +311,13 @@ export function LeadFinderShowcase() {
                 setSelectedIndustry(key);
                 setActiveLeadId(item.leads[0].id);
               }}
-              className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-xl flex items-center gap-2 whitespace-nowrap transition-all border shrink-0 ${
+              className={`px-3.5 py-2 text-xs font-bold rounded-xl flex items-center gap-2 transition-all border ${
                 isSelected
-                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm scale-105"
                   : "bg-surface border-border text-muted-foreground hover:text-foreground hover:bg-surface-hover"
               }`}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-3.5 w-3.5 shrink-0" />
               <span>{item.label}</span>
             </button>
           );

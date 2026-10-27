@@ -193,13 +193,13 @@ export function IndustryBlueprintsPanel() {
               className="pl-9 h-9 text-xs bg-muted/40 border-border"
             />
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          <div className="flex flex-wrap items-center gap-1.5 pb-1 md:pb-0">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-colors border ${
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors border ${
                   selectedCategory === cat
                     ? "bg-primary/10 text-primary border-primary/30 font-semibold"
                     : "border-border text-muted-foreground hover:text-foreground hover:bg-muted/50"
