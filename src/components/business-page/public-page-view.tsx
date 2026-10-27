@@ -12,6 +12,9 @@ import {
   Send,
   Loader2,
   Share2,
+  Calendar,
+  X,
+  CalendarCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -50,6 +53,22 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   const [inquiryNotes, setInquiryNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Booking Modal State
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [selectedItemForBooking, setSelectedItemForBooking] = useState<BusinessItem | null>(null);
+  const [bookingName, setBookingName] = useState('');
+  const [bookingPhone, setBookingPhone] = useState('');
+  const [bookingDate, setBookingDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
+  const [bookingSlot, setBookingSlot] = useState('11:00 AM');
+  const [bookingNotes, setBookingNotes] = useState('');
+  const [bookingSubmitting, setBookingSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
+  const [bookingWaDeepLink, setBookingWaDeepLink] = useState<string | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -119,6 +138,54 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookingName.trim() || !bookingPhone.trim() || !bookingDate || !bookingSlot) {
+      toast.error('Please fill in your name, phone, date, and preferred time slot.');
+      return;
+    }
+
+    setBookingSubmitting(true);
+    try {
+      const res = await fetch('/api/business-pages/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageId: page.id,
+          accountId: page.account_id,
+          name: bookingName.trim(),
+          phone: bookingPhone.trim(),
+          bookingDate,
+          timeSlot: bookingSlot,
+          itemId: selectedItemForBooking?.id || null,
+          itemTitle: selectedItemForBooking?.title || null,
+          notes: bookingNotes.trim() || null,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to schedule booking');
+      }
+
+      setBookingSuccess(true);
+      if (data.clientWaDeepLink) {
+        setBookingWaDeepLink(data.clientWaDeepLink);
+      }
+      toast.success('Appointment booked successfully! WhatsApp confirmation sent.');
+    } catch (err: any) {
+      toast.error(err.message || 'Could not schedule booking. Please message us on WhatsApp.');
+    } finally {
+      setBookingSubmitting(false);
+    }
+  };
+
+  const openBookingModal = (item?: BusinessItem) => {
+    setSelectedItemForBooking(item || null);
+    setBookingSuccess(false);
+    setBookingOpen(true);
   };
 
   return (
@@ -207,32 +274,19 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           {/* Primary Action Buttons */}
           <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
             <button
-              onClick={() => openWhatsApp()}
+              onClick={() => openBookingModal()}
               className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98]"
             >
-              <MessageCircle className="size-4 fill-current" />
+              <Calendar className="size-4" />
+              Book Appointment / Slot
+            </button>
+            <button
+              onClick={() => openWhatsApp()}
+              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
+            >
+              <MessageCircle className="size-4 fill-current text-emerald-500" />
               Chat on WhatsApp
             </button>
-            {page.calling_number ? (
-              <a
-                href={`tel:${page.calling_number}`}
-                className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
-              >
-                <Phone className="size-4" />
-                Call Directly
-              </a>
-            ) : (
-              <button
-                onClick={() => {
-                  const formEl = document.getElementById('inquiry-section');
-                  formEl?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
-              >
-                <Clock className="size-4" />
-                Request Callback
-              </button>
-            )}
           </div>
         </div>
 
@@ -311,7 +365,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center sm:self-center shrink-0">
+                  <div className="flex items-center gap-2 sm:self-center shrink-0">
+                    <button
+                      onClick={() => openBookingModal(item)}
+                      className="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-1 shadow-xs"
+                    >
+                      <Calendar className="size-3.5" />
+                      Book Slot
+                    </button>
                     <button
                       onClick={() =>
                         openWhatsApp(
@@ -319,10 +380,10 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                             `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
                         )
                       }
-                      className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 border border-emerald-500/20"
+                      className="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 border border-emerald-500/20"
                     >
                       <MessageCircle className="size-3.5 fill-current" />
-                      {item.button_label || 'Inquire on WhatsApp'}
+                      {item.button_label || 'Inquire'}
                     </button>
                   </div>
                 </div>
@@ -417,22 +478,198 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
         </div>
       </main>
 
-      {/* Persistent Floating Bottom Bar for Mobile */}
-      <div className="fixed bottom-0 inset-x-0 z-50 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between sm:hidden gap-2">
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
-          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium truncate">
-            {page.tagline || 'Verified Business'}
-          </p>
+        {/* Persistent Floating Bottom Bar for Mobile */}
+        <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between sm:hidden gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium truncate">
+              {page.tagline || 'Verified Business'}
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={() => openBookingModal()}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-xs shadow-xs"
+            >
+              <Calendar className="size-3.5" />
+              Book
+            </button>
+            <button
+              onClick={() => openWhatsApp()}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md"
+            >
+              <MessageCircle className="size-3.5 fill-current" />
+              Chat
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => openWhatsApp()}
-          className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md"
-        >
-          <MessageCircle className="size-3.5 fill-current" />
-          Chat Now
-        </button>
+
+        {/* Interactive Booking Modal */}
+        {bookingOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in-snappy">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <CalendarCheck className="size-4" />
+                    </span>
+                    <h3 className="font-bold text-base text-foreground">
+                      Book an Appointment
+                    </h3>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedItemForBooking
+                      ? `Service: ${selectedItemForBooking.title}`
+                      : `With ${page.title}`}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBookingOpen(false)}
+                  className="rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {bookingSuccess ? (
+                <div className="text-center py-6 space-y-3">
+                  <div className="size-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="size-6" />
+                  </div>
+                  <h4 className="font-bold text-sm text-foreground">
+                    Booking Confirmed!
+                  </h4>
+                  <p className="text-xs text-muted-foreground leading-relaxed px-4">
+                    Your appointment has been scheduled for{' '}
+                    <strong className="text-foreground">{bookingDate}</strong> at{' '}
+                    <strong className="text-foreground">{bookingSlot}</strong>.
+                    A WhatsApp reminder has been sent to your number.
+                  </p>
+
+                  {bookingWaDeepLink && (
+                    <a
+                      href={bookingWaDeepLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md mt-2"
+                    >
+                      <MessageCircle className="size-3.5 fill-current" />
+                      View Chat on WhatsApp
+                    </a>
+                  )}
+
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setBookingOpen(false)}
+                      className="w-full py-2 rounded-xl text-xs font-semibold bg-muted hover:bg-muted/80 text-foreground transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleBookingSubmit} className="space-y-3 pt-1">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-foreground">
+                      Your Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. John Doe"
+                      value={bookingName}
+                      onChange={(e) => setBookingName(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-foreground">
+                      WhatsApp Phone Number (with Country Code)
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="+91 98765 43210"
+                      value={bookingPhone}
+                      onChange={(e) => setBookingPhone(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-semibold text-foreground">
+                        Preferred Date
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={bookingDate}
+                        onChange={(e) => setBookingDate(e.target.value)}
+                        className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] font-semibold text-foreground">
+                        Time Slot
+                      </label>
+                      <select
+                        value={bookingSlot}
+                        onChange={(e) => setBookingSlot(e.target.value)}
+                        className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      >
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="12:00 PM">12:00 PM</option>
+                        <option value="02:00 PM">02:00 PM</option>
+                        <option value="03:30 PM">03:30 PM</option>
+                        <option value="05:00 PM">05:00 PM</option>
+                        <option value="06:30 PM">06:30 PM</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-semibold text-foreground">
+                      Special Requirements / Note (Optional)
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Any specific questions or preparation details..."
+                      value={bookingNotes}
+                      onChange={(e) => setBookingNotes(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={bookingSubmitting}
+                      className="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center justify-center gap-1.5 shadow-md"
+                    >
+                      {bookingSubmitting ? (
+                        <>
+                          <Loader2 className="size-3.5 animate-spin" />
+                          Confirming Slot...
+                        </>
+                      ) : (
+                        <>
+                          <CalendarCheck className="size-3.5" />
+                          Confirm Booking &amp; Send WhatsApp Reminder
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
   );
 }
