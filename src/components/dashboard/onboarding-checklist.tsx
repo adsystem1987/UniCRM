@@ -11,10 +11,13 @@ import {
   Users, 
   ChevronRight, 
   X,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
 
 interface Step {
   id: string;
@@ -65,6 +68,8 @@ const STORAGE_KEY = 'unicrm_onboarding_dismissed';
 export function OnboardingChecklist() {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [dismissed, setDismissed] = useState(false);
+  const [deployingStarters, setDeployingStarters] = useState(false);
+  const [startersDeployed, setStartersDeployed] = useState(false);
 
   useEffect(() => {
     const isDismissed = localStorage.getItem(STORAGE_KEY) === 'true';
@@ -80,6 +85,27 @@ export function OnboardingChecklist() {
       }
     }
   }, []);
+
+  const handleDeployStarters = async () => {
+    setDeployingStarters(true);
+    try {
+      const res = await fetch('/api/onboarding/deploy-starters', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to deploy starter kit');
+      }
+      setStartersDeployed(true);
+      toast.success(
+        `DFY Starter Kit active! ${data.templatesSubmitted || 0} templates submitted to Meta, and ${data.automationsCreated || 0} drip automations ready.`
+      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Error deploying starter kit');
+    } finally {
+      setDeployingStarters(false);
+    }
+  };
 
   const toggleStep = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -137,7 +163,50 @@ export function OnboardingChecklist() {
       </div>
 
       {/* Step items */}
-      <CardContent className="p-4 sm:p-5">
+      <CardContent className="p-4 sm:p-5 space-y-4">
+        {/* 1-Click DFY Starter Banner */}
+        <div className="relative overflow-hidden rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500 text-white">
+                <Zap className="h-3.5 w-3.5 fill-current" />
+              </span>
+              <h4 className="text-sm font-semibold text-foreground">
+                Want a Done-For-You (DFY) Quickstart?
+              </h4>
+              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                1-Click Ready
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Automatically submit 5 pre-approved WhatsApp message templates to Meta and activate instant lead drip automations for your account.
+            </p>
+          </div>
+          <Button
+            size="sm"
+            onClick={handleDeployStarters}
+            disabled={deployingStarters || startersDeployed}
+            className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm transition-all text-xs h-8"
+          >
+            {deployingStarters ? (
+              <>
+                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                Setting Up...
+              </>
+            ) : startersDeployed ? (
+              <>
+                <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+                DFY Pack Active
+              </>
+            ) : (
+              <>
+                <Zap className="mr-1.5 h-3.5 w-3.5" />
+                Deploy Starter Kit
+              </>
+            )}
+          </Button>
+        </div>
+
         <div className="grid gap-3 sm:grid-cols-2">
           {ONBOARDING_STEPS.map((step) => {
             const isDone = completedSteps.includes(step.id);
