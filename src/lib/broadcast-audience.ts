@@ -145,6 +145,11 @@ export async function resolveAudienceContacts(
   audience: AudienceConfig,
   resolveCsv: (rows: CsvAudienceRow[]) => Promise<Contact[]>,
 ): Promise<Contact[]> {
+  // If an empty tag selection is provided, return early with zero DB calls
+  if (audience.type === 'tags' && (!audience.tagIds || audience.tagIds.length === 0)) {
+    return [];
+  }
+
   const excluded = await fetchExcludedIds(db, audience);
   const keep = (contact: Contact) => !excluded.has(contact.id);
 
@@ -179,8 +184,11 @@ export async function countAudience(
       .select('id', { count: 'exact', head: true });
     if (error) throw new Error(`Failed to count contacts: ${error.message}`);
     const total = count ?? 0;
-    const excluded = await fetchExcludedIds(db, audience);
-    return Math.max(0, total - excluded.size);
+    if (audience.excludeTagIds && audience.excludeTagIds.length > 0) {
+      const excluded = await fetchExcludedIds(db, audience);
+      return Math.max(0, total - excluded.size);
+    }
+    return total;
   }
 
   if (audience.type === 'custom_field' && !audience.customField?.value) {
