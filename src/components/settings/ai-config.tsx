@@ -58,7 +58,12 @@ const KEY_PLACEHOLDER: Record<AiProvider, string> = {
 
 type PresetMode = 'builtin' | 'gemini_free' | 'custom';
 
-export function AiConfig() {
+interface AiConfigProps {
+  initialSystemPrompt?: string;
+  onSystemPromptChange?: (prompt: string) => void;
+}
+
+export function AiConfig({ initialSystemPrompt, onSystemPromptChange }: AiConfigProps = {}) {
   const { accountId, accountRole, profileLoading } = useAuth();
   const canEdit = accountRole ? canEditSettings(accountRole) : false;
   const t = useTranslations('Settings.aiConfig');
@@ -82,7 +87,13 @@ export function AiConfig() {
   const [embeddingsKey, setEmbeddingsKey] = useState('');
   const [embeddingsKeyEdited, setEmbeddingsKeyEdited] = useState(false);
   const [hasStoredEmbeddingsKey, setHasStoredEmbeddingsKey] = useState(false);
-  const [systemPrompt, setSystemPrompt] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState(initialSystemPrompt ?? '');
+
+  useEffect(() => {
+    if (initialSystemPrompt !== undefined && initialSystemPrompt !== null) {
+      setSystemPrompt(initialSystemPrompt);
+    }
+  }, [initialSystemPrompt]);
   const [isActive, setIsActive] = useState(true);
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(false);
   const [maxPerConversation, setMaxPerConversation] = useState(3);

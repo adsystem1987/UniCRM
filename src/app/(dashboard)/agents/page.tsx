@@ -2,31 +2,39 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Bot, Sparkles, Settings2, BarChart3 } from 'lucide-react';
+import { Bot, Sparkles, Settings2, BarChart3, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { AiPlayground } from '@/components/agents/ai-playground';
 import { AiUsageCard } from '@/components/agents/ai-usage';
 import { AiConfig } from '@/components/settings/ai-config';
+import { AgentSquadsDesk } from '@/components/agents/agent-squads-desk';
 import { useAuth } from '@/hooks/use-auth';
 import { canEditSettings } from '@/lib/auth/roles';
+import type { AgentSquadRole } from '@/lib/ai/squads';
 
-type Tab = 'playground' | 'setup' | 'usage';
+type Tab = 'squads' | 'playground' | 'setup' | 'usage';
 
 export default function AgentsPage() {
   const t = useTranslations('Agents');
   const { accountRole } = useAuth();
   const canViewUsage = accountRole ? canEditSettings(accountRole) : false;
-  const [tab, setTab] = useState<Tab>('playground');
+  const [tab, setTab] = useState<Tab>('squads');
   const [decided, setDecided] = useState(false);
+  const [activeSystemPrompt, setActiveSystemPrompt] = useState<string>('');
 
-  // Land first-time users on Setup, returning users on the Playground.
+  const handleApplyRole = (role: AgentSquadRole) => {
+    setActiveSystemPrompt(role.systemPrompt);
+    setTab('setup');
+  };
+
+  // Land first-time users on Squads, returning users on Squads / Playground.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const res = await fetch('/api/ai/config');
         const data = await res.json().catch(() => ({}));
-        if (!cancelled) setTab(data?.configured ? 'playground' : 'setup');
+        if (!cancelled) setTab(data?.configured ? 'squads' : 'setup');
       } catch {
         if (!cancelled) setTab('setup');
       } finally {
@@ -57,6 +65,9 @@ export default function AgentsPage() {
           className="mt-6"
         >
           <TabsList>
+            <TabsTrigger value="squads">
+              <Users className="mr-1.5 h-4 w-4" /> Agent Squads
+            </TabsTrigger>
             <TabsTrigger value="playground">
               <Sparkles className="mr-1.5 h-4 w-4" /> {t('tabPlayground')}
             </TabsTrigger>
@@ -70,12 +81,19 @@ export default function AgentsPage() {
             )}
           </TabsList>
 
+          <TabsContent value="squads" className="mt-4">
+            <AgentSquadsDesk
+              currentPrompt={activeSystemPrompt}
+              onApplyPrompt={handleApplyRole}
+            />
+          </TabsContent>
+
           <TabsContent value="playground" className="mt-4">
             <AiPlayground onGoToSetup={() => setTab('setup')} />
           </TabsContent>
 
           <TabsContent value="setup" className="mt-4">
-            <AiConfig />
+            <AiConfig initialSystemPrompt={activeSystemPrompt} />
           </TabsContent>
 
           {canViewUsage && (
