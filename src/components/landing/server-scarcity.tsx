@@ -34,7 +34,7 @@ export function ScarcityCtaButton() {
     <Link href="/signup" className="w-full sm:w-auto">
       <Button
         size="lg"
-        className="w-full sm:w-auto h-11 px-5 rounded-full bg-primary text-primary-foreground font-medium text-base gap-2 hover:opacity-90 active:opacity-80 active:translate-y-px shadow-xs"
+        className="w-full sm:w-auto h-11 px-6 rounded-full btn-gold-gradient font-bold text-base gap-2 shadow-md"
       >
         <MessageCircle className="h-4 w-4" />
         <span>Start for free</span>
