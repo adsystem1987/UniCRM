@@ -270,3 +270,29 @@
 - Read `@AGENTS.md` for UI/UX engineering standards and Next.js guidelines.
 - Always maintain documentation integrity and preserve unrelated comments/docstrings.
 - Ensure all color tokens maintain WCAG contrast in both Light and Dark modes.
+
+---
+
+## Karpathy Coding Guidelines (LLM Guardrails)
+Derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls:
+
+1. **Think Before Coding**:
+   - Don't assume. Don't hide confusion. Surface tradeoffs.
+   - State assumptions explicitly; ask if uncertain.
+   - Present options if multiple interpretations exist instead of picking silently.
+   - Propose simpler alternatives when warranted.
+
+2. **Simplicity First**:
+   - Write the minimum code required to solve the problem; nothing speculative.
+   - No unnecessary abstractions or premature generalizability.
+   - Rewrite if 200 lines can cleanly be 50 lines.
+
+3. **Surgical Changes**:
+   - Touch only what you must. Clean up only your own mess.
+   - Match existing style. Do not refactor untouched working code.
+   - Every changed line must trace directly to the task.
+
+4. **Goal-Driven Execution**:
+   - Define concrete, verifiable success criteria before running edits.
+   - Run verification loops (`npx tsc --noEmit`, automated test/build checks) until green.
+
