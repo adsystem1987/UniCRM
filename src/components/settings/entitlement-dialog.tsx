@@ -157,15 +157,15 @@ export function EntitlementDialog({
         ) : (
           <div className="space-y-5">
             {/* Quick 1-Click Provisioning Preset for ₹1,000 3-Month Pro UniCRM */}
-            <div className="rounded-xl border-2 border-emerald-500/40 bg-emerald-500/5 p-4 space-y-2.5">
-              <div className="flex items-center justify-between">
+            <div className="rounded-xl border-2 border-emerald-500/40 bg-emerald-500/5 p-4 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div>
                   <h4 className="text-xs font-black text-foreground flex items-center gap-1.5">
                     <Sparkles className="size-3.5 text-emerald-500" />
                     1-Click Bundle: 3-Month Pro UniCRM (₹1,000 Setup)
                   </h4>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    Instantly activates AI Pro Squads (+3 Months) &amp; grants 1,000 Lead Finder credits.
+                    Pre-fills +3 Months AI Pro &amp; 1,000 Lead Finder credits. Paste their dedicated keys below to track usage per tenant.
                   </p>
                 </div>
                 <Button
@@ -175,12 +175,42 @@ export function EntitlementDialog({
                     setAiProActive(true);
                     setAiMonthsToAdd(3);
                     setLeadCreditsToAdd(1000);
-                    toast.success('Applied 3-Month Pro UniCRM package preset! Click Save below to confirm.');
+                    toast.success('Applied 3-Month Pro presets! You can paste their dedicated keys below and click Save.');
                   }}
                   className="text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shrink-0 shadow-xs"
                 >
-                  Apply 3-Month Pro
+                  Apply 3-Month Preset
                 </Button>
+              </div>
+
+              {/* Dedicated Keys Quick Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-emerald-500/20">
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold text-foreground flex items-center gap-1">
+                    <Key className="size-3 text-amber-500" />
+                    Dedicated AI Key (Optional Tracking)
+                  </Label>
+                  <Input
+                    type="password"
+                    placeholder={data?.ai_api_key_encrypted ? '•••••••••••••••• (Active)' : 'Paste client AI key (sk-...)'}
+                    value={aiApiKey}
+                    onChange={(e) => setAiApiKey(e.target.value)}
+                    className="h-8 text-xs font-mono bg-background"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px] font-bold text-foreground flex items-center gap-1">
+                    <Key className="size-3 text-emerald-500" />
+                    Dedicated Scraper Token (Optional Tracking)
+                  </Label>
+                  <Input
+                    type="password"
+                    placeholder={data?.lead_scraper_token_encrypted ? '•••••••••••••••• (Active)' : 'Paste client Apify token'}
+                    value={leadScraperToken}
+                    onChange={(e) => setLeadScraperToken(e.target.value)}
+                    className="h-8 text-xs font-mono bg-background"
+                  />
+                </div>
               </div>
             </div>
 
