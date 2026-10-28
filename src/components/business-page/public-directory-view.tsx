@@ -41,7 +41,7 @@ export interface PublicDirectoryPageItem {
 
 export const CATEGORY_FILTERS = [
   { id: 'all', label: 'All Businesses' },
-  { id: 'loans', label: 'Loans & Mortgage (DSA)', icon: Landmark },
+  { id: 'loans', label: 'Loans & Finance', icon: Landmark },
   { id: 'realestate', label: 'Real Estate & Site Visits', icon: Building2 },
   { id: 'stays', label: 'Stays & Rooms', icon: Home },
   { id: 'tours', label: 'Tours & Travel', icon: Compass },
@@ -331,7 +331,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                         {getPageCategory(page) === 'loans' && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
                             <Landmark className="size-2.5" />
-                            Loans &amp; DSA Desk
+                            Loans &amp; Finance
                           </span>
                         )}
                         {getPageCategory(page) === 'realestate' && (
