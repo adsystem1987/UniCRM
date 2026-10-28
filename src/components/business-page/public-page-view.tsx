@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import {
   MessageCircle,
@@ -18,6 +19,9 @@ import {
   Home,
   Ticket,
   Users,
+  ArrowLeft,
+  Store,
+  ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -311,334 +315,477 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground antialiased selection:bg-emerald-500 selection:text-white pb-20">
-      {/* Top Banner / Cover */}
-      <div className="relative h-44 sm:h-56 w-full bg-linear-to-br from-emerald-600 via-teal-600 to-slate-900 overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground antialiased selection:bg-emerald-500 selection:text-white pb-24 sm:pb-16">
+      {/* Universal Top Header / Navbar */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/p"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-1.5 px-2.5 rounded-xl hover:bg-muted"
+            >
+              <ArrowLeft className="size-4" />
+              <span className="hidden sm:inline">Back to Directory</span>
+              <span className="sm:hidden">Directory</span>
+            </Link>
+
+            <span className="text-border">|</span>
+
+            <Link href="/" className="flex items-center gap-2">
+              <div className="size-7 rounded-lg bg-linear-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-black text-xs shadow-xs">
+                U
+              </div>
+              <span className="font-black text-sm tracking-tight text-foreground hidden sm:inline">
+                UniCRM
+              </span>
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={handleShare}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-muted hover:bg-muted/80 text-foreground transition-colors"
+            >
+              <Share2 className="size-3.5" />
+              <span className="hidden sm:inline">Share</span>
+            </button>
+
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-foreground text-background hover:opacity-90 transition-opacity shadow-xs"
+            >
+              <Store className="size-3.5" />
+              <span className="hidden md:inline">Create Your Page</span>
+              <span className="md:hidden">Get Yours</span>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Banner / Cover */}
+      <div className="relative h-48 sm:h-64 lg:h-80 w-full bg-linear-to-br from-emerald-700 via-teal-700 to-slate-950 overflow-hidden">
         {page.cover_url && (
           <Image
             src={page.cover_url}
-            alt="Cover"
+            alt={page.title}
             fill
-            className="object-cover opacity-60"
+            className="object-cover opacity-65"
             priority
           />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-transparent to-black/20" />
-        
-        {/* Share Button */}
-        <button
-          onClick={handleShare}
-          className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-xs font-semibold shadow-xs transition-colors"
-        >
-          <Share2 className="size-3.5" />
-          Share
-        </button>
-      </div>
+        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
 
-      {/* Main Profile Card Container */}
-      <main className="max-w-xl mx-auto px-4 -mt-16 sm:-mt-20 relative z-20 space-y-6">
-        {/* Profile Card */}
-        <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xl backdrop-blur-xs">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
-            {/* Logo / Avatar */}
-            <div className="relative size-20 sm:size-24 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-3xl font-black shadow-md border-2 border-background overflow-hidden shrink-0">
-              {page.logo_url ? (
-                <Image
-                  src={page.logo_url}
-                  alt={page.title}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                page.title.slice(0, 2).toUpperCase()
-              )}
-            </div>
-
-            {/* Profile Info */}
-            <div className="flex-1 space-y-1">
-              <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
-                  {page.title}
-                </h1>
-                <CheckCircle2 className="size-5 text-emerald-500 fill-emerald-500/20 shrink-0" />
-              </div>
-              {page.tagline && (
-                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                  {page.tagline}
-                </p>
-              )}
-              {page.address && (
-                <div className="flex items-center justify-center sm:justify-start gap-1 text-xs text-muted-foreground pt-1">
-                  <MapPin className="size-3.5 text-muted-foreground shrink-0" />
-                  {page.google_maps_url ? (
-                    <a
-                      href={page.google_maps_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline line-clamp-1"
-                    >
-                      {page.address}
-                    </a>
-                  ) : (
-                    <span className="line-clamp-1">{page.address}</span>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {page.about && (
-            <p className="mt-4 pt-4 border-t border-border text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              {page.about}
-            </p>
-          )}
-
-          {/* Primary Action Buttons */}
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <button
-              onClick={() => openBookingModal()}
-              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98]"
-            >
-              <Calendar className="size-4" />
-              Book Appointment / Slot
-            </button>
-            <button
-              onClick={() => openWhatsApp()}
-              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
-            >
-              <MessageCircle className="size-4 fill-current text-emerald-500" />
-              Chat on WhatsApp
-            </button>
+        <div className="absolute bottom-4 left-4 right-4 max-w-7xl mx-auto flex items-end justify-between z-10 text-white">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-400/30 backdrop-blur-md">
+              <CheckCircle2 className="size-3 text-emerald-300" />
+              Verified Direct Desk
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Dynamic Items / Offers Section */}
-        {page.items && page.items.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between px-1">
-              <h2 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-1.5 uppercase">
-                <Sparkles className="size-4 text-emerald-500" />
-                Featured Services &amp; Offers
-              </h2>
-              <span className="text-[11px] text-muted-foreground font-medium">
-                {filteredItems.length} of {page.items.length} items
-              </span>
-            </div>
+      {/* Main Responsive Grid Container */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+          
+          {/* Left Column (Main Content: Profile, Services, Offers) */}
+          <div className="lg:col-span-8 space-y-6">
+            
+            {/* Primary Profile Card */}
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-xl backdrop-blur-xs">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
+                {/* Logo / Avatar */}
+                <div className="relative size-20 sm:size-24 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-3xl font-black shadow-lg border-4 border-background overflow-hidden shrink-0">
+                  {page.logo_url ? (
+                    <Image
+                      src={page.logo_url}
+                      alt={page.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    page.title.slice(0, 2).toUpperCase()
+                  )}
+                </div>
 
-            {/* Category Filter Pills (if categories exist) */}
-            {categories.length > 2 && (
-              <div className="flex flex-wrap items-center gap-2 pb-1.5">
-                {categories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat as string)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
-                      selectedCategory === cat
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-card border border-border text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <div className="space-y-3">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-2xl border border-border/80 bg-card p-4 shadow-sm hover:shadow-md hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col sm:flex-row gap-4 justify-between"
-                >
-                  <div className="flex gap-3.5">
-                    {item.image_url && (
-                      <div className="relative size-18 rounded-xl bg-muted overflow-hidden shrink-0 border border-border">
-                        <Image
-                          src={item.image_url}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    )}
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <h3 className="font-bold text-sm text-foreground">
-                          {item.title}
-                        </h3>
-                        {item.badge && (
-                          <span className="text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                      {item.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {item.description}
-                        </p>
-                      )}
-                      {item.price && (
-                        <div className="pt-0.5">
-                          <span className="inline-block text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                            {item.price}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                {/* Profile Info */}
+                <div className="flex-1 space-y-1.5 min-w-0">
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <h1 className="text-xl sm:text-3xl font-black tracking-tight text-foreground truncate">
+                      {page.title}
+                    </h1>
+                    <CheckCircle2 className="size-5 sm:size-6 text-emerald-500 fill-emerald-500/20 shrink-0" />
                   </div>
 
-                  <div className="flex items-center gap-2 sm:self-center shrink-0">
-                    <button
-                      onClick={() => openBookingModal(item)}
-                      className="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-1 shadow-xs"
+                  {page.tagline && (
+                    <p className="text-sm sm:text-base font-medium text-emerald-600 dark:text-emerald-400">
+                      {page.tagline}
+                    </p>
+                  )}
+
+                  {page.address && (
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm text-muted-foreground pt-1">
+                      <MapPin className="size-4 text-emerald-600 shrink-0" />
+                      {page.google_maps_url ? (
+                        <a
+                          href={page.google_maps_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline hover:text-foreground line-clamp-1 flex items-center gap-1"
+                        >
+                          <span>{page.address}</span>
+                          <ExternalLink className="size-3 shrink-0" />
+                        </a>
+                      ) : (
+                        <span className="line-clamp-1">{page.address}</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {page.about && (
+                <div className="mt-5 pt-5 border-t border-border text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  <p>{page.about}</p>
+                </div>
+              )}
+
+              {/* Mobile Quick Actions (Shown on sm or smaller) */}
+              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:hidden">
+                <button
+                  onClick={() => openBookingModal()}
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98]"
+                >
+                  <Calendar className="size-4" />
+                  Book Appointment / Pass
+                </button>
+                <button
+                  onClick={() => openWhatsApp()}
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
+                >
+                  <MessageCircle className="size-4 fill-current text-emerald-500" />
+                  Chat on WhatsApp
+                </button>
+              </div>
+            </div>
+
+            {/* Dynamic Items / Offers Section */}
+            {page.items && page.items.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
+                  <div>
+                    <h2 className="text-base sm:text-lg font-black tracking-tight text-foreground flex items-center gap-2">
+                      <Sparkles className="size-5 text-emerald-500" />
+                      Catalog, Services &amp; Passes
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Direct WhatsApp inquiries and guaranteed zero booking commissions.
+                    </p>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-semibold bg-muted px-2.5 py-1 rounded-full self-start sm:self-auto">
+                    {filteredItems.length} of {page.items.length} items
+                  </span>
+                </div>
+
+                {/* Category Filter Pills */}
+                {categories.length > 2 && (
+                  <div className="flex flex-wrap items-center gap-2 pb-1">
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat as string)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+                          selectedCategory === cat
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-emerald-500/50'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Items Grid (Responsive 1-col on mobile, 2-col on md/lg) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs hover:shadow-lg hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
                     >
-                      {getItemBookingType(item) === 'stay' ? (
+                      <div className="space-y-3">
+                        {item.image_url && (
+                          <div className="relative h-40 w-full rounded-xl bg-muted overflow-hidden border border-border">
+                            <Image
+                              src={item.image_url}
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                            />
+                            {item.badge && (
+                              <div className="absolute top-2.5 left-2.5">
+                                <span className="text-[10px] font-bold bg-background/90 text-foreground backdrop-blur-md border border-border/60 px-2 py-0.5 rounded-md shadow-xs">
+                                  {item.badge}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-bold text-sm sm:text-base text-foreground leading-snug">
+                              {item.title}
+                            </h3>
+                            {!item.image_url && item.badge && (
+                              <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-md shrink-0">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+
+                          {item.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                              {item.description}
+                            </p>
+                          )}
+
+                          {item.price && (
+                            <div className="pt-1">
+                              <span className="inline-block text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                                {item.price}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-4 border-t border-border/60 grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => openBookingModal(item)}
+                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-1 shadow-xs"
+                        >
+                          {getItemBookingType(item) === 'stay' ? (
+                            <>
+                              <Home className="size-3.5" />
+                              Reserve Stay
+                            </>
+                          ) : getItemBookingType(item) === 'event' ? (
+                            <>
+                              <Ticket className="size-3.5" />
+                              Get Pass
+                            </>
+                          ) : (
+                            <>
+                              <Calendar className="size-3.5" />
+                              Book Slot
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            openWhatsApp(
+                              item.prefill_message ||
+                                `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
+                            )
+                          }
+                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
+                        >
+                          <MessageCircle className="size-3.5 fill-current text-emerald-500" />
+                          {item.button_label || 'Inquire'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Sticky Consultation & Callback Desk (Desktop Sidebar) */}
+          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
+            
+            {/* Direct Booking Desk Card */}
+            <div className="rounded-2xl border-2 border-emerald-500/30 bg-card p-6 shadow-xl space-y-5">
+              <div className="space-y-1">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <Clock className="size-3" />
+                  Instant Direct Response
+                </span>
+                <h3 className="text-base sm:text-lg font-black text-foreground">
+                  Connect with {page.title}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Direct WhatsApp bookings, appointments, and custom quotes with 0% platform surcharge.
+                </p>
+              </div>
+
+              <div className="space-y-2.5">
+                <button
+                  onClick={() => openBookingModal()}
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+                >
+                  <CalendarCheck className="size-4" />
+                  Schedule Slot / Book Pass
+                </button>
+
+                <button
+                  onClick={() => openWhatsApp()}
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 transition-colors flex items-center justify-center gap-2"
+                >
+                  <MessageCircle className="size-4 fill-current text-emerald-500" />
+                  Chat Directly on WhatsApp
+                </button>
+
+                {page.calling_number && (
+                  <a
+                    href={`tel:${page.calling_number.replace(/[^0-9+]/g, '')}`}
+                    className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Phone className="size-3.5 text-muted-foreground" />
+                    Call: {page.calling_number}
+                  </a>
+                )}
+              </div>
+
+              {/* Direct Callback Form */}
+              <div id="inquiry-section" className="pt-4 border-t border-border space-y-3">
+                <div className="space-y-0.5">
+                  <h4 className="text-xs font-bold text-foreground">
+                    Request an Instant Callback
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground">
+                    Leave your contact details and our team will message you shortly.
+                  </p>
+                </div>
+
+                {submitted ? (
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center space-y-2">
+                    <CheckCircle2 className="size-7 text-emerald-500 mx-auto" />
+                    <p className="text-xs font-bold text-foreground">
+                      Inquiry Received!
+                    </p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Thank you, {inquiryName}. The {page.title} team has been notified.
+                    </p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleQuickLeadSubmit} className="space-y-2.5">
+                    <input
+                      type="text"
+                      placeholder="Your Name"
+                      required
+                      value={inquiryName}
+                      onChange={(e) => setInquiryName(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="WhatsApp / Phone Number"
+                      required
+                      value={inquiryPhone}
+                      onChange={(e) => setInquiryPhone(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                    />
+                    <textarea
+                      placeholder="Requirements / preferred time (Optional)"
+                      rows={2}
+                      value={inquiryNotes}
+                      onChange={(e) => setInquiryNotes(e.target.value)}
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full py-2.5 rounded-xl text-xs font-bold bg-foreground text-background hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shadow-xs"
+                    >
+                      {submitting ? (
                         <>
-                          <Home className="size-3.5" />
-                          Reserve Stay
-                        </>
-                      ) : getItemBookingType(item) === 'event' ? (
-                        <>
-                          <Ticket className="size-3.5" />
-                          Get Ticket
+                          <Loader2 className="size-3.5 animate-spin" />
+                          Submitting...
                         </>
                       ) : (
                         <>
-                          <Calendar className="size-3.5" />
-                          Book Slot
+                          <Send className="size-3.5" />
+                          Submit Request
                         </>
                       )}
                     </button>
-                    <button
-                      onClick={() =>
-                        openWhatsApp(
-                          item.prefill_message ||
-                            `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
-                        )
-                      }
-                      className="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 border border-emerald-500/20"
-                    >
-                      <MessageCircle className="size-3.5 fill-current" />
-                      {item.button_label || 'Inquire'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Quick Callback / Lead Capture Box */}
-        <div id="inquiry-section" className="rounded-2xl border border-border bg-card p-5 shadow-sm space-y-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <h3 className="text-sm font-bold text-foreground">
-              Prefer a callback? Leave your details
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              We will reach out to you directly on WhatsApp or phone.
-            </p>
-          </div>
-
-          {submitted ? (
-            <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center space-y-2">
-              <CheckCircle2 className="size-8 text-emerald-500 mx-auto" />
-              <p className="text-xs font-bold text-foreground">
-                Inquiry Received!
-              </p>
-              <p className="text-[11px] text-muted-foreground">
-                Thank you, {inquiryName}. The {page.title} team has been notified.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleQuickLeadSubmit} className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  required
-                  value={inquiryName}
-                  onChange={(e) => setInquiryName(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
-                />
-                <input
-                  type="tel"
-                  placeholder="WhatsApp / Phone Number"
-                  required
-                  value={inquiryPhone}
-                  onChange={(e) => setInquiryPhone(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
-                />
-              </div>
-              <textarea
-                placeholder="What are you looking for? (Optional)"
-                rows={2}
-                value={inquiryNotes}
-                onChange={(e) => setInquiryNotes(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
-              />
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full py-2.5 rounded-xl text-xs font-bold bg-foreground text-background hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shadow-xs"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="size-3.5 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Send className="size-3.5" />
-                    Submit Callback Request
-                  </>
+                  </form>
                 )}
-              </button>
-            </form>
-          )}
+              </div>
+            </div>
+
+            {/* UniCRM Powered By Pill */}
+            <div className="rounded-xl border border-border/80 bg-muted/40 p-4 text-center space-y-1">
+              <p className="text-xs font-semibold text-foreground">
+                Run your business on UniCRM
+              </p>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Free DIY core with Google Drive media storage &amp; WhatsApp automation.
+              </p>
+              <div className="pt-1.5">
+                <Link
+                  href="/signup"
+                  className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
+                >
+                  Create your own free page &rarr;
+                </Link>
+              </div>
+            </div>
+
+          </div>
+
         </div>
 
-        {/* Footer */}
-        <div className="pt-4 text-center space-y-2">
-          <p className="text-[11px] text-muted-foreground">
-            Powered by{' '}
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-bold text-foreground hover:underline"
-            >
+        {/* Global Directory Footer */}
+        <footer className="mt-16 pt-8 border-t border-border/60 text-center space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Verified Business Profile hosted on{' '}
+            <Link href="/" className="font-bold text-foreground hover:underline">
               UniCRM
-            </a>{' '}
-            — End-to-End Business Operating System
+            </Link>{' '}
+            • Zero-Commission Direct WhatsApp Platform
           </p>
-        </div>
+          <div className="flex items-center justify-center gap-4 text-xs font-medium text-muted-foreground">
+            <Link href="/p" className="hover:text-foreground hover:underline">
+              Browse Business Directory
+            </Link>
+            <span>•</span>
+            <Link href="/signup" className="hover:text-foreground hover:underline">
+              Claim Your Business
+            </Link>
+          </div>
+        </footer>
       </main>
 
-        {/* Persistent Floating Bottom Bar for Mobile */}
-        <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between sm:hidden gap-2">
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
-            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium truncate">
-              {page.tagline || 'Verified Business'}
-            </p>
-          </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              onClick={() => openBookingModal()}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-xs shadow-xs"
-            >
-              <Calendar className="size-3.5" />
-              Book
-            </button>
-            <button
-              onClick={() => openWhatsApp()}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md"
-            >
-              <MessageCircle className="size-3.5 fill-current" />
-              Chat
-            </button>
-          </div>
+      {/* Persistent Floating Bottom Bar for Mobile Only */}
+      <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between lg:hidden gap-2 shadow-lg">
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium truncate">
+            {page.tagline || 'Verified Business'}
+          </p>
         </div>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <button
+            onClick={() => openBookingModal()}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-xs shadow-xs"
+          >
+            <Calendar className="size-3.5" />
+            Book
+          </button>
+          <button
+            onClick={() => openWhatsApp()}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md"
+          >
+            <MessageCircle className="size-3.5 fill-current" />
+            Chat
+          </button>
+        </div>
+      </div>
 
         {/* Interactive Booking Modal */}
         {bookingOpen && (
