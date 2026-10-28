@@ -15,6 +15,9 @@ import {
   Calendar,
   X,
   CalendarCheck,
+  Home,
+  Ticket,
+  Users,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -28,6 +31,7 @@ export interface BusinessItem {
   image_url?: string;
   button_label?: string;
   prefill_message?: string;
+  item_type?: 'service' | 'stay' | 'event';
 }
 
 export interface BusinessPageRecord {
@@ -70,6 +74,92 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
   const [bookingWaDeepLink, setBookingWaDeepLink] = useState<string | null>(null);
   const [bookingCalendarLink, setBookingCalendarLink] = useState<string | null>(null);
+
+  // Airbnb stays & Eventbrite ticket parameters
+  const [checkInDate, setCheckInDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
+  const [checkOutDate, setCheckOutDate] = useState(() => {
+    const dayAfter = new Date();
+    dayAfter.setDate(dayAfter.getDate() + 3);
+    return dayAfter.toISOString().split('T')[0];
+  });
+  const [guestsCount, setGuestsCount] = useState<number>(2);
+  const [ticketsCount, setTicketsCount] = useState<number>(1);
+  const [bookedTicketCode, setBookedTicketCode] = useState<string | null>(null);
+
+  // Helper to determine booking pattern of current item
+  const getItemBookingType = (item?: BusinessItem | null): 'stay' | 'event' | 'appointment' => {
+    if (!item) return 'appointment';
+    if (item.item_type === 'stay') return 'stay';
+    if (item.item_type === 'event') return 'event';
+    const cat = (item.category || '').toLowerCase();
+    const title = (item.title || '').toLowerCase();
+    if (
+      cat.includes('stay') ||
+      cat.includes('hotel') ||
+      cat.includes('homestay') ||
+      cat.includes('room') ||
+      cat.includes('villa') ||
+      title.includes('stay') ||
+      title.includes('villa') ||
+      title.includes('night') ||
+      title.includes('room')
+    ) {
+      return 'stay';
+    }
+    if (
+      cat.includes('event') ||
+      cat.includes('workshop') ||
+      cat.includes('ticket') ||
+      cat.includes('pass') ||
+      cat.includes('festival') ||
+      cat.includes('webinar') ||
+      title.includes('workshop') ||
+      title.includes('event') ||
+      title.includes('summit') ||
+      title.includes('ticket')
+    ) {
+      return 'event';
+    }
+    return 'appointment';
+  };
+
+  const activeBookingType = getItemBookingType(selectedItemForBooking);
+
+  // Calculate nights for stay
+  const totalNights = (() => {
+    try {
+      const inD = new Date(checkInDate);
+      const outD = new Date(checkOutDate);
+      const diffTime = outD.getTime() - inD.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays > 0 ? diffDays : 1;
+    } catch {
+      return 1;
+    }
+  })();
+
+  // Calculate estimated price
+  const calculateEstimatedTotal = (): string | null => {
+    if (!selectedItemForBooking?.price) return null;
+    const rawNum = selectedItemForBooking.price.replace(/[^0-9.]/g, '');
+    const unitPrice = parseFloat(rawNum);
+    if (isNaN(unitPrice)) return selectedItemForBooking.price;
+
+    const currencySymbol = selectedItemForBooking.price.replace(/[0-9.,\s]/g, '') || '₹';
+    if (activeBookingType === 'stay') {
+      const total = unitPrice * totalNights;
+      return `${currencySymbol}${total.toLocaleString()}`;
+    }
+    if (activeBookingType === 'event') {
+      const total = unitPrice * ticketsCount;
+      return `${currencySymbol}${total.toLocaleString()}`;
+    }
+    return selectedItemForBooking.price;
+  };
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -143,10 +233,22 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bookingName.trim() || !bookingPhone.trim() || !bookingDate || !bookingSlot) {
-      toast.error('Please fill in your name, phone, date, and preferred time slot.');
+    if (!bookingName.trim() || !bookingPhone.trim()) {
+      toast.error('Please fill in your name and WhatsApp phone number.');
       return;
     }
+
+    if (activeBookingType === 'stay' && (!checkInDate || !checkOutDate)) {
+      toast.error('Please select both check-in and check-out dates.');
+      return;
+    }
+
+    if (activeBookingType === 'appointment' && (!bookingDate || !bookingSlot)) {
+      toast.error('Please select preferred date and time slot.');
+      return;
+    }
+
+    const calculatedPrice = calculateEstimatedTotal();
 
     setBookingSubmitting(true);
     try {
@@ -158,27 +260,43 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           accountId: page.account_id,
           name: bookingName.trim(),
           phone: bookingPhone.trim(),
-          bookingDate,
-          timeSlot: bookingSlot,
+          bookingDate: activeBookingType === 'stay' ? checkInDate : bookingDate,
+          timeSlot: activeBookingType === 'stay' ? '12:00 PM (Check-in)' : bookingSlot,
           itemId: selectedItemForBooking?.id || null,
           itemTitle: selectedItemForBooking?.title || null,
           notes: bookingNotes.trim() || null,
+          bookingType: activeBookingType,
+          checkInDate: activeBookingType === 'stay' ? checkInDate : null,
+          checkOutDate: activeBookingType === 'stay' ? checkOutDate : null,
+          guestsCount: activeBookingType === 'stay' ? guestsCount : null,
+          totalNights: activeBookingType === 'stay' ? totalNights : null,
+          ticketsCount: activeBookingType === 'event' ? ticketsCount : null,
+          totalPrice: calculatedPrice,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to schedule booking');
+        throw new Error(data.error || 'Failed to process booking');
       }
 
       setBookingSuccess(true);
+      if (data.booking?.ticket_reference_code) {
+        setBookedTicketCode(data.booking.ticket_reference_code);
+      }
       if (data.clientWaDeepLink) {
         setBookingWaDeepLink(data.clientWaDeepLink);
       }
       if (data.clientCalendarLink) {
         setBookingCalendarLink(data.clientCalendarLink);
       }
-      toast.success('Appointment booked successfully! WhatsApp confirmation sent.');
+      toast.success(
+        activeBookingType === 'stay'
+          ? 'Stay booked successfully! WhatsApp confirmation sent.'
+          : activeBookingType === 'event'
+          ? 'Tickets confirmed! Your digital WhatsApp pass has been issued.'
+          : 'Appointment booked successfully! WhatsApp confirmation sent.'
+      );
     } catch (err: any) {
       toast.error(err.message || 'Could not schedule booking. Please message us on WhatsApp.');
     } finally {
@@ -374,8 +492,22 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       onClick={() => openBookingModal(item)}
                       className="w-full sm:w-auto px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-1 shadow-xs"
                     >
-                      <Calendar className="size-3.5" />
-                      Book Slot
+                      {getItemBookingType(item) === 'stay' ? (
+                        <>
+                          <Home className="size-3.5" />
+                          Reserve Stay
+                        </>
+                      ) : getItemBookingType(item) === 'event' ? (
+                        <>
+                          <Ticket className="size-3.5" />
+                          Get Ticket
+                        </>
+                      ) : (
+                        <>
+                          <Calendar className="size-3.5" />
+                          Book Slot
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={() =>
@@ -516,15 +648,25 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                      <CalendarCheck className="size-4" />
+                      {activeBookingType === 'stay' ? (
+                        <Home className="size-4" />
+                      ) : activeBookingType === 'event' ? (
+                        <Ticket className="size-4" />
+                      ) : (
+                        <CalendarCheck className="size-4" />
+                      )}
                     </span>
                     <h3 className="font-bold text-base text-foreground">
-                      Book an Appointment
+                      {activeBookingType === 'stay'
+                        ? 'Reserve Your Stay'
+                        : activeBookingType === 'event'
+                        ? 'Event Registration & Tickets'
+                        : 'Book an Appointment'}
                     </h3>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {selectedItemForBooking
-                      ? `Service: ${selectedItemForBooking.title}`
+                      ? `${selectedItemForBooking.title}`
                       : `With ${page.title}`}
                   </p>
                 </div>
@@ -543,14 +685,50 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     <CheckCircle2 className="size-6" />
                   </div>
                   <h4 className="font-bold text-sm text-foreground">
-                    Booking Confirmed!
+                    {activeBookingType === 'stay'
+                      ? 'Stay Confirmed!'
+                      : activeBookingType === 'event'
+                      ? 'Tickets Reserved!'
+                      : 'Booking Confirmed!'}
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed px-4">
-                    Your appointment has been scheduled for{' '}
-                    <strong className="text-foreground">{bookingDate}</strong> at{' '}
-                    <strong className="text-foreground">{bookingSlot}</strong>.
-                    A WhatsApp reminder has been sent to your number.
-                  </p>
+
+                  {activeBookingType === 'stay' ? (
+                    <div className="text-xs text-muted-foreground leading-relaxed px-4 space-y-1">
+                      <p>
+                        Your stay is scheduled from{' '}
+                        <strong className="text-foreground">{checkInDate}</strong> to{' '}
+                        <strong className="text-foreground">{checkOutDate}</strong> ({totalNights} nights, {guestsCount} guests).
+                      </p>
+                      {calculateEstimatedTotal() && (
+                        <p className="font-bold text-emerald-600 dark:text-emerald-400">
+                          Total Estimate: {calculateEstimatedTotal()}
+                        </p>
+                      )}
+                      <p className="text-[11px] pt-1">A WhatsApp confirmation with property details has been sent to your phone.</p>
+                    </div>
+                  ) : activeBookingType === 'event' ? (
+                    <div className="text-xs text-muted-foreground leading-relaxed px-4 space-y-1.5">
+                      <p>
+                        You reserved <strong className="text-foreground">{ticketsCount} ticket{ticketsCount > 1 ? 's' : ''}</strong> for{' '}
+                        <strong className="text-foreground">{selectedItemForBooking?.title || page.title}</strong>.
+                      </p>
+                      {bookedTicketCode && (
+                        <div className="py-1">
+                          <span className="inline-block px-3 py-1 rounded-lg bg-purple-500/10 text-purple-700 dark:text-purple-300 font-mono font-bold text-sm border border-purple-500/20">
+                            Pass: {bookedTicketCode}
+                          </span>
+                        </div>
+                      )}
+                      <p className="text-[11px]">Your digital pass has been sent directly to your WhatsApp number.</p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground leading-relaxed px-4">
+                      Your appointment has been scheduled for{' '}
+                      <strong className="text-foreground">{bookingDate}</strong> at{' '}
+                      <strong className="text-foreground">{bookingSlot}</strong>.
+                      A WhatsApp reminder has been sent to your number.
+                    </p>
+                  )}
 
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
                     {bookingCalendarLink && (
@@ -618,38 +796,136 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-foreground">
-                        Preferred Date
-                      </label>
-                      <input
-                        type="date"
-                        required
-                        value={bookingDate}
-                        onChange={(e) => setBookingDate(e.target.value)}
-                        className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
-                      />
+                  {/* Dynamic Inputs Based on Airbnb Stay / Eventbrite Event / Appointment */}
+                  {activeBookingType === 'stay' ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                            <Calendar className="size-3 text-emerald-500" />
+                            Check-in Date
+                          </label>
+                          <input
+                            type="date"
+                            required
+                            value={checkInDate}
+                            onChange={(e) => setCheckInDate(e.target.value)}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                            <Calendar className="size-3 text-emerald-500" />
+                            Check-out Date
+                          </label>
+                          <input
+                            type="date"
+                            required
+                            value={checkOutDate}
+                            onChange={(e) => setCheckOutDate(e.target.value)}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                            <Users className="size-3 text-emerald-500" />
+                            Guests
+                          </label>
+                          <select
+                            value={guestsCount}
+                            onChange={(e) => setGuestsCount(Number(e.target.value))}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((g) => (
+                              <option key={g} value={g}>
+                                {g} {g === 1 ? 'Guest' : 'Guests'}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-muted-foreground">
+                            Duration &amp; Price
+                          </label>
+                          <div className="w-full rounded-xl border border-border bg-muted/50 px-3 py-2 text-xs font-semibold text-foreground flex items-center justify-between">
+                            <span>{totalNights} Night{totalNights > 1 ? 's' : ''}</span>
+                            {calculateEstimatedTotal() && (
+                              <span className="text-emerald-600 dark:text-emerald-400">
+                                {calculateEstimatedTotal()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : activeBookingType === 'event' ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
+                            <Ticket className="size-3 text-purple-500" />
+                            Number of Tickets
+                          </label>
+                          <select
+                            value={ticketsCount}
+                            onChange={(e) => setTicketsCount(Number(e.target.value))}
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+                          >
+                            {[1, 2, 3, 4, 5, 6, 8, 10].map((t) => (
+                              <option key={t} value={t}>
+                                {t} Ticket{t > 1 ? 's' : ''}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[11px] font-semibold text-muted-foreground">
+                            Total Pass Amount
+                          </label>
+                          <div className="w-full rounded-xl border border-border bg-purple-500/5 px-3 py-2 text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center justify-between">
+                            <span>{ticketsCount} Pass{ticketsCount > 1 ? 'es' : ''}</span>
+                            <span>{calculateEstimatedTotal() || 'Free RSVP'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-semibold text-foreground">
+                          Preferred Date
+                        </label>
+                        <input
+                          type="date"
+                          required
+                          value={bookingDate}
+                          onChange={(e) => setBookingDate(e.target.value)}
+                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-semibold text-foreground">
+                          Time Slot
+                        </label>
+                        <select
+                          value={bookingSlot}
+                          onChange={(e) => setBookingSlot(e.target.value)}
+                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                        >
+                          <option value="10:00 AM">10:00 AM</option>
+                          <option value="11:00 AM">11:00 AM</option>
+                          <option value="12:00 PM">12:00 PM</option>
+                          <option value="02:00 PM">02:00 PM</option>
+                          <option value="03:30 PM">03:30 PM</option>
+                          <option value="05:00 PM">05:00 PM</option>
+                          <option value="06:30 PM">06:30 PM</option>
+                        </select>
+                      </div>
                     </div>
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-semibold text-foreground">
-                        Time Slot
-                      </label>
-                      <select
-                        value={bookingSlot}
-                        onChange={(e) => setBookingSlot(e.target.value)}
-                        className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
-                      >
-                        <option value="10:00 AM">10:00 AM</option>
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:30 PM">03:30 PM</option>
-                        <option value="05:00 PM">05:00 PM</option>
-                        <option value="06:30 PM">06:30 PM</option>
-                      </select>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-semibold text-foreground">
@@ -657,7 +933,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     </label>
                     <textarea
                       rows={2}
-                      placeholder="Any specific questions or preparation details..."
+                      placeholder={
+                        activeBookingType === 'stay'
+                          ? 'Arrival time, extra bed request, dietary preferences...'
+                          : activeBookingType === 'event'
+                          ? 'Attendee names, company or guest details...'
+                          : 'Any specific questions or preparation details...'
+                      }
                       value={bookingNotes}
                       onChange={(e) => setBookingNotes(e.target.value)}
                       className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
@@ -668,12 +950,26 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     <button
                       type="submit"
                       disabled={bookingSubmitting}
-                      className="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center justify-center gap-1.5 shadow-md"
+                      className={`w-full py-2.5 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 shadow-md ${
+                        activeBookingType === 'event'
+                          ? 'bg-purple-600 hover:bg-purple-500'
+                          : 'bg-emerald-600 hover:bg-emerald-500'
+                      }`}
                     >
                       {bookingSubmitting ? (
                         <>
                           <Loader2 className="size-3.5 animate-spin" />
-                          Confirming Slot...
+                          Processing...
+                        </>
+                      ) : activeBookingType === 'stay' ? (
+                        <>
+                          <Home className="size-3.5" />
+                          Reserve Stay &amp; Get WhatsApp Confirmation
+                        </>
+                      ) : activeBookingType === 'event' ? (
+                        <>
+                          <Ticket className="size-3.5" />
+                          Confirm Tickets &amp; Get Digital Pass
                         </>
                       ) : (
                         <>

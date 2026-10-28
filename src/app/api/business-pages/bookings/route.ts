@@ -81,11 +81,25 @@ export async function PATCH(req: Request) {
 
       let alertText = '';
       if (status === 'confirmed') {
-        alertText = `Hi ${booking.name}! Your appointment with ${businessTitle} on ${booking.booking_date} at ${booking.time_slot} has been confirmed. See you soon!`;
+        if (booking.booking_type === 'stay') {
+          alertText = `Hi ${booking.name}! Your stay at ${businessTitle} from ${booking.check_in_date} to ${booking.check_out_date} has been confirmed. We look forward to hosting you!`;
+        } else if (booking.booking_type === 'event') {
+          alertText = `Hi ${booking.name}! Your tickets for ${booking.item_title || businessTitle} (Pass: ${booking.ticket_reference_code || 'N/A'}) are confirmed. See you there!`;
+        } else {
+          alertText = `Hi ${booking.name}! Your appointment with ${businessTitle} on ${booking.booking_date} at ${booking.time_slot} has been confirmed. See you soon!`;
+        }
       } else if (status === 'cancelled') {
-        alertText = `Hi ${booking.name}, your appointment with ${businessTitle} on ${booking.booking_date} at ${booking.time_slot} has been cancelled. Please let us know if you would like to reschedule.`;
+        if (booking.booking_type === 'stay') {
+          alertText = `Hi ${booking.name}, your stay at ${businessTitle} for ${booking.check_in_date} has been cancelled. Please let us know if you need any assistance.`;
+        } else {
+          alertText = `Hi ${booking.name}, your appointment with ${businessTitle} on ${booking.booking_date} at ${booking.time_slot} has been cancelled. Please let us know if you would like to reschedule.`;
+        }
       } else if (status === 'completed') {
-        alertText = `Hi ${booking.name}, thank you for attending your appointment with ${businessTitle}! We appreciate your time. Let us know if you need anything else.`;
+        if (booking.booking_type === 'stay') {
+          alertText = `Hi ${booking.name}, thank you for staying with us at ${businessTitle}! We hope you had a wonderful visit. Safe travels!`;
+        } else {
+          alertText = `Hi ${booking.name}, thank you for attending your appointment with ${businessTitle}! We appreciate your time. Let us know if you need anything else.`;
+        }
       }
 
       if (alertText) {

@@ -16,6 +16,9 @@ import {
   CalendarCheck,
   Send,
   ExternalLink,
+  Home,
+  Ticket,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +42,14 @@ export interface BookingRecord {
   whatsapp_message_id?: string | null;
   google_calendar_html_link?: string | null;
   google_calendar_event_id?: string | null;
+  booking_type?: 'appointment' | 'stay' | 'event';
+  check_in_date?: string | null;
+  check_out_date?: string | null;
+  guests_count?: number | null;
+  total_nights?: number | null;
+  tickets_count?: number | null;
+  ticket_reference_code?: string | null;
+  total_price?: string | null;
   created_at: string;
 }
 
@@ -50,6 +61,7 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'confirmed' | 'completed' | 'cancelled'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'appointment' | 'stay' | 'event'>('all');
   const [search, setSearch] = useState('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -107,12 +119,17 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
 
   const filteredBookings = bookings.filter((b) => {
     if (filter !== 'all' && b.status !== filter) return false;
+    if (typeFilter !== 'all') {
+      const bType = b.booking_type || 'appointment';
+      if (bType !== typeFilter) return false;
+    }
     if (search.trim()) {
       const q = search.toLowerCase();
       return (
         b.name.toLowerCase().includes(q) ||
         b.phone.includes(q) ||
-        (b.item_title && b.item_title.toLowerCase().includes(q))
+        (b.item_title && b.item_title.toLowerCase().includes(q)) ||
+        (b.ticket_reference_code && b.ticket_reference_code.toLowerCase().includes(q))
       );
     }
     return true;
@@ -121,6 +138,8 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
   const confirmedCount = bookings.filter((b) => b.status === 'confirmed').length;
   const completedCount = bookings.filter((b) => b.status === 'completed').length;
   const cancelledCount = bookings.filter((b) => b.status === 'cancelled').length;
+  const staysCount = bookings.filter((b) => b.booking_type === 'stay').length;
+  const eventsCount = bookings.filter((b) => b.booking_type === 'event').length;
 
   return (
     <div className="space-y-4">
@@ -145,12 +164,12 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <Button
             size="sm"
-            variant={filter === 'all' ? 'default' : 'outline'}
-            onClick={() => setFilter('all')}
+            variant={filter === 'all' && typeFilter === 'all' ? 'default' : 'outline'}
+            onClick={() => { setFilter('all'); setTypeFilter('all'); }}
             className="text-xs h-8"
           >
             All ({bookings.length})
@@ -162,6 +181,24 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
             className="text-xs h-8"
           >
             Upcoming ({confirmedCount})
+          </Button>
+          <Button
+            size="sm"
+            variant={typeFilter === 'stay' ? 'secondary' : 'outline'}
+            onClick={() => setTypeFilter(typeFilter === 'stay' ? 'all' : 'stay')}
+            className={`text-xs h-8 flex items-center gap-1 ${typeFilter === 'stay' ? 'border-primary/50 font-bold' : ''}`}
+          >
+            <Home className="size-3" />
+            Stays ({staysCount})
+          </Button>
+          <Button
+            size="sm"
+            variant={typeFilter === 'event' ? 'secondary' : 'outline'}
+            onClick={() => setTypeFilter(typeFilter === 'event' ? 'all' : 'event')}
+            className={`text-xs h-8 flex items-center gap-1 ${typeFilter === 'event' ? 'border-primary/50 font-bold' : ''}`}
+          >
+            <Ticket className="size-3" />
+            Events ({eventsCount})
           </Button>
           <Button
             size="sm"
@@ -239,6 +276,21 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
                   >
                     {b.status}
                   </Badge>
+
+                  {/* Booking Type Badge */}
+                  {b.booking_type === 'stay' && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-amber-700 dark:text-amber-300 font-semibold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+                      <Home className="size-2.5" />
+                      Stay ({b.total_nights || 1}N)
+                    </span>
+                  )}
+                  {b.booking_type === 'event' && (
+                    <span className="inline-flex items-center gap-1 text-[10px] text-purple-700 dark:text-purple-300 font-semibold bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded">
+                      <Ticket className="size-2.5" />
+                      {b.tickets_count || 1} Ticket{((b.tickets_count || 1) > 1) ? 's' : ''}
+                    </span>
+                  )}
+
                   {b.whatsapp_notification_status === 'sent' && (
                     <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-1.5 py-0.5 rounded">
                       <Send className="size-2.5" />
@@ -259,14 +311,33 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
                 </div>
 
                 <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-                  <span className="flex items-center gap-1 text-foreground font-medium">
-                    <Calendar className="size-3 text-primary" />
-                    {b.booking_date}
-                  </span>
-                  <span className="flex items-center gap-1 text-foreground font-medium">
-                    <Clock className="size-3 text-primary" />
-                    {b.time_slot}
-                  </span>
+                  {b.booking_type === 'stay' ? (
+                    <>
+                      <span className="flex items-center gap-1 text-foreground font-medium">
+                        <Calendar className="size-3 text-primary" />
+                        {b.check_in_date} &rarr; {b.check_out_date}
+                      </span>
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <Clock className="size-3 text-primary" />
+                        {b.total_nights || 1} Nights
+                      </span>
+                      <span className="flex items-center gap-1 text-muted-foreground">
+                        <Users className="size-3 text-primary" />
+                        {b.guests_count || 1} Guests
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="flex items-center gap-1 text-foreground font-medium">
+                        <Calendar className="size-3 text-primary" />
+                        {b.booking_date}
+                      </span>
+                      <span className="flex items-center gap-1 text-foreground font-medium">
+                        <Clock className="size-3 text-primary" />
+                        {b.time_slot}
+                      </span>
+                    </>
+                  )}
                   <a
                     href={`https://wa.me/${b.phone.replace(/[^0-9]/g, '')}`}
                     target="_blank"
@@ -280,7 +351,20 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
 
                 {b.item_title && (
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">Service:</span> {b.item_title}
+                    <span className="font-semibold text-foreground">
+                      {b.booking_type === 'stay' ? 'Property / Room:' : b.booking_type === 'event' ? 'Event:' : 'Service:'}
+                    </span>{' '}
+                    {b.item_title}
+                  </p>
+                )}
+                {b.ticket_reference_code && (
+                  <p className="text-xs text-purple-700 dark:text-purple-300 font-mono font-medium">
+                    Pass Code: <span className="bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">{b.ticket_reference_code}</span> ({b.tickets_count || 1} ticket{((b.tickets_count || 1) > 1) ? 's' : ''})
+                  </p>
+                )}
+                {b.total_price && (
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                    Total: {b.total_price}
                   </p>
                 )}
                 {b.notes && (
