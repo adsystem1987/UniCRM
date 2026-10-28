@@ -30,6 +30,7 @@ import {
   Target,
   Receipt,
   Compass,
+  Globe,
 } from "lucide-react";
 
 import type { AccountRole } from "@/lib/auth/roles";
@@ -100,6 +101,7 @@ const navItems: NavItem[] = [
   { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
   { href: "/notifications", labelKey: "notifications", icon: Bell },
   { href: "/contacts", labelKey: "contacts", icon: Users },
+  { href: "/business-pages", labelKey: "businessPages", icon: Globe },
   { href: "/leads", labelKey: "leadFinder", icon: Target, beta: true },
   { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
   { href: "/settings?tab=blueprints", labelKey: "industrySetup", icon: Compass },
