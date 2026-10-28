@@ -22,6 +22,8 @@ import {
   ArrowLeft,
   Store,
   ExternalLink,
+  MessageSquare,
+  ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ModeToggle } from '@/components/layout/mode-toggle';
@@ -189,13 +191,85 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
     ? page.items
     : page.items.filter((it) => it.category === selectedCategory);
 
-  const cleanWaNumber = page.whatsapp_number.replace(/[^0-9]/g, '');
+  const [chatDrawerOpen, setChatDrawerOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{ id: string; sender: 'user' | 'agent'; text: string; time: string }>>([
+    {
+      id: 'welcome_1',
+      sender: 'agent',
+      text: `Hello! 👋 Thanks for reaching out to ${page.title}. How can we assist you today?`,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    },
+  ]);
+  const [visitorName, setVisitorName] = useState('');
+  const [visitorPhone, setVisitorPhone] = useState('');
+  const [chatInputText, setChatInputText] = useState('');
+  const [chatSending, setChatSending] = useState(false);
+  const [hasStartedChat, setHasStartedChat] = useState(false);
 
-  const openWhatsApp = (customMessage?: string) => {
-    const defaultText = `Hi ${page.title}! I am reaching out from your business link. I'd like more details.`;
-    const message = customMessage || defaultText;
-    const url = `https://wa.me/${cleanWaNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+  const openChatWithMe = (customMsg?: string) => {
+    if (customMsg) {
+      setChatInputText(customMsg);
+    }
+    setChatDrawerOpen(true);
+  };
+
+  const handleSendChatMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInputText.trim()) return;
+
+    if (!hasStartedChat && (!visitorName.trim() || !visitorPhone.trim())) {
+      toast.error('Please provide your name and phone number to start chatting');
+      return;
+    }
+
+    const outgoingText = chatInputText.trim();
+    const userMsg = {
+      id: `msg_${Date.now()}`,
+      sender: 'user' as const,
+      text: outgoingText,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatMessages((prev) => [...prev, userMsg]);
+    setChatInputText('');
+    setChatSending(true);
+
+    try {
+      const res = await fetch('/api/business-pages/inquire', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageId: page.id,
+          accountId: page.account_id,
+          name: visitorName.trim() || 'Visitor',
+          phone: visitorPhone.trim(),
+          notes: outgoingText,
+          itemTitle: 'Live Chat Widget Message',
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Message delivery failed');
+      }
+
+      setHasStartedChat(true);
+
+      setTimeout(() => {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: `reply_${Date.now()}`,
+            sender: 'agent',
+            text: `Thank you! Your message has been received by ${page.title}'s team. We will reply to you right away or follow up via your number.`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          },
+        ]);
+      }, 700);
+    } catch {
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setChatSending(false);
+    }
   };
 
   const handleShare = async () => {
@@ -478,11 +552,11 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                   Book Appointment / Pass
                 </button>
                 <button
-                  onClick={() => openWhatsApp()}
+                  onClick={() => openChatWithMe()}
                   className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground transition-colors"
                 >
-                  <MessageCircle className="size-4 fill-current text-[#25D366]" />
-                  Chat on WhatsApp
+                  <MessageSquare className="size-4 text-primary" />
+                  Chat With Me
                 </button>
               </div>
             </div>
@@ -625,14 +699,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
                         <button
                           onClick={() =>
-                            openWhatsApp(
+                            openChatWithMe(
                               item.prefill_message ||
                                 `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
                             )
                           }
                           className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
                         >
-                          <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
+                          <MessageSquare className="size-3.5 text-primary" />
                           {item.button_label || 'Inquire'}
                         </button>
                       </div>
@@ -671,11 +745,11 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                 </button>
 
                 <button
-                  onClick={() => openWhatsApp()}
+                  onClick={() => openChatWithMe()}
                   className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground border border-border transition-colors flex items-center justify-center gap-2"
                 >
-                  <MessageCircle className="size-4 fill-current text-[#25D366]" />
-                  Chat Directly on WhatsApp
+                  <MessageSquare className="size-4 text-primary" />
+                  Chat With Me
                 </button>
               </div>
 
@@ -795,10 +869,10 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             Book
           </button>
           <button
-            onClick={() => openWhatsApp()}
+            onClick={() => openChatWithMe()}
             className="flex items-center gap-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md"
           >
-            <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
+            <MessageSquare className="size-3.5" />
             Chat
           </button>
         </div>
@@ -1141,6 +1215,104 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                   </div>
                 </form>
               )}
+            </div>
+          </div>
+        )}
+        {/* Native Chat With Me Desk Modal */}
+        {chatDrawerOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl flex flex-col h-[520px] max-h-[90vh]">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
+                      <MessageSquare className="size-5" />
+                    </div>
+                    <span className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                      {page.title}
+                      <ShieldCheck className="size-3.5 text-primary" />
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground">
+                      UniCRM Live Desk • Replies directly or via linked WhatsApp
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setChatDrawerOpen(false)}
+                  className="rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              {/* Message List */}
+              <div className="flex-1 overflow-y-auto py-3 space-y-3 pr-1 text-xs">
+                {chatMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                  >
+                    <div
+                      className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-xs ${
+                        msg.sender === 'user'
+                          ? 'bg-primary text-primary-foreground rounded-br-xs'
+                          : 'bg-muted text-foreground rounded-bl-xs border border-border'
+                      }`}
+                    >
+                      <p className="whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground mt-1 px-1">{msg.time}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Identification Form if not yet provided */}
+              {!hasStartedChat && (
+                <div className="py-2.5 px-3 mb-2 rounded-xl border border-primary/20 bg-primary/5 space-y-2">
+                  <p className="text-[11px] font-semibold text-foreground">
+                    Where should the team reach back out to you?
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Your Name"
+                      value={visitorName}
+                      onChange={(e) => setVisitorName(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Phone / WhatsApp"
+                      value={visitorPhone}
+                      onChange={(e) => setVisitorPhone(e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Chat Input */}
+              <form onSubmit={handleSendChatMessage} className="pt-2 border-t border-border flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={chatInputText}
+                  onChange={(e) => setChatInputText(e.target.value)}
+                  className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
+                />
+                <button
+                  type="submit"
+                  disabled={chatSending || !chatInputText.trim()}
+                  className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-xs"
+                >
+                  {chatSending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+                </button>
+              </form>
             </div>
           </div>
         )}
