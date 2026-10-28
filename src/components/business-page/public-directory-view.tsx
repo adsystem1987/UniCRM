@@ -200,23 +200,24 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
         </div>
       </header>
 
-      {/* Hero Search Banner */}
-      <section className="relative py-12 md:py-16 bg-linear-to-b from-emerald-500/10 via-teal-500/5 to-transparent border-b border-border/40">
-        <div className="max-w-4xl mx-auto px-4 text-center space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-            <Sparkles className="size-3.5" />
-            Verified Direct WhatsApp Business Pages
+      {/* Hero Search Banner: UnitPost Style Radial/Surface Glow */}
+      <section className="relative py-12 md:py-16 bg-surface border-b border-border/40 overflow-hidden">
+        <div className="absolute inset-0 bg-radial from-primary/10 via-background to-background pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto px-4 text-center space-y-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+            <Sparkles className="size-3.5 text-primary" />
+            Verified Direct Business Desks
           </div>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-foreground">
             Explore &amp; Book Directly with Local Businesses
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto">
-            Direct reservations, appointment scheduling, and WhatsApp catalogs with 0% platform commission.
+            Direct reservations, appointment scheduling, and automated catalogs with 0% platform commission.
           </p>
 
           {/* Search Box */}
           <div className="pt-2 max-w-2xl mx-auto">
-            <div className="relative flex items-center rounded-2xl border-2 border-border/80 bg-card shadow-lg shadow-emerald-500/5 hover:border-emerald-500/50 transition-colors overflow-hidden">
+            <div className="relative flex items-center rounded-2xl border border-border bg-card shadow-lg hover:border-primary/50 transition-colors overflow-hidden">
               <Search className="size-5 text-muted-foreground ml-4 shrink-0" />
               <input
                 type="text"
@@ -419,38 +420,26 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                     </div>
                   </div>
 
-                  {/* Actions Footer */}
-                  <div className="p-4 pt-0 border-t border-border/40 mt-2 flex items-center gap-2">
+                  {/* Actions Footer: Single Direct Link into UniCRM (No external wa.me leak) */}
+                  <div className="p-4 pt-0 border-t border-border/40 mt-2">
                     <Link
                       href={`/p/${page.slug}`}
-                      className="flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity flex items-center justify-center gap-1 shadow-xs"
+                      className="w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity flex items-center justify-center gap-1.5 shadow-xs"
                     >
                       <Calendar className="size-3.5" />
                       <span>
                         {getPageCategory(page) === 'loans'
-                          ? 'Check Eligibility'
+                          ? 'Check Eligibility & Rates'
                           : isStay
-                          ? 'Book Stay'
+                          ? 'Book Stay & View Details'
                           : getPageCategory(page) === 'realestate'
-                          ? 'Site Visit Pass'
+                          ? 'Get Site Visit Pass'
                           : isEvent
-                          ? 'Get Passes'
-                          : 'View & Book'}
+                          ? 'Get Passes & Register'
+                          : 'View Services & Connect'}
                       </span>
-                      <ArrowRight className="size-3 ml-0.5" />
+                      <ArrowRight className="size-3.5 ml-0.5" />
                     </Link>
-
-                    <a
-                      href={`https://wa.me/${cleanWa}?text=${encodeURIComponent(
-                        `Hi ${page.title}! I found your page on the UniCRM Directory. I'd like more details.`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="py-2 px-3 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border flex items-center justify-center gap-1.5 shrink-0"
-                    >
-                      <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
-                      <span>Chat</span>
-                    </a>
                   </div>
                 </div>
               );
