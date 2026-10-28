@@ -93,7 +93,7 @@ const INDUSTRY_SHOWCASE: Record<
     ],
   },
   loans: {
-    label: "Loans & Mortgages",
+    label: "Loans & Finance",
     icon: Landmark,
     tagline: "Pre-qualified salaried and business applicants seeking fast bank sanctions and low rates.",
     leads: [

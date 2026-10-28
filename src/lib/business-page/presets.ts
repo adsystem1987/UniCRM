@@ -145,11 +145,11 @@ export const INDUSTRY_PAGE_PRESETS: IndustryPagePreset[] = [
 
   // 4. Loans, Mortgages & Financial Services
   {
-    id: 'loans_mortgages',
-    name: 'Loan & Mortgage Advisory',
-    category: 'Finance & Legal',
+    id: 'loans_finance',
+    name: 'Loans & Finance Advisory',
+    category: 'Loans & Finance',
     defaultTagline: 'Instant Loan Approvals Across 30+ Banks & NBFCs — Lowest Interest Rates & Fast Payout',
-    defaultAbout: 'Authorised Direct Selling Agent (DSA). We compare 30+ leading banks to secure maximum loan eligibility, minimal paperwork, and doorstep document pickup.',
+    defaultAbout: 'Authorised Direct Selling Agent (DSA) & Financial Consultant. We compare 30+ leading banks to secure maximum loan eligibility, minimal paperwork, and doorstep document pickup.',
     sampleItems: [
       {
         id: 'loan-1',

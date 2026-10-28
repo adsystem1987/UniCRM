@@ -128,7 +128,7 @@ const DEMO_INDUSTRIES: IndustryTab[] = [
   },
   {
     id: 'loans',
-    label: 'Loans & Mortgages',
+    label: 'Loans & Finance',
     bizName: 'FinTrust Capital Advisors',
     slug: 'fintrust-loans',
     tagline: 'Instant Loan Approvals Across 30+ Banks & NBFCs • Doorstep Pickup',

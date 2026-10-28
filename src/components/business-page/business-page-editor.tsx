@@ -112,7 +112,7 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
       description: '',
       price: '',
       badge: '',
-      button_label: 'Inquire on WhatsApp',
+      button_label: 'Chat / Inquire',
       prefill_message: '',
     };
     setItems([...items, newItem]);
