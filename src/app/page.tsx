@@ -869,7 +869,9 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Airbnb-style Stays &amp; Eventbrite Event RSVP Micro-Pages</span>
+                      <span>
+                        1-Click Micro-Pages &amp; Booking Desks (Stays, Events, Clinics, Salons &amp; Tours)
+                      </span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -920,7 +922,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Live 1-on-1 setup: WhatsApp, Google Drive &amp; Google Calendar</span>
+                      <span>1-Click Live Setup: WhatsApp QR, Google Drive &amp; Calendar</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -929,6 +931,10 @@ export default function LandingPage() {
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                       <span><strong>Lead Finder Included</strong> (up to 100 verified leads / day)</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span>1-Click Industry Micro-Page &amp; Booking Desk activation</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -943,10 +949,10 @@ export default function LandingPage() {
                   <ContactButton
                     variant="cta"
                     className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
-                    defaultTopic="3-Month Pro Pilot Pass (₹1,000 Total)"
+                    defaultTopic="Get 3-Month Pro UniCRM (₹1,000)"
                     icon="message"
                   >
-                    <span>Get 3-Month Pro Pilot Pass (₹1,000)</span>
+                    <span>Get 3-Month Pro UniCRM</span>
                   </ContactButton>
                   <p className="text-[11px] text-center text-muted-foreground">
                     Complete 90-day trial &bull; No automatic charges &bull; Downgrade to DIY Free anytime
