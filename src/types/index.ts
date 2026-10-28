@@ -132,6 +132,19 @@ export interface Contact {
   ai_dossier?: string | null;
   /** Last updated timestamp for the compiled AI dossier. */
   ai_dossier_updated_at?: string | null;
+  /** Autonomous Continuous Learning Client Memory (budget, intent, objections). */
+  ai_memory?: {
+    budget?: string;
+    buying_intent?: string;
+    niche_requirement?: string;
+    timeline?: string;
+    objections?: string[];
+    communication_preference?: string;
+    last_topic?: string;
+    key_facts?: string[];
+  } | null;
+  /** Last updated timestamp for continuous learning memory. */
+  ai_memory_updated_at?: string | null;
   /** Hydrated by queries that embed `contact_tags(tags(*))` (e.g. the
    *  Inbox conversation list, for tag filtering). Absent otherwise. */
   tags?: Tag[];

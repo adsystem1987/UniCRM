@@ -21,6 +21,10 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
+  Flame,
+  Clock,
+  AlertTriangle,
+  Lightbulb,
 } from "lucide-react";
 import { MarkdownRenderer } from "@/components/ui/markdown-renderer";
 import { Button } from "@/components/ui/button";
@@ -45,20 +49,29 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
   const [newNote, setNewNote] = useState("");
   const [addingNote, setAddingNote] = useState(false);
 
-  // AI Dossier state
+  // AI Dossier & Continuous Memory state
   const [dossier, setDossier] = useState<string | null>(null);
   const [dossierExpanded, setDossierExpanded] = useState(true);
   const [generatingDossier, setGeneratingDossier] = useState(false);
+  const [aiMemory, setAiMemory] = useState<Contact["ai_memory"]>(null);
+  const [memoryExpanded, setMemoryExpanded] = useState(true);
+  const [refreshingMemory, setRefreshingMemory] = useState(false);
 
   const fetchContactData = useCallback(async () => {
     if (!contact) return;
 
     setDossier(contact.ai_dossier ?? null);
+    setAiMemory(contact.ai_memory ?? null);
 
     const supabase = createClient();
 
-    // Fetch deals, notes, and tags in parallel
-    const [dealsRes, notesRes, tagsRes] = await Promise.all([
+    // Fetch live contact memory, deals, notes, and tags in parallel
+    const [contactRes, dealsRes, notesRes, tagsRes] = await Promise.all([
+      supabase
+        .from("contacts")
+        .select("ai_memory, ai_memory_updated_at")
+        .eq("id", contact.id)
+        .maybeSingle(),
       supabase
         .from("deals")
         .select("*, stage:pipeline_stages(*)")
@@ -75,6 +88,9 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
         .eq("contact_id", contact.id),
     ]);
 
+    if (contactRes.data?.ai_memory) {
+      setAiMemory(contactRes.data.ai_memory);
+    }
     if (dealsRes.data) setDeals(dealsRes.data);
     if (notesRes.data) setNotes(notesRes.data);
     if (tagsRes.data) {
@@ -136,6 +152,26 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
     }
     setAddingNote(false);
   }, [contact, newNote, accountId]);
+
+  const handleRefreshMemory = useCallback(async () => {
+    if (!contact) return;
+    setRefreshingMemory(true);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("contacts")
+        .select("ai_memory")
+        .eq("id", contact.id)
+        .maybeSingle();
+      if (data?.ai_memory) {
+        setAiMemory(data.ai_memory);
+      }
+    } catch (err) {
+      console.error("[contact-sidebar] memory refresh error:", err);
+    } finally {
+      setRefreshingMemory(false);
+    }
+  }, [contact]);
 
   const handleGenerateDossier = useCallback(async () => {
     if (!contact) return;
@@ -243,6 +279,125 @@ export function ContactSidebar({ contact }: ContactSidebarProps) {
                 ))
               )}
             </div>
+          </div>
+
+          {/* Divider */}
+          <div className="my-4 border-t border-border" />
+
+          {/* Smart Client Memory (Continuous Learning) */}
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 dark:border-primary/25 dark:bg-primary/10">
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setMemoryExpanded((prev) => !prev)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-foreground hover:text-primary transition-colors"
+              >
+                <Sparkles className="size-3.5 text-primary" />
+                <span>Smart Client Memory</span>
+                {memoryExpanded ? (
+                  <ChevronDown className="size-3 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="size-3 text-muted-foreground" />
+                )}
+              </button>
+              <button
+                type="button"
+                disabled={refreshingMemory}
+                onClick={handleRefreshMemory}
+                title="Refresh client signals"
+                className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+              >
+                {refreshingMemory ? (
+                  <Loader2 className="size-3 animate-spin text-primary" />
+                ) : (
+                  <RefreshCw className="size-3" />
+                )}
+              </button>
+            </div>
+
+            {memoryExpanded && (
+              <div className="mt-2.5 space-y-2">
+                {aiMemory && (aiMemory.budget || aiMemory.buying_intent || aiMemory.timeline || (aiMemory.objections && aiMemory.objections.length > 0)) ? (
+                  <>
+                    {/* Budget & Intent Badges */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {aiMemory.budget && (
+                        <div className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+                          <DollarSign className="size-3" />
+                          <span>{aiMemory.budget}</span>
+                        </div>
+                      )}
+                      {aiMemory.buying_intent && (
+                        <div className={cn(
+                          "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold",
+                          aiMemory.buying_intent.toLowerCase().includes("high") || aiMemory.buying_intent.toLowerCase().includes("urgent")
+                            ? "bg-rose-500/10 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300"
+                            : "bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+                        )}>
+                          <Flame className="size-3" />
+                          <span>Intent: {aiMemory.buying_intent}</span>
+                        </div>
+                      )}
+                      {aiMemory.timeline && (
+                        <div className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground">
+                          <Clock className="size-3 text-muted-foreground" />
+                          <span>{aiMemory.timeline}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Niche Requirement / Last Topic */}
+                    {(aiMemory.niche_requirement || aiMemory.last_topic) && (
+                      <div className="rounded-md bg-background/80 p-2 text-xs border border-border/60">
+                        <span className="font-semibold text-muted-foreground text-[10px] uppercase tracking-wider block mb-0.5">Focus</span>
+                        <p className="text-foreground text-[11px] leading-snug">
+                          {aiMemory.niche_requirement || aiMemory.last_topic}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Objections */}
+                    {aiMemory.objections && aiMemory.objections.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          <AlertTriangle className="size-2.5 text-amber-500" />
+                          <span>Objections / Concerns</span>
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {aiMemory.objections.map((obj, i) => (
+                            <span
+                              key={i}
+                              className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
+                            >
+                              {obj}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Key Facts */}
+                    {aiMemory.key_facts && aiMemory.key_facts.length > 0 && (
+                      <div className="space-y-1 pt-1 border-t border-border/40">
+                        <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          <Lightbulb className="size-2.5 text-primary" />
+                          <span>Key Facts</span>
+                        </span>
+                        <ul className="list-disc pl-3 text-[10px] text-muted-foreground space-y-0.5">
+                          {aiMemory.key_facts.map((fact, idx) => (
+                            <li key={idx}>{fact}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <p className="py-1 text-center text-[11px] text-muted-foreground">
+                    Listening for budget, intent & objections in chat...
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Divider */}
