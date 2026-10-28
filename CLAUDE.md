@@ -266,28 +266,66 @@
 
 ---
 
-## Core System Architecture & Recent Features (Last 3 Days)
+## Core System Architecture & Phase A Milestone (Completed)
+
+UniCRM **Phase A** represents the complete baseline omnichannel platform, zero-cost BYOC (Bring Your Own Cloud) data plane, 1-click industry storefronts, and 3-Month Pro Pilot architecture.
+
+### Phase A Completed Capabilities:
 
 1. **Continuous Learning Client Memory (`contacts.ai_memory`)**:
    - Real-time extraction of budget (e.g. `₹50k`, `80L`), commercial buying intent (`high`/`warm`/`low`), timeline, and objections across all inbound chats (both Meta Cloud API & QR gateway).
    - Injected live into the Unified Inbox contact sidebar drawer (`contact-sidebar.tsx`) with 1-click database refresh.
-2. **Instant Business Micro-Pages & 1-Click WhatsApp Bookings (`/p/[slug]`)**:
+
+2. **Airbnb Multi-Day Stay Booking Engine (`065_airbnb_stays_and_eventbrite_tickets.sql`)**:
+   - Dynamic stay mode: Check-in and check-out date pickers with automatic night calculations and guest count (1–12 guests).
+   - Dynamic pricing estimator (`Rate × Nights = Total Stay Fee`) with 0% commission.
+   - Multi-day calendar scheduling and customized WhatsApp stay confirmation with check-in/out instructions.
+
+3. **Eventbrite Ticket Issuance & Digital RSVP Passes**:
+   - Ticket count selector with live pass amount calculations.
+   - Automatic generation of unique alphanumeric pass codes (`TKT-XXXXXX`).
+   - Digital WhatsApp tickets dispatched directly to attendees with event date and entry code.
+
+4. **Public Business Search & Discovery Directory (`/p`)**:
+   - Central marketplace and directory (`https://dfyunicrm.com/p`) showcasing all verified published business micro-pages.
+   - Real-time debounced search bar filtering by business name, service, or city.
+   - Category filtering pills: *All Businesses*, *Stays & Villas*, *Events & Passes*, *Tours & Travel*, *Clinics & Wellness*, and *Professional Services*.
+   - Direct action cards with *"View & Book"* and *"Chat on WhatsApp"*.
+
+5. **Instant Business Micro-Pages & 1-Click WhatsApp Bookings (`/p/[slug]`)**:
    - Dynamic mobile-first storefronts, service catalogs, and printable counter standee flyers.
    - Interactive appointment slot booking modal with automated confirmation notices via approved Meta template (`appointment_reminder_notice`) and QR fallback.
-3. **Appointments & Bookings Desk (`/business-pages`)**:
-   - First-class sidebar navigation item and dashboard route.
-   - Status tracking (`confirmed`, `completed`, `cancelled`) with automated WhatsApp status alerts.
-4. **Google Calendar & 1-Click Scheduling (Cal.com Architecture)**:
+
+6. **Appointments & Bookings Desk (`/business-pages`)**:
+   - First-class dedicated sidebar navigation item and dashboard route.
+   - Filter pills for *All*, *Upcoming*, *Stays*, *Events*, *Completed*, and *Cancelled*.
+   - Live status tracking (`confirmed`, `completed`, `cancelled`) with automated WhatsApp status alerts.
+
+7. **Google Calendar & 1-Click Scheduling (Cal.com Architecture)**:
    - Synchronizes bookings directly to the workspace owner's connected Google Calendar.
    - Generates 1-click "Add to Google Calendar" (.ics web link) for clients on booking confirmations.
-5. **AI Agent Squads & 1-Click Role Playbooks**:
+
+8. **AI Agent Squads & 1-Click Role Playbooks**:
    - Pre-trained WhatsApp personas (*Appointment & Booking Concierge*, *Objection Handler & Value Closer*, *Lead Qualifier & Discovery*, *Customer Support & Care*).
-6. **Categorized AI Knowledge Base (AppFlowy Architecture)**:
+
+9. **Categorized AI Knowledge Base (AppFlowy Architecture)**:
    - Folder/category hierarchy for FAQs, pricing sheets, and policies feeding the RAG assistant.
-7. **Platform Owner Provisioning Desk**:
-   - Encrypted custom LLM router and Apify runner tokens per workspace with live status badges.
-8. **AEO / GEO & Open-SEO Crawler Architecture**:
-   - SSR-injected `LocalBusiness`, `Product`, `OfferCatalog` JSON-LD schemas and dynamic sitemaps.
+
+10. **Split-Plane BYODB (Bring Your Own Database) & Google Drive Storage**:
+    - Centralized auth on platform Supabase with strict Row Level Security (`is_account_member(account_id)`).
+    - Media attachments, PDFs, and invoices streamed directly into the tenant's own Google Drive (15 GB free storage).
+    - Optional BYODB (Bring Your Own Database) under Settings &rarr; Integrations.
+
+11. **Client Provisioning Desk & 3-Month Pro UniCRM Bundle**:
+    - 1-click package preset applying +3 Months AI Pro + 1,000 Lead Finder credits.
+    - Dedicated per-tenant key assignment and tracking for AI and Apify scraper runners with instant hot-swapping.
+
+12. **AEO / GEO & Open-SEO Crawler Architecture**:
+    - SSR-injected `LocalBusiness`, `Product`, `OfferCatalog` JSON-LD schemas and dynamic sitemaps.
+
+13. **Landing Page Value Proposition**:
+    - Transparent community model: **DIY UniCRM Core (Free Forever)** vs. **Get 3-Month Pro UniCRM (₹1,000 Total)**.
+    - Zero lock-in, zero predatory per-seat fees.
 
 ---
 
