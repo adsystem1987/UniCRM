@@ -146,23 +146,31 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
     }
   })();
 
-  // Calculate estimated price
+  // Calculate estimated price with clean currency and suffix support
   const calculateEstimatedTotal = (): string | null => {
     if (!selectedItemForBooking?.price) return null;
-    const rawNum = selectedItemForBooking.price.replace(/[^0-9.]/g, '');
-    const unitPrice = parseFloat(rawNum);
-    if (isNaN(unitPrice)) return selectedItemForBooking.price;
+    const priceStr = selectedItemForBooking.price.trim();
 
-    const currencySymbol = selectedItemForBooking.price.replace(/[0-9.,\s]/g, '') || '₹';
-    if (activeBookingType === 'stay') {
-      const total = unitPrice * totalNights;
-      return `${currencySymbol}${total.toLocaleString()}`;
-    }
-    if (activeBookingType === 'event') {
-      const total = unitPrice * ticketsCount;
-      return `${currencySymbol}${total.toLocaleString()}`;
-    }
-    return selectedItemForBooking.price;
+    // Match leading currency symbol if present
+    const currencyMatch = priceStr.match(/^[^0-9.]+/);
+    const currency = currencyMatch ? currencyMatch[0].trim() : '₹';
+
+    // Match number portion
+    const numMatch = priceStr.match(/[0-9]+(?:\.[0-9]+)?/);
+    if (!numMatch) return priceStr;
+
+    const unitVal = parseFloat(numMatch[0]);
+    if (isNaN(unitVal)) return priceStr;
+
+    const multiplier = activeBookingType === 'stay' ? totalNights : activeBookingType === 'event' ? ticketsCount : 1;
+    const total = unitVal * multiplier;
+    const formattedTotal = Number.isInteger(total) ? total.toLocaleString() : total.toFixed(2);
+
+    // Extract trailing suffix like "Cr onwards", "Lakhs", etc. (stripping per night/person)
+    const afterNum = priceStr.slice(priceStr.indexOf(numMatch[0]) + numMatch[0].length).trim();
+    const cleanSuffix = afterNum.replace(/^\s*\/\s*(night|person|ticket|pass|slot|pax)/i, '').trim();
+
+    return `${currency}${formattedTotal}${cleanSuffix ? ' ' + cleanSuffix : ''}`;
   };
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -315,9 +323,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground antialiased selection:bg-emerald-500 selection:text-white pb-24 sm:pb-16">
-      {/* Universal Top Header / Navbar */}
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur-md">
+    <div className="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 pb-24 sm:pb-16">
+      {/* Universal Top Header / Navbar (Clean, No Auth, No Theme Switch) */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
@@ -345,48 +353,34 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={handleShare}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-muted hover:bg-muted/80 text-foreground transition-colors"
             >
               <Share2 className="size-3.5" />
-              <span className="hidden sm:inline">Share</span>
+              <span>Share</span>
             </button>
-
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-foreground text-background hover:opacity-90 transition-opacity shadow-xs"
-            >
-              <Store className="size-3.5" />
-              <span className="hidden md:inline">Create Your Page</span>
-              <span className="md:hidden">Get Yours</span>
-            </Link>
           </div>
         </div>
       </header>
 
-      {/* Hero Banner / Cover */}
-      <div className="relative h-48 sm:h-64 lg:h-80 w-full bg-linear-to-br from-emerald-700 via-teal-700 to-slate-950 overflow-hidden">
-        {page.cover_url && (
-          <Image
-            src={page.cover_url}
-            alt={page.title}
-            fill
-            className="object-cover opacity-65"
-            priority
-          />
+      {/* Hero Banner / Cover: UnitPost Style Radial/Dot Pattern when no image, or cover image */}
+      <div className="relative h-44 sm:h-56 lg:h-64 w-full border-b border-border/40 overflow-hidden bg-surface">
+        {page.cover_url ? (
+          <>
+            <Image
+              src={page.cover_url}
+              alt={page.title}
+              fill
+              className="object-cover opacity-35"
+              priority
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-radial from-primary/10 via-background to-background" />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/40 to-transparent" />
-
-        <div className="absolute bottom-4 left-4 right-4 max-w-7xl mx-auto flex items-end justify-between z-10 text-white">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-400/30 backdrop-blur-md">
-              <CheckCircle2 className="size-3 text-emerald-300" />
-              Verified Direct Desk
-            </span>
-          </div>
-        </div>
       </div>
 
       {/* Main Responsive Grid Container */}
@@ -397,10 +391,10 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           <div className="lg:col-span-8 space-y-6">
             
             {/* Primary Profile Card */}
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-xl backdrop-blur-xs">
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-7 shadow-xl">
               <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
-                {/* Logo / Avatar */}
-                <div className="relative size-20 sm:size-24 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center text-3xl font-black shadow-lg border-4 border-background overflow-hidden shrink-0">
+                {/* Logo / Avatar (UnitPost Branded Monogram) */}
+                <div className="relative size-20 sm:size-24 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-3xl font-black shadow-lg border-4 border-card overflow-hidden shrink-0">
                   {page.logo_url ? (
                     <Image
                       src={page.logo_url}
@@ -415,22 +409,25 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
                 {/* Profile Info */}
                 <div className="flex-1 space-y-1.5 min-w-0">
-                  <div className="flex items-center justify-center sm:justify-start gap-2">
-                    <h1 className="text-xl sm:text-3xl font-black tracking-tight text-foreground truncate">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-foreground truncate">
                       {page.title}
                     </h1>
-                    <CheckCircle2 className="size-5 sm:size-6 text-emerald-500 fill-emerald-500/20 shrink-0" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary/10 text-primary border border-primary/20 shrink-0">
+                      <CheckCircle2 className="size-3.5 text-primary" />
+                      Verified
+                    </span>
                   </div>
 
                   {page.tagline && (
-                    <p className="text-sm sm:text-base font-medium text-emerald-600 dark:text-emerald-400">
+                    <p className="text-sm sm:text-base font-medium text-muted-foreground">
                       {page.tagline}
                     </p>
                   )}
 
                   {page.address && (
                     <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs sm:text-sm text-muted-foreground pt-1">
-                      <MapPin className="size-4 text-emerald-600 shrink-0" />
+                      <MapPin className="size-4 text-primary shrink-0" />
                       {page.google_maps_url ? (
                         <a
                           href={page.google_maps_url}
@@ -459,16 +456,16 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:hidden">
                 <button
                   onClick={() => openBookingModal()}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98]"
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform active:scale-[0.98]"
                 >
                   <Calendar className="size-4" />
                   Book Appointment / Pass
                 </button>
                 <button
                   onClick={() => openWhatsApp()}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-foreground transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground transition-colors"
                 >
-                  <MessageCircle className="size-4 fill-current text-emerald-500" />
+                  <MessageCircle className="size-4 fill-current text-[#25D366]" />
                   Chat on WhatsApp
                 </button>
               </div>
@@ -480,7 +477,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
                   <div>
                     <h2 className="text-base sm:text-lg font-black tracking-tight text-foreground flex items-center gap-2">
-                      <Sparkles className="size-5 text-emerald-500" />
+                      <Sparkles className="size-5 text-primary" />
                       Catalog, Services &amp; Passes
                     </h2>
                     <p className="text-xs text-muted-foreground">
@@ -501,8 +498,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         onClick={() => setSelectedCategory(cat as string)}
                         className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                           selectedCategory === cat
-                            ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-emerald-500/50'
+                            ? 'bg-primary text-primary-foreground shadow-xs'
+                            : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40'
                         }`}
                       >
                         {cat}
@@ -516,7 +513,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                   {filteredItems.map((item) => (
                     <div
                       key={item.id}
-                      className="rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs hover:shadow-lg hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
+                      className="rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
                     >
                       <div className="space-y-3">
                         {item.image_url ? (
@@ -537,16 +534,16 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                           </div>
                         ) : (
                           /* Dummy Fallback Preview Graphic when No Image is Provided */
-                          <div className="relative h-32 w-full rounded-xl bg-linear-to-br from-slate-100 via-emerald-50/40 to-teal-100/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-slate-800 border border-border/80 flex items-center justify-between p-4 overflow-hidden">
+                          <div className="relative h-32 w-full rounded-xl bg-surface border border-border/80 flex items-center justify-between p-4 overflow-hidden">
                             <div className="space-y-1 z-10">
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
                                 {item.category || 'Service Offering'}
                               </span>
                               <p className="text-xs font-bold text-foreground line-clamp-1">
                                 {item.title}
                               </p>
                             </div>
-                            <div className="size-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 shadow-xs z-10">
+                            <div className="size-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 shadow-xs z-10">
                               {getItemBookingType(item) === 'stay' ? (
                                 <Home className="size-6" />
                               ) : getItemBookingType(item) === 'event' ? (
@@ -555,8 +552,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                                 <Sparkles className="size-6" />
                               )}
                             </div>
-                            {/* Decorative background circle */}
-                            <div className="absolute -right-6 -bottom-6 size-24 rounded-full bg-emerald-500/5 pointer-events-none" />
+                            <div className="absolute -right-6 -bottom-6 size-24 rounded-full bg-primary/5 pointer-events-none" />
                           </div>
                         )}
 
@@ -566,7 +562,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                               {item.title}
                             </h3>
                             {!item.image_url && item.badge && (
-                              <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-md shrink-0">
+                              <span className="text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-md shrink-0">
                                 {item.badge}
                               </span>
                             )}
@@ -580,7 +576,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
                           {item.price && (
                             <div className="pt-1">
-                              <span className="inline-block text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                              <span className="inline-block text-xs sm:text-sm font-black text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20">
                                 {item.price}
                               </span>
                             </div>
@@ -591,7 +587,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       <div className="mt-4 pt-4 border-t border-border/60 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => openBookingModal(item)}
-                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition-colors flex items-center justify-center gap-1 shadow-xs"
+                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground transition-colors flex items-center justify-center gap-1 shadow-xs"
                         >
                           {getItemBookingType(item) === 'stay' ? (
                             <>
@@ -620,7 +616,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                           }
                           className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
                         >
-                          <MessageCircle className="size-3.5 fill-current text-emerald-500" />
+                          <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
                           {item.button_label || 'Inquire'}
                         </button>
                       </div>
@@ -635,9 +631,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-24">
             
             {/* Direct Booking Desk Card */}
-            <div className="rounded-2xl border-2 border-emerald-500/30 bg-card p-6 shadow-xl space-y-5">
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-xl space-y-5">
               <div className="space-y-1">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
                   <Clock className="size-3" />
                   Instant Direct Response
                 </span>
@@ -652,7 +648,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="space-y-2.5">
                 <button
                   onClick={() => openBookingModal()}
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   <CalendarCheck className="size-4" />
                   Schedule Slot / Book Pass
@@ -660,9 +656,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
                 <button
                   onClick={() => openWhatsApp()}
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground border border-border transition-colors flex items-center justify-center gap-2"
                 >
-                  <MessageCircle className="size-4 fill-current text-emerald-500" />
+                  <MessageCircle className="size-4 fill-current text-[#25D366]" />
                   Chat Directly on WhatsApp
                 </button>
               </div>
@@ -679,8 +675,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                 </div>
 
                 {submitted ? (
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center space-y-2">
-                    <CheckCircle2 className="size-7 text-emerald-500 mx-auto" />
+                  <div className="rounded-xl bg-primary/10 border border-primary/20 p-4 text-center space-y-2">
+                    <CheckCircle2 className="size-7 text-primary mx-auto" />
                     <p className="text-xs font-bold text-foreground">
                       Inquiry Received!
                     </p>
@@ -696,7 +692,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       required
                       value={inquiryName}
                       onChange={(e) => setInquiryName(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                     />
                     <input
                       type="tel"
@@ -704,14 +700,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       required
                       value={inquiryPhone}
                       onChange={(e) => setInquiryPhone(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                     />
                     <textarea
                       placeholder="Requirements / preferred time (Optional)"
                       rows={2}
                       value={inquiryNotes}
                       onChange={(e) => setInquiryNotes(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary resize-none"
                     />
                     <button
                       type="submit"
@@ -736,21 +732,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             </div>
 
             {/* UniCRM Powered By Pill */}
-            <div className="rounded-xl border border-border/80 bg-muted/40 p-4 text-center space-y-1">
+            <div className="rounded-xl border border-border/80 bg-surface p-4 text-center space-y-1">
               <p className="text-xs font-semibold text-foreground">
                 Run your business on UniCRM
               </p>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
                 Free DIY core with Google Drive media storage &amp; WhatsApp automation.
               </p>
-              <div className="pt-1.5">
-                <Link
-                  href="/signup"
-                  className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
-                >
-                  Create your own free page &rarr;
-                </Link>
-              </div>
             </div>
 
           </div>
@@ -770,10 +758,6 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             <Link href="/p" className="hover:text-foreground hover:underline">
               Browse Business Directory
             </Link>
-            <span>•</span>
-            <Link href="/signup" className="hover:text-foreground hover:underline">
-              Claim Your Business
-            </Link>
           </div>
         </footer>
       </main>
@@ -782,23 +766,23 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
       <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between lg:hidden gap-2 shadow-lg">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
-          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium truncate">
+          <p className="text-[10px] text-primary font-medium truncate">
             {page.tagline || 'Verified Business'}
           </p>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => openBookingModal()}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-xs shadow-xs"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-foreground text-background font-bold text-xs shadow-xs"
           >
             <Calendar className="size-3.5" />
             Book
           </button>
           <button
             onClick={() => openWhatsApp()}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md"
           >
-            <MessageCircle className="size-3.5 fill-current" />
+            <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
             Chat
           </button>
         </div>
@@ -811,7 +795,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
                       {activeBookingType === 'stay' ? (
                         <Home className="size-4" />
                       ) : activeBookingType === 'event' ? (
@@ -845,7 +829,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
               {bookingSuccess ? (
                 <div className="text-center py-6 space-y-3">
-                  <div className="size-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center mx-auto">
+                  <div className="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
                     <CheckCircle2 className="size-6" />
                   </div>
                   <h4 className="font-bold text-sm text-foreground">
@@ -864,7 +848,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         <strong className="text-foreground">{checkOutDate}</strong> ({totalNights} nights, {guestsCount} guests).
                       </p>
                       {calculateEstimatedTotal() && (
-                        <p className="font-bold text-emerald-600 dark:text-emerald-400">
+                        <p className="font-bold text-primary">
                           Total Estimate: {calculateEstimatedTotal()}
                         </p>
                       )}
@@ -878,7 +862,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       </p>
                       {bookedTicketCode && (
                         <div className="py-1">
-                          <span className="inline-block px-3 py-1 rounded-lg bg-purple-500/10 text-purple-700 dark:text-purple-300 font-mono font-bold text-sm border border-purple-500/20">
+                          <span className="inline-block px-3 py-1 rounded-lg bg-primary/10 text-primary font-mono font-bold text-sm border border-primary/20">
                             Pass: {bookedTicketCode}
                           </span>
                         </div>
@@ -900,7 +884,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         href={bookingCalendarLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-bold transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl border border-border bg-muted hover:bg-muted/80 text-foreground text-xs font-bold transition-colors"
                       >
                         <Calendar className="size-3.5" />
                         Add to Google Calendar
@@ -912,9 +896,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         href={bookingWaDeepLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition-colors"
+                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold shadow-md transition-colors"
                       >
-                        <MessageCircle className="size-3.5 fill-current" />
+                        <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
                         Chat on WhatsApp
                       </a>
                     )}
@@ -942,7 +926,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       placeholder="e.g. John Doe"
                       value={bookingName}
                       onChange={(e) => setBookingName(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                     />
                   </div>
 
@@ -956,7 +940,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       placeholder="+91 98765 43210"
                       value={bookingPhone}
                       onChange={(e) => setBookingPhone(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                     />
                   </div>
 
@@ -966,7 +950,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
                           <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                            <Calendar className="size-3 text-emerald-500" />
+                            <Calendar className="size-3 text-primary" />
                             Check-in Date
                           </label>
                           <input
@@ -974,12 +958,12 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                             required
                             value={checkInDate}
                             onChange={(e) => setCheckInDate(e.target.value)}
-                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                           />
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                            <Calendar className="size-3 text-emerald-500" />
+                            <Calendar className="size-3 text-primary" />
                             Check-out Date
                           </label>
                           <input
@@ -987,7 +971,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                             required
                             value={checkOutDate}
                             onChange={(e) => setCheckOutDate(e.target.value)}
-                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                           />
                         </div>
                       </div>
@@ -995,13 +979,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
                           <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                            <Users className="size-3 text-emerald-500" />
+                            <Users className="size-3 text-primary" />
                             Guests
                           </label>
                           <select
                             value={guestsCount}
                             onChange={(e) => setGuestsCount(Number(e.target.value))}
-                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                           >
                             {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((g) => (
                               <option key={g} value={g}>
@@ -1017,7 +1001,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                           <div className="w-full rounded-xl border border-border bg-muted/50 px-3 py-2 text-xs font-semibold text-foreground flex items-center justify-between">
                             <span>{totalNights} Night{totalNights > 1 ? 's' : ''}</span>
                             {calculateEstimatedTotal() && (
-                              <span className="text-emerald-600 dark:text-emerald-400">
+                              <span className="text-primary font-bold">
                                 {calculateEstimatedTotal()}
                               </span>
                             )}
@@ -1030,13 +1014,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       <div className="grid grid-cols-2 gap-2.5">
                         <div className="space-y-1.5">
                           <label className="text-[11px] font-semibold text-foreground flex items-center gap-1">
-                            <Ticket className="size-3 text-purple-500" />
+                            <Ticket className="size-3 text-primary" />
                             Number of Tickets
                           </label>
                           <select
                             value={ticketsCount}
                             onChange={(e) => setTicketsCount(Number(e.target.value))}
-                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-purple-500"
+                            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                           >
                             {[1, 2, 3, 4, 5, 6, 8, 10].map((t) => (
                               <option key={t} value={t}>
@@ -1049,7 +1033,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                           <label className="text-[11px] font-semibold text-muted-foreground">
                             Total Pass Amount
                           </label>
-                          <div className="w-full rounded-xl border border-border bg-purple-500/5 px-3 py-2 text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center justify-between">
+                          <div className="w-full rounded-xl border border-border bg-primary/5 px-3 py-2 text-xs font-bold text-primary flex items-center justify-between">
                             <span>{ticketsCount} Pass{ticketsCount > 1 ? 'es' : ''}</span>
                             <span>{calculateEstimatedTotal() || 'Free RSVP'}</span>
                           </div>
@@ -1067,7 +1051,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                           required
                           value={bookingDate}
                           onChange={(e) => setBookingDate(e.target.value)}
-                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -1077,7 +1061,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         <select
                           value={bookingSlot}
                           onChange={(e) => setBookingSlot(e.target.value)}
-                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
+                          className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-2 focus:ring-primary"
                         >
                           <option value="10:00 AM">10:00 AM</option>
                           <option value="11:00 AM">11:00 AM</option>
@@ -1106,7 +1090,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       }
                       value={bookingNotes}
                       onChange={(e) => setBookingNotes(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-emerald-500 resize-none"
+                      className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-primary resize-none"
                     />
                   </div>
 
@@ -1114,11 +1098,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     <button
                       type="submit"
                       disabled={bookingSubmitting}
-                      className={`w-full py-2.5 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-1.5 shadow-md ${
-                        activeBookingType === 'event'
-                          ? 'bg-purple-600 hover:bg-purple-500'
-                          : 'bg-emerald-600 hover:bg-emerald-500'
-                      }`}
+                      className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all flex items-center justify-center gap-1.5 shadow-md"
                     >
                       {bookingSubmitting ? (
                         <>
