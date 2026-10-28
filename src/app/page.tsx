@@ -813,7 +813,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing / Business Model Section: Free Forever + ₹1,000/mo DFY Pro Support */}
+        {/* Pricing / Business Model Section: Free Forever DIY vs 3-Month Pro Pilot Pass */}
         <section id="support-plan" className="py-16 md:py-24 border-b border-border/40 bg-card/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -821,29 +821,29 @@ export default function LandingPage() {
                 Transparent Community Model
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-                Free Forever Core Software.<br />Pay Only If You Need Handheld Support.
+                Free Forever Core Software.<br />Pay Only If You Want a Guided 3-Month Pro Pilot.
               </h2>
               <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
-                Zero lock-in. Direct bills to Meta. Optional Done-For-You (DFY) Pro maintenance.
+                Zero lock-in. Direct bills to Meta. Free forever with your own cloud workspace, or get our ₹1,000 all-inclusive 90-day pilot pass.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-              {/* Plan 1: Free Forever */}
+              {/* Plan 1: DIY UniCRM Core (Free Forever) */}
               <div className="rounded-3xl border border-border/70 bg-card p-8 flex flex-col justify-between shadow-sm">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface text-foreground border border-border">
-                      Community-Funded
+                      DIY Community Edition
                     </span>
                     <span className="text-xs font-semibold text-muted-foreground">Free Forever</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">DFY UniCRM Core</h3>
+                  <h3 className="text-2xl font-black text-foreground">DIY UniCRM Core</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
                     <span className="text-5xl font-black text-foreground">₹0</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
                     <span className="rounded-full bg-emerald-500/15 border border-border px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                      Community Edition
+                      Bring Your Own Cloud
                     </span>
                   </div>
 
@@ -851,33 +851,33 @@ export default function LandingPage() {
                   <ScarcityAllocationBar />
 
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Complete access to the entire omnichannel CRM software. No trial period, no card required.
+                    Complete access to the entire omnichannel CRM software. Bring your own cloud accounts with zero monthly subscription fees.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Unlimited contacts & conversation history</span>
+                      <span>Dedicated Database (BYODB) — complete data privacy</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>WhatsApp, Instagram, Facebook & Support Email</span>
+                      <span>Google Drive Cloud Storage (15 GB Free Storage)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>WhatsApp Inbound & Outbound Calling with IVR</span>
+                      <span>WhatsApp, Instagram, Facebook &amp; Support Inbox</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Google Drive BYOS (15 GB Free Storage)</span>
+                      <span>Airbnb-style Stays &amp; Eventbrite Event RSVP Micro-Pages</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Unlimited team agent accounts</span>
+                      <span>Lead Finder with CSV upload or Google Sheet sync</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>UniCRM Free Multi-Model AI Gateway</span>
+                      <span>AI Agent Squads (Bring Your Own AI API Key)</span>
                     </li>
                   </ul>
                 </div>
@@ -885,32 +885,32 @@ export default function LandingPage() {
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <Link href="/signup" className="block w-full">
                     <Button variant="outline" className="w-full h-11 font-bold">
-                      Create Free Account
+                      Start Free with DIY Setup
                     </Button>
                   </Link>
                 </div>
               </div>
 
-              {/* Plan 2: ₹1,000/mo Optional Done-For-You Pro Support */}
+              {/* Plan 2: 3-Month Pro Pilot Pass — ₹1,000 Total */}
               <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
                 <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
-                  100% Optional Service
+                  Limited-Time Pilot Pass
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
-                      Completely Optional Help
+                      Guided 90-Day Access
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">One-Time Setup</span>
+                    <span className="text-xs font-semibold text-emerald-500">No Monthly Renewal</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">Optional Done-For-You Pro Help</h3>
+                  <h3 className="text-2xl font-black text-foreground">3-Month Pro Pilot Pass</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
-                    <span className="text-sm text-muted-foreground font-semibold">— one time cost per setup</span>
+                    <span className="text-sm text-muted-foreground font-semibold">total for 3 full months (one-time)</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    The software is 100% free forever. This hands-on assistance is completely optional—only choose it if you want our experts to handle your Meta setup, phone number verification, and templates for you.
+                    Everything set up and managed for you. No need to bring API keys or configure databases—test the full power of UniCRM for 90 days with zero strings attached.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
@@ -920,20 +920,20 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Live 1-on-1 Google Meet setup with our engineer</span>
+                      <span>Live 1-on-1 setup: WhatsApp, Google Drive &amp; Google Calendar</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Free Google Drive (15 GB) &amp; Private Database configured for you</span>
+                      <span><strong>AI Pro Squads Included for 3 Months</strong> (no API key required)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>WhatsApp Gateway connected &amp; initial catalog cards uploaded</span>
+                      <span><strong>Lead Finder Included</strong> (up to 100 verified leads / day)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                       <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                        Includes 3 Months of Smart AI 24/7 Auto-Reply
+                        Managed uninterrupted database — zero weekly pruning worries
                       </span>
                     </li>
                   </ul>
@@ -943,13 +943,13 @@ export default function LandingPage() {
                   <ContactButton
                     variant="cta"
                     className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
-                    defaultTopic="Optional Pro Setup (₹1,000 one-time)"
+                    defaultTopic="3-Month Pro Pilot Pass (₹1,000 Total)"
                     icon="message"
                   >
-                    <span>Get ₹1,000 One-Time Setup</span>
+                    <span>Get 3-Month Pro Pilot Pass (₹1,000)</span>
                   </ContactButton>
                   <p className="text-[11px] text-center text-muted-foreground">
-                    1-on-1 human technical onboarding &bull; Pay once, use forever
+                    Complete 90-day trial &bull; No automatic charges &bull; Downgrade to DIY Free anytime
                   </p>
                 </div>
               </div>
