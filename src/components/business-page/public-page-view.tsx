@@ -332,9 +332,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             <span className="text-border">|</span>
 
             <Link href="/" className="flex items-center gap-2">
-              <div className="size-7 rounded-lg bg-linear-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-black text-xs shadow-xs">
-                U
-              </div>
+              <Image
+                src="/logo.png"
+                alt="UniCRM"
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+              />
               <span className="font-black text-sm tracking-tight text-foreground hidden sm:inline">
                 UniCRM
               </span>
@@ -515,7 +519,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       className="rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs hover:shadow-lg hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
                     >
                       <div className="space-y-3">
-                        {item.image_url && (
+                        {item.image_url ? (
                           <div className="relative h-40 w-full rounded-xl bg-muted overflow-hidden border border-border">
                             <Image
                               src={item.image_url}
@@ -530,6 +534,29 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                                 </span>
                               </div>
                             )}
+                          </div>
+                        ) : (
+                          /* Dummy Fallback Preview Graphic when No Image is Provided */
+                          <div className="relative h-32 w-full rounded-xl bg-linear-to-br from-slate-100 via-emerald-50/40 to-teal-100/30 dark:from-slate-900 dark:via-emerald-950/20 dark:to-slate-800 border border-border/80 flex items-center justify-between p-4 overflow-hidden">
+                            <div className="space-y-1 z-10">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                                {item.category || 'Service Offering'}
+                              </span>
+                              <p className="text-xs font-bold text-foreground line-clamp-1">
+                                {item.title}
+                              </p>
+                            </div>
+                            <div className="size-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0 shadow-xs z-10">
+                              {getItemBookingType(item) === 'stay' ? (
+                                <Home className="size-6" />
+                              ) : getItemBookingType(item) === 'event' ? (
+                                <Ticket className="size-6" />
+                              ) : (
+                                <Sparkles className="size-6" />
+                              )}
+                            </div>
+                            {/* Decorative background circle */}
+                            <div className="absolute -right-6 -bottom-6 size-24 rounded-full bg-emerald-500/5 pointer-events-none" />
                           </div>
                         )}
 
@@ -638,16 +665,6 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                   <MessageCircle className="size-4 fill-current text-emerald-500" />
                   Chat Directly on WhatsApp
                 </button>
-
-                {page.calling_number && (
-                  <a
-                    href={`tel:${page.calling_number.replace(/[^0-9+]/g, '')}`}
-                    className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Phone className="size-3.5 text-muted-foreground" />
-                    Call: {page.calling_number}
-                  </a>
-                )}
               </div>
 
               {/* Direct Callback Form */}

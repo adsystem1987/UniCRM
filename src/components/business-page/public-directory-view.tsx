@@ -96,9 +96,13 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
       <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="size-8 rounded-xl bg-linear-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-black text-sm shadow-sm">
-              U
-            </div>
+            <Image
+              src="/logo.png"
+              alt="UniCRM"
+              width={32}
+              height={32}
+              className="h-8 w-8 object-contain"
+            />
             <span className="font-black text-base tracking-tight text-foreground">
               UniCRM <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs ml-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Directory</span>
             </span>
