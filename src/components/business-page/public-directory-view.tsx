@@ -14,8 +14,12 @@ import {
   Sparkles,
   ArrowRight,
   Store,
-  Layers,
+  Compass,
+  HeartPulse,
+  Wrench,
+  Building2,
 } from 'lucide-react';
+import { ModeToggle } from '@/components/layout/mode-toggle';
 import { BusinessItem } from '@/components/business-page/public-page-view';
 
 export interface PublicDirectoryPageItem {
@@ -34,13 +38,14 @@ export interface PublicDirectoryPageItem {
   lead_count?: number;
 }
 
-const CATEGORY_FILTERS = [
+export const CATEGORY_FILTERS = [
   { id: 'all', label: 'All Businesses' },
-  { id: 'stays', label: 'Stays & Villas', icon: Home },
+  { id: 'stays', label: 'Stays & Rooms', icon: Home },
+  { id: 'tours', label: 'Tours & Travel', icon: Compass },
+  { id: 'realestate', label: 'Real Estate & Site Visits', icon: Building2 },
   { id: 'events', label: 'Events & Passes', icon: Ticket },
-  { id: 'tours', label: 'Tours & Travel' },
-  { id: 'wellness', label: 'Clinics & Wellness' },
-  { id: 'services', label: 'Professional Services' },
+  { id: 'wellness', label: 'Clinics & Wellness', icon: HeartPulse },
+  { id: 'services', label: 'Professional Services', icon: Wrench },
 ];
 
 export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[] }) {
@@ -51,18 +56,77 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
   const getPageCategory = (page: PublicDirectoryPageItem): string => {
     const text = `${page.title} ${page.tagline || ''} ${page.about || ''} ${(page.items || []).map((i) => `${i.title} ${i.category || ''}`).join(' ')}`.toLowerCase();
 
-    if (text.includes('stay') || text.includes('hotel') || text.includes('resort') || text.includes('villa') || text.includes('homestay') || text.includes('room')) {
+    // 1. Real Estate & Site Visits (flats, villas for sale, developers, brokers, land, mortgage/dsa)
+    if (
+      text.includes('real estate') ||
+      text.includes('realty') ||
+      text.includes('site visit') ||
+      text.includes('bhk') ||
+      text.includes('penthouse') ||
+      text.includes('developer') ||
+      text.includes('broker') ||
+      text.includes('mortgage') ||
+      text.includes('home loan') ||
+      text.includes('lap')
+    ) {
+      return 'realestate';
+    }
+
+    // 2. Stays & Rooms (Airbnb-style homestays, hotels, resorts, room bookings)
+    if (
+      text.includes('stay') ||
+      text.includes('hotel') ||
+      text.includes('resort') ||
+      text.includes('homestay') ||
+      text.includes('room booking') ||
+      text.includes('deluxe room') ||
+      text.includes('bed & breakfast')
+    ) {
       return 'stays';
     }
-    if (text.includes('event') || text.includes('workshop') || text.includes('ticket') || text.includes('pass') || text.includes('summit') || text.includes('fest')) {
-      return 'events';
-    }
-    if (text.includes('tour') || text.includes('travel') || text.includes('holiday') || text.includes('itinerary') || text.includes('cab')) {
+
+    // 3. Tours & Travel (holiday packages, sightseeing, excursions, itinerary, travel agency)
+    if (
+      text.includes('tour') ||
+      text.includes('travel') ||
+      text.includes('holiday') ||
+      text.includes('itinerary') ||
+      text.includes('trip') ||
+      text.includes('safari')
+    ) {
       return 'tours';
     }
-    if (text.includes('clinic') || text.includes('dental') || text.includes('doctor') || text.includes('hospital') || text.includes('salon') || text.includes('spa') || text.includes('yoga') || text.includes('fitness')) {
+
+    // 4. Events & Passes (workshops, ticket bookings, passes, summits, conferences)
+    if (
+      text.includes('event') ||
+      text.includes('workshop') ||
+      text.includes('ticket') ||
+      text.includes('pass') ||
+      text.includes('summit') ||
+      text.includes('fest') ||
+      text.includes('webinar')
+    ) {
+      return 'events';
+    }
+
+    // 5. Clinics & Wellness (doctors, gym, dental, health, yoga, fitness, spa, salon)
+    if (
+      text.includes('clinic') ||
+      text.includes('dental') ||
+      text.includes('doctor') ||
+      text.includes('hospital') ||
+      text.includes('gym') ||
+      text.includes('fitness') ||
+      text.includes('yoga') ||
+      text.includes('wellness') ||
+      text.includes('salon') ||
+      text.includes('spa')
+    ) {
       return 'wellness';
     }
+
+    // 6. Professional Services (maid, drivers, electrician, solar EPC, plumbing, repair)
     return 'services';
   };
 
@@ -91,9 +155,9 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
   }, [pages, selectedCategory, search]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground selection:bg-emerald-500 selection:text-white pb-20">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20 pb-20">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -104,17 +168,18 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
               className="h-8 w-8 object-contain"
             />
             <span className="font-black text-base tracking-tight text-foreground">
-              UniCRM <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs ml-1 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Directory</span>
+              UniCRM <span className="text-primary font-semibold text-xs ml-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">Directory</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ModeToggle />
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-foreground text-background hover:opacity-90 transition-opacity shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity shadow-xs"
             >
               <Store className="size-3.5" />
-              <span>Create Your Micro-Page</span>
+              <span>Create Your Page</span>
             </Link>
           </div>
         </div>
@@ -233,40 +298,48 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                 >
                   <div>
                     {/* Cover & Avatar Header */}
-                    <div className="relative h-36 w-full bg-linear-to-br from-emerald-600 via-teal-600 to-slate-800 overflow-hidden">
-                      {page.cover_url && (
+                    <div className="relative h-36 w-full bg-surface border-b border-border/40 overflow-hidden">
+                      {page.cover_url ? (
                         <Image
                           src={page.cover_url}
                           alt={page.title}
                           fill
-                          className="object-cover opacity-70 group-hover:scale-105 transition-transform duration-300"
+                          className="object-cover opacity-60 group-hover:scale-105 transition-transform duration-300"
                         />
+                      ) : (
+                        <div className="absolute inset-0 bg-radial from-primary/10 via-background to-background" />
                       )}
-                      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-linear-to-t from-background/80 via-transparent to-transparent" />
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 flex items-center gap-1.5">
                         {isStay && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500 text-slate-950 flex items-center gap-1 shadow-xs">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
                             <Home className="size-2.5" />
-                            Stay &amp; Villa
+                            Stays &amp; Rooms
+                          </span>
+                        )}
+                        {getPageCategory(page) === 'realestate' && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
+                            <Building2 className="size-2.5" />
+                            Site Visits &amp; Realty
                           </span>
                         )}
                         {isEvent && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500 text-white flex items-center gap-1 shadow-xs">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
                             <Ticket className="size-2.5" />
                             Events &amp; Passes
                           </span>
                         )}
-                        {!isStay && !isEvent && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/40 text-white backdrop-blur-md border border-white/20">
+                        {!isStay && !isEvent && getPageCategory(page) !== 'realestate' && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-background/90 text-foreground backdrop-blur-md border border-border/60">
                             Verified Business
                           </span>
                         )}
                       </div>
 
                       {/* Logo Avatar */}
-                      <div className="absolute -bottom-4 left-5 size-14 rounded-2xl bg-linear-to-br from-emerald-500 to-teal-700 text-white flex items-center justify-center font-black text-xl shadow-md border-2 border-card overflow-hidden">
+                      <div className="absolute -bottom-4 left-5 size-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center font-black text-xl shadow-md border-2 border-card overflow-hidden">
                         {page.logo_url ? (
                           <Image
                             src={page.logo_url}
@@ -286,18 +359,18 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                         <h3 className="font-black text-base text-foreground truncate">
                           {page.title}
                         </h3>
-                        <CheckCircle2 className="size-4 text-emerald-500 fill-emerald-500/20 shrink-0" />
+                        <CheckCircle2 className="size-4 text-primary shrink-0" />
                       </div>
 
                       {page.tagline && (
-                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 line-clamp-1">
+                        <p className="text-xs font-medium text-muted-foreground line-clamp-1">
                           {page.tagline}
                         </p>
                       )}
 
                       {page.address && (
                         <div className="flex items-center gap-1 text-[11px] text-muted-foreground truncate">
-                          <MapPin className="size-3 text-muted-foreground shrink-0" />
+                          <MapPin className="size-3 text-primary shrink-0" />
                           <span className="truncate">{page.address}</span>
                         </div>
                       )}
@@ -310,7 +383,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                               {primaryItem.title}
                             </span>
                             {primaryItem.price && (
-                              <span className="font-extrabold text-emerald-600 dark:text-emerald-400 shrink-0 text-[11px]">
+                              <span className="font-extrabold text-primary shrink-0 text-[11px]">
                                 {primaryItem.price}
                               </span>
                             )}
@@ -329,10 +402,18 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                   <div className="p-4 pt-0 border-t border-border/40 mt-2 flex items-center gap-2">
                     <Link
                       href={`/p/${page.slug}`}
-                      className="flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:opacity-90 transition-opacity flex items-center justify-center gap-1 shadow-xs"
+                      className="flex-1 py-2 px-3 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity flex items-center justify-center gap-1 shadow-xs"
                     >
                       <Calendar className="size-3.5" />
-                      <span>{isStay ? 'Book Stay' : isEvent ? 'Get Tickets' : 'View & Book'}</span>
+                      <span>
+                        {isStay
+                          ? 'Book Stay'
+                          : getPageCategory(page) === 'realestate'
+                          ? 'Site Visit Pass'
+                          : isEvent
+                          ? 'Get Passes'
+                          : 'View & Book'}
+                      </span>
                       <ArrowRight className="size-3 ml-0.5" />
                     </Link>
 
@@ -342,9 +423,9 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 px-3 rounded-xl text-xs font-bold bg-emerald-600/10 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white transition-colors border border-emerald-500/20 flex items-center justify-center gap-1 shrink-0"
+                      className="py-2 px-3 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border flex items-center justify-center gap-1.5 shrink-0"
                     >
-                      <MessageCircle className="size-3.5 fill-current" />
+                      <MessageCircle className="size-3.5 fill-current text-[#25D366]" />
                       <span>Chat</span>
                     </a>
                   </div>

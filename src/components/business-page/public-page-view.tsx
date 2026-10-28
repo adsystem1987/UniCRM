@@ -24,6 +24,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ModeToggle } from '@/components/layout/mode-toggle';
 
 export interface BusinessItem {
   id: string;
@@ -101,19 +102,22 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
     if (item.item_type === 'event') return 'event';
     const cat = (item.category || '').toLowerCase();
     const title = (item.title || '').toLowerCase();
+
+    // Stays & Rooms (Airbnb-style room nights, homestay, resort)
     if (
       cat.includes('stay') ||
       cat.includes('hotel') ||
       cat.includes('homestay') ||
       cat.includes('room') ||
-      cat.includes('villa') ||
+      cat.includes('resort') ||
       title.includes('stay') ||
-      title.includes('villa') ||
       title.includes('night') ||
       title.includes('room')
     ) {
       return 'stay';
     }
+
+    // Events & Passes (workshops, summits, conferences, tickets, site visit passes)
     if (
       cat.includes('event') ||
       cat.includes('workshop') ||
@@ -121,10 +125,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
       cat.includes('pass') ||
       cat.includes('festival') ||
       cat.includes('webinar') ||
+      cat.includes('site visit') ||
       title.includes('workshop') ||
       title.includes('event') ||
       title.includes('summit') ||
-      title.includes('ticket')
+      title.includes('pass') ||
+      title.includes('ticket') ||
+      title.includes('site visit')
     ) {
       return 'event';
     }
@@ -353,7 +360,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             </Link>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ModeToggle />
             <button
               onClick={handleShare}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-muted hover:bg-muted/80 text-foreground transition-colors"
@@ -361,6 +369,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <Share2 className="size-3.5" />
               <span>Share</span>
             </button>
+            <Link
+              href="/signup"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity shadow-xs"
+            >
+              <Store className="size-3.5" />
+              <span className="hidden sm:inline">Create Your Page</span>
+              <span className="sm:hidden">Get Yours</span>
+            </Link>
           </div>
         </div>
       </header>
