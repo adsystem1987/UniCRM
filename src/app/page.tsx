@@ -588,11 +588,11 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Instant Business Page &amp; Booking</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Launch your digital storefront in 60 seconds with zero coding. Customers can browse your catalog, book appointments directly from the page, and receive instant automated WhatsApp confirmations and reminders.
+                    Launch your digital storefront in 60 seconds. Customers can browse your catalog, book appointments with direct Google Calendar sync, and receive instant automated WhatsApp confirmations and reminders.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500 flex items-center justify-between">
-                  <span>1-Click Booking + Reminders</span>
+                  <span>Google Calendar + WhatsApp Sync</span>
                   <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
                 </div>
               </div>

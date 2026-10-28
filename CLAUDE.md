@@ -266,6 +266,31 @@
 
 ---
 
+## Core System Architecture & Recent Features (Last 3 Days)
+
+1. **Continuous Learning Client Memory (`contacts.ai_memory`)**:
+   - Real-time extraction of budget (e.g. `₹50k`, `80L`), commercial buying intent (`high`/`warm`/`low`), timeline, and objections across all inbound chats (both Meta Cloud API & QR gateway).
+   - Injected live into the Unified Inbox contact sidebar drawer (`contact-sidebar.tsx`) with 1-click database refresh.
+2. **Instant Business Micro-Pages & 1-Click WhatsApp Bookings (`/p/[slug]`)**:
+   - Dynamic mobile-first storefronts, service catalogs, and printable counter standee flyers.
+   - Interactive appointment slot booking modal with automated confirmation notices via approved Meta template (`appointment_reminder_notice`) and QR fallback.
+3. **Appointments & Bookings Desk (`/business-pages`)**:
+   - First-class sidebar navigation item and dashboard route.
+   - Status tracking (`confirmed`, `completed`, `cancelled`) with automated WhatsApp status alerts.
+4. **Google Calendar & 1-Click Scheduling (Cal.com Architecture)**:
+   - Synchronizes bookings directly to the workspace owner's connected Google Calendar.
+   - Generates 1-click "Add to Google Calendar" (.ics web link) for clients on booking confirmations.
+5. **AI Agent Squads & 1-Click Role Playbooks**:
+   - Pre-trained WhatsApp personas (*Appointment & Booking Concierge*, *Objection Handler & Value Closer*, *Lead Qualifier & Discovery*, *Customer Support & Care*).
+6. **Categorized AI Knowledge Base (AppFlowy Architecture)**:
+   - Folder/category hierarchy for FAQs, pricing sheets, and policies feeding the RAG assistant.
+7. **Platform Owner Provisioning Desk**:
+   - Encrypted custom LLM router and Apify runner tokens per workspace with live status badges.
+8. **AEO / GEO & Open-SEO Crawler Architecture**:
+   - SSR-injected `LocalBusiness`, `Product`, `OfferCatalog` JSON-LD schemas and dynamic sitemaps.
+
+---
+
 ## Agent Guidelines & Memory
 - Read `@AGENTS.md` for UI/UX engineering standards and Next.js guidelines.
 - Always maintain documentation integrity and preserve unrelated comments/docstrings.

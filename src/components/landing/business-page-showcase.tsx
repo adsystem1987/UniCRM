@@ -16,6 +16,8 @@ import {
   Coins,
   Utensils,
   Home,
+  CalendarCheck,
+  Calendar,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -294,34 +296,44 @@ export function BusinessPageShowcase() {
         </div>
 
         {/* Bottom Flow Explanation */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-center sm:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3.5 pt-2 text-center sm:text-left">
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 space-y-1">
             <span className="text-xs font-bold text-foreground flex items-center gap-1.5 justify-center sm:justify-start">
               <Share2 className="size-3.5 text-emerald-500" />
               1. Put Link Anywhere
             </span>
             <p className="text-[11px] text-muted-foreground">
-              Add to your Instagram Bio, Google Maps Profile, or print a QR sticker on your desk or car.
+              Add to your Instagram Bio, Google Maps Profile, or print a counter standee flyer with 1 click.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 space-y-1">
+            <span className="text-xs font-bold text-foreground flex items-center gap-1.5 justify-center sm:justify-start">
+              <CalendarCheck className="size-3.5 text-emerald-500" />
+              2. 1-Click Slot Booking
+            </span>
+            <p className="text-[11px] text-muted-foreground">
+              Clients pick their preferred date and time slot with automatic sync to your Google Calendar.
             </p>
           </div>
 
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 space-y-1">
             <span className="text-xs font-bold text-foreground flex items-center gap-1.5 justify-center sm:justify-start">
               <MessageCircle className="size-3.5 text-emerald-500" />
-              2. 1-Click WhatsApp Chat
+              3. WhatsApp Reminders
             </span>
             <p className="text-[11px] text-muted-foreground">
-              Customers tap their desired package or room—WhatsApp opens with the exact details ready to send.
+              Automated confirmation and reminder notices are dispatched to the customer's WhatsApp.
             </p>
           </div>
 
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 space-y-1">
             <span className="text-xs font-bold text-foreground flex items-center gap-1.5 justify-center sm:justify-start">
               <CheckCircle2 className="size-3.5 text-emerald-500" />
-              3. Captured in UniCRM
+              4. Captured in CRM Desk
             </span>
             <p className="text-[11px] text-muted-foreground">
-              The phone number and deal requirements land instantly in your pipeline as #WebPageLead.
+              Bookings and client memory land automatically on your Appointments Desk and Inbox sidebar.
             </p>
           </div>
         </div>
