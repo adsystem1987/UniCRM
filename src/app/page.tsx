@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
+import { UniCrmLogo } from "@/components/brand/logo";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 import { WebsiteWhatsAppWidget } from "@/components/layout/website-whatsapp-widget";
 import {
@@ -127,12 +128,10 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full bg-background/90 backdrop-blur-xs border-b border-border/40">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
           <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 min-w-0">
-            <img
-              src="/logo.png"
-              alt="DFY UniCRM"
-              className="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0"
-            />
-            <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">DFY UniCRM</span>
+            <UniCrmLogo className="h-8 w-8 sm:h-9 sm:w-9" showGlow />
+            <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">
+              DFY <span className="text-muted-foreground font-semibold">UniCRM</span>
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-muted-foreground">
@@ -153,9 +152,9 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-primary text-primary-foreground font-medium gap-1.5 px-3.5 text-sm rounded-full hover:opacity-90 active:opacity-80 active:translate-y-px">
+              <Button size="sm" className="btn-gold-gradient font-bold gap-1.5 px-4 text-xs rounded-full shadow-md">
                 <span>Start for free</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-3.5 w-3.5 text-[#171103]" />
               </Button>
             </Link>
           </div>

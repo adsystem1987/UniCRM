@@ -26,6 +26,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { UniCrmLogo } from '@/components/brand/logo';
 import { ModeToggle } from '@/components/layout/mode-toggle';
 
 export interface BusinessItem {
@@ -424,15 +425,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             <span className="text-border">|</span>
 
             <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="/logo.png"
-                alt="UniCRM"
-                width={28}
-                height={28}
-                className="h-7 w-7 object-contain"
-              />
+              <UniCrmLogo className="h-7 w-7" showGlow />
               <span className="font-black text-sm tracking-tight text-foreground hidden sm:inline">
-                UniCRM
+                Uni<span className="text-muted-foreground font-semibold">CRM</span>
               </span>
             </Link>
           </div>
@@ -448,7 +443,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             </button>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold btn-gold-gradient shadow-xs"
             >
               <Store className="size-3.5" />
               <span className="hidden sm:inline">Create Your Page</span>
@@ -557,16 +552,16 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:hidden">
                 <button
                   onClick={() => openBookingModal()}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform active:scale-[0.98]"
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm btn-gold-gradient shadow-md"
                 >
                   <Calendar className="size-4" />
                   Book Appointment / Pass
                 </button>
                 <button
                   onClick={() => openChatWithMe()}
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground transition-colors"
+                  className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground transition-colors border border-border"
                 >
-                  <MessageSquare className="size-4 text-primary" />
+                  <MessageSquare className="size-4" />
                   Chat With Me
                 </button>
               </div>
@@ -750,7 +745,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="space-y-2.5">
                 <button
                   onClick={() => openBookingModal()}
-                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 rounded-xl font-bold text-sm btn-gold-gradient shadow-md flex items-center justify-center gap-2"
                 >
                   <CalendarCheck className="size-4" />
                   Schedule Slot / Book Pass
@@ -760,7 +755,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                   onClick={() => openChatWithMe()}
                   className="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-muted hover:bg-muted/80 text-foreground border border-border transition-colors flex items-center justify-center gap-2"
                 >
-                  <MessageSquare className="size-4 text-primary" />
+                  <MessageSquare className="size-4" />
                   Chat With Me
                 </button>
               </div>
@@ -875,14 +870,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
         <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => openBookingModal()}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-foreground text-background font-bold text-xs shadow-xs"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl btn-gold-gradient font-bold text-xs shadow-xs"
           >
             <Calendar className="size-3.5" />
             Book
           </button>
           <button
             onClick={() => openChatWithMe()}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-card border border-border text-foreground font-bold text-xs shadow-xs"
           >
             <MessageSquare className="size-3.5" />
             Chat
@@ -1200,7 +1195,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     <button
                       type="submit"
                       disabled={bookingSubmitting}
-                      className="w-full py-2.5 rounded-xl text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition-all flex items-center justify-center gap-1.5 shadow-md"
+                      className="w-full py-2.5 rounded-xl text-xs font-bold btn-gold-gradient transition-all flex items-center justify-center gap-1.5 shadow-md"
                     >
                       {bookingSubmitting ? (
                         <>
@@ -1320,7 +1315,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                 <button
                   type="submit"
                   disabled={chatSending || !chatInputText.trim()}
-                  className="p-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-xs"
+                  className="p-2 rounded-xl btn-gold-gradient disabled:opacity-50 transition-colors shadow-xs"
                 >
                   {chatSending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
                 </button>

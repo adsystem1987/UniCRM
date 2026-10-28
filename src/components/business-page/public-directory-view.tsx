@@ -21,6 +21,7 @@ import {
   Landmark,
 } from 'lucide-react';
 import { ModeToggle } from '@/components/layout/mode-toggle';
+import { UniCrmLogo } from '@/components/brand/logo';
 import { BusinessItem } from '@/components/business-page/public-page-view';
 
 export interface PublicDirectoryPageItem {
@@ -175,15 +176,9 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
       <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="UniCRM"
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
-            />
+            <UniCrmLogo className="h-8 w-8" showGlow />
             <span className="font-black text-base tracking-tight text-foreground">
-              UniCRM <span className="text-primary font-semibold text-xs ml-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">Directory</span>
+              Uni<span className="text-muted-foreground font-semibold">CRM</span> <span className="text-foreground font-semibold text-xs ml-1 bg-muted px-2 py-0.5 rounded-full border border-border">Directory</span>
             </span>
           </Link>
 
@@ -191,7 +186,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
             <ModeToggle />
             <Link
               href="/signup"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-opacity shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold btn-gold-gradient shadow-xs"
             >
               <Store className="size-3.5" />
               <span>Create Your Page</span>

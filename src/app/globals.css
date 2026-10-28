@@ -424,6 +424,45 @@ html[data-theme="rose"] {
   background-size: 22px 22px;
 }
 
+/* ============================================================
+ * UniCRM Lightweight Luxe Gold CTA System (.btn-gold-gradient)
+ * Harmonizes with Sun (Light) and Moon (Dark) Monochrome + Signals
+ * ============================================================ */
+.btn-gold-gradient {
+  background: linear-gradient(135deg, #F5D796 0%, #D8A447 50%, #BF892B 100%);
+  color: #171103 !important;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 8px rgba(216, 164, 71, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-gold-gradient:hover {
+  background: linear-gradient(135deg, #FDE0A3 0%, #E4B052 50%, #CA9434 100%);
+  box-shadow: 0 4px 18px rgba(216, 164, 71, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-gold-gradient:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(216, 164, 71, 0.2);
+}
+
+/* Dark Mode (Moon Mode) Enhancements for Gold CTA */
+html.dark .btn-gold-gradient,
+html[data-mode="dark"] .btn-gold-gradient {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 16px rgba(216, 164, 71, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+html.dark .btn-gold-gradient:hover,
+html[data-mode="dark"] .btn-gold-gradient:hover {
+  box-shadow: 0 4px 22px rgba(216, 164, 71, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
 @keyframes enter-snappy {
   from {
     opacity: 0;
