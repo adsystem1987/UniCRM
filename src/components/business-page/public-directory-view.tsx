@@ -18,6 +18,7 @@ import {
   HeartPulse,
   Wrench,
   Building2,
+  Landmark,
 } from 'lucide-react';
 import { ModeToggle } from '@/components/layout/mode-toggle';
 import { BusinessItem } from '@/components/business-page/public-page-view';
@@ -40,9 +41,10 @@ export interface PublicDirectoryPageItem {
 
 export const CATEGORY_FILTERS = [
   { id: 'all', label: 'All Businesses' },
+  { id: 'loans', label: 'Loans & Mortgage (DSA)', icon: Landmark },
+  { id: 'realestate', label: 'Real Estate & Site Visits', icon: Building2 },
   { id: 'stays', label: 'Stays & Rooms', icon: Home },
   { id: 'tours', label: 'Tours & Travel', icon: Compass },
-  { id: 'realestate', label: 'Real Estate & Site Visits', icon: Building2 },
   { id: 'events', label: 'Events & Passes', icon: Ticket },
   { id: 'wellness', label: 'Clinics & Wellness', icon: HeartPulse },
   { id: 'services', label: 'Professional Services', icon: Wrench },
@@ -56,7 +58,22 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
   const getPageCategory = (page: PublicDirectoryPageItem): string => {
     const text = `${page.title} ${page.tagline || ''} ${page.about || ''} ${(page.items || []).map((i) => `${i.title} ${i.category || ''}`).join(' ')}`.toLowerCase();
 
-    // 1. Real Estate & Site Visits (flats, villas for sale, developers, brokers, land, mortgage/dsa)
+    // 1. Loans, Mortgage & Financial DSAs (personal loans, home loans, business funding, LAP, NBFC, bank DSA)
+    if (
+      text.includes('loan') ||
+      text.includes('mortgage') ||
+      text.includes('dsa') ||
+      text.includes('funding') ||
+      text.includes('lap') ||
+      text.includes('credit') ||
+      text.includes('nbfc') ||
+      text.includes('finance') ||
+      text.includes('balance transfer')
+    ) {
+      return 'loans';
+    }
+
+    // 2. Real Estate & Site Visits (flats, villas for sale, developers, brokers, land, high-rise)
     if (
       text.includes('real estate') ||
       text.includes('realty') ||
@@ -65,9 +82,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
       text.includes('penthouse') ||
       text.includes('developer') ||
       text.includes('broker') ||
-      text.includes('mortgage') ||
-      text.includes('home loan') ||
-      text.includes('lap')
+      text.includes('commercial office')
     ) {
       return 'realestate';
     }
@@ -313,10 +328,10 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                        {isStay && (
+                        {getPageCategory(page) === 'loans' && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
-                            <Home className="size-2.5" />
-                            Stays &amp; Rooms
+                            <Landmark className="size-2.5" />
+                            Loans &amp; DSA Desk
                           </span>
                         )}
                         {getPageCategory(page) === 'realestate' && (
@@ -325,13 +340,19 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                             Site Visits &amp; Realty
                           </span>
                         )}
+                        {isStay && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
+                            <Home className="size-2.5" />
+                            Stays &amp; Rooms
+                          </span>
+                        )}
                         {isEvent && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary text-primary-foreground flex items-center gap-1 shadow-xs">
                             <Ticket className="size-2.5" />
                             Events &amp; Passes
                           </span>
                         )}
-                        {!isStay && !isEvent && getPageCategory(page) !== 'realestate' && (
+                        {!isStay && !isEvent && getPageCategory(page) !== 'realestate' && getPageCategory(page) !== 'loans' && (
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-background/90 text-foreground backdrop-blur-md border border-border/60">
                             Verified Business
                           </span>
@@ -406,7 +427,9 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
                     >
                       <Calendar className="size-3.5" />
                       <span>
-                        {isStay
+                        {getPageCategory(page) === 'loans'
+                          ? 'Check Eligibility'
+                          : isStay
                           ? 'Book Stay'
                           : getPageCategory(page) === 'realestate'
                           ? 'Site Visit Pass'
