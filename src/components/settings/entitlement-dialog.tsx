@@ -156,6 +156,34 @@ export function EntitlementDialog({
           </div>
         ) : (
           <div className="space-y-5">
+            {/* Quick 1-Click Provisioning Preset for ₹1,000 3-Month Pro UniCRM */}
+            <div className="rounded-xl border-2 border-emerald-500/40 bg-emerald-500/5 p-4 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-black text-foreground flex items-center gap-1.5">
+                    <Sparkles className="size-3.5 text-emerald-500" />
+                    1-Click Bundle: 3-Month Pro UniCRM (₹1,000 Setup)
+                  </h4>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Instantly activates AI Pro Squads (+3 Months) &amp; grants 1,000 Lead Finder credits.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    setAiProActive(true);
+                    setAiMonthsToAdd(3);
+                    setLeadCreditsToAdd(1000);
+                    toast.success('Applied 3-Month Pro UniCRM package preset! Click Save below to confirm.');
+                  }}
+                  className="text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shrink-0 shadow-xs"
+                >
+                  Apply 3-Month Pro
+                </Button>
+              </div>
+            </div>
+
             {/* 1. Smart AI Auto-Reply (3 Months Promotion / Paid) */}
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3">
               <div className="flex items-center justify-between">
