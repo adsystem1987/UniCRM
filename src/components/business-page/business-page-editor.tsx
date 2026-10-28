@@ -15,6 +15,8 @@ import {
   Share2,
   Smartphone,
   Eye,
+  CalendarCheck,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
 import { BusinessItem } from './public-page-view';
+import { BookingsDesk } from './bookings-desk';
 import { INDUSTRY_PAGE_PRESETS } from '@/lib/business-page/presets';
 
 interface BusinessPageEditorProps {
@@ -30,6 +33,7 @@ interface BusinessPageEditorProps {
 }
 
 export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
+  const [activeTab, setActiveTab] = useState<'editor' | 'bookings'>('editor');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -254,8 +258,33 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
         </div>
       </div>
 
-      {/* Main Settings Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Navigation Sub-Tabs: Page Editor vs Bookings & Appointments */}
+      <div className="flex items-center gap-2 border-b border-border pb-3">
+        <Button
+          size="sm"
+          variant={activeTab === 'editor' ? 'default' : 'ghost'}
+          onClick={() => setActiveTab('editor')}
+          className="text-xs h-8 gap-1.5 font-semibold"
+        >
+          <SlidersHorizontal className="size-3.5" />
+          Page & Catalog Editor
+        </Button>
+        <Button
+          size="sm"
+          variant={activeTab === 'bookings' ? 'default' : 'ghost'}
+          onClick={() => setActiveTab('bookings')}
+          className="text-xs h-8 gap-1.5 font-semibold"
+        >
+          <CalendarCheck className="size-3.5" />
+          Appointments & Bookings Desk
+        </Button>
+      </div>
+
+      {activeTab === 'bookings' ? (
+        <BookingsDesk accountId={accountId} />
+      ) : (
+        /* Main Settings Form */
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Profile Card Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Section 1: Business Identity */}
@@ -611,6 +640,7 @@ export function BusinessPageEditor({ accountId }: BusinessPageEditorProps) {
           </div>
         </div>
       </div>
+      )}
 
       {/* QR Code Modal */}
       {showQrModal && (
