@@ -81,6 +81,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
   const [bookingWaDeepLink, setBookingWaDeepLink] = useState<string | null>(null);
   const [bookingCalendarLink, setBookingCalendarLink] = useState<string | null>(null);
+  const [coverError, setCoverError] = useState(false);
+  const [logoError, setLogoError] = useState(false);
+  const [itemErrors, setItemErrors] = useState<Record<string, boolean>>({});
 
   // Airbnb stays & Eventbrite ticket parameters
   const [checkInDate, setCheckInDate] = useState(() => {
@@ -455,9 +458,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
         </div>
       </header>
 
-      {/* Hero Banner / Cover: UnitPost Style Radial/Dot Pattern when no image, or cover image */}
+      {/* Hero Banner / Cover: UnitPost Style Radial/Dot Pattern when no image or image error */}
       <div className="relative h-44 sm:h-56 lg:h-64 w-full border-b border-border/40 overflow-hidden bg-surface">
-        {page.cover_url ? (
+        {page.cover_url && !coverError ? (
           <>
             <Image
               src={page.cover_url}
@@ -465,11 +468,18 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               fill
               className="object-cover opacity-35"
               priority
+              onError={() => setCoverError(true)}
             />
             <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
           </>
         ) : (
-          <div className="absolute inset-0 bg-radial from-primary/10 via-background to-background" />
+          <>
+            <div
+              aria-hidden="true"
+              className="mkt-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(75%_65%_at_50%_40%,black,transparent)]"
+            />
+            <div className="absolute inset-0 bg-radial from-primary/10 via-background/60 to-background pointer-events-none" />
+          </>
         )}
       </div>
 
@@ -485,12 +495,13 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
               <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
                 {/* Logo / Avatar (UnitPost Branded Monogram) */}
                 <div className="relative size-20 sm:size-24 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-3xl font-black shadow-lg border-4 border-card overflow-hidden shrink-0">
-                  {page.logo_url ? (
+                  {page.logo_url && !logoError ? (
                     <Image
                       src={page.logo_url}
                       alt={page.title}
                       fill
                       className="object-cover"
+                      onError={() => setLogoError(true)}
                     />
                   ) : (
                     page.title.slice(0, 2).toUpperCase()
@@ -606,13 +617,14 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                       className="rounded-2xl border border-border/80 bg-card p-4 sm:p-5 shadow-xs hover:shadow-lg hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between"
                     >
                       <div className="space-y-3">
-                        {item.image_url ? (
+                        {item.image_url && !itemErrors[item.id] ? (
                           <div className="relative h-40 w-full rounded-xl bg-muted overflow-hidden border border-border">
                             <Image
                               src={item.image_url}
                               alt={item.title}
                               fill
                               className="object-cover"
+                              onError={() => setItemErrors((prev) => ({ ...prev, [item.id]: true }))}
                             />
                             {item.badge && (
                               <div className="absolute top-2.5 left-2.5">
@@ -880,8 +892,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
         {/* Interactive Booking Modal */}
         {bookingOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in-snappy">
-            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in-snappy">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -1220,24 +1232,24 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
         )}
         {/* Native Chat With Me Desk Modal */}
         {chatDrawerOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl flex flex-col h-[520px] max-h-[90vh]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in-snappy">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xl flex flex-col h-[480px] max-h-[85vh]">
               {/* Header */}
               <div className="flex items-center justify-between pb-3 border-b border-border">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <div className="relative">
-                    <div className="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
-                      <MessageSquare className="size-5" />
+                    <div className="size-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
+                      <MessageSquare className="size-4" />
                     </div>
-                    <span className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
+                    <span className="absolute bottom-0 right-0 size-2 rounded-full bg-primary ring-2 ring-card" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                       {page.title}
                       <ShieldCheck className="size-3.5 text-primary" />
                     </h3>
-                    <p className="text-[11px] text-muted-foreground">
-                      UniCRM Live Desk • Replies directly or via linked WhatsApp
+                    <p className="text-[10px] text-muted-foreground">
+                      UniCRM Live Desk • Direct response via inbox &amp; WhatsApp
                     </p>
                   </div>
                 </div>
