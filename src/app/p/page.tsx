@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getAdminClient } from '@/lib/gdrive/offload';
 import { PublicDirectoryView, PublicDirectoryPageItem } from '@/components/business-page/public-directory-view';
+import { SHOWCASE_BUSINESS_PAGES } from '@/lib/business-page/showcase-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +49,14 @@ async function getPublishedBusinessPages(): Promise<PublicDirectoryPageItem[]> {
 }
 
 export default async function PublicDirectoryRoute() {
-  const pages = await getPublishedBusinessPages();
+  const publishedPages = await getPublishedBusinessPages();
 
-  return <PublicDirectoryView pages={pages} />;
+  // Merge database published pages with our verified showcase templates
+  const existingSlugs = new Set(publishedPages.map((p) => p.slug));
+  const mergedPages: PublicDirectoryPageItem[] = [
+    ...publishedPages,
+    ...SHOWCASE_BUSINESS_PAGES.filter((p) => !existingSlugs.has(p.slug)),
+  ];
+
+  return <PublicDirectoryView pages={mergedPages} />;
 }
