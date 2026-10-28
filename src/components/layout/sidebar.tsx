@@ -104,12 +104,12 @@ const navItems: NavItem[] = [
   { href: "/business-pages", labelKey: "businessPages", icon: Globe },
   { href: "/leads", labelKey: "leadFinder", icon: Target, beta: true },
   { href: "/pipelines", labelKey: "pipelines", icon: GitBranch },
-  { href: "/settings?tab=blueprints", labelKey: "industrySetup", icon: Compass },
+  { href: "/blueprints", labelKey: "industrySetup", icon: Compass },
   { href: "/broadcasts", labelKey: "broadcasts", icon: Radio },
   { href: "/automations", labelKey: "automations", icon: Zap },
   { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
   { href: "/agents", labelKey: "aiAgents", icon: Bot },
-  { href: "/settings?tab=orders", labelKey: "orders", icon: Receipt },
+  { href: "/orders", labelKey: "orders", icon: Receipt },
 ];
 
 const bottomNavItems = [
