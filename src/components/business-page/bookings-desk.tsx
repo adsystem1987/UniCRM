@@ -15,6 +15,7 @@ import {
   Loader2,
   CalendarCheck,
   Send,
+  ExternalLink,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,8 @@ export interface BookingRecord {
   status: 'confirmed' | 'completed' | 'cancelled' | 'no_show';
   whatsapp_notification_status?: 'sent' | 'failed' | 'pending';
   whatsapp_message_id?: string | null;
+  google_calendar_html_link?: string | null;
+  google_calendar_event_id?: string | null;
   created_at: string;
 }
 
@@ -241,6 +244,17 @@ export function BookingsDesk({ accountId }: BookingsDeskProps) {
                       <Send className="size-2.5" />
                       WhatsApp Notified
                     </span>
+                  )}
+                  {b.google_calendar_html_link && (
+                    <a
+                      href={b.google_calendar_html_link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-medium bg-blue-500/10 px-1.5 py-0.5 rounded hover:underline"
+                    >
+                      <ExternalLink className="size-2.5" />
+                      Google Calendar
+                    </a>
                   )}
                 </div>
 

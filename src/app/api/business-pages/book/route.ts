@@ -3,6 +3,7 @@ import { getAdminClient } from '@/lib/gdrive/offload';
 import { decrypt } from '@/lib/whatsapp/encryption';
 import { sendTemplateMessage, sendTextMessage } from '@/lib/whatsapp/meta-api';
 import { evolution } from '@/lib/evolution/client';
+import { createGoogleCalendarEvent, generateGoogleCalendarWebLink } from '@/lib/gdrive/calendar';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,7 +111,50 @@ export async function POST(req: Request) {
         .eq('id', pageId);
     }
 
-    // 5. Send dual-mode WhatsApp confirmation / reminder to customer
+    // 5. Try syncing event to business owner's Google Calendar if connected
+    let calendarHtmlLink: string | null = null;
+    let calendarEventId: string | null = null;
+
+    try {
+      // Calculate start and end ISO strings for Google Calendar
+      const [timePart, modifier] = timeSlot.split(' ');
+      let [hours, minutes] = timePart.split(':').map(Number);
+      if (modifier?.toUpperCase() === 'PM' && hours < 12) hours += 12;
+      if (modifier?.toUpperCase() === 'AM' && hours === 12) hours = 0;
+
+      const startDateObj = new Date(bookingDate);
+      startDateObj.setHours(hours, minutes || 0, 0, 0);
+      const endDateObj = new Date(startDateObj.getTime() + 30 * 60 * 1000);
+
+      const calRes = await createGoogleCalendarEvent({
+        supabase: admin,
+        accountId,
+        event: {
+          summary: `Appointment: ${name.trim()} (${businessTitle})`,
+          description: `Client: ${name.trim()}\nPhone: ${cleanPhone}${itemTitle ? `\nService: ${itemTitle}` : ''}${notes ? `\nNotes: ${notes}` : ''}`,
+          startDateTime: startDateObj.toISOString(),
+          endDateTime: endDateObj.toISOString(),
+          timeZone: 'Asia/Kolkata',
+        },
+      });
+
+      if (calRes?.htmlLink) {
+        calendarHtmlLink = calRes.htmlLink;
+        calendarEventId = calRes.eventId || null;
+      }
+    } catch (calErr) {
+      console.warn('[business-pages/book] Google Calendar sync error:', calErr);
+    }
+
+    // Generate instant client-side Add to Google Calendar web link
+    const clientCalendarLink = generateGoogleCalendarWebLink({
+      title: `Appointment with ${businessTitle}`,
+      description: `Appointment for ${name.trim()}${itemTitle ? ` - ${itemTitle}` : ''}`,
+      startDate: bookingDate,
+      timeSlot,
+    });
+
+    // 6. Send dual-mode WhatsApp confirmation / reminder to customer
     // Format variables for template:
     // Hi {{1}}, this is a friendly reminder of your upcoming appointment with {{2}} scheduled on {{3}} at {{4}}. Please let us know if you need to reschedule.
     let notificationSent = false;
@@ -174,14 +218,21 @@ export async function POST(req: Request) {
       }
     }
 
-    // Update notification status on booking row
+    // Update notification status & calendar links on booking row
+    const updateFields: Record<string, unknown> = {};
     if (notificationSent) {
+      updateFields.whatsapp_notification_status = 'sent';
+      updateFields.whatsapp_message_id = whatsappMessageId;
+    }
+    if (calendarHtmlLink) {
+      updateFields.google_calendar_html_link = calendarHtmlLink;
+      updateFields.google_calendar_event_id = calendarEventId;
+    }
+
+    if (Object.keys(updateFields).length > 0) {
       await admin
         .from('business_page_bookings')
-        .update({
-          whatsapp_notification_status: 'sent',
-          whatsapp_message_id: whatsappMessageId,
-        })
+        .update(updateFields)
         .eq('id', booking.id);
     }
 
@@ -198,6 +249,8 @@ export async function POST(req: Request) {
       booking,
       notificationSent,
       clientWaDeepLink,
+      clientCalendarLink,
+      calendarHtmlLink,
     });
   } catch (err: any) {
     console.error('[business-pages/book] Server error:', err);

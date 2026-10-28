@@ -69,6 +69,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
   const [bookingWaDeepLink, setBookingWaDeepLink] = useState<string | null>(null);
+  const [bookingCalendarLink, setBookingCalendarLink] = useState<string | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -173,6 +174,9 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
       setBookingSuccess(true);
       if (data.clientWaDeepLink) {
         setBookingWaDeepLink(data.clientWaDeepLink);
+      }
+      if (data.clientCalendarLink) {
+        setBookingCalendarLink(data.clientCalendarLink);
       }
       toast.success('Appointment booked successfully! WhatsApp confirmation sent.');
     } catch (err: any) {
@@ -548,17 +552,31 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                     A WhatsApp reminder has been sent to your number.
                   </p>
 
-                  {bookingWaDeepLink && (
-                    <a
-                      href={bookingWaDeepLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md mt-2"
-                    >
-                      <MessageCircle className="size-3.5 fill-current" />
-                      View Chat on WhatsApp
-                    </a>
-                  )}
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
+                    {bookingCalendarLink && (
+                      <a
+                        href={bookingCalendarLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-bold transition-colors"
+                      >
+                        <Calendar className="size-3.5" />
+                        Add to Google Calendar
+                      </a>
+                    )}
+
+                    {bookingWaDeepLink && (
+                      <a
+                        href={bookingWaDeepLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md transition-colors"
+                      >
+                        <MessageCircle className="size-3.5 fill-current" />
+                        Chat on WhatsApp
+                      </a>
+                    )}
+                  </div>
 
                   <div className="pt-2">
                     <button
