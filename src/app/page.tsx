@@ -555,7 +555,7 @@ export default function LandingPage() {
         </section>
 
         {/* SECTION: INSTANT BUSINESS MICRO-PAGE & CATALOG SHOWCASE */}
-        <section id="catalog" className="py-16 md:py-24 border-b border-border/40 bg-linear-to-b from-background via-emerald-500/5 to-background">
+        <section id="catalog" className="py-16 md:py-24 border-b border-border/40 bg-linear-to-b from-background via-primary/5 to-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <BusinessPageShowcase />
           </div>
@@ -578,12 +578,12 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {/* Feature 1: Instant Business Micro-Page & 1-Click Booking */}
-              <div className="rounded-3xl border border-emerald-500/40 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-emerald-500 relative overflow-hidden">
-                <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
+              <div className="rounded-3xl border border-primary/30 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-primary relative overflow-hidden">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground rounded-bl-xl">
                   New
                 </div>
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6">
                     <Globe className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Instant Business Page &amp; Booking</h3>
@@ -591,7 +591,7 @@ export default function LandingPage() {
                     Launch your digital storefront in 60 seconds. Customers can browse your catalog, book appointments with direct Google Calendar sync, and receive instant automated WhatsApp confirmations and reminders.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500 flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-primary flex items-center justify-between">
                   <span>Google Calendar + WhatsApp Sync</span>
                   <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
                 </div>
