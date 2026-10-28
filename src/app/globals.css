@@ -425,42 +425,83 @@ html[data-theme="rose"] {
 }
 
 /* ============================================================
- * UniCRM Lightweight Luxe Gold CTA System (.btn-gold-gradient)
- * Harmonizes with Sun (Light) and Moon (Dark) Monochrome + Signals
+ * UniCRM Adaptive Luxe Gold CTA System (.btn-gold-gradient)
+ * Dynamically shifts personality between Sun (Light) and Moon (Dark):
+ *
+ * • Sun Mode (Light Canvas):
+ *   Deep Obsidian Charcoal base with an exquisite metallic gold border,
+ *   subtle warm gold ambient glow, and crisp gold text/icon accent.
+ *   (High contrast against white surfaces, razor-sharp luxury feel).
+ *
+ * • Moon Mode (Dark Canvas):
+ *   Radiant 24K Liquid Gold gradient with deep obsidian typography,
+ *   luminous gold outer glow, and glass reflection highlight.
+ *   (Glows like a physical gold credit card against deep space black).
  * ============================================================ */
+
+/* --- Sun Mode (Light Mode Default) --- */
 .btn-gold-gradient {
-  background: linear-gradient(135deg, #F5D796 0%, #D8A447 50%, #BF892B 100%);
-  color: #171103 !important;
+  background: #111113;
+  color: #F6D695 !important;
   font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 2px 8px rgba(216, 164, 71, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(216, 164, 71, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 12px rgba(216, 164, 71, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
+.btn-gold-gradient svg {
+  color: #F6D695 !important;
+  stroke: #F6D695 !important;
+}
+
 .btn-gold-gradient:hover {
-  background: linear-gradient(135deg, #FDE0A3 0%, #E4B052 50%, #CA9434 100%);
-  box-shadow: 0 4px 18px rgba(216, 164, 71, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: #1C1C20;
+  color: #FDE2A7 !important;
+  border-color: rgba(216, 164, 71, 0.7);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18), 0 0 20px rgba(216, 164, 71, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
+}
+
+.btn-gold-gradient:hover svg {
+  color: #FDE2A7 !important;
+  stroke: #FDE2A7 !important;
 }
 
 .btn-gold-gradient:active {
   transform: translateY(0);
-  box-shadow: 0 1px 4px rgba(216, 164, 71, 0.2);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Dark Mode (Moon Mode) Enhancements for Gold CTA */
+/* --- Moon Mode (Dark Mode Active) --- */
 html.dark .btn-gold-gradient,
 html[data-mode="dark"] .btn-gold-gradient {
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 16px rgba(216, 164, 71, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, #FDE2A7 0%, #E2AB4B 50%, #C48E2E 100%);
+  color: #171103 !important;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 4px 20px rgba(226, 171, 75, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+html.dark .btn-gold-gradient svg,
+html[data-mode="dark"] .btn-gold-gradient svg {
+  color: #171103 !important;
+  stroke: #171103 !important;
 }
 
 html.dark .btn-gold-gradient:hover,
 html[data-mode="dark"] .btn-gold-gradient:hover {
-  box-shadow: 0 4px 22px rgba(216, 164, 71, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: linear-gradient(135deg, #FFF0CA 0%, #EDB856 50%, #D49D38 100%);
+  color: #0A0802 !important;
+  box-shadow: 0 6px 28px rgba(226, 171, 75, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+html.dark .btn-gold-gradient:hover svg,
+html[data-mode="dark"] .btn-gold-gradient:hover svg {
+  color: #0A0802 !important;
+  stroke: #0A0802 !important;
 }
 
 @keyframes enter-snappy {
