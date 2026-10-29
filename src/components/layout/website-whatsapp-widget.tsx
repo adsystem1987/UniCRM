@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, X, Send, Loader2, Sparkles, Phone, ArrowUpRight, ShieldCheck, Mail } from "lucide-react";
+import { MessageSquare, X, Send, Loader2, Sparkles, Mail, ShieldCheck, Phone, CheckCircle2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 
 interface WebsiteLiveChatWidgetProps {
@@ -26,27 +26,101 @@ export function WebsiteWhatsAppWidget({
 }: WebsiteLiveChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
-  const [emailOrPhone, setEmailOrPhone] = useState("");
+  const [contactMode, setContactMode] = useState<'whatsapp' | 'email'>('whatsapp');
+  const [whatsappPhone, setWhatsappPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [history, setHistory] = useState<ChatMessageItem[]>([]);
 
-  // Validation helper: strictly requires email or phone to stop bots & spammers
-  const validateContactMethod = (input: string) => {
-    const trimmed = input.trim();
-    if (!trimmed) return false;
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-    const digitsOnly = trimmed.replace(/\D/g, "");
-    const isPhone = digitsOnly.length >= 7 && digitsOnly.length <= 15;
-    return isEmail || isPhone;
+  // Email OTP state
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpToken, setOtpToken] = useState<string | null>(null);
+  const [otpExpiresAt, setOtpExpiresAt] = useState<number | null>(null);
+  const [enteredOtp, setEnteredOtp] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
+
+  // Validation helpers
+  const cleanPhoneDigits = whatsappPhone.replace(/\D/g, "");
+  const isWhatsappValid = cleanPhoneDigits.length >= 10 && cleanPhoneDigits.length <= 15;
+  const isEmailFormatValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  // Overall validity based on user's chosen contact method
+  const isContactValid =
+    contactMode === 'whatsapp'
+      ? isWhatsappValid
+      : isEmailFormatValid && isEmailVerified;
+
+  // Handler: Send 6-digit verification code via Unitpost
+  const handleSendEmailOtp = async () => {
+    if (!isEmailFormatValid) {
+      toast.error("Please enter a valid email address first.");
+      return;
+    }
+    setSendingOtp(true);
+    try {
+      const res = await fetch("/api/contact/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "send",
+          email: email.trim(),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        setOtpSent(true);
+        setOtpToken(data.token);
+        setOtpExpiresAt(data.expiresAt);
+        toast.success(`Verification code sent to ${email.trim()}`);
+      } else {
+        toast.error(data.error || "Failed to send verification code. Try again.");
+      }
+    } catch {
+      toast.error("Network error while sending code. Please try again.");
+    } finally {
+      setSendingOtp(false);
+    }
   };
 
-  const isContactValid = validateContactMethod(emailOrPhone);
+  // Handler: Verify 6-digit code
+  const handleVerifyOtp = async () => {
+    if (!enteredOtp.trim() || enteredOtp.trim().length !== 6) {
+      toast.error("Please enter the 6-digit verification code.");
+      return;
+    }
+    setVerifyingOtp(true);
+    try {
+      const res = await fetch("/api/contact/verify-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "verify",
+          email: email.trim(),
+          code: enteredOtp.trim(),
+          token: otpToken,
+          expiresAt: otpExpiresAt,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.verified) {
+        setIsEmailVerified(true);
+        toast.success("Email verified successfully! You can now send your message.");
+      } else {
+        toast.error(data.error || "Invalid code. Please try again.");
+      }
+    } catch {
+      toast.error("Network error during verification.");
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const queryText = message.trim();
-    const contactInput = emailOrPhone.trim();
 
     if (!queryText) {
       toast.error("Please enter a message.");
@@ -54,13 +128,16 @@ export function WebsiteWhatsAppWidget({
     }
 
     if (!isContactValid) {
-      toast.error("Please enter a valid Email address or WhatsApp phone number to continue.");
+      if (contactMode === 'whatsapp') {
+        toast.error("Please provide a valid 10-15 digit WhatsApp number.");
+      } else {
+        toast.error("Please verify your email with the 6-digit code to continue.");
+      }
       return;
     }
 
-    const isEmail = contactInput.includes("@");
-    const cleanPhone = !isEmail ? contactInput.replace(/[^\d+]/g, "") : "";
-    const cleanEmail = isEmail ? contactInput : "";
+    const cleanPhone = contactMode === 'whatsapp' ? cleanPhoneDigits : "";
+    const cleanEmail = contactMode === 'email' ? email.trim() : "";
 
     const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const userMsg: ChatMessageItem = {
@@ -136,13 +213,14 @@ export function WebsiteWhatsAppWidget({
     setHistory([]);
     setMessage("");
     setName("");
-    setEmailOrPhone("");
+    setWhatsappPhone("");
+    setEmail("");
+    setOtpSent(false);
+    setOtpToken(null);
+    setOtpExpiresAt(null);
+    setEnteredOtp("");
+    setIsEmailVerified(false);
   };
-
-  const waPrefillMessage = name.trim() 
-    ? `Hi UniCRM, I'm ${name.trim()} and I'd like to get started with WhatsApp CRM.`
-    : `Hi UniCRM, I'd like to get started with WhatsApp CRM.`;
-  const waDirectUrl = `https://wa.me/${officialWhatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waPrefillMessage)}`;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end print:hidden">
@@ -178,26 +256,8 @@ export function WebsiteWhatsAppWidget({
             </button>
           </div>
 
-          {/* Quick Direct WhatsApp Handshake Banner (Verified & Instant) */}
-          <div className="bg-emerald-500/10 dark:bg-emerald-950/40 border-b border-emerald-500/20 px-3 py-2 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 text-[11px] font-medium">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span>Direct WhatsApp Handshake</span>
-            </div>
-            <a
-              href={waDirectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 hover:underline bg-emerald-500/15 hover:bg-emerald-500/25 px-2 py-0.5 rounded-md transition-colors"
-            >
-              <Phone className="h-3 w-3" />
-              <span>Open WhatsApp</span>
-              <ArrowUpRight className="h-3 w-3" />
-            </a>
-          </div>
-
           {/* Chat Content Body */}
-          <div className="p-4 bg-muted/30 max-h-[300px] overflow-y-auto flex flex-col space-y-3">
+          <div className="p-4 bg-muted/30 max-h-[280px] overflow-y-auto flex flex-col space-y-3">
             {/* System Welcome Bubble */}
             <div className="bg-background border border-border text-foreground rounded-2xl rounded-tl-xs p-3.5 shadow-xs max-w-[92%] text-xs leading-relaxed space-y-1">
               <span className="font-bold text-[10px] text-primary flex items-center gap-1">
@@ -257,36 +317,125 @@ export function WebsiteWhatsAppWidget({
           <form onSubmit={handleSubmit} className="p-3 bg-card border-t border-border space-y-2">
             {history.length === 0 && (
               <div className="space-y-2">
-                <div className="grid grid-cols-2 gap-2">
+                {/* Contact Mode Selection Tabs */}
+                <div className="flex items-center justify-between gap-1 p-0.5 bg-muted/60 rounded-lg text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setContactMode('whatsapp')}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1 px-2 rounded-md font-semibold text-[11px] transition-all ${
+                      contactMode === 'whatsapp'
+                        ? "bg-background text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Phone className="h-3 w-3 text-emerald-500" />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setContactMode('email')}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1 px-2 rounded-md font-semibold text-[11px] transition-all ${
+                      contactMode === 'email'
+                        ? "bg-background text-foreground shadow-xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Mail className="h-3 w-3 text-blue-500" />
+                    <span>Email Code</span>
+                  </button>
+                </div>
+
+                {/* Input Fields */}
+                <div className="space-y-1.5">
                   <input
                     type="text"
                     placeholder="Your Name (optional)"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full text-xs bg-muted/50 border border-border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   />
-                  <input
-                    type="text"
-                    required
-                    placeholder="Email or WhatsApp *"
-                    value={emailOrPhone}
-                    onChange={(e) => setEmailOrPhone(e.target.value)}
-                    className={`text-xs bg-muted/50 border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 transition-colors ${
-                      emailOrPhone.trim().length > 0 && !isContactValid
-                        ? "border-destructive focus:ring-destructive"
-                        : "border-border focus:ring-primary"
-                    }`}
-                  />
+
+                  {contactMode === 'whatsapp' ? (
+                    <div>
+                      <input
+                        type="tel"
+                        required
+                        placeholder="WhatsApp Number (e.g. +91 9876543210) *"
+                        value={whatsappPhone}
+                        onChange={(e) => setWhatsappPhone(e.target.value)}
+                        className={`w-full text-xs bg-muted/50 border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 transition-colors ${
+                          whatsappPhone.trim().length > 0 && !isWhatsappValid
+                            ? "border-destructive focus:ring-destructive"
+                            : "border-border focus:ring-primary"
+                        }`}
+                      />
+                      <p className="text-[10px] text-muted-foreground mt-1 px-1">
+                        🔒 Enter your 10-15 digit WhatsApp number for follow-up.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <div className="flex gap-1.5">
+                        <input
+                          type="email"
+                          required
+                          placeholder="Your Email Address *"
+                          value={email}
+                          disabled={isEmailVerified}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className={`flex-1 text-xs bg-muted/50 border rounded-lg px-2.5 py-1.5 text-foreground focus:outline-none focus:ring-1 transition-colors disabled:opacity-60 ${
+                            isEmailVerified
+                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                              : email.trim().length > 0 && !isEmailFormatValid
+                              ? "border-destructive focus:ring-destructive"
+                              : "border-border focus:ring-primary"
+                          }`}
+                        />
+                        {!isEmailVerified && (
+                          <button
+                            type="button"
+                            disabled={!isEmailFormatValid || sendingOtp}
+                            onClick={handleSendEmailOtp}
+                            className="text-[11px] font-bold px-2.5 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-1"
+                          >
+                            {sendingOtp ? <Loader2 className="h-3 w-3 animate-spin" /> : <KeyRound className="h-3 w-3" />}
+                            <span>{otpSent ? "Resend" : "Send Code"}</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* OTP Input row if sent and not yet verified */}
+                      {otpSent && !isEmailVerified && (
+                        <div className="flex items-center gap-1.5 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                          <input
+                            type="text"
+                            maxLength={6}
+                            placeholder="6-digit code"
+                            value={enteredOtp}
+                            onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
+                            className="w-24 text-center tracking-widest font-mono text-xs font-bold bg-background border border-border rounded-md py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          />
+                          <button
+                            type="button"
+                            disabled={enteredOtp.length !== 6 || verifyingOtp}
+                            onClick={handleVerifyOtp}
+                            className="flex-1 text-[11px] font-bold py-1 px-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-1"
+                          >
+                            {verifyingOtp ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                            <span>Verify Email</span>
+                          </button>
+                        </div>
+                      )}
+
+                      {isEmailVerified && (
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 px-1">
+                          <CheckCircle2 className="h-3 w-3" />
+                          Email verified! You can now send your inquiry.
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
-                {emailOrPhone.trim().length > 0 && !isContactValid ? (
-                  <p className="text-[10px] text-destructive leading-tight px-1">
-                    Please provide a valid email (e.g. name@company.com) or WhatsApp phone number.
-                  </p>
-                ) : (
-                  <p className="text-[10px] text-muted-foreground leading-tight px-1">
-                    🔒 Required so our team can follow up with your reply and prevent spam.
-                  </p>
-                )}
               </div>
             )}
 
@@ -296,7 +445,13 @@ export function WebsiteWhatsAppWidget({
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder={isContactValid || history.length > 0 ? "Ask anything or request pricing..." : "Enter Email/Phone above first..."}
+                placeholder={
+                  history.length > 0 || isContactValid
+                    ? "Ask anything or request pricing..."
+                    : contactMode === 'whatsapp'
+                    ? "Enter WhatsApp number above first..."
+                    : "Verify your email above first..."
+                }
                 disabled={history.length === 0 && !isContactValid}
                 className="flex-1 text-xs bg-muted/50 border border-border rounded-full px-3.5 py-2 text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               />

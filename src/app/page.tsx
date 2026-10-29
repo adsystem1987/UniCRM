@@ -146,15 +146,16 @@ export default function LandingPage() {
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <ModeToggle className="h-9 w-9" />
-            <Link href="/login">
+            <Link href="/login" className="hidden sm:inline-flex">
               <Button variant="ghost" size="sm" className="font-medium text-muted-foreground hover:text-foreground px-3 text-sm rounded-full">
                 Sign In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="btn-gold-gradient font-bold gap-1.5 px-4 text-xs rounded-full shadow-md">
-                <span>Start for free</span>
-                <ArrowRight className="h-3.5 w-3.5 text-[#171103]" />
+              <Button size="sm" className="btn-gold-gradient font-bold gap-1 sm:gap-1.5 px-3 sm:px-4 text-xs sm:text-xs rounded-full shadow-md whitespace-nowrap">
+                <span className="inline sm:hidden">Instant Access</span>
+                <span className="hidden sm:inline">Get Instant Access</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>

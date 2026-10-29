@@ -274,28 +274,8 @@ export async function POST(req: Request) {
               })
               .eq('id', conversationId);
 
-            // Trigger Automations engine (Welcome Drips, Keyword Auto-Responders, New Contact workflows)
-            try {
-              const triggersToFire: Array<'new_contact_created' | 'first_inbound_message' | 'new_message_received'> = ['new_message_received'];
-              if (isFirstInbound) triggersToFire.unshift('first_inbound_message');
-              if (isNewContact) triggersToFire.unshift('new_contact_created');
-
-              for (const triggerType of triggersToFire) {
-                await runAutomationsForTrigger({
-                  accountId,
-                  triggerType,
-                  contactId,
-                  context: {
-                    message_text: message,
-                    conversation_id: conversationId,
-                  },
-                }).catch((autoErr) => console.error('[contact/route] automation run error:', autoErr));
-              }
-            } catch (autoErr) {
-              console.error('[contact/route] failed to dispatch automations:', autoErr);
-            }
-
-            // Option A: For general queries, generate an instant AI auto-reply
+            // 1. Try Contextual AI Auto-Reply first (Reads the message and generates a tailored response)
+            let handledByAi = false;
             try {
               const aiConfig = await loadAiConfig(supabase, accountId);
               if (aiConfig && aiConfig.isActive) {
@@ -317,6 +297,7 @@ export async function POST(req: Request) {
 
                 if (aiResult?.text && !aiResult.handoff) {
                   aiGeneratedReply = aiResult.text.trim();
+                  handledByAi = true;
 
                   // Save AI agent response into CRM conversation thread
                   await supabase.from('messages').insert({
@@ -341,6 +322,30 @@ export async function POST(req: Request) {
               }
             } catch (aiErr) {
               console.warn('[contact/route] AI auto-reply generation skipped:', aiErr);
+            }
+
+            // 2. Trigger Automations engine only if AI did not handle it, or for non-duplicating automation triggers
+            // This prevents rigid "Welcome" template blasts from conflicting with intelligent AI responses.
+            if (!handledByAi) {
+              try {
+                const triggersToFire: Array<'new_contact_created' | 'first_inbound_message' | 'new_message_received'> = ['new_message_received'];
+                if (isFirstInbound) triggersToFire.unshift('first_inbound_message');
+                if (isNewContact) triggersToFire.unshift('new_contact_created');
+
+                for (const triggerType of triggersToFire) {
+                  await runAutomationsForTrigger({
+                    accountId,
+                    triggerType,
+                    contactId,
+                    context: {
+                      message_text: message,
+                      conversation_id: conversationId,
+                    },
+                  }).catch((autoErr) => console.error('[contact/route] automation run error:', autoErr));
+                }
+              } catch (autoErr) {
+                console.error('[contact/route] failed to dispatch automations:', autoErr);
+              }
             }
           }
         }
