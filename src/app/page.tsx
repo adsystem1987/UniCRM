@@ -27,6 +27,7 @@ import {
   Compass,
   Target,
   Globe,
+  Flame,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
@@ -196,7 +197,10 @@ export default function LandingPage() {
                 <Mail className="h-3.5 w-3.5 text-[#EA4335]" /> Support Email Inbox
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
-                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Google Drive Storage &amp; Receipts
+                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Multi-Drive Cloud Pool (15–45GB+)
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Flame className="h-3.5 w-3.5 text-amber-500" /> Strategy War Room
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
                 <Target className="h-3.5 w-3.5 text-primary" /> Smart Lead Finder
@@ -527,13 +531,13 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                   <HardDrive className="h-3.5 w-3.5" />
-                  Bring Your Own Storage (BYOS)
+                  Bring Your Own Storage Pool (BYOS)
                 </div>
                 <h3 className="text-xl md:text-2xl font-black text-foreground">
-                  Connect Google Drive — 15 GB Free Storage &amp; Auto-Receipts
+                  Multi-Drive Cloud Storage Pool — 15 GB to 45 GB+ Free Storage
                 </h3>
                 <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                  By connecting your personal or business Google Drive (15 GB free), UniCRM streams all customer photos, voice notes, PDFs, call audio, and automated payment receipts into your own cloud folder. Zero storage limits on your CRM server!
+                  Pool multiple personal or business Google accounts into one unified cloud storage drive. All WhatsApp photos, voice notes, PDFs, and call audio recordings stream directly into your private Drive pool without ever hitting server storage limits!
                 </p>
               </div>
 
@@ -774,9 +778,9 @@ export default function LandingPage() {
                   <div className="h-11 w-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 dark:text-amber-400 font-black mb-4">
                     <HardDrive className="h-5 w-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground">BYOS: 15GB Free Cloud Drive</h3>
+                  <h3 className="text-lg font-bold text-foreground">BYOS: Multi-Drive Storage Pool</h3>
                   <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    Bring Your Own Storage (BYOS). Connect your existing Google Drive for 15 GB of completely free file, invoice, and voice call audio recording storage.
+                    Bring Your Own Storage (BYOS). Pool multiple Google accounts together for 15 GB to 45 GB+ of completely free file, invoice, and voice call audio recording storage.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
@@ -861,7 +865,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Google Drive Cloud Storage (15 GB Free Storage)</span>
+                      <span>Multi-Drive Storage Pool (15 GB to 45 GB+ Free Storage)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -879,7 +883,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>AI Agent Squads (Bring Your Own AI API Key)</span>
+                      <span>Pre-Trained AI Squad Playbooks &amp; Strategy War Room</span>
                     </li>
                   </ul>
                 </div>
