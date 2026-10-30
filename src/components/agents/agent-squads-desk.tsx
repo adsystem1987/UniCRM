@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, Check, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Bot, Check, Sparkles, ShieldCheck, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AGENT_SQUAD_ROLES, type AgentSquadRole } from '@/lib/ai/squads';
@@ -14,6 +14,20 @@ interface AgentSquadsDeskProps {
 
 export function AgentSquadsDesk({ currentPrompt, onApplyPrompt }: AgentSquadsDeskProps) {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+
+  const categories = [
+    { id: 'all', label: 'All Roles' },
+    { id: 'sales', label: 'Sales & Conversion' },
+    { id: 'support', label: 'Support & Retention' },
+    { id: 'operations', label: 'Operations & Retail' },
+    { id: 'marketing', label: 'Community & Events' },
+  ];
+
+  const filteredRoles =
+    selectedCategory === 'all'
+      ? AGENT_SQUAD_ROLES
+      : AGENT_SQUAD_ROLES.filter((r) => r.category === selectedCategory);
 
   const handleApply = (role: AgentSquadRole) => {
     setSelectedRole(role.id);
@@ -33,14 +47,32 @@ export function AgentSquadsDesk({ currentPrompt, onApplyPrompt }: AgentSquadsDes
               Pre-Trained Agent Squads & Playbooks
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5 max-w-xl">
-              Equip your WhatsApp AI Assistant with battle-tested personas. Select a role below to adopt its behavior and prompt instructions in 1 click.
+              Equip your WhatsApp & Omnichannel AI Assistant with agency-grade personas. Select a role below to adopt its behavior and prompt instructions in 1 click.
             </p>
           </div>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-border/40">
+          {categories.map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {AGENT_SQUAD_ROLES.map((role) => {
+        {filteredRoles.map((role) => {
           const isSelected = selectedRole === role.id;
           return (
             <div

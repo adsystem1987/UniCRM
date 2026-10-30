@@ -34,6 +34,7 @@
   - **Analytics**: Google Analytics tag `G-P9H01H22G1` via `next/script`
   - **i18n**: `next-intl` (English `messages/en.json`, Spanish `messages/es.json`)
   - **Alerting**: Real-time Slack notifications to channel `C0BJU7JLKUM` on new signups and orders
+  - **Open-Source Lineage**: Documented in [`docs/open-source-lineage.md`](docs/open-source-lineage.md) (tracks ported concepts from `ArnasDon/wacrm`, `msitarzewski/agency-agents`, `nateherkai/roast-room`, `EvolutionAPI`, and `shadcn/ui`).
 
 ---
 

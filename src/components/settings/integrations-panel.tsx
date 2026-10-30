@@ -29,6 +29,7 @@ import {
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -126,6 +127,12 @@ export function IntegrationsPanel() {
   const [gdriveFolder, setGdriveFolder] = useState("/DFY UniCRM Attachments");
   const [gdriveMirrorInbound, setGdriveMirrorInbound] = useState(true);
   const [gdriveMirrorOutbound, setGdriveMirrorOutbound] = useState(true);
+  const [gdrivePool, setGdrivePool] = useState<{
+    totalNodes: number;
+    nodes: any[];
+    totalCapacityGb: number;
+    totalUsedMb: number;
+  } | null>(null);
 
   // Check URL params for OAuth redirect results and subtab switching
   useEffect(() => {
@@ -210,6 +217,7 @@ export function IntegrationsPanel() {
         if (data.target_folder) setGdriveFolder(data.target_folder);
         if (typeof data.mirror_inbound === "boolean") setGdriveMirrorInbound(data.mirror_inbound);
         if (typeof data.mirror_outbound === "boolean") setGdriveMirrorOutbound(data.mirror_outbound);
+        if (data.pool) setGdrivePool(data.pool);
       } else {
         setGdriveConnected(false);
         setGdriveEmail("");
@@ -834,27 +842,82 @@ export function IntegrationsPanel() {
                     )}
                   </p>
                 </div>
-                <Button
-                  onClick={gdriveConnected ? handleDisconnectDrive : handleConnectDrive}
-                  disabled={gdriveLoading}
-                  className={`font-bold transition-all shadow-xs ${
-                    gdriveConnected
-                      ? "bg-muted text-foreground hover:bg-muted/80 border border-border"
-                      : "bg-emerald-600 hover:bg-emerald-700 text-white"
-                  }`}
-                >
-                  {gdriveLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : gdriveConnected ? (
-                    "Disconnect Drive"
-                  ) : (
-                    "Connect with Google Drive"
+                <div className="flex items-center gap-2">
+                  {gdriveConnected && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleConnectDrive}
+                      className="font-bold text-xs h-9 gap-1.5 border-dashed border-emerald-500/50 hover:bg-emerald-500/10"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
+                      Add Extra Drive (+15 GB Pool)
+                    </Button>
                   )}
-                </Button>
+                  <Button
+                    onClick={gdriveConnected ? handleDisconnectDrive : handleConnectDrive}
+                    disabled={gdriveLoading}
+                    className={`font-bold transition-all shadow-xs ${
+                      gdriveConnected
+                        ? "bg-muted text-foreground hover:bg-muted/80 border border-border"
+                        : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                    }`}
+                  >
+                    {gdriveLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : gdriveConnected ? (
+                      "Disconnect All"
+                    ) : (
+                      "Connect with Google Drive"
+                    )}
+                  </Button>
+                </div>
               </div>
 
               {gdriveConnected && (
                 <div className="pt-2 border-t border-border space-y-3">
+                  {/* Multi-Drive Storage Pool (9Drive Concept) */}
+                  {gdrivePool && (
+                    <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-foreground flex items-center gap-1.5">
+                          <HardDrive className="h-4 w-4 text-emerald-500" />
+                          Multi-Drive Storage Pool
+                        </span>
+                        <Badge variant="outline" className="border-emerald-500/40 text-emerald-600 dark:text-emerald-400 font-mono text-[10px]">
+                          {gdrivePool.totalCapacityGb} GB Pooled Free Capacity
+                        </Badge>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px] text-muted-foreground">
+                          <span>Connected Drives: {gdrivePool.totalNodes} accounts</span>
+                          <span>Used: ~{gdrivePool.totalUsedMb} MB</span>
+                        </div>
+                        <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                          <div
+                            className="h-full bg-emerald-500 rounded-full transition-all"
+                            style={{
+                              width: `${Math.min(100, Math.max(5, (gdrivePool.totalUsedMb / (gdrivePool.totalCapacityGb * 1024)) * 100))}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {gdrivePool.nodes.map((node: any, idx: number) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-background border border-border text-[10px] font-mono text-muted-foreground"
+                          >
+                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-500" />
+                            {node.connected_email} (+15 GB)
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className="space-y-1.5">
                     <Label className="text-xs font-bold">Storage Target Folder</Label>
                     <Input

@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Bot, Sparkles, Settings2, BarChart3, Users } from 'lucide-react';
+import { Bot, Sparkles, Settings2, BarChart3, Users, Flame } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { AiPlayground } from '@/components/agents/ai-playground';
 import { AiUsageCard } from '@/components/agents/ai-usage';
 import { AiConfig } from '@/components/settings/ai-config';
 import { AgentSquadsDesk } from '@/components/agents/agent-squads-desk';
+import { StrategyWarRoom } from '@/components/agents/strategy-war-room';
 import { useAuth } from '@/hooks/use-auth';
 import { canEditSettings } from '@/lib/auth/roles';
 import type { AgentSquadRole } from '@/lib/ai/squads';
 
-type Tab = 'squads' | 'playground' | 'setup' | 'usage';
+type Tab = 'squads' | 'war-room' | 'playground' | 'setup' | 'usage';
 
 export default function AgentsPage() {
   const t = useTranslations('Agents');
@@ -68,6 +69,9 @@ export default function AgentsPage() {
             <TabsTrigger value="squads">
               <Users className="mr-1.5 h-4 w-4" /> Agent Squads
             </TabsTrigger>
+            <TabsTrigger value="war-room">
+              <Flame className="mr-1.5 h-4 w-4 text-amber-500" /> War Room
+            </TabsTrigger>
             <TabsTrigger value="playground">
               <Sparkles className="mr-1.5 h-4 w-4" /> {t('tabPlayground')}
             </TabsTrigger>
@@ -86,6 +90,10 @@ export default function AgentsPage() {
               currentPrompt={activeSystemPrompt}
               onApplyPrompt={handleApplyRole}
             />
+          </TabsContent>
+
+          <TabsContent value="war-room" className="mt-4">
+            <StrategyWarRoom />
           </TabsContent>
 
           <TabsContent value="playground" className="mt-4">
