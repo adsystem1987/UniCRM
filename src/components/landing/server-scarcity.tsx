@@ -12,7 +12,7 @@ export function ScarcityTopBanner() {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
       </span>
       <span>
-        Funded by our community — keeping UniCRM 100% free for everyone to use • Zero software fees
+        Funded by our business community • 100% Free forever for everyone • Zero software fees
       </span>
     </div>
   );

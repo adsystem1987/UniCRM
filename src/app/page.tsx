@@ -223,7 +223,7 @@ export default function LandingPage() {
               </div>
               <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#25D366]" />
-                Funded by our community • 100% Free forever for everyone • Zero credit card required
+                Funded by our business community • 100% Free forever for everyone • Zero credit card required
               </p>
             </div>
 
