@@ -4,6 +4,7 @@ import { getAdminClient } from '@/lib/gdrive/offload';
 import { PublicBusinessPageView, BusinessPageRecord } from '@/components/business-page/public-page-view';
 import { generateBusinessJsonLd } from '@/lib/business-page/seo-schema';
 import { SHOWCASE_BUSINESS_PAGES } from '@/lib/business-page/showcase-data';
+import { fetchStorefrontFromR2 } from '@/lib/r2/storefront';
 
 interface PageProps {
   params: Promise<{
@@ -17,6 +18,46 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dfyunicrm.com';
 
 async function getBusinessPage(slug: string): Promise<BusinessPageRecord | null> {
   const normalizedSlug = slug.toLowerCase();
+
+  // 1. Check Cloudflare R2 first (Zero Supabase DB usage)
+  try {
+    const r2Catalog = await fetchStorefrontFromR2(normalizedSlug);
+    if (r2Catalog) {
+      return {
+        id: `r2-${r2Catalog.slug}`,
+        account_id: 'r2-storefront',
+        slug: r2Catalog.slug,
+        title: r2Catalog.businessName,
+        tagline: r2Catalog.tagline || `Direct WhatsApp Catalog${r2Catalog.city ? ` • ${r2Catalog.city}` : ''}`,
+        about: `Browse our official product catalog. Click any item to order directly via WhatsApp with instant delivery confirmation.`,
+        whatsapp_number: r2Catalog.phone?.replace(/[^0-9]/g, '') || '919876543210',
+        calling_number: r2Catalog.phone || null,
+        address: r2Catalog.city || '',
+        google_maps_url: '',
+        logo_url: '',
+        cover_url: '',
+        items: (r2Catalog.products || []).map((p) => ({
+          id: p.id,
+          title: p.name,
+          category: p.category || 'Products',
+          description: p.description || '',
+          price: `₹${p.price}`,
+          badge: p.inStock === false ? 'Out of Stock' : 'In Stock',
+          image_url: p.imageUrl,
+          button_label: 'Order on WhatsApp',
+          prefill_message: `Hi ${r2Catalog.businessName}, I would like to order: ${p.name} (₹${p.price}). Please share delivery and payment details.`,
+          item_type: 'service',
+        })),
+        is_published: true,
+        view_count: 100,
+        lead_count: 5,
+        created_at: r2Catalog.updatedAt || new Date().toISOString(),
+        updated_at: r2Catalog.updatedAt || new Date().toISOString(),
+      } as BusinessPageRecord;
+    }
+  } catch (err) {
+    console.warn('[getBusinessPage] R2 check error:', err);
+  }
 
   try {
     const admin = getAdminClient();
