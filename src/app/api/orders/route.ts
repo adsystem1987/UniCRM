@@ -3,6 +3,7 @@ import { getCurrentAccount, requireRole } from '@/lib/auth/account';
 import { supabaseAdmin } from '@/lib/flows/admin-client';
 import { sendOrderNotification } from '@/lib/slack/notify';
 import { isMasterAdminEmail } from '@/lib/auth/master-admin';
+import { deliverReceiptToGoogleDrive } from '@/lib/invoice/delivery';
 
 export const dynamic = 'force-dynamic';
 
@@ -171,6 +172,13 @@ export async function PATCH(request: Request) {
     if (error) {
       console.error('[orders PATCH] update error:', error);
       return NextResponse.json({ error: 'Failed to update order status' }, { status: 500 });
+    }
+
+    // Auto-deliver / sync payment receipt to Google Drive on paid or fulfilled status
+    if (['paid', 'fulfilled'].includes(status)) {
+      void deliverReceiptToGoogleDrive(orderId).catch((receiptErr) => {
+        console.warn('[orders PATCH] receipt drive delivery error:', receiptErr);
+      });
     }
 
     return NextResponse.json({ success: true, order: updated });

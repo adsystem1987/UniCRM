@@ -336,7 +336,7 @@ export function EvolutionQrConnect({ onSelectMetaOption }: EvolutionQrConnectPro
                       Pre-Configured Cloud Gateway:
                     </p>
                     <p className="leading-relaxed">
-                      UniCRM is connected to the cloud gateway at <code className="text-foreground font-semibold">https://wa.dfydude.online</code>. If you prefer to connect your own self-hosted WhatsApp Gateway (Evolution API), you can enter your custom URL and secret key above.
+                      UniCRM is connected to the cloud gateway at <code className="text-foreground font-semibold">https://wa.dfydude.online</code>. If you prefer to connect your own self-hosted WhatsApp Gateway, you can enter your custom URL and secret key above.
                     </p>
                   </div>
                 </form>

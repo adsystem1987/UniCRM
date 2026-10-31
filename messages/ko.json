@@ -447,6 +447,7 @@
         "notes": "메모",
         "custom": "커스텀 필드",
         "deals": "딜",
+        "dossier": "AI 메모리 요약",
         "tags": "태그",
         "noTags": "태그 없음",
         "noDeals": "딜 없음",

@@ -10,16 +10,27 @@ import { AccountAccessAlert } from "@/components/layout/account-access-alert";
 import { PresenceHeartbeat } from "@/components/presence/presence-heartbeat";
 import { BrowserNotificationsListener } from "@/components/notifications/browser-notifications-listener";
 import { MandatorySetupModal } from "@/components/layout/mandatory-setup-modal";
+import { PhoneVerificationModal } from "@/components/layout/phone-verification-modal";
 
 // Auth-gated dashboard shell. Extracted from the layout so the layout
 // itself can stay a server component and export metadata (noindex) —
 // client components can't export Next's metadata object.
 
 function DashboardShellInner({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, profile, isPlatformOwner, loading, refreshProfile } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("DashboardShell");
+
+  // Phone verification handshake state
+  const isPhoneVerified = isPlatformOwner || !!profile?.phone_verified;
+  const [phoneVerifiedState, setPhoneVerifiedState] = useState(false);
+
+  useEffect(() => {
+    if (isPhoneVerified) {
+      setPhoneVerifiedState(true);
+    }
+  }, [isPhoneVerified]);
 
   // Setup verification state (compulsory Google Drive + Supabase BYOD)
   const [googleDriveConnected, setGoogleDriveConnected] = useState(false);
@@ -103,9 +114,18 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
+      {/* Phone / WhatsApp Anti-Spam Verification Barrier */}
+      <PhoneVerificationModal
+        open={!phoneVerifiedState && !isPlatformOwner}
+        onVerified={() => {
+          setPhoneVerifiedState(true);
+          refreshProfile();
+        }}
+      />
+
       {/* Mandatory Onboarding & Storage/DB Barrier */}
       <MandatorySetupModal
-        open={setupModalOpen}
+        open={phoneVerifiedState && setupModalOpen}
         googleDriveConnected={googleDriveConnected}
         supabaseConnected={supabaseConnected}
         onRefresh={checkSetupStatus}

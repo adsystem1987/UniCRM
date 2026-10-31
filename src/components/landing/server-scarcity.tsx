@@ -12,7 +12,7 @@ export function ScarcityTopBanner() {
         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
       </span>
       <span>
-        Funded by our community — keeping UniCRM 100% free for everyone to use • Zero software fees
+        Funded by our business community • 100% Free forever for everyone • Zero software fees
       </span>
     </div>
   );
@@ -34,11 +34,11 @@ export function ScarcityCtaButton() {
     <Link href="/signup" className="w-full sm:w-auto">
       <Button
         size="lg"
-        className="w-full sm:w-auto h-11 px-5 rounded-full bg-primary text-primary-foreground font-medium text-base gap-2 hover:opacity-90 active:opacity-80 active:translate-y-px shadow-xs"
+        className="w-full sm:w-auto h-12 sm:h-11 px-6 rounded-full btn-gold-gradient font-bold text-sm sm:text-base gap-2 shadow-md whitespace-nowrap"
       >
-        <MessageCircle className="h-4 w-4" />
-        <span>Start for free</span>
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        <MessageCircle className="h-4 w-4 shrink-0" />
+        <span>Get Instant Access</span>
+        <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
       </Button>
     </Link>
   );

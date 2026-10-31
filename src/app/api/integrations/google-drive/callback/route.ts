@@ -79,6 +79,24 @@ export async function GET(request: Request) {
       { onConflict: "account_id" }
     );
 
+    // Also register or update inside the Multi-Drive Storage Pool (9Drive concept)
+    try {
+      await supabase.from("gdrive_storage_nodes").upsert(
+        {
+          account_id: accountId,
+          connected_email: email,
+          refresh_token: encryptedRefreshToken,
+          target_folder: "/DFY UniCRM Attachments",
+          folder_id: folderId,
+          is_active: true,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "account_id,connected_email" }
+      );
+    } catch (poolErr: unknown) {
+      console.warn("[gdrive-pool] node sync skipped:", poolErr);
+    }
+
     if (dbError) {
       console.error("[google-drive/callback] DB upsert error:", dbError);
       return NextResponse.redirect(

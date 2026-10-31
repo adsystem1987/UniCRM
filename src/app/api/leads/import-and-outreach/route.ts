@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     const admin = supabaseAdmin();
 
     // 1. Ensure the Omnichannel Outreach automation exists and is active for this account
+    // Wire the approved Meta template (welcome_lead_intro) or text message
     let targetAutomationId: string | null = null;
     if (enrollInSequence) {
       const { data: existingAuto } = await admin
@@ -53,27 +54,58 @@ export async function POST(request: Request) {
             .eq('id', existingAuto.id);
         }
       } else {
-        // Deploy template
-        const tpl = getTemplate('unicrm_omnichannel_outreach');
-        if (tpl) {
-          const { data: createdAuto } = await admin
-            .from('automations')
-            .insert({
-              account_id: accountId,
-              user_id: userId,
-              name: tpl.name,
-              description: tpl.description,
-              trigger_type: tpl.trigger_type,
-              trigger_config: tpl.trigger_config,
-              is_active: true,
-            })
-            .select('id')
-            .single();
+        // Deploy template with approved Meta template welcome_lead_intro
+        const { data: createdAuto } = await admin
+          .from('automations')
+          .insert({
+            account_id: accountId,
+            user_id: userId,
+            name: 'UniCRM Omnichannel Drip & AI Agent Qualifier',
+            description: 'Automated 1-click lead outreach: WhatsApp intro -> Follow-up reminder -> AI qualification.',
+            trigger_type: 'new_contact_created',
+            trigger_config: {},
+            is_active: true,
+          })
+          .select('id')
+          .single();
 
-          if (createdAuto) {
-            targetAutomationId = createdAuto.id;
-            await insertSteps(createdAuto.id, tpl.steps as unknown as BuilderStepInput[]);
-          }
+        if (createdAuto) {
+          targetAutomationId = createdAuto.id;
+          const outreachSteps: BuilderStepInput[] = [
+            {
+              step_type: 'send_template',
+              step_config: {
+                template_name: 'welcome_lead_intro',
+                language: 'en_US',
+                variable_mapping: {
+                  '1': '{{contact.name}}',
+                  '2': 'our team',
+                },
+              },
+            },
+            {
+              step_type: 'wait',
+              step_config: { amount: 1, unit: 'days' },
+            },
+            {
+              step_type: 'send_template',
+              step_config: {
+                template_name: 'inquiry_follow_up_touch',
+                language: 'en_US',
+                variable_mapping: {
+                  '1': '{{contact.name}}',
+                  '2': 'our previous conversation',
+                },
+              },
+            },
+            {
+              step_type: 'ai_reply',
+              step_config: {
+                prompt: 'Qualify if the business prospect needs CRM, messaging, or business growth services. Answer their questions and offer to schedule a call.',
+              },
+            },
+          ];
+          await insertSteps(createdAuto.id, outreachSteps);
         }
       }
     }

@@ -17,6 +17,7 @@ import {
   Mail,
   Receipt,
   FileSpreadsheet,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
@@ -25,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { SettingsPanelHead } from "./settings-panel-head";
+import { EntitlementDialog } from "./entitlement-dialog";
 
 interface PlatformAccount {
   id: string;
@@ -38,6 +40,13 @@ interface PlatformAccount {
   member_count: number;
   owner_email: string;
   owner_name: string;
+  entitlements?: {
+    aiProActive: boolean;
+    aiProExpiresAt: string | null;
+    hasCustomAiKey: boolean;
+    leadCredits: number;
+    hasCustomScraperToken: boolean;
+  };
 }
 
 export function MasterAdminPanel() {
@@ -47,6 +56,7 @@ export function MasterAdminPanel() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedEntitlementAccount, setSelectedEntitlementAccount] = useState<PlatformAccount | null>(null);
 
   const fetchAccounts = async () => {
     if (!isPlatformOwner) {
@@ -284,6 +294,20 @@ export function MasterAdminPanel() {
                       <span className="text-[11px] font-mono text-muted-foreground">
                         {acc.member_count} {acc.member_count === 1 ? "user" : "users"}
                       </span>
+
+                      {/* Entitlement Status Badges */}
+                      {acc.entitlements?.aiProActive ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                          <Sparkles className="size-2.5 fill-current" />
+                          AI Pro Active {acc.entitlements.hasCustomAiKey ? '(Dedicated Key)' : ''}
+                        </span>
+                      ) : null}
+
+                      {acc.entitlements?.leadCredits && acc.entitlements.leadCredits > 0 ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                          🎯 {acc.entitlements.leadCredits} Lead Credits {acc.entitlements.hasCustomScraperToken ? '(Dedicated Scraper)' : ''}
+                        </span>
+                      ) : null}
                     </div>
 
                     <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
@@ -308,6 +332,17 @@ export function MasterAdminPanel() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSelectedEntitlementAccount(acc)}
+                      className="h-8 px-2.5 text-xs text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/10 font-bold gap-1"
+                      title="Manage AI Pro & Lead Credits"
+                    >
+                      <Sparkles className="h-3 w-3" />
+                      <span>Provision</span>
+                    </Button>
+
                     {acc.status === "active" ? (
                       <Button
                         size="sm"
@@ -360,6 +395,17 @@ export function MasterAdminPanel() {
           )}
         </CardContent>
       </Card>
+
+      {/* Client Entitlement Provisioning Modal */}
+      {selectedEntitlementAccount && (
+        <EntitlementDialog
+          open={!!selectedEntitlementAccount}
+          onClose={() => setSelectedEntitlementAccount(null)}
+          accountId={selectedEntitlementAccount.id}
+          accountName={selectedEntitlementAccount.name}
+          ownerEmail={selectedEntitlementAccount.owner_email}
+        />
+      )}
     </div>
   );
 }

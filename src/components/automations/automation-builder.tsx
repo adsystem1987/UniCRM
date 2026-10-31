@@ -63,6 +63,7 @@ import {
   blankListPayload,
 } from "@/components/interactive/interactive-builder"
 import { interactivePayloadPreviewText } from "@/lib/whatsapp/interactive"
+import { extractVariableIndices } from "@/lib/whatsapp/template-validators"
 import { createClient } from "@/lib/supabase/client"
 import {
   childPath,
@@ -557,20 +558,38 @@ function DealPipelineFields({
 }
 
 /** Template dropdown showing approved templates by name + language,
- *  storing both template_name and language. Falls back to manual name +
- *  language inputs when no approved templates are synced yet. */
+ *  storing template_name, language, and variable mapping inputs. */
 function SendTemplateFields({
   templateName,
   language,
+  variables,
   onChange,
   t,
 }: {
   templateName: string
   language: string
-  onChange: (patch: { template_name: string; language: string }) => void
+  variables?: Record<string, string>
+  onChange: (patch: {
+    template_name: string
+    language: string
+    variables?: Record<string, string>
+  }) => void
   t: ReturnType<typeof useTranslations>
 }) {
   const { templates } = useResources()
+
+  const currentVars = variables ?? {}
+  const selectedTmpl = templates.find(
+    (t) => t.name === templateName && (t.language ?? "en_US") === (language || "en_US")
+  )
+  const varIndices = selectedTmpl
+    ? extractVariableIndices(selectedTmpl.body_text)
+    : []
+
+  const handleVarChange = (idx: number, val: string) => {
+    const updated = { ...currentVars, [String(idx)]: val }
+    onChange({ template_name: templateName, language, variables: updated })
+  }
 
   if (templates.length === 0) {
     return (
@@ -579,7 +598,7 @@ function SendTemplateFields({
           <Input
             value={templateName}
             onChange={(e) =>
-              onChange({ template_name: e.target.value, language })
+              onChange({ template_name: e.target.value, language, variables: currentVars })
             }
             className="bg-muted text-foreground"
           />
@@ -588,7 +607,7 @@ function SendTemplateFields({
           <Input
             value={language}
             onChange={(e) =>
-              onChange({ template_name: templateName, language: e.target.value })
+              onChange({ template_name: templateName, language: e.target.value, variables: currentVars })
             }
             className="bg-muted text-foreground"
           />
@@ -606,31 +625,66 @@ function SendTemplateFields({
   )
 
   return (
-    <FieldBlock label={t("templates.templateLabel")}>
-      <select
-        value={current}
-        onChange={(e) => {
-          const [name, lang] = e.target.value.split("::")
-          onChange({ template_name: name ?? "", language: lang ?? "" })
-        }}
-        className={SELECT_CLASS}
-      >
-        <option value="">{t("templates.select")}</option>
-        {templates.map((tmpl) => {
-          const lang = tmpl.language ?? "en_US"
-          return (
-            <option key={tmpl.id} value={toValue(tmpl.name, lang)}>
-              {tmpl.name} ({lang})
+    <>
+      <FieldBlock label={t("templates.templateLabel")}>
+        <select
+          value={current}
+          onChange={(e) => {
+            const [name, lang] = e.target.value.split("::")
+            onChange({ template_name: name ?? "", language: lang ?? "", variables: currentVars })
+          }}
+          className={SELECT_CLASS}
+        >
+          <option value="">{t("templates.select")}</option>
+          {templates.map((tmpl) => {
+            const lang = tmpl.language ?? "en_US"
+            return (
+              <option key={tmpl.id} value={toValue(tmpl.name, lang)}>
+                {tmpl.name} ({lang})
+              </option>
+            )
+          })}
+          {current && !hasMatch && (
+            <option value={current}>
+              {t("templates.unknown", { name: templateName, lang: language || t("templates.unknownLang") })}
             </option>
-          )
-        })}
-        {current && !hasMatch && (
-          <option value={current}>
-            {t("templates.unknown", { name: templateName, lang: language || t("templates.unknownLang") })}
-          </option>
-        )}
-      </select>
-    </FieldBlock>
+          )}
+        </select>
+      </FieldBlock>
+
+      {selectedTmpl && (
+        <div className="rounded-lg border border-border/80 bg-muted/40 p-2.5 text-xs text-muted-foreground space-y-1 mb-2">
+          <div className="font-semibold text-foreground text-[11px]">Template Preview</div>
+          <p className="italic text-[11px] leading-relaxed line-clamp-3">"{selectedTmpl.body_text}"</p>
+        </div>
+      )}
+
+      {varIndices.length > 0 && (
+        <div className="space-y-2 pt-1 border-t border-border/60">
+          <div className="text-[11px] font-bold text-foreground">
+            Template Variables ({varIndices.length})
+          </div>
+          <div className="space-y-1.5">
+            {varIndices.map((idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <span className="font-mono text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded shrink-0">
+                  {`{{${idx}}}`}
+                </span>
+                <Input
+                  value={currentVars[String(idx)] ?? ""}
+                  onChange={(e) => handleVarChange(idx, e.target.value)}
+                  placeholder={`Value or {{contact.name}}`}
+                  className="h-8 text-xs bg-muted text-foreground"
+                />
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground italic">
+            Tip: Use variables like &#123;&#123;contact.name&#125;&#125; or static text.
+          </p>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -1362,6 +1416,7 @@ function StepEditor({
         <SendTemplateFields
           templateName={(cfg.template_name as string) ?? ""}
           language={(cfg.language as string) ?? ""}
+          variables={(cfg.variables as Record<string, string>) ?? {}}
           onChange={(patch) => set(patch)}
           t={t}
         />

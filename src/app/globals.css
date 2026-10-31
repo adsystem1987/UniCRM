@@ -424,6 +424,87 @@ html[data-theme="rose"] {
   background-size: 22px 22px;
 }
 
+/* ============================================================
+ * UniCRM Adaptive Luxe Gold CTA System (.btn-gold-gradient)
+ * Dynamically shifts personality between Sun (Light) and Moon (Dark):
+ *
+ * • Sun Mode (Light Canvas):
+ *   Deep Obsidian Charcoal base with metallic gold border,
+ *   subtle warm gold ambient glow, and PURE WHITE typography & icon.
+ *   (High contrast against white surfaces, razor-sharp luxury feel).
+ *
+ * • Moon Mode (Dark Canvas):
+ *   Radiant 24K Liquid Gold gradient with PURE BLACK typography & icon,
+ *   luminous gold outer glow, and glass reflection highlight.
+ *   (Glows like a physical gold credit card against deep space black).
+ * ============================================================ */
+
+/* --- Sun Mode (Light Mode Default) --- */
+.btn-gold-gradient {
+  background: #111113;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border: 1px solid rgba(216, 164, 71, 0.55);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14), 0 0 14px rgba(216, 164, 71, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-gold-gradient svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+.btn-gold-gradient:hover {
+  background: #1C1C20;
+  color: #FFFFFF !important;
+  border-color: rgba(216, 164, 71, 0.85);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22), 0 0 22px rgba(216, 164, 71, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-gold-gradient:hover svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+.btn-gold-gradient:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Moon Mode (Dark Mode Active) --- */
+html.dark .btn-gold-gradient,
+html[data-mode="dark"] .btn-gold-gradient {
+  background: linear-gradient(135deg, #FDE2A7 0%, #E2AB4B 50%, #C48E2E 100%);
+  color: #000000 !important;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 4px 20px rgba(226, 171, 75, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+html.dark .btn-gold-gradient svg,
+html[data-mode="dark"] .btn-gold-gradient svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
+html.dark .btn-gold-gradient:hover,
+html[data-mode="dark"] .btn-gold-gradient:hover {
+  background: linear-gradient(135deg, #FFF0CA 0%, #EDB856 50%, #D49D38 100%);
+  color: #000000 !important;
+  box-shadow: 0 6px 28px rgba(226, 171, 75, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transform: translateY(-1px);
+}
+
+html.dark .btn-gold-gradient:hover svg,
+html[data-mode="dark"] .btn-gold-gradient:hover svg {
+  color: #000000 !important;
+  stroke: #000000 !important;
+}
+
 @keyframes enter-snappy {
   from {
     opacity: 0;
@@ -707,4 +788,38 @@ html[data-theme="rose"] {
   animation: voice-glow-pulse 2.4s ease-in-out infinite;
   pointer-events: none;
 }
+
+/* ============================================================
+ * Tremor & Recharts Theme Contrast Adjustments
+ * Recharts renders SVG text with hardcoded fill or relies on CSS.
+ * In dark mode, ensure axis tick labels, numbers and text are
+ * always crisp and visible against card backgrounds.
+ * ============================================================ */
+.recharts-cartesian-axis-tick text,
+.recharts-cartesian-axis-tick-value,
+.recharts-text {
+  fill: var(--muted-foreground) !important;
+  font-weight: 500;
+}
+
+html[data-mode="dark"] .recharts-cartesian-axis-tick text,
+html[data-mode="dark"] .recharts-cartesian-axis-tick-value,
+html[data-mode="dark"] .recharts-text,
+html.dark .recharts-cartesian-axis-tick text,
+html.dark .recharts-cartesian-axis-tick-value,
+html.dark .recharts-text {
+  fill: #a3a3a3 !important;
+}
+
+html[data-mode="light"] .recharts-cartesian-axis-tick text,
+html[data-mode="light"] .recharts-cartesian-axis-tick-value,
+html[data-mode="light"] .recharts-text {
+  fill: #525252 !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--border) !important;
+  opacity: 0.8;
+}
+
 

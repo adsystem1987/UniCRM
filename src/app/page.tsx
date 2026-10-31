@@ -24,9 +24,14 @@ import {
   Volume2,
   Sliders,
   CheckCircle2,
+  Compass,
+  Target,
+  Globe,
+  Flame,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
+import { UniCrmLogo } from "@/components/brand/logo";
 import { ModeToggle } from "@/components/layout/mode-toggle";
 import { WebsiteWhatsAppWidget } from "@/components/layout/website-whatsapp-widget";
 import {
@@ -35,6 +40,10 @@ import {
   ScarcityCtaButton,
   ScarcityAllocationBar,
 } from "@/components/landing/server-scarcity";
+import { LeadFinderShowcase } from "@/components/landing/lead-finder-showcase";
+import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showcase";
+import { ComparisonBanner } from "@/components/landing/comparison-banner";
+import { BusinessPageShowcase } from "@/components/landing/business-page-showcase";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -120,33 +129,33 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full bg-background/90 backdrop-blur-xs border-b border-border/40">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
           <Link href="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 min-w-0">
-            <img
-              src="/logo.png"
-              alt="DFY UniCRM"
-              className="h-8 w-8 sm:h-9 sm:w-9 object-contain shrink-0"
-            />
-            <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">DFY UniCRM</span>
+            <UniCrmLogo className="h-8 w-8 sm:h-9 sm:w-9" showGlow />
+            <span className="text-lg sm:text-xl font-black tracking-tight text-foreground truncate">
+              DFY <span className="text-muted-foreground font-semibold">UniCRM</span>
+            </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-muted-foreground">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-medium text-muted-foreground">
+            <a href="#leads" className="hover:text-foreground transition-colors font-semibold text-primary">Find Leads</a>
+            <a href="#industries" className="hover:text-foreground transition-colors">Industry Setup</a>
             <a href="#channels" className="hover:text-foreground transition-colors">Channels</a>
-            <a href="#calling" className="hover:text-foreground transition-colors">Calling & IVR</a>
+            <a href="#calling" className="hover:text-foreground transition-colors">Calling &amp; IVR</a>
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#why-free" className="hover:text-foreground transition-colors">Why 100% Free?</a>
-            <a href="#support-plan" className="hover:text-foreground transition-colors">DFY Setup (₹1,000)</a>
             <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <ModeToggle className="h-9 w-9" />
-            <Link href="/login">
+            <Link href="/login" className="hidden sm:inline-flex">
               <Button variant="ghost" size="sm" className="font-medium text-muted-foreground hover:text-foreground px-3 text-sm rounded-full">
                 Sign In
               </Button>
             </Link>
             <Link href="/signup">
-              <Button size="sm" className="bg-primary text-primary-foreground font-medium gap-1.5 px-3.5 text-sm rounded-full hover:opacity-90 active:opacity-80 active:translate-y-px">
-                <span>Start for free</span>
+              <Button size="sm" className="btn-gold-gradient font-bold gap-1 sm:gap-1.5 px-3 sm:px-4 text-xs sm:text-xs rounded-full shadow-md whitespace-nowrap">
+                <span className="inline sm:hidden">Instant Access</span>
+                <span className="hidden sm:inline">Get Instant Access</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </Link>
@@ -188,7 +197,19 @@ export default function LandingPage() {
                 <Mail className="h-3.5 w-3.5 text-[#EA4335]" /> Support Email Inbox
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
-                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Google Drive (15GB Free)
+                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Multi-Drive Cloud Pool (15–45GB+)
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Flame className="h-3.5 w-3.5 text-amber-500" /> Strategy War Room
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Target className="h-3.5 w-3.5 text-primary" /> Smart Lead Finder
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Sparkles className="h-3.5 w-3.5 text-purple-400" /> Self-Learning Memory
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border hover:border-border-strong transition-colors">
+                <Compass className="h-3.5 w-3.5 text-purple-500" /> 1-Click Industry Setup
               </span>
             </div>
 
@@ -206,7 +227,7 @@ export default function LandingPage() {
               </div>
               <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-[#25D366]" />
-                Funded by our community • 100% Free forever for everyone • Zero credit card required
+                Funded by our business community • 100% Free forever for everyone • Zero credit card required
               </p>
             </div>
 
@@ -228,6 +249,13 @@ export default function LandingPage() {
                 <span>Inbound & Outbound Voice Calling</span>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: OLD WAY VS UNICRM COMPARISON BANNER */}
+        <section id="comparison" className="py-12 md:py-16 border-b border-border/40 bg-muted/15">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ComparisonBanner />
           </div>
         </section>
 
@@ -317,7 +345,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> Browser WebRTC & SIP Support
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Instant Browser Calling &bull; Zero Extra Apps
                 </div>
               </div>
 
@@ -379,14 +407,14 @@ export default function LandingPage() {
               <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 font-black text-sm">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted text-foreground font-black text-sm border border-border">
                       03
                     </span>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full border border-border">
                       Storage
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Recordings → S3 & Google Drive</h3>
+                  <h3 className="text-xl font-bold text-foreground">Recordings → S3 &amp; Google Drive</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                     Every recording is encrypted and streamed straight to the S3-compatible or Google Drive bucket you configure. You set retention. You own the keys.
                   </p>
@@ -395,8 +423,8 @@ export default function LandingPage() {
                   <div className="mt-5 rounded-2xl border border-border bg-muted/40 p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-lg bg-teal-500/20 text-teal-600 flex items-center justify-center">
-                          <Play className="h-4 w-4 fill-teal-600" />
+                        <div className="h-8 w-8 rounded-lg bg-foreground text-background flex items-center justify-center">
+                          <Play className="h-4 w-4 fill-current" />
                         </div>
                         <div>
                           <p className="text-xs font-bold text-foreground">call_recording_0482.wav</p>
@@ -407,18 +435,18 @@ export default function LandingPage() {
                     </div>
 
                     <div className="w-full bg-border rounded-full h-1.5 overflow-hidden">
-                      <div className="bg-teal-500 h-1.5 rounded-full w-2/3" />
+                      <div className="bg-foreground h-1.5 rounded-full w-2/3" />
                     </div>
 
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground font-semibold">
                       <span>Streamed to Private Storage</span>
-                      <span className="text-teal-600 dark:text-teal-400 font-bold">0 MB Server Storage Used</span>
+                      <span className="text-foreground font-bold">0 MB Server Storage Used</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-500 flex items-center gap-1">
-                  <CheckCircle2 className="h-3.5 w-3.5" /> End-to-End Private Encryption
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> End-to-End Private Encryption
                 </div>
               </div>
             </div>
@@ -443,83 +471,97 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* WhatsApp */}
               <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
-                  <MessageCircle className="h-5 w-5" />
+                <div className="h-10 w-10 rounded-xl bg-muted text-foreground border border-border flex items-center justify-center font-bold">
+                  <MessageCircle className="h-5 w-5 text-[#25D366]" />
                 </div>
                 <h4 className="font-bold text-foreground">WhatsApp Messaging</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Connect via QR code in 10 seconds or through official Meta Cloud API. Send broadcasts, buttons, and catalogs.
                 </p>
-                <div className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                  Instant QR or Official API
+                <div className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-emerald-500" /> Instant QR or Official API
                 </div>
               </div>
 
               {/* Instagram */}
               <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-                <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold">
-                  <Camera className="h-5 w-5" />
+                <div className="h-10 w-10 rounded-xl bg-muted text-foreground border border-border flex items-center justify-center font-bold">
+                  <Camera className="h-5 w-5 text-[#E4405F]" />
                 </div>
                 <h4 className="font-bold text-foreground">Instagram Direct</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Turn Instagram DMs, story mentions, and product inquiries into closed deals without leaving the CRM.
                 </p>
-                <div className="text-[11px] font-bold text-purple-600 dark:text-purple-400">
-                  100% Free Meta Messaging
+                <div className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-foreground" /> 100% Free Meta Messaging
                 </div>
               </div>
 
               {/* Facebook */}
               <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-                <div className="h-10 w-10 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center font-bold">
-                  <Share2 className="h-5 w-5" />
+                <div className="h-10 w-10 rounded-xl bg-muted text-foreground border border-border flex items-center justify-center font-bold">
+                  <Share2 className="h-5 w-5 text-[#1877F2]" />
                 </div>
                 <h4 className="font-bold text-foreground">Facebook Messenger</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Sync all customer inquiries from your Facebook Business Pages into your agents' shared inbox timeline.
                 </p>
-                <div className="text-[11px] font-bold text-sky-600 dark:text-sky-400">
-                  Zero Message Surcharges
+                <div className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-foreground" /> Zero Message Surcharges
                 </div>
               </div>
 
               {/* Support Email */}
               <div className="rounded-2xl border border-border bg-card p-6 space-y-3">
-                <div className="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold">
-                  <Mail className="h-5 w-5" />
+                <div className="h-10 w-10 rounded-xl bg-muted text-foreground border border-border flex items-center justify-center font-bold">
+                  <Mail className="h-5 w-5 text-[#EA4335]" />
                 </div>
                 <h4 className="font-bold text-foreground">Support Email Inboxes</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   Connect company email via Gmail OAuth, IMAP/SMTP (Zoho/Outlook), or smart inbound forwarding.
                 </p>
-                <div className="text-[11px] font-bold text-blue-600 dark:text-blue-400">
-                  Integrated Ticket Threads
+                <div className="text-[11px] font-bold text-muted-foreground flex items-center gap-1">
+                  <span className="size-1.5 rounded-full bg-foreground" /> Integrated Ticket Threads
                 </div>
               </div>
             </div>
 
             {/* Google Drive BYOS Banner */}
-            <div className="mt-8 rounded-3xl border border-border bg-gradient-to-r from-emerald-500/10 via-background to-teal-500/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="mt-8 rounded-3xl border border-border bg-card p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                   <HardDrive className="h-3.5 w-3.5" />
-                  Bring Your Own Storage (BYOS)
+                  Bring Your Own Storage Pool (BYOS)
                 </div>
                 <h3 className="text-xl md:text-2xl font-black text-foreground">
-                  Connect Google Drive — Get 15 GB Free Media Storage
+                  Multi-Drive Cloud Storage Pool — 15 GB to 45 GB+ Free Storage
                 </h3>
                 <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-                  By connecting your personal or business Google Drive (15 GB free), UniCRM streams all photos, voice recordings, PDFs, and call audio into your own cloud folder. Zero storage limits on your CRM server!
+                  Pool multiple personal or business Google accounts into one unified cloud storage drive. All WhatsApp photos, voice notes, PDFs, and call audio recordings stream directly into your private Drive pool without ever hitting server storage limits!
                 </p>
               </div>
 
               <Link href="/signup" className="shrink-0">
-                <Button className="h-11 px-6 font-bold bg-primary hover:opacity-90 active:opacity-80 text-primary-foreground rounded-full gap-2">
+                <Button className="h-11 px-6 font-bold btn-gold-gradient rounded-full gap-2 shadow-md">
                   Connect in 1 Click
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: SMART LEAD FINDER SHOWCASE */}
+        <section id="leads" className="py-16 md:py-24 border-b border-border/40 bg-card/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <LeadFinderShowcase />
+          </div>
+        </section>
+
+        {/* SECTION: INSTANT BUSINESS MICRO-PAGE & CATALOG SHOWCASE */}
+        <section id="catalog" className="py-16 md:py-24 border-b border-border/40 bg-linear-to-b from-background via-primary/5 to-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <BusinessPageShowcase />
           </div>
         </section>
 
@@ -539,58 +581,78 @@ export default function LandingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {/* Feature 1 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 1: Instant Business Micro-Page & 1-Click Booking */}
+              <div className="rounded-3xl border border-primary/30 bg-card p-7 shadow-md hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-primary relative overflow-hidden">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-[10px] font-black uppercase tracking-wider text-primary-foreground rounded-bl-xl">
+                  New
+                </div>
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-border flex items-center justify-center text-emerald-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6">
+                    <Globe className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Instant Business Page &amp; Booking</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    Launch your digital storefront in 60 seconds. Customers can browse your catalog, book appointments with direct Google Calendar sync, and receive instant automated WhatsApp confirmations and reminders.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-primary flex items-center justify-between">
+                  <span>Google Calendar + WhatsApp Sync</span>
+                  <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
+                </div>
+              </div>
+
+              {/* Feature 2: Dual WhatsApp Gateways */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
+                <div>
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <QrCode className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Dual WhatsApp Gateways</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Connect instantly by scanning a QR code with your mobile phone (100% free WhatsApp Web Gateway), or plug in your official Meta Cloud API for high-volume enterprise campaigns.
+                    Connect instantly in 10 seconds by scanning a QR code with your phone (100% free with zero Meta setup barriers), or plug in official Meta Cloud API keys for high-volume enterprise broadcast marketing.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-500">
-                  Zero setup friction
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-emerald-500" /> Instant QR or Meta Cloud API
                 </div>
               </div>
 
-              {/* Feature 2 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 3: Smart Client Memory & Continuous Learning */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-purple-500/10 border border-border flex items-center justify-center text-purple-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <Sparkles className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Free AI Gateway & Autoreply</h3>
+                  <h3 className="text-xl font-bold text-foreground">Continuous Learning Client Memory</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Powered by internal smart AI routing. Get intelligent draft suggestions and automated replies across Gemini, Groq, and DeepSeek without paying $20/seat.
+                    Your CRM gets smarter with every conversation. Automatically extracts customer budgets, timelines, buying intentions, and past objections in real-time, giving your agents instant context right inside the chat sidebar.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-purple-400">
-                  Token-compressed & fast
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-foreground" /> Self-learning intelligence on every chat
                 </div>
               </div>
 
-              {/* Feature 3 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 4: WhatsApp Voice & IVR Calls */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-border flex items-center justify-center text-blue-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <PhoneCall className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">WhatsApp Voice & IVR Calls</h3>
+                  <h3 className="text-xl font-bold text-foreground">WhatsApp Voice &amp; IVR Calls</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                     Make and receive WhatsApp voice calls directly inside your browser. Record calls, track durations, and route callers through visual DTMF menus.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-blue-400">
-                  Built-in High-Concurrency Voice Engine
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-emerald-500" /> High-Concurrency Voice Engine
                 </div>
               </div>
 
-              {/* Feature 4 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 5: Visual Drag & Drop Bot Builder */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <GitBranch className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Visual Deals Kanban</h3>
@@ -598,15 +660,15 @@ export default function LandingPage() {
                     Turn WhatsApp, Instagram, and email chats into sales pipelines. Move deals across stages, link contact values, and track revenue in INR (₹) or USD ($).
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-teal-400">
-                  Drag & drop pipeline
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-foreground" /> Drag &amp; drop pipeline
                 </div>
               </div>
 
-              {/* Feature 5 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 6 */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-border flex items-center justify-center text-amber-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <Zap className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">No-Code Flow Builder</h3>
@@ -614,15 +676,15 @@ export default function LandingPage() {
                     Canvas-based automations to welcome new leads, auto-assign chats to online agents, and send interactive buttons and lists automatically.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-amber-400">
-                  Interactive node canvas
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-foreground" /> Interactive node canvas
                 </div>
               </div>
 
-              {/* Feature 6 */}
-              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-primary/50 transition-colors">
+              {/* Feature 7 */}
+              <div className="rounded-3xl border border-border/70 bg-card p-7 shadow-sm flex flex-col justify-between hover:border-border-strong transition-all">
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-foreground mb-6">
                     <Users className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Unlimited Team Members</h3>
@@ -630,11 +692,18 @@ export default function LandingPage() {
                     Invite your entire sales, marketing, and customer support staff. Assign granular roles (Admin, Agent, Viewer) with real-time presence tracking.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-rose-400">
-                  No per-agent penalties
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-emerald-500" /> No per-agent penalties
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* SECTION: 1-CLICK INDUSTRY SETUP */}
+        <section id="industries" className="py-16 md:py-24 border-b border-border/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <IndustrySetupShowcase />
           </div>
         </section>
 
@@ -709,9 +778,9 @@ export default function LandingPage() {
                   <div className="h-11 w-11 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-600 dark:text-amber-400 font-black mb-4">
                     <HardDrive className="h-5 w-5" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground">BYOS: 15GB Free Cloud Drive</h3>
+                  <h3 className="text-lg font-bold text-foreground">BYOS: Multi-Drive Storage Pool</h3>
                   <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    Bring Your Own Storage (BYOS). Connect your existing Google Drive for 15 GB of completely free file, invoice, and voice call audio recording storage.
+                    Bring Your Own Storage (BYOS). Pool multiple Google accounts together for 15 GB to 45 GB+ of completely free file, invoice, and voice call audio recording storage.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border/40 flex items-center gap-1.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
@@ -748,7 +817,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing / Business Model Section: Free Forever + ₹1,000/mo DFY Pro Support */}
+        {/* Pricing / Business Model Section: Free Forever DIY vs 3-Month Pro Pilot Pass */}
         <section id="support-plan" className="py-16 md:py-24 border-b border-border/40 bg-card/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -756,29 +825,29 @@ export default function LandingPage() {
                 Transparent Community Model
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-                Free Forever Core Software.<br />Pay Only If You Need Handheld Support.
+                Free Forever Core Software.<br />Pay Only If You Want a Guided 3-Month Pro Pilot.
               </h2>
               <p className="mt-3 text-muted-foreground text-base md:text-lg font-medium">
-                Zero lock-in. Direct bills to Meta. Optional Done-For-You (DFY) Pro maintenance.
+                Zero lock-in. Direct bills to Meta. Free forever with your own cloud workspace, or get our ₹1,000 all-inclusive 90-day pilot pass.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-              {/* Plan 1: Free Forever */}
+              {/* Plan 1: DIY UniCRM Core (Free Forever) */}
               <div className="rounded-3xl border border-border/70 bg-card p-8 flex flex-col justify-between shadow-sm">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface text-foreground border border-border">
-                      Community-Funded
+                      DIY Community Edition
                     </span>
                     <span className="text-xs font-semibold text-muted-foreground">Free Forever</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">DFY UniCRM Core</h3>
+                  <h3 className="text-2xl font-black text-foreground">DIY UniCRM Core</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
                     <span className="text-5xl font-black text-foreground">₹0</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
                     <span className="rounded-full bg-emerald-500/15 border border-border px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                      Community Edition
+                      Bring Your Own Cloud
                     </span>
                   </div>
 
@@ -786,33 +855,35 @@ export default function LandingPage() {
                   <ScarcityAllocationBar />
 
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Complete access to the entire omnichannel CRM software. No trial period, no card required.
+                    Complete access to the entire omnichannel CRM software. Bring your own cloud accounts with zero monthly subscription fees.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Unlimited contacts & conversation history</span>
+                      <span>Dedicated Database (BYODB) — complete data privacy</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>WhatsApp, Instagram, Facebook & Support Email</span>
+                      <span>Multi-Drive Storage Pool (15 GB to 45 GB+ Free Storage)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>WhatsApp Inbound & Outbound Calling with IVR</span>
+                      <span>WhatsApp, Instagram, Facebook &amp; Support Inbox</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Google Drive BYOS (15 GB Free Storage)</span>
+                      <span>
+                        1-Click Micro-Pages &amp; Booking Desks (Stays, Events, Clinics, Salons &amp; Tours)
+                      </span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Unlimited team agent accounts</span>
+                      <span>Lead Finder with CSV upload or Google Sheet sync</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>UniCRM Free Multi-Model AI Gateway</span>
+                      <span>Pre-Trained AI Squad Playbooks &amp; Strategy War Room</span>
                     </li>
                   </ul>
                 </div>
@@ -820,67 +891,76 @@ export default function LandingPage() {
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <Link href="/signup" className="block w-full">
                     <Button variant="outline" className="w-full h-11 font-bold">
-                      Create Free Account
+                      Start Free with DIY Setup
                     </Button>
                   </Link>
                 </div>
               </div>
 
-              {/* Plan 2: ₹1,000/mo Optional Done-For-You Pro Support */}
+              {/* Plan 2: 3-Month Pro Pilot Pass — ₹1,000 Total */}
               <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
                 <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
-                  100% Optional Service
+                  Limited-Time Pilot Pass
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
-                      Completely Optional Help
+                      Guided 90-Day Access
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">Stop Anytime</span>
+                    <span className="text-xs font-semibold text-emerald-500">No Monthly Renewal</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">Optional Done-For-You Pro Help</h3>
-                  <div className="mt-4 flex items-baseline gap-1">
+                  <h3 className="text-2xl font-black text-foreground">3-Month Pro Pilot Pass</h3>
+                  <div className="mt-4 flex flex-wrap items-baseline gap-2">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
-                    <span className="text-sm text-muted-foreground font-semibold">/ month</span>
+                    <span className="text-sm text-muted-foreground font-semibold">total for 3 full months (one-time)</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    The software is 100% free forever. This hands-on assistance is completely optional—only choose it if you want our experts to handle your Meta setup, phone number verification, and templates for you.
+                    Everything set up and managed for you. No need to bring API keys or configure databases—test the full power of UniCRM for 90 days with zero strings attached.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Everything in Free Core</strong></span>
+                      <span><strong>Everything in Free Core Software</strong></span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We connect your WhatsApp, Meta API & Social accounts</span>
+                      <span>1-Click Live Setup: WhatsApp QR, Google Drive &amp; Calendar</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Dedicated technical desk whenever you need assistance</span>
+                      <span><strong>AI Pro Squads Included for 3 Months</strong> (no API key required)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>We help write and get your WhatsApp templates approved</span>
+                      <span><strong>Lead Finder Included</strong> (up to 100 verified leads / day)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Priority Support with rapid response times</span>
+                      <span>1-Click Industry Micro-Page &amp; Booking Desk activation</span>
+                    </li>
+                    <li className="flex items-center gap-2.5">
+                      <Check className="h-4 w-4 text-emerald-500 shrink-0" />
+                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                        Managed uninterrupted database — zero weekly pruning worries
+                      </span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-border/40">
+                <div className="mt-8 pt-6 border-t border-border/40 space-y-2">
                   <ContactButton
                     variant="cta"
-                    className="w-full h-11 text-base font-bold"
-                    defaultTopic="Optional Pro Support (₹1,000/mo)"
+                    className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
+                    defaultTopic="Get 3-Month Pro UniCRM (₹1,000)"
                     icon="message"
                   >
-                    Request Optional Pro Setup (₹1,000/mo)
+                    <span>Get 3-Month Pro UniCRM</span>
                   </ContactButton>
+                  <p className="text-[11px] text-center text-muted-foreground">
+                    Complete 90-day trial &bull; No automatic charges &bull; Downgrade to DIY Free anytime
+                  </p>
                 </div>
               </div>
             </div>
@@ -906,7 +986,7 @@ export default function LandingPage() {
               <div className="rounded-2xl border border-border/60 bg-card p-6">
                 <h4 className="font-bold text-foreground">How does WhatsApp Calling work?</h4>
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  UniCRM incorporates proprietary high-concurrency VoIP and WebRTC voice gateways. You can receive inbound WhatsApp audio calls, dial outbound calls right from your computer, set up visual node-based IVR trees, and stream recordings directly to your private S3 or Google Drive storage.
+                  UniCRM incorporates a proprietary high-concurrency voice engine. You can receive inbound WhatsApp audio calls, dial outbound calls right from your computer, set up visual node-based IVR trees, and stream recordings directly to your private Google Drive storage.
                 </p>
               </div>
 

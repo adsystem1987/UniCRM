@@ -45,6 +45,13 @@ export interface Profile {
    * `@/lib/auth/roles` rather than comparing this string directly.
    */
   account_role?: AccountRole;
+  /** User contact phone number. */
+  phone?: string | null;
+  /** Whether the user has verified their phone/WhatsApp number. */
+  phone_verified?: boolean;
+  /** One-time verification code for WhatsApp onboarding handshake. */
+  verification_code?: string | null;
+  verification_code_expires_at?: string | null;
   created_at: string;
 }
 
@@ -121,6 +128,23 @@ export interface Contact {
   avatar_url?: string;
   created_at: string;
   updated_at: string;
+  /** Garry Tan / gbrain AI Memory Dossier Markdown text. */
+  ai_dossier?: string | null;
+  /** Last updated timestamp for the compiled AI dossier. */
+  ai_dossier_updated_at?: string | null;
+  /** Autonomous Continuous Learning Client Memory (budget, intent, objections). */
+  ai_memory?: {
+    budget?: string;
+    buying_intent?: string;
+    niche_requirement?: string;
+    timeline?: string;
+    objections?: string[];
+    communication_preference?: string;
+    last_topic?: string;
+    key_facts?: string[];
+  } | null;
+  /** Last updated timestamp for continuous learning memory. */
+  ai_memory_updated_at?: string | null;
   /** Hydrated by queries that embed `contact_tags(tags(*))` (e.g. the
    *  Inbox conversation list, for tag filtering). Absent otherwise. */
   tags?: Tag[];
@@ -763,3 +787,37 @@ export interface CallLog {
   contact?: Contact;
 }
 
+
+// ============================================================
+// Orders & Payment Receipts (Google Drive BYOS)
+// ============================================================
+
+export type OrderStatus = 'pending_verification' | 'paid' | 'fulfilled' | 'cancelled';
+
+export interface OrderRecord {
+  id: string;
+  account_id: string;
+  user_id?: string | null;
+  order_number: string;
+  order_type: string;
+  item_name: string;
+  amount: number;
+  currency: string;
+  payment_method: string;
+  utr_number: string | null;
+  whatsapp_phone: string;
+  parameters: {
+    niche?: string;
+    city?: string;
+    leads_count?: number;
+    packId?: string;
+  };
+  status: OrderStatus;
+  admin_notes: string | null;
+  receipt_number?: string | null;
+  receipt_gdrive_url?: string | null;
+  receipt_gdrive_file_id?: string | null;
+  receipt_generated_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}

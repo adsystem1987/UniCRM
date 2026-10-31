@@ -19,7 +19,6 @@ import { DealsSettings } from '@/components/settings/deals-settings';
 import { MembersTab } from '@/components/settings/members-tab';
 import { ApiKeysSettings } from '@/components/settings/api-keys-settings';
 import { IntegrationsPanel } from '@/components/settings/integrations-panel';
-import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
 import { MasterAdminPanel } from '@/components/settings/master-admin-panel';
 import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
@@ -47,16 +46,27 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency, isPlatformOwner } = useAuth();
+  const { defaultCurrency, isPlatformOwner, accountId } = useAuth();
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
-  // The URL (`?tab=`) is the single source of truth for the active
-  // section — deep-linkable, and it keeps the existing links in the
-  // app sidebar/header working. Legacy tab values (tags, custom-fields)
-  // resolve onto their new home; unknown/empty → the Overview landing.
-  // Guard: if a normal user deep links to master-admin, fallback to overview.
+  // If a user visits legacy URLs (?tab=business-page, ?tab=blueprints, ?tab=orders),
+  // smoothly redirect them to their dedicated first-class dashboard routes.
   const rawTab = searchParams.get('tab');
+
+  if (rawTab === 'business-page') {
+    router.replace('/business-pages');
+    return null;
+  }
+  if (rawTab === 'blueprints') {
+    router.replace('/blueprints');
+    return null;
+  }
+  if (rawTab === 'orders') {
+    router.replace('/orders');
+    return null;
+  }
+
   const section =
     rawTab === 'master-admin' && !isPlatformOwner
       ? 'overview'
@@ -84,7 +94,6 @@ function SettingsPageInner() {
     profile: <ProfileForm />,
     security: <SecurityPanel />,
     appearance: <AppearancePanel />,
-    orders: <OrdersBillingPanel />,
     whatsapp: <WhatsAppConfig />,
     'chat-widget': <ChatWidgetPanel />,
     ai: <AiConfig />,

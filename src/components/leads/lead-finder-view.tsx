@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Target,
   Search,
@@ -202,13 +203,17 @@ const SAMPLE_LEAD_DATABASE: Record<string, LeadItem[]> = {
 };
 
 const DEFAULT_NICHES = [
-  "Real Estate",
-  "D2C Brands",
-  "Clinics & Healthcare",
-  "Gyms & Fitness",
   "Interior Designers",
+  "Financial Services",
+  "Real Estate",
   "Solar & CleanTech",
   "Law Firms",
+  "D2C Brands",
+  "Automotive",
+  "Clinics & Healthcare",
+  "Travel & Hospitality",
+  "Event Venues",
+  "Gyms & Fitness",
   "Restaurants & Cafes",
 ];
 
@@ -226,8 +231,16 @@ const DEFAULT_CITIES = [
 export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
   const { user } = useAuth();
   const supabase = createClient();
+  const searchParams = useSearchParams();
 
   const [niche, setNiche] = useState("Real Estate");
+
+  useEffect(() => {
+    const qNiche = searchParams?.get("niche");
+    if (qNiche) {
+      setNiche(qNiche);
+    }
+  }, [searchParams]);
   const [city, setCity] = useState("All India");
   const [whatsappOnly, setWhatsappOnly] = useState(true);
   const [highRatingOnly, setHighRatingOnly] = useState(true);
@@ -282,7 +295,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
     }
 
     setScrapingLive(true);
-    const toastId = toast.loading(`Starting Apify lead extraction for ${contactsToFetch} contacts in ${city}...`);
+    const toastId = toast.loading(`Starting Smart Lead discovery for ${contactsToFetch} contacts in ${city}...`);
 
     try {
       const res = await fetch("/api/leads-finder/run", {
@@ -589,7 +602,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 <span className="text-[10px] text-muted-foreground font-medium">contacts (100–1,000)</span>
               </div>
 
-              {/* Live Apify Trigger */}
+              {/* Live Lead Finder Trigger */}
               <Button
                 onClick={handleLiveApifyScrape}
                 disabled={scrapingLive}
@@ -598,7 +611,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 {scrapingLive ? (
                   <>
                     <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                    Extracting via Apify...
+                    Discovering Verified Leads...
                   </>
                 ) : (
                   <>
@@ -615,7 +628,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
       {/* Results Table Section */}
       {hasSearched && (
         <Card>
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardHeader className="pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <CardTitle className="text-sm font-bold flex items-center gap-2">
                 <span>Discovered Prospective Leads</span>
@@ -628,13 +641,13 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
               </CardDescription>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => handleImportToContacts(false)}
                 disabled={importing || launchingOutreach || filteredLeads.length === 0}
-                className="font-bold text-xs gap-1.5 border-border text-foreground hover:border-border-strong hover:bg-surface-hover"
+                className="font-bold text-xs gap-1.5 border-border text-foreground hover:border-border-strong hover:bg-surface-hover flex-1 sm:flex-none justify-center"
               >
                 <Download className="h-3.5 w-3.5" />
                 {selectedLeadIds.length > 0
@@ -645,7 +658,7 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                 size="sm"
                 onClick={() => handleImportToContacts(true)}
                 disabled={importing || launchingOutreach || filteredLeads.length === 0}
-                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5"
+                className="font-bold bg-primary text-primary-foreground hover:opacity-90 active:opacity-80 text-xs gap-1.5 flex-1 sm:flex-none justify-center"
               >
                 {launchingOutreach ? (
                   <>
@@ -665,8 +678,8 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
           </CardHeader>
 
           <CardContent className="space-y-3">
-            {/* Table */}
-            <div className="rounded-xl border border-border overflow-hidden">
+            {/* Desktop / Tablet Table View */}
+            <div className="hidden md:block rounded-xl border border-border overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
                   <thead className="bg-muted/50 border-b border-border text-[11px] font-bold text-muted-foreground uppercase">
@@ -762,6 +775,129 @@ export function LeadFinderView({ isDrawer = false }: { isDrawer?: boolean }) {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Mobile Stacked Cards View (Under 768px) */}
+            <div className="block md:hidden space-y-2.5">
+              <div className="flex items-center justify-between px-1 text-xs text-muted-foreground font-medium pb-1">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={
+                      selectedLeadIds.length === filteredLeads.length &&
+                      filteredLeads.length > 0
+                    }
+                    onCheckedChange={(c) => handleSelectAll(c === true)}
+                    className="border-muted-foreground/50 data-[checked]:border-primary"
+                  />
+                  <span>Select All ({filteredLeads.length})</span>
+                </label>
+                {selectedLeadIds.length > 0 && (
+                  <span className="text-primary font-bold">
+                    {selectedLeadIds.length} selected
+                  </span>
+                )}
+              </div>
+
+              {filteredLeads.map((lead) => {
+                const isSelected = selectedLeadIds.includes(lead.id);
+                return (
+                  <div
+                    key={lead.id}
+                    onClick={() => handleToggleLead(lead.id)}
+                    className={`p-3.5 rounded-xl border transition-all cursor-pointer space-y-2.5 ${
+                      isSelected
+                        ? "border-primary bg-primary/5 shadow-xs"
+                        : "border-border bg-card hover:border-border-strong"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2.5">
+                      <div className="flex items-start gap-2.5 min-w-0">
+                        <div
+                          className="pt-0.5"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => handleToggleLead(lead.id)}
+                            className="border-muted-foreground/60 data-[checked]:border-primary"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-sm text-foreground truncate">
+                            {lead.name}
+                          </div>
+                          {lead.category && (
+                            <div className="text-xs text-muted-foreground font-medium truncate">
+                              {lead.category}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-[#008f68] dark:text-[#42b991] dark:text-emerald-400 border border-emerald-500/20 shrink-0">
+                        {lead.matchScore}% Match
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-y-1.5 gap-x-3 text-xs pt-1 border-t border-border/50">
+                      <div className="flex items-center gap-1.5 font-mono font-bold text-[#008f68] dark:text-[#42b991] dark:text-emerald-400">
+                        <Phone className="h-3 w-3 shrink-0" />
+                        <span>{lead.phone}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400">
+                          <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                          <span>{lead.rating}</span>
+                          <span className="text-[10px] text-muted-foreground font-normal">
+                            ({lead.reviewsCount})
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <MapPin className="h-3 w-3 shrink-0" />
+                          <span className="truncate max-w-[90px]">{lead.city}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 pt-1 border-t border-border/40">
+                      {lead.website ? (
+                        <a
+                          href={lead.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1 truncate max-w-[140px]"
+                        >
+                          <Globe className="h-2.5 w-2.5 shrink-0" />
+                          <span className="truncate">{lead.website.replace("https://", "")}</span>
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground italic">Direct Contact</span>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const cleanNum = lead.phone.replace(/[^0-9]/g, '');
+                          window.open(
+                            `https://wa.me/${cleanNum}?text=${encodeURIComponent(
+                              `Hi ${lead.name}, saw your profile online regarding ${lead.category || 'your services'}. Wanted to connect!`
+                            )}`,
+                            '_blank',
+                            'noopener,noreferrer'
+                          );
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-colors"
+                      >
+                        <Send className="h-2.5 w-2.5" />
+                        Quick Chat
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Quick Outbound Action Bar */}

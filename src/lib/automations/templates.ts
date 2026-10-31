@@ -54,9 +54,14 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
     trigger_config: {},
     steps: [
       {
-        step_type: 'send_message',
+        step_type: 'send_template',
         step_config: {
-          text: t('welcome_message.text'),
+          template_name: 'welcome_lead_intro',
+          language: 'en_US',
+          variables: {
+            '1': '{{contact.name}}',
+            '2': 'UniCRM Support',
+          },
         },
       },
       {
@@ -127,9 +132,14 @@ export const AUTOMATION_TEMPLATES: Record<TemplateSlug, AutomationTemplateDefini
         step_config: { amount: 1, unit: 'days' },
       },
       {
-        step_type: 'send_message',
+        step_type: 'send_template',
         step_config: {
-          text: t('follow_up_reminder.text'),
+          template_name: 'inquiry_follow_up_touch',
+          language: 'en_US',
+          variables: {
+            '1': '{{contact.name}}',
+            '2': 'our CRM setup',
+          },
         },
       },
     ],

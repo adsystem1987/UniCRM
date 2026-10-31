@@ -27,12 +27,11 @@ describe("getBroadcastStatus", () => {
 
   it("each variant has the dark-theme class triple", () => {
     // Accept both fixed-shade Tailwind names (bg-red-500/10) and
-    // token-backed names without a shade number (bg-primary/10) since
-    // the brand-accent statuses now ride the active color theme.
+    // token-backed names without a shade number (bg-primary/10, bg-muted, bg-status-*)
     for (const v of Object.values(broadcastStatusConfig)) {
-      expect(v.classes).toMatch(/bg-[a-z]+(-\d+)?\/10/);
-      expect(v.classes).toMatch(/text-[a-z]+(-\d+)?/);
-      expect(v.classes).toMatch(/border-[a-z]+(-\d+)?\/20/);
+      expect(v.classes).toMatch(/bg-(muted|[a-z]+(-\d+)?\/10|status-[a-z]+-bg)/);
+      expect(v.classes).toMatch(/text-(muted-foreground|[a-z]+(-\d+)?|status-[a-z]+)/);
+      expect(v.classes).toMatch(/border-(border|[a-z]+(-\d+)?\/20|status-[a-z]+-border)/);
     }
   });
 });

@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Loader2, Plus, Trash2, Pencil, RefreshCw, BookOpen } from 'lucide-react';
+import { Loader2, Plus, Trash2, Pencil, RefreshCw, BookOpen, Folder, FileText, ChevronRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Card,
   CardContent,
@@ -19,6 +20,8 @@ import { useTranslations } from 'next-intl';
 interface DocSummary {
   id: string;
   title: string;
+  category?: string;
+  icon?: string;
   updated_at: string;
 }
 
@@ -39,6 +42,7 @@ export function AiKnowledgeCard({
   const [editing, setEditing] = useState<EditTarget>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [category, setCategory] = useState('General');
   const [saving, setSaving] = useState(false);
   const [reindexing, setReindexing] = useState(false);
   const loadedAccountIdRef = useRef<string | null>(null);
@@ -64,10 +68,11 @@ export function AiKnowledgeCard({
     void fetchDocs();
   }, [accountId, fetchDocs]);
 
-  const openNew = () => {
+  const openNew = (defaultCat?: string) => {
     setEditing('new');
     setTitle('');
     setContent('');
+    setCategory(defaultCat || 'General');
   };
 
   const openEdit = async (id: string) => {
@@ -81,6 +86,7 @@ export function AiKnowledgeCard({
       setEditing(id);
       setTitle(data.title ?? '');
       setContent(data.content ?? '');
+      setCategory(data.category ?? 'General');
     } catch {
       toast.error(t('openFailed'));
     }
@@ -90,6 +96,7 @@ export function AiKnowledgeCard({
     setEditing(null);
     setTitle('');
     setContent('');
+    setCategory('General');
   };
 
   const save = async () => {
@@ -105,7 +112,11 @@ export function AiKnowledgeCard({
         {
           method: isNew ? 'POST' : 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: title.trim(), content: content.trim() }),
+          body: JSON.stringify({
+            title: title.trim(),
+            content: content.trim(),
+            category: category.trim() || 'General',
+          }),
         },
       );
       const data = await res.json();
@@ -183,71 +194,118 @@ export function AiKnowledgeCard({
             )}
 
             {docs.length > 0 && (
-              <ul className="divide-y divide-border rounded-md border border-border">
-                {docs.map((doc) => (
-                  <li
-                    key={doc.id}
-                    className="flex items-center justify-between gap-2 px-3 py-2"
-                  >
-                    <span className="min-w-0 truncate text-sm text-foreground">
-                      {doc.title}
-                    </span>
-                    {canEdit && (
-                      <span className="flex shrink-0 gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0"
-                          onClick={() => void openEdit(doc.id)}
-                          title={t('editDoc')}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                          onClick={() => void remove(doc.id)}
-                          title={t('deleteDoc')}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
+              <div className="space-y-4">
+                {/* AppFlowy-style Category / Folder Tree */}
+                {Array.from(new Set(docs.map((d) => d.category || 'General'))).map((catName) => {
+                  const catDocs = docs.filter((d) => (d.category || 'General') === catName);
+                  return (
+                    <div key={catName} className="rounded-xl border border-border bg-card/60 overflow-hidden">
+                      <div className="flex items-center justify-between px-3 py-2 bg-muted/40 border-b border-border/60">
+                        <span className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                          <Folder className="size-3.5 text-primary" />
+                          {catName}
+                          <Badge variant="secondary" className="text-[10px] py-0 h-4 px-1.5 ml-1">
+                            {catDocs.length}
+                          </Badge>
+                        </span>
+                        {canEdit && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 text-[10px] px-2 text-primary gap-1"
+                            onClick={() => openNew(catName)}
+                          >
+                            <Plus className="size-3" /> Add Doc
+                          </Button>
+                        )}
+                      </div>
+
+                      <ul className="divide-y divide-border/60">
+                        {catDocs.map((doc) => (
+                          <li
+                            key={doc.id}
+                            className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-muted/30 transition-colors"
+                          >
+                            <span className="flex items-center gap-2 min-w-0 truncate text-xs text-foreground font-medium">
+                              <FileText className="size-3 text-muted-foreground shrink-0" />
+                              <span className="truncate">{doc.title}</span>
+                            </span>
+                            {canEdit && (
+                              <span className="flex shrink-0 gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                                  onClick={() => void openEdit(doc.id)}
+                                  title={t('editDoc')}
+                                >
+                                  <Pencil className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 w-7 p-0 text-destructive/70 hover:text-destructive"
+                                  onClick={() => void remove(doc.id)}
+                                  title={t('deleteDoc')}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                })}
+              </div>
             )}
 
             {editing !== null ? (
-              <div className="space-y-3 rounded-md border border-border p-3">
-                <div className="space-y-2">
-                  <Label htmlFor="kb-title">{t('editDocTitle')}</Label>
-                  <Input
-                    id="kb-title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder={t('editDocTitlePlaceholder')}
-                    disabled={saving}
-                  />
+              <div className="space-y-3 rounded-xl border border-border p-4 bg-muted/20">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2 space-y-1.5">
+                    <Label htmlFor="kb-title" className="text-xs font-semibold">{t('editDocTitle')}</Label>
+                    <Input
+                      id="kb-title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder={t('editDocTitlePlaceholder')}
+                      className="text-xs"
+                      disabled={saving}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="kb-cat" className="text-xs font-semibold">Folder / Category</Label>
+                    <Input
+                      id="kb-cat"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="e.g. Pricing, FAQs, Policies"
+                      className="text-xs"
+                      disabled={saving}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="kb-content">{t('editDocContent')}</Label>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="kb-content" className="text-xs font-semibold">{t('editDocContent')}</Label>
                   <Textarea
                     id="kb-content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder={t('editDocContentPlaceholder')}
                     rows={8}
+                    className="text-xs font-mono"
                     disabled={saving}
                   />
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={cancelEdit} disabled={saving}>
+                <div className="flex justify-end gap-2 pt-2">
+                  <Button variant="ghost" size="sm" onClick={cancelEdit} disabled={saving} className="text-xs h-8">
                     {t('cancel')}
                   </Button>
-                  <Button onClick={save} disabled={saving}>
-                    {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Button size="sm" onClick={save} disabled={saving} className="text-xs h-8">
+                    {saving && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />}
                     {t('saveDoc')}
                   </Button>
                 </div>
@@ -255,8 +313,8 @@ export function AiKnowledgeCard({
             ) : (
               canEdit && (
                 <div className="flex items-center justify-between">
-                  <Button variant="outline" size="sm" onClick={openNew}>
-                    <Plus className="mr-2 h-4 w-4" /> {t('addDoc')}
+                  <Button variant="outline" size="sm" onClick={() => openNew()} className="text-xs h-8">
+                    <Plus className="mr-1.5 h-3.5 w-3.5" /> {t('addDoc')}
                   </Button>
                   {hasEmbeddingsKey && docs.length > 0 && (
                     <Button

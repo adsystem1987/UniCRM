@@ -22,7 +22,7 @@ export async function GET() {
     const { supabase, accountId } = await getCurrentAccount()
     const { data, error } = await supabase
       .from('ai_knowledge_documents')
-      .select('id, title, updated_at')
+      .select('id, title, category, icon, updated_at')
       .eq('account_id', accountId)
       .order('updated_at', { ascending: false })
     if (error) {
@@ -53,6 +53,9 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null)
     const title = typeof body?.title === 'string' ? body.title.trim() : ''
     const content = typeof body?.content === 'string' ? body.content.trim() : ''
+    const category = typeof body?.category === 'string' && body.category.trim() ? body.category.trim() : 'General'
+    const icon = typeof body?.icon === 'string' && body.icon.trim() ? body.icon.trim() : 'FileText'
+
     if (!title || !content) {
       return NextResponse.json(
         { error: t('ai.knowledge.titleContentRequired') },
@@ -62,7 +65,7 @@ export async function POST(request: Request) {
 
     const { data: doc, error } = await supabase
       .from('ai_knowledge_documents')
-      .insert({ account_id: accountId, created_by: userId, title, content })
+      .insert({ account_id: accountId, created_by: userId, title, content, category, icon })
       .select('id')
       .single()
     if (error || !doc) {

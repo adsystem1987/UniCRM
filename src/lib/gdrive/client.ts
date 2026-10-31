@@ -135,12 +135,16 @@ export async function getGoogleUserEmail(accessToken: string): Promise<string> {
 
 export async function getOrCreateDriveFolder(
   accessToken: string,
-  folderName: string = "DFY UniCRM Attachments"
+  folderName: string = "DFY UniCRM Attachments",
+  parentId?: string
 ): Promise<string> {
   const cleanName = folderName.replace(/^\/+|\/+$/g, "") || "DFY UniCRM Attachments";
 
   // 1. Search for existing folder
-  const query = `name = '${cleanName.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  let query = `name = '${cleanName.replace(/'/g, "\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  if (parentId) {
+    query += ` and '${parentId}' in parents`;
+  }
   const searchUrl = `${GOOGLE_DRIVE_API_BASE}?q=${encodeURIComponent(query)}&fields=files(id,name)&spaces=drive`;
 
   const searchRes = await fetch(searchUrl, {
@@ -155,16 +159,21 @@ export async function getOrCreateDriveFolder(
   }
 
   // 2. Create folder if not found
+  const createBody: Record<string, unknown> = {
+    name: cleanName,
+    mimeType: "application/vnd.google-apps.folder",
+  };
+  if (parentId) {
+    createBody.parents = [parentId];
+  }
+
   const createRes = await fetch(GOOGLE_DRIVE_API_BASE, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: cleanName,
-      mimeType: "application/vnd.google-apps.folder",
-    }),
+    body: JSON.stringify(createBody),
   });
 
   const createData = await createRes.json();

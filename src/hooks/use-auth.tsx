@@ -36,6 +36,9 @@ interface Profile {
   beta_features: string[];
   account_id: string | null;
   account_role: AccountRole | null;
+  phone?: string | null;
+  phone_verified?: boolean;
+  verification_code?: string | null;
 }
 
 interface AccountSummary {
@@ -155,6 +158,9 @@ interface ProfileRow {
   beta_features: string[] | null;
   account_id: string | null;
   account_role: string | null;
+  phone?: string | null;
+  phone_verified?: boolean | null;
+  verification_code?: string | null;
 }
 
 /**
@@ -283,6 +289,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           beta_features: data.beta_features ?? [],
           account_id: data.account_id ?? null,
           account_role: accountRole,
+          phone: data.phone ?? null,
+          phone_verified: data.phone_verified ?? false,
+          verification_code: data.verification_code ?? null,
         });
         setAccount(accountRow);
         if (!data.account_id || !accountRole) {

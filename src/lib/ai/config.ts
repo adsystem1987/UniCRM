@@ -42,7 +42,54 @@ export async function loadAiConfig(
     .maybeSingle()
 
   if (error) throw error
+
+  // Check if platform owner has provisioned an active AI Pro entitlement for this account
+  let entitlementAiKey: string | null = null;
+  let entitlementModel: string = 'gemini-1.5-flash';
+  let entitlementActive = false;
+
+  try {
+    const { data: ent } = await db
+      .from('account_entitlements')
+      .select('ai_pro_active, ai_pro_expires_at, ai_api_key_encrypted, ai_model, ai_provider')
+      .eq('account_id', accountId)
+      .maybeSingle();
+
+    if (ent && ent.ai_pro_active) {
+      const isNotExpired = !ent.ai_pro_expires_at || new Date(ent.ai_pro_expires_at) > new Date();
+      if (isNotExpired) {
+        entitlementActive = true;
+        if (ent.ai_api_key_encrypted) {
+          entitlementAiKey = ent.ai_api_key_encrypted;
+        }
+        if (ent.ai_model) {
+          entitlementModel = ent.ai_model;
+        }
+      }
+    }
+  } catch (entErr) {
+    console.warn('[ai config] could not check account_entitlements:', entErr);
+  }
+
   if (!data) {
+    // If client has provisioned AI Pro entitlement, activate auto-reply with provisioned key
+    if (entitlementActive) {
+      const activeKey = entitlementAiKey || process.env.SYSTEM_AI_API_KEY || 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
+      const activeUrl = process.env.SYSTEM_AI_BASE_URL || 'https://omniroute.dfydude.online/v1';
+      return {
+        provider: 'openai_compatible',
+        model: entitlementModel,
+        baseUrl: activeUrl,
+        apiKey: activeKey,
+        systemPrompt: null,
+        isActive: true,
+        autoReplyEnabled: true,
+        autoReplyMaxPerConversation: 5,
+        handoffAgentId: null,
+        embeddingsApiKey: null,
+      };
+    }
+
     // Fall back to UniCRM Smart Router default if account has not configured custom AI
     const defaultKey = process.env.SYSTEM_AI_API_KEY || 'sk-e7737b4e5f7146bd-c1f145-945a0bc2';
     const defaultUrl = process.env.SYSTEM_AI_BASE_URL || 'https://omniroute.dfydude.online/v1';

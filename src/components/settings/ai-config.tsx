@@ -58,7 +58,12 @@ const KEY_PLACEHOLDER: Record<AiProvider, string> = {
 
 type PresetMode = 'builtin' | 'gemini_free' | 'custom';
 
-export function AiConfig() {
+interface AiConfigProps {
+  initialSystemPrompt?: string;
+  onSystemPromptChange?: (prompt: string) => void;
+}
+
+export function AiConfig({ initialSystemPrompt, onSystemPromptChange }: AiConfigProps = {}) {
   const { accountId, accountRole, profileLoading } = useAuth();
   const canEdit = accountRole ? canEditSettings(accountRole) : false;
   const t = useTranslations('Settings.aiConfig');
@@ -82,7 +87,13 @@ export function AiConfig() {
   const [embeddingsKey, setEmbeddingsKey] = useState('');
   const [embeddingsKeyEdited, setEmbeddingsKeyEdited] = useState(false);
   const [hasStoredEmbeddingsKey, setHasStoredEmbeddingsKey] = useState(false);
-  const [systemPrompt, setSystemPrompt] = useState('');
+  const [systemPrompt, setSystemPrompt] = useState(initialSystemPrompt ?? '');
+
+  useEffect(() => {
+    if (initialSystemPrompt !== undefined && initialSystemPrompt !== null) {
+      setSystemPrompt(initialSystemPrompt);
+    }
+  }, [initialSystemPrompt]);
   const [isActive, setIsActive] = useState(true);
   const [autoReplyEnabled, setAutoReplyEnabled] = useState(false);
   const [maxPerConversation, setMaxPerConversation] = useState(3);
@@ -90,9 +101,10 @@ export function AiConfig() {
   const [handoffAgentId, setHandoffAgentId] = useState('');
   const [members, setMembers] = useState<AccountMember[]>([]);
 
-  // AI Pro Plan purchase verification state
+  // AI Pro Plan purchase verification & entitlement state
   const [isProPaid, setIsProPaid] = useState(false);
   const [isProPending, setIsProPending] = useState(false);
+  const [entitlementExpiry, setEntitlementExpiry] = useState<string | null>(null);
   const [aiProOrderOpen, setAiProOrderOpen] = useState(false);
 
   // Guard keyed on the account (not a bare boolean) so an in-place
@@ -104,9 +116,16 @@ export function AiConfig() {
   const fetchConfig = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Check AI Config
+      // 1. Check AI Config & Platform Owner Entitlements
       const res = await fetch('/api/ai/config');
       const data = await res.json();
+
+      let hasEntitlementActive = false;
+      if (data?.entitlement?.ai_pro_active) {
+        hasEntitlementActive = true;
+        setIsProPaid(true);
+        setEntitlementExpiry(data.entitlement.ai_pro_expires_at || null);
+      }
 
       // 2. Check if account has an active or pending order for Smart Router Pro
       try {
@@ -120,7 +139,9 @@ export function AiConfig() {
           );
           const hasPaid = proOrders.some((o: { status: string }) => o.status === 'paid' || o.status === 'fulfilled');
           const hasPending = proOrders.some((o: { status: string }) => o.status === 'pending_verification');
-          setIsProPaid(hasPaid);
+          if (!hasEntitlementActive) {
+            setIsProPaid(hasPaid);
+          }
           setIsProPending(hasPending);
         }
       } catch {}
@@ -458,7 +479,9 @@ export function AiConfig() {
                     {isProPaid ? (
                       <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" />
-                        Plan Active &amp; Verified
+                        {entitlementExpiry
+                          ? `Plan Active • Expires ${new Date(entitlementExpiry).toLocaleDateString()}`
+                          : 'Plan Active & Verified'}
                       </span>
                     ) : isProPending ? (
                       <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
@@ -476,7 +499,9 @@ export function AiConfig() {
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {isProPaid
-                    ? "Your AI assistant is connected to UniCRM's Smart Router Pro. Provides zero-configuration intelligent reply drafts, incoming lead qualification, and automated routing."
+                    ? entitlementExpiry
+                      ? `Your AI assistant has an active AI Pro Router provisioned. Valid until ${new Date(entitlementExpiry).toLocaleDateString()}. Provides 24/7 intelligent reply drafts, incoming lead qualification, and automated routing.`
+                      : "Your AI assistant is connected to UniCRM's Smart Router Pro. Provides zero-configuration intelligent reply drafts, incoming lead qualification, and automated routing."
                     : isProPending
                     ? "Your ₹59 payment reference is submitted and pending bank verification. You can check status in Orders & Billing, or use Google Gemini Free in the meantime."
                     : "Zero-configuration intelligent reply drafts and automated routing for ₹59/month. Direct UPI payment with zero gateway deductions, or switch to Google Gemini Free below for 100% free access."}
