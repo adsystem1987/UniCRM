@@ -116,19 +116,19 @@ export function LoansClientView() {
       {/* Header */}
       <div className="border-b border-border pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">
-            <Sparkles className="w-4 h-4" /> UniCRM Capital Desk
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1">
+            <ShieldCheck className="w-4 h-4" /> UniCRM Lending Network • Verified Banking Partners
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
             Apply Loans &amp; Business Capital
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Compare quotes across 15+ Banks &amp; NBFCs with AI Pre-Screening.
+            Compare quotes across 15+ Banks &amp; NBFCs with dedicated advisory support.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs">
             <CheckCircle2 className="w-3.5 h-3.5" /> 100% Free Consultation
           </span>
         </div>
@@ -150,21 +150,21 @@ export function LoansClientView() {
                 <button
                   key={lt.id}
                   onClick={() => handleSelectCategory(lt.id)}
-                  className={`text-left p-4 rounded-xl border transition-all flex flex-col justify-between hover:border-amber-500 hover:bg-amber-500/5 group ${
+                  className={`text-left p-4 rounded-xl border transition-all flex flex-col justify-between hover:border-emerald-500 hover:bg-emerald-500/5 group ${
                     selectedCategory === lt.id
-                      ? "border-amber-500 bg-amber-500/10 shadow-xs"
+                      ? "border-emerald-500 bg-emerald-500/10 shadow-xs"
                       : "border-border bg-background"
                   }`}
                 >
                   <div>
-                    <div className="font-bold text-sm text-foreground group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    <div className="font-bold text-sm text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {lt.label}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
                       {lt.desc}
                     </p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+                  <div className="mt-4 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                     <span>Explore Route</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -175,7 +175,7 @@ export function LoansClientView() {
         </div>
       )}
 
-      {/* Step 2: AI Loan Advisor Chat & Dossier Structuring */}
+      {/* Step 2: Loan Advisor Chat & Dossier Structuring */}
       {step === "chat" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-200">
           {/* Main Conversational Window */}
@@ -190,7 +190,7 @@ export function LoansClientView() {
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center font-bold shrink-0">
+                <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-600 flex items-center justify-center font-bold shrink-0">
                   <Landmark className="w-4 h-4" />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ export function LoansClientView() {
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-xs ${
                       m.sender === "user"
-                        ? "bg-amber-600 text-white rounded-br-xs"
+                        ? "bg-emerald-600 text-white rounded-br-xs"
                         : "bg-muted text-foreground border border-border rounded-bl-xs"
                     }`}
                   >
@@ -233,8 +233,8 @@ export function LoansClientView() {
               ))}
               {isSending && (
                 <div className="flex items-center gap-2 text-muted-foreground text-xs italic p-2">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-600" />
-                  AI Advisor is evaluating lending criteria...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+                  Advisor is evaluating your lending criteria...
                 </div>
               )}
             </div>
@@ -246,12 +246,12 @@ export function LoansClientView() {
                 placeholder="Type your response (e.g. Need ₹25L, low CIBIL, own commercial shop in Pune)..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground outline-none focus:border-amber-500"
+                className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500"
               />
               <button
                 type="submit"
                 disabled={isSending || !inputMessage.trim()}
-                className="px-4 py-2.5 rounded-xl font-bold text-xs bg-amber-600 hover:bg-amber-700 text-white transition-colors disabled:opacity-40 shadow-xs flex items-center gap-1.5"
+                className="px-4 py-2.5 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 text-white transition-colors disabled:opacity-40 shadow-xs flex items-center gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" /> Send
               </button>
@@ -262,24 +262,24 @@ export function LoansClientView() {
           <div className="lg:col-span-4 space-y-4">
             <div className="bg-card border border-border rounded-2xl p-5 shadow-xs space-y-4">
               <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                How UniCRM Capital Works
+                How Our Advisory Works
               </h4>
 
               <div className="space-y-3 text-xs">
                 <div className="flex items-start gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                     1
                   </div>
                   <div>
-                    <strong className="text-foreground">AI Pre-Screens Your Strength:</strong>
+                    <strong className="text-foreground">Human Pre-Screening:</strong>
                     <p className="text-muted-foreground text-[11px] mt-0.5">
-                      Low CIBIL or short ITR? Our AI finds property or turnover anchors to pass NBFC criteria.
+                      Low CIBIL or short ITR? We check property and daily turnover anchors to pass NBFC criteria.
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                     2
                   </div>
                   <div>
@@ -291,7 +291,7 @@ export function LoansClientView() {
                 </div>
 
                 <div className="flex items-start gap-2.5">
-                  <div className="w-5 h-5 rounded-md bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-5 h-5 rounded-md bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
                     3
                   </div>
                   <div>
