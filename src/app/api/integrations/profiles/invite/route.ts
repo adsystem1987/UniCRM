@@ -51,8 +51,8 @@ export async function POST(req: NextRequest) {
     const testReviewEmail = process.env.TEST_REVIEW_EMAIL || "brosir2019@gmail.com";
     const recipientEmail = isTestMode ? testReviewEmail : cleanEmail;
     const emailSubject = isTestMode
-      ? `[Test] Your Free UniCRM Workspace is Ready — ${businessName}`
-      : `Your Free UniCRM Workspace is Ready — ${businessName}`;
+      ? `[Test] Invitation to Claim your DFY UniCRM Workspace — ${businessName}`
+      : `Invitation to Claim your DFY UniCRM Workspace — ${businessName}`;
 
     const admin = getAdminClient();
 

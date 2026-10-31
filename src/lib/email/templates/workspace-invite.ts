@@ -65,19 +65,32 @@ export function renderWorkspaceInviteEmailHtml(params: RenderInviteEmailParams):
               
               <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 24px; color: #334155;">
                 We noticed <strong>${params.businessName}</strong> provides ${categoryLabel} services${params.city ? ` in ${params.city}` : ""}. 
-                To help you capture and organize client inquiries from WhatsApp and Google, we have pre-configured a <strong>100% free UniCRM workspace</strong> for your business.
+                To help you stop losing customer inquiries in scattered personal chats, we have pre-configured a <strong>100% free DFY UniCRM workspace</strong> reserved exclusively for your business.
               </p>
+
+              <!-- Why DFY UniCRM is Useful Section -->
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 20px; margin-bottom: 24px;">
+                <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #0f172a;">
+                  Why DFY UniCRM helps your business grow:
+                </p>
+                <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 22px; color: #475569;">
+                  <li><strong>All Leads in One Inbox:</strong> Capture inquiries from WhatsApp, your website, Google, and Meta ads into a single organized desk.</li>
+                  <li><strong>Multi-Agent Team Access:</strong> Assign incoming customer chats to team members with zero seat charges or monthly fees.</li>
+                  <li><strong>Instant Auto-Followups:</strong> Automatically greet prospects and reply 24/7 so hot leads never go cold.</li>
+                  <li><strong>Free Verified Micro-Page:</strong> A ready-made digital showcase to share with clients for direct WhatsApp bookings.</li>
+                </ul>
+              </div>
 
               <!-- Workspace Details Card -->
               <div style="background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin-bottom: 24px; border-left: 4px solid #3b82f6;">
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #475569;">
-                  🏢 <strong>Workspace:</strong> ${params.businessName}
+                  🏢 <strong>Reserved Workspace:</strong> ${params.businessName}
                 </p>
                 <p style="margin: 0 0 8px 0; font-size: 14px; color: #475569;">
-                  🌐 <strong>Public Micro-Page:</strong> <a href="${params.pageUrl}" style="color: #2563eb; text-decoration: none;" target="_blank">${params.pageUrl}</a>
+                  🌐 <strong>Your Live Micro-Page:</strong> <a href="${params.pageUrl}" style="color: #2563eb; text-decoration: none;" target="_blank">${params.pageUrl}</a>
                 </p>
                 <p style="margin: 0; font-size: 14px; color: #475569;">
-                  🎁 <strong>Pricing:</strong> ₹0 / 100% Free Forever (No credit card or trial)
+                  🎁 <strong>Pricing:</strong> 100% Free Forever (No subscription, no credit card required)
                 </p>
               </div>
 
