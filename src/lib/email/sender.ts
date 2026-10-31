@@ -39,7 +39,7 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailRespon
     process.env.EMAIL_FROM_ADDRESS ||
     process.env.UNITPOST_FROM ||
     process.env.RESEND_FROM ||
-    "UniCRM <hello@dfydude.cc.cd>";
+    "UniCRM <hello@outreach.dfydude.online>";
 
   const defaultReplyTo = opts.replyTo || process.env.EMAIL_REPLY_TO || "help@dfyunicrm.com";
   const recipients = Array.isArray(opts.to) ? opts.to : [opts.to];

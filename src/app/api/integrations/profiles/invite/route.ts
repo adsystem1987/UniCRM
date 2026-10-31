@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
       subject: `Your Free UniCRM Workspace is Ready — ${businessName}`,
       html,
       text: `Hi ${contactName || "there"},\n\nWe have set up a pre-configured 100% free UniCRM workspace for ${businessName}.\n\nPublic page: ${pageUrl}\n\nClaim your free workspace: ${claimUrl}\n\nTo delete your profile and opt-out: ${optOutUrl}\n\nBest regards,\nUniCRM Team`,
-      from: process.env.EMAIL_FROM_ADDRESS || "UniCRM <hello@dfydude.cc.cd>",
+      from: process.env.EMAIL_FROM_ADDRESS || "UniCRM <hello@outreach.dfydude.online>",
       replyTo: process.env.EMAIL_REPLY_TO || "help@dfyunicrm.com",
     });
 
