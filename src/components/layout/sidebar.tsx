@@ -19,6 +19,7 @@ import {
   Settings,
   Shield,
   ShieldAlert,
+  Send,
   User,
   UserCog,
   Users,
@@ -314,23 +315,42 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               );
             })}
             {isPlatformOwner && (
-              <li>
-                <Link
-                  href="/settings?tab=master-admin"
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
-                    pathname.startsWith("/settings") && currentTab === "master-admin"
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )}
-                >
-                  <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-500" />
-                  <span className="flex-1">{t("platformOwner")}</span>
-                  <span className="rounded-full border border-amber-600/30 bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
-                    Owner
-                  </span>
-                </Link>
-              </li>
+              <>
+                <li>
+                  <Link
+                    href="/outreach"
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
+                      pathname.startsWith("/outreach")
+                        ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    <Send className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="flex-1">Outreach Engine</span>
+                    <span className="rounded-full border border-emerald-600/30 bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300">
+                      Owner
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/settings?tab=master-admin"
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors lg:py-2",
+                      pathname.startsWith("/settings") && currentTab === "master-admin"
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    <ShieldAlert className="h-4 w-4 text-amber-600 dark:text-amber-500" />
+                    <span className="flex-1">{t("platformOwner")}</span>
+                    <span className="rounded-full border border-amber-600/30 bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+                      Owner
+                    </span>
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </nav>
