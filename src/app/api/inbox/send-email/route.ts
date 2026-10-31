@@ -88,7 +88,7 @@ export async function POST(req: Request) {
 
     // 2. Insert into CRM messages table under this conversation
     if (conversationId) {
-      await supabase.from("messages").insert({
+      const { data: insertedMsg } = await supabase.from("messages").insert({
         conversation_id: conversationId,
         sender_type: "agent",
         sender_id: userId,
@@ -98,8 +98,9 @@ export async function POST(req: Request) {
         subject,
         status: "delivered",
         message_id: messageId,
-      });
+      }).select("id").maybeSingle();
 
+      // If sent via SES and we have message id, we could append tracking pixel if desired
       // Update conversation snippet
       await supabase
         .from("conversations")

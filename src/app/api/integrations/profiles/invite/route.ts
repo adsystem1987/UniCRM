@@ -115,6 +115,7 @@ export async function POST(req: NextRequest) {
       pageUrl,
       claimUrl,
       optOutUrl,
+      token,
     });
 
     const emailRes = await sendEmail({

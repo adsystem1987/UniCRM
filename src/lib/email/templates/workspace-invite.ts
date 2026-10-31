@@ -6,6 +6,7 @@ export interface RenderInviteEmailParams {
   pageUrl: string;
   claimUrl: string;
   optOutUrl: string;
+  token?: string;
 }
 
 const CATEGORY_MAP: Record<string, string> = {
@@ -136,6 +137,7 @@ export function renderWorkspaceInviteEmailHtml(params: RenderInviteEmailParams):
       </td>
     </tr>
   </table>
+  ${params.token ? `<img src="https://dfyunicrm.com/api/email/track/open?token=${encodeURIComponent(params.token)}" width="1" height="1" alt="" style="display:none;width:1px;height:1px;max-height:1px;max-width:1px;opacity:0;border:none;" />` : ""}
 </body>
 </html>
   `.trim();
