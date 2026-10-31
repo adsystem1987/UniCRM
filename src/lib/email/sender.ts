@@ -1,6 +1,7 @@
 import { renderWelcomeEmailHtml } from "./templates/welcome";
 import { renderWhatsAppFollowupEmailHtml } from "./templates/followup-whatsapp";
 import { renderDfyPitchEmailHtml } from "./templates/dfy-pitch";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -15,14 +16,18 @@ export interface SendEmailResponse {
   success: boolean;
   id?: string;
   error?: string;
-  provider?: "unitpost" | "resend" | "none";
+  provider?: "ses" | "unitpost" | "resend" | "none";
 }
 
 /**
  * Universal transactional email sender for UniCRM.
- * Routes through Unitpost (verified domain mail.dfyunicrm.com) or Resend fallback.
+ * Routes through AWS SES (dfydude.cc.cd), Unitpost, or Resend fallback.
  */
 export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailResponse> {
+  const sesAccessKey = process.env.AWS_SES_ACCESS_KEY_ID?.trim();
+  const sesSecretKey = process.env.AWS_SES_SECRET_ACCESS_KEY?.trim();
+  const sesRegion = process.env.AWS_REGION?.trim() || "ap-south-1";
+
   const unitpostKey =
     process.env.UNITPOST_API_KEY?.trim() ||
     process.env.UNITPOST_KEY?.trim() ||
@@ -31,13 +36,53 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailRespon
 
   const defaultFrom =
     opts.from ||
+    process.env.EMAIL_FROM_ADDRESS ||
     process.env.UNITPOST_FROM ||
     process.env.RESEND_FROM ||
-    "UniCRM <hello@mail.dfyunicrm.com>";
+    "UniCRM <hello@dfydude.cc.cd>";
 
+  const defaultReplyTo = opts.replyTo || process.env.EMAIL_REPLY_TO || "help@dfyunicrm.com";
   const recipients = Array.isArray(opts.to) ? opts.to : [opts.to];
 
-  // 1. Primary: Unitpost API (mail.dfyunicrm.com)
+  // 1. Primary: AWS SES (mail.dfydude.cc.cd)
+  if (sesAccessKey && sesSecretKey) {
+    try {
+      const ses = new SESClient({
+        region: sesRegion,
+        credentials: {
+          accessKeyId: sesAccessKey,
+          secretAccessKey: sesSecretKey,
+        },
+      });
+
+      let lastId = "";
+      for (const recipient of recipients) {
+        console.log(`[Email/SES] Sending to ${recipient} from ${defaultFrom}...`);
+        const command = new SendEmailCommand({
+          Source: defaultFrom,
+          Destination: { ToAddresses: [recipient] },
+          ReplyToAddresses: [defaultReplyTo],
+          Message: {
+            Subject: { Data: opts.subject, Charset: "UTF-8" },
+            Body: {
+              Html: { Data: opts.html, Charset: "UTF-8" },
+              ...(opts.text ? { Text: { Data: opts.text, Charset: "UTF-8" } } : {}),
+            },
+          },
+        });
+
+        const res = await ses.send(command);
+        lastId = res.MessageId || "";
+        console.log(`[Email/SES] Delivered to ${recipient}! Message ID: ${lastId}`);
+      }
+      return { success: true, id: lastId, provider: "ses" };
+    } catch (err: any) {
+      console.error("[Email/SES] AWS SES error:", err);
+      // Fall through to Unitpost / Resend if configured
+    }
+  }
+
+  // 2. Secondary: Unitpost API (mail.dfyunicrm.com)
   if (unitpostKey) {
     try {
       let lastId = "";

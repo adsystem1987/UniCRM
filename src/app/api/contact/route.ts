@@ -226,7 +226,12 @@ export async function POST(req: Request) {
             .eq('contact_id', contactId)
             .maybeSingle();
 
-          const messageContent = `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email || 'Not provided'}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`;
+          // Only format as a structured card on the first inbound inquiry;
+          // subsequent messages in an ongoing conversation (e.g. live chat) should be clean message text.
+          const isLiveChatFollowUp = !!existingConv && topic === 'Website Live Chat';
+          const messageContent = (existingConv && (isLiveChatFollowUp || !isNewContact))
+            ? message
+            : `📬 Web Contact Inquiry\n\n📌 Topic: ${topic}\n👤 Name: ${name}\n📧 Email: ${email || 'Not provided'}\n📱 Phone: ${phone || 'Not provided'}\n\n💬 Message:\n${message}`;
 
           if (existingConv) {
             conversationId = existingConv.id;
