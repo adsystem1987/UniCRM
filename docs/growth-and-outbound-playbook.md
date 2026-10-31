@@ -1,10 +1,10 @@
 # UniCRM Growth, Outbound Architecture & Lead Gen Playbook
 
-This document records the exact architecture, outbound infrastructure, and growth acquisition strategy configured for UniCRM.
+This document records the exact architecture, outbound infrastructure, deployment protocols, and growth acquisition strategy configured for UniCRM.
 
 ## 1. Outbound & Onboarding Infrastructure
-- **Sending Domain**: `dfydude.cc.cd` (AWS SES in `ap-south-1` Mumbai)
-- **Sender Address**: `UniCRM <hello@dfydude.cc.cd>`
+- **Sending Domain**: `outreach.dfydude.online` (AWS SES in `ap-south-1` Mumbai, 50k quota)
+- **Sender Address**: `UniCRM <hello@outreach.dfydude.online>`
 - **Reply-To**: `help@dfyunicrm.com`
 - **Application Base URL**: `https://dfyunicrm.com`
 - **Public Profile Pages**: `https://dfyunicrm.com/p/{slug}`
@@ -12,10 +12,27 @@ This document records the exact architecture, outbound infrastructure, and growt
 - **Claim Workspace Route**: `GET /claim?token=...` & `POST /api/claim`
 - **Instant Opt-Out / Delete Route**: `GET /opt-out?token=...` & `POST /api/opt-out`
 - **Suppression Table**: `email_suppression_list` (bounces, opt-outs permanently suppressed)
+- **Test Mode & Approvals**: Supports `isTest: true`, routing preview copies directly to `brosir2019@gmail.com` with `[Test]` in the subject.
+- **Outreach Command Center**: Dedicated panel at `/outreach`, visible exclusively to platform owners (`isPlatformOwner`).
 
 ---
 
-## 2. Using Free Plans of Apollo.io, Arc AI & Exa for Lead Sourcing
+## 2. OmniRoute AI Gateway on AWS EC2
+- **Base URL**: `https://omniroute.dfydude.online/v1`
+- **Key**: Configured in `/home/ubuntu/OpenOutreach/.env`
+- **Model**: `auto/best-chat` (or `auto/best-reasoning`)
+- **OpenOutreach Engine**: Cloned and running under virtualenv at `/home/ubuntu/OpenOutreach` on AWS instance `13.235.207.253`.
+
+---
+
+## 3. Strict Deployment & Production Safety Protocols
+1. **No Automatic Git Push to Production**: Never push changes to `main` without explicit confirmation.
+2. **No Unapproved Vercel Production Deploys**: Never run `vercel --prod` or alias to production domains without explicit user instruction.
+3. **Staging First**: All new development, commits, and tests must target the `staging` branch and preview environments first.
+
+---
+
+## 4. Using Free Plans of Apollo.io, Arc AI & Exa for Lead Sourcing
 
 ### Apollo.io (Free Plan Strategy)
 - **Monthly Free Credits**: 250 export credits/month on the free tier.
@@ -35,7 +52,7 @@ This document records the exact architecture, outbound infrastructure, and growt
 
 ---
 
-## 3. Top Growth Loops to Attract & Convert Users
+## 5. Top Growth Loops to Attract & Convert Users
 
 ### Loop 1: The "Pre-Built Digital Storefront" Hook
 Instead of pitching "Sign up for another CRM", pitch what you have already created for them:
