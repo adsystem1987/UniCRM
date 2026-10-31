@@ -30,6 +30,37 @@ async function getBusinessPage(slug: string): Promise<BusinessPageRecord | null>
     if (data) {
       return data as BusinessPageRecord;
     }
+
+    // Check workspace claim tokens (for pre-provisioned outbound businesses)
+    const { data: claimToken } = await admin
+      .from('workspace_claim_tokens')
+      .select('*')
+      .eq('page_slug', normalizedSlug)
+      .maybeSingle();
+
+    if (claimToken && claimToken.status !== 'opted_out') {
+      const categoryLabel = claimToken.category?.replace(/_/g, ' ') || 'Professional Services';
+      return {
+        id: claimToken.id,
+        account_id: claimToken.account_id || 'unclaimed',
+        slug: claimToken.page_slug,
+        title: claimToken.business_name,
+        tagline: `Verified ${categoryLabel}${claimToken.city ? ` in ${claimToken.city}` : ''}`,
+        about: `Welcome to the official digital page of ${claimToken.business_name}. Connect directly with our team for inquiries, pricing, and appointments.`,
+        whatsapp_number: claimToken.phone || '919876543210',
+        calling_number: claimToken.phone || null,
+        address: claimToken.city || '',
+        google_maps_url: '',
+        logo_url: '',
+        cover_url: '',
+        items: [],
+        is_published: true,
+        view_count: 1,
+        lead_count: 0,
+        created_at: claimToken.created_at,
+        updated_at: claimToken.created_at,
+      } as BusinessPageRecord;
+    }
   } catch (err) {
     console.error('[getBusinessPage] supabase fetch error, checking showcase fallback:', err);
   }
