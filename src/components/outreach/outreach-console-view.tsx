@@ -70,6 +70,7 @@ interface FollowUpCandidate {
 }
 
 const CATEGORIES = [
+  { value: "d2c", label: "🛍️ D2C Brand & E-Commerce Catalog" },
   { value: "real_estate", label: "🏠 Real Estate & Property Brokers" },
   { value: "loan_provider", label: "💰 Loan Agents & Financial DSAs" },
   { value: "education", label: "🎓 Study Abroad & Visa Consultants" },

@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { getAdminClient } from "@/lib/gdrive/offload";
 import { sendEmail } from "@/lib/email/sender";
 import { renderWorkspaceInviteEmailHtml } from "@/lib/email/templates/workspace-invite";
+import { publishStorefrontToR2 } from "@/lib/r2/storefront";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,14 @@ interface InviteRequestBody {
   city?: string;
   slug?: string;
   isTest?: boolean;
+  isD2C?: boolean;
+  sampleProducts?: Array<{
+    name: string;
+    price: number;
+    imageUrl: string;
+    description?: string;
+    category?: string;
+  }>;
 }
 
 /**
@@ -80,6 +89,57 @@ export async function POST(req: NextRequest) {
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dfyunicrm.com";
     const pageUrl = `${siteUrl}/p/${pageSlug}`;
+
+    // If D2C brand or sample products provided, publish static catalog to Cloudflare R2
+    if (body.isD2C || body.sampleProducts?.length || category === "ecommerce" || category === "d2c") {
+      try {
+        const defaultProducts = body.sampleProducts?.length
+          ? body.sampleProducts.map((p, idx) => ({
+              id: `p-${idx + 1}`,
+              name: p.name,
+              price: p.price,
+              imageUrl: p.imageUrl,
+              description: p.description || "",
+              category: p.category || "Best Seller",
+              inStock: true,
+            }))
+          : [
+              {
+                id: "p-1",
+                name: `${businessName} Featured Collection`,
+                price: 999,
+                imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+                description: "Handcrafted premium quality with express all-India delivery.",
+                category: "Collection",
+                inStock: true,
+              },
+              {
+                id: "p-2",
+                name: `${businessName} Signature Pack`,
+                price: 1499,
+                imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+                description: "Best-selling edition. Order directly via WhatsApp.",
+                category: "Popular",
+                inStock: true,
+              },
+            ];
+
+        await publishStorefrontToR2({
+          slug: pageSlug,
+          businessName,
+          tagline: `Official WhatsApp Storefront • ${city || "India"}`,
+          phone: phone || "919876543210",
+          city: city || undefined,
+          category: category || "D2C Brand",
+          currency: "INR",
+          products: defaultProducts,
+          updatedAt: new Date().toISOString(),
+        });
+        console.log(`[ProfileInvite] R2 Storefront published for ${businessName} at slug: ${pageSlug}`);
+      } catch (r2Err) {
+        console.warn("[ProfileInvite] Failed to push R2 catalog:", r2Err);
+      }
+    }
 
     // 3. Generate secure claim token
     const token = crypto.randomBytes(24).toString("hex");
