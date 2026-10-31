@@ -928,8 +928,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
 
         {/* Interactive Booking Modal */}
         {bookingOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in-snappy">
-            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 will-change-transform">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto overscroll-contain">
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -1268,8 +1268,8 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
         )}
         {/* Native Chat With Me Desk Modal */}
         {chatDrawerOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in-snappy">
-            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xl flex flex-col h-[480px] max-h-[85vh]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 will-change-transform">
+            <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] max-h-[88vh] overscroll-contain">
               {/* Header */}
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2.5">
