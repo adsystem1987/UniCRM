@@ -29,6 +29,10 @@ import {
   Globe,
   Flame,
   Landmark,
+  BadgePercent,
+  Banknote,
+  Coins,
+  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ContactButton } from "@/components/contact/contact-buttons";
@@ -253,47 +257,62 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (HIGH VISIBILITY ABOVE COMPARISON) */}
-        <section id="business-loans" className="py-8 md:py-10 border-b border-border/40 bg-linear-to-r from-amber-500/10 via-amber-500/5 to-transparent">
+        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (TRUST-FIRST EMERALD & GOLD) */}
+        <section id="business-loans" className="py-8 md:py-10 border-b border-border/40 bg-linear-to-r from-emerald-500/10 via-emerald-500/5 to-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl border border-amber-500/30 bg-card/95 p-6 md:p-8 shadow-lg flex flex-col lg:flex-row items-center justify-between gap-6 backdrop-blur-xs relative overflow-hidden">
-              <div className="space-y-3 z-10 max-w-3xl">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
-                  <Landmark className="h-3.5 w-3.5" />
-                  UniCRM Capital Partner • Fast Business &amp; Shop Loans in 48 Hours
+            <div className="rounded-3xl border border-emerald-500/30 bg-card/95 p-6 md:p-8 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6 backdrop-blur-xs relative overflow-hidden">
+              <div className="space-y-3.5 z-10 max-w-3xl">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 shadow-xs">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Verified Banking Network • 48-Hour Disbursal</span>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-                  Need Money to Grow Your Business or Stock Inventory?
+                
+                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground flex items-center gap-2.5">
+                  <span>Need Money to Grow Your Business or Stock Inventory?</span>
                 </h3>
+                
                 <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Engineered for Indian businesses across Real Estate, D2C Shops, Contractors, Clinics &amp; Consultants. Low CIBIL score? You can still qualify if you own a house or have active GST/UPI turnover. Send bank papers directly on WhatsApp with zero confusion.
+                  Fast shop, stock, and business loans for Indian entrepreneurs. Low CIBIL score? You can still qualify if you own a house or have active GST/UPI turnover. Direct paperwork verification on WhatsApp with complete confidentiality.
                 </p>
-                <div className="flex flex-wrap items-center gap-3 pt-1 text-xs font-bold text-foreground">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface border border-border">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> ₹2 Lakhs to ₹1 Crore+
+
+                {/* Money & Trust Badges */}
+                <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs font-bold text-foreground">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs">
+                    <Banknote className="h-4 w-4 text-emerald-500" />
+                    <span>₹2 Lakhs to ₹1 Crore+</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface border border-border">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> 15+ Banks &amp; NBFC Partners
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs">
+                    <TrendingUp className="h-4 w-4 text-emerald-500" />
+                    <span>Interest from 1.05%/mo</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface border border-border">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> 100% Free Human Expert &amp; Dedicated Loan Advisor
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs">
+                    <Coins className="h-4 w-4 text-amber-500" />
+                    <span>15+ Banks &amp; NBFC Partners</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    <span>100% Free Consultation</span>
                   </span>
                 </div>
               </div>
 
+              {/* Action Column */}
               <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto z-10">
                 <Link href="/loans" className="w-full">
-                  <Button className="w-full h-12 px-7 font-black text-xs sm:text-sm btn-gold-gradient rounded-xl gap-2 shadow-md">
+                  <Button className="w-full h-12 px-7 font-black text-xs sm:text-sm btn-gold-gradient rounded-xl gap-2 shadow-lg hover:shadow-emerald-500/20">
+                    <Banknote className="h-4 w-4" />
                     <span>Talk to a Loan Advisor</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <p className="text-[11px] text-center text-muted-foreground font-medium">
-                  Direct WhatsApp &amp; Phone Consultation
-                </p>
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground font-semibold">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+                  <span>Direct WhatsApp &amp; Phone Support</span>
+                </div>
               </div>
 
-              <div className="absolute -right-8 -bottom-8 size-48 rounded-full bg-amber-500/5 pointer-events-none" />
+              {/* Subtle background ambient graphic */}
+              <div className="absolute -right-10 -bottom-10 size-56 rounded-full bg-emerald-500/10 pointer-events-none blur-xl" />
             </div>
           </div>
         </section>
