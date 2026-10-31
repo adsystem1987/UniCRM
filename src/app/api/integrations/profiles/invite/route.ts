@@ -14,6 +14,7 @@ interface InviteRequestBody {
   category?: string;
   city?: string;
   slug?: string;
+  isTest?: boolean;
 }
 
 /**
@@ -22,7 +23,8 @@ interface InviteRequestBody {
  * 1. Verifies anti-spam suppression list.
  * 2. Pre-creates or reserves the business micro-page.
  * 3. Generates a secure single-use claim token.
- * 4. Dispatches the claim invitation email via AWS SES (dfydude.cc.cd).
+ * 4. Dispatches the claim invitation email via AWS SES.
+ * If isTest === true (or email contains test), sends a test copy to TEST_REVIEW_EMAIL (brosir2019@gmail.com) with [Test] in subject.
  */
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = (await req.json().catch(() => ({}))) as InviteRequestBody;
-    const { businessName, contactName, email, phone, category = "loan_provider", city, slug: customSlug } = body;
+    const { businessName, contactName, email, phone, category = "loan_provider", city, slug: customSlug, isTest } = body;
 
     if (!businessName || !email) {
       return NextResponse.json(
@@ -45,6 +47,13 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanEmail = email.trim().toLowerCase();
+    const isTestMode = Boolean(isTest || cleanEmail.includes("test") || process.env.OUTREACH_TEST_MODE === "true");
+    const testReviewEmail = process.env.TEST_REVIEW_EMAIL || "brosir2019@gmail.com";
+    const recipientEmail = isTestMode ? testReviewEmail : cleanEmail;
+    const emailSubject = isTestMode
+      ? `[Test] Your Free UniCRM Workspace is Ready — ${businessName}`
+      : `Your Free UniCRM Workspace is Ready — ${businessName}`;
+
     const admin = getAdminClient();
 
     // 1. Anti-Spam Check: Verify if email is in the suppression list
@@ -109,10 +118,10 @@ export async function POST(req: NextRequest) {
     });
 
     const emailRes = await sendEmail({
-      to: cleanEmail,
-      subject: `Your Free UniCRM Workspace is Ready — ${businessName}`,
+      to: recipientEmail,
+      subject: emailSubject,
       html,
-      text: `Hi ${contactName || "there"},\n\nWe have set up a pre-configured 100% free UniCRM workspace for ${businessName}.\n\nPublic page: ${pageUrl}\n\nClaim your free workspace: ${claimUrl}\n\nTo delete your profile and opt-out: ${optOutUrl}\n\nBest regards,\nUniCRM Team`,
+      text: `${isTestMode ? "[TEST EMAIL REVIEW]\nIntended Recipient: " + cleanEmail + "\n\n" : ""}Hi ${contactName || "there"},\n\nWe have set up a pre-configured 100% free UniCRM workspace for ${businessName}.\n\nPublic page: ${pageUrl}\n\nClaim your free workspace: ${claimUrl}\n\nTo delete your profile and opt-out: ${optOutUrl}\n\nBest regards,\nUniCRM Team`,
       from: process.env.EMAIL_FROM_ADDRESS || "UniCRM <hello@outreach.dfydude.online>",
       replyTo: process.env.EMAIL_REPLY_TO || "help@dfyunicrm.com",
     });
@@ -121,6 +130,9 @@ export async function POST(req: NextRequest) {
       success: true,
       emailSent: emailRes.success,
       provider: emailRes.provider,
+      isTest: isTestMode,
+      sentTo: recipientEmail,
+      intendedRecipient: cleanEmail,
       pageUrl,
       claimUrl,
       optOutUrl,
