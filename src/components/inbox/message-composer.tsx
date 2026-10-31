@@ -154,6 +154,11 @@ export function MessageComposer({
   const [drafting, setDrafting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Multi-channel inbox switch: WhatsApp vs Email
+  const [sendChannel, setSendChannel] = useState<"whatsapp" | "email">("whatsapp");
+  const [emailSubject, setEmailSubject] = useState("");
+  const [emailSending, setEmailSending] = useState(false);
+
   // Enter-to-send only on devices with a mouse/keyboard (fine pointer).
   // On touch devices (phones) Enter inserts a newline and the Send button
   // is the only way to send — there's no practical Shift+Enter on a phone,
@@ -519,6 +524,42 @@ export function MessageComposer({
     [selectQuickReply],
   );
 
+  const handleSendEmail = useCallback(async () => {
+    if (!contact?.email) {
+      toast.error("This contact does not have an email address.");
+      return;
+    }
+    if (!text.trim()) {
+      toast.error("Please enter email content.");
+      return;
+    }
+    setEmailSending(true);
+    try {
+      const res = await fetch("/api/inbox/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId,
+          to: contact.email,
+          subject: emailSubject.trim() || `Update for ${contact.name || "Customer"}`,
+          message: text.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(`Email dispatched to ${contact.email}!`);
+        setText("");
+        setEmailSubject("");
+      } else {
+        toast.error(data.error || "Failed to deliver email.");
+      }
+    } catch {
+      toast.error("Network error sending email.");
+    } finally {
+      setEmailSending(false);
+    }
+  }, [contact, text, emailSubject, conversationId]);
+
   // Upload a captured file to chat-media and stage it as a draft.
   const stageUpload = useCallback(
     async (kind: ComposerMediaKind, file: File) => {
@@ -677,6 +718,57 @@ export function MessageComposer({
 
   return (
     <div className="relative border-t border-border bg-card p-3">
+      {/* Multi-channel switch: WhatsApp vs Email */}
+      <div className="flex items-center justify-between mb-2 px-1">
+        <div className="inline-flex items-center gap-1 p-0.5 rounded-lg bg-muted border border-border text-xs">
+          <button
+            type="button"
+            onClick={() => setSendChannel("whatsapp")}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-colors",
+              sendChannel === "whatsapp"
+                ? "bg-emerald-600 text-white shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <MessageSquare className="w-3.5 h-3.5" />
+            WhatsApp
+          </button>
+          <button
+            type="button"
+            onClick={() => setSendChannel("email")}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium transition-colors",
+              sendChannel === "email"
+                ? "bg-blue-600 text-white shadow-xs font-semibold"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            Email
+            {contact?.email && <span className="opacity-80 text-[10px]">({contact.email})</span>}
+          </button>
+        </div>
+
+        {sendChannel === "email" && (
+          <span className="text-[11px] text-muted-foreground font-medium">
+            Via {contact?.email ? "Connected Gmail / Verified Mail" : "No contact email"}
+          </span>
+        )}
+      </div>
+
+      {sendChannel === "email" && (
+        <div className="mb-2">
+          <input
+            type="text"
+            value={emailSubject}
+            onChange={(e) => setEmailSubject(e.target.value)}
+            placeholder={`Email Subject: (e.g. Partnership Proposal for ${contact?.name || "Client"})`}
+            className="w-full text-xs px-3.5 py-2 rounded-lg border border-border bg-muted text-foreground placeholder:text-muted-foreground outline-none focus:border-blue-500"
+          />
+        </div>
+      )}
+
       {/* Inline Slash Command Autocomplete Popover */}
       {slashMatches.length > 0 && (
         <div className="absolute bottom-full left-3 right-3 mb-2 max-h-56 overflow-y-auto rounded-xl border border-border bg-popover shadow-2xl z-50 p-1.5 animate-in fade-in slide-in-from-bottom-2 duration-150">
@@ -970,17 +1062,29 @@ export function MessageComposer({
             )}
           />
 
-          <GatedButton
-            size="sm"
-            canAct={!readOnly}
-            gateReason={tGate("reasons.sendMessages")}
-            disabled={!text.trim() || sessionExpired || sending}
-            onClick={handleSend}
-            aria-label={t("send")}
-            className="order-1 h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40 sm:order-3"
-          >
-            <Send className="h-4 w-4" />
-          </GatedButton>
+          {sendChannel === "email" ? (
+            <Button
+              size="sm"
+              disabled={!text.trim() || !contact?.email || emailSending}
+              onClick={handleSendEmail}
+              className="order-1 h-9 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold sm:order-3"
+            >
+              {emailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 mr-1.5" />}
+              Send Email
+            </Button>
+          ) : (
+            <GatedButton
+              size="sm"
+              canAct={!readOnly}
+              gateReason={tGate("reasons.sendMessages")}
+              disabled={!text.trim() || sessionExpired || sending}
+              onClick={handleSend}
+              aria-label={t("send")}
+              className="order-1 h-9 w-9 shrink-0 bg-primary p-0 hover:bg-primary/90 disabled:opacity-40 sm:order-3"
+            >
+              <Send className="h-4 w-4" />
+            </GatedButton>
+          )}
         </div>
       )}
 
