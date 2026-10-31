@@ -18,6 +18,9 @@ import {
   HelpCircle,
   MessageCircle,
   ArrowLeft,
+  Banknote,
+  TrendingUp,
+  Percent,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -29,12 +32,54 @@ interface Message {
 }
 
 const LOAN_TYPES = [
-  { id: "business", label: "💼 Shop & Business Stock Loan", desc: "₹2L to ₹50L for buying bulk inventory, marketing, and working capital" },
-  { id: "lap", label: "🏠 Property / House Owner Loan (LAP)", desc: "Lowest interest rates. Qualify easily even if you have a low CIBIL score" },
-  { id: "msme", label: "⚙️ Factory & Machinery Finance", desc: "Government subsidized CGTMSE loans for contractors and manufacturers" },
-  { id: "home", label: "🏡 Home Loan & Balance Transfer", desc: "New home purchase or lower your existing monthly bank EMI" },
-  { id: "private", label: "🛍️ D2C Brand & Online Store Funding", desc: "Fast approval based on your monthly UPI & GST sales" },
-  { id: "personal", label: "👤 Personal & Emergency Loan", desc: "Fast 24-hour funds for business owners and self-employed" },
+  {
+    id: "business",
+    label: "💼 Shop & Business Stock Loan",
+    desc: "₹2L to ₹50L for buying bulk inventory, marketing, and working capital.",
+    tag: "₹2L - ₹50L",
+    rate: "From 1.1%/mo",
+    highlight: "Fast Disbursal",
+  },
+  {
+    id: "lap",
+    label: "🏠 Property / House Owner Loan (LAP)",
+    desc: "Lowest interest rates. Qualify easily even if you have a low CIBIL score.",
+    tag: "Up to ₹5 Cr",
+    rate: "From 8.65% p.a.",
+    highlight: "Low CIBIL Accepted",
+  },
+  {
+    id: "msme",
+    label: "⚙️ Factory & Machinery Finance",
+    desc: "Government subsidized CGTMSE collateral-free loans for manufacturers & contractors.",
+    tag: "Up to ₹2 Cr",
+    rate: "Collateral-Free",
+    highlight: "Govt Subsidized",
+  },
+  {
+    id: "home",
+    label: "🏡 Home Loan & Balance Transfer",
+    desc: "New home purchase or lower your existing monthly bank EMI with top-up options.",
+    tag: "Flexible Tenure",
+    rate: "From 8.35% p.a.",
+    highlight: "Save on EMI",
+  },
+  {
+    id: "private",
+    label: "🛍️ D2C Brand & Online Store Funding",
+    desc: "Fast approval based on your monthly UPI & GST sales without pledging assets.",
+    tag: "Revenue Based",
+    rate: "From 1.05%/mo",
+    highlight: "UPI / GST Backed",
+  },
+  {
+    id: "personal",
+    label: "👤 Personal & Emergency Capital",
+    desc: "Quick 24-hour funds for business owners, shopkeepers, and self-employed founders.",
+    tag: "Same Day",
+    rate: "Instant In-Principle",
+    highlight: "24h Payout",
+  },
 ];
 
 export function LoansClientView() {
@@ -138,35 +183,61 @@ export function LoansClientView() {
       {step === "category" && (
         <div className="space-y-6 animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-2xl p-6 shadow-xs">
-            <h2 className="text-base font-bold text-foreground mb-1">
-              What kind of funding does your business need?
-            </h2>
-            <p className="text-xs text-muted-foreground mb-6">
-              Select the option that best matches your situation to get the highest approval chance.
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-border/50">
+              <div>
+                <h2 className="text-base font-bold text-foreground">
+                  What kind of funding does your business need?
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Select your requirement to check instant pre-qualification criteria across 15+ partner banks.
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
+                <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Advisors Online Now</span>
+              </div>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {LOAN_TYPES.map((lt) => (
                 <button
                   key={lt.id}
                   onClick={() => handleSelectCategory(lt.id)}
-                  className={`text-left p-4 rounded-xl border transition-all flex flex-col justify-between hover:border-emerald-500 hover:bg-emerald-500/5 group ${
+                  className={`text-left p-4.5 rounded-2xl border transition-all flex flex-col justify-between hover:border-emerald-500 hover:shadow-md hover:shadow-emerald-500/5 group relative overflow-hidden ${
                     selectedCategory === lt.id
-                      ? "border-emerald-500 bg-emerald-500/10 shadow-xs"
-                      : "border-border bg-background"
+                      ? "border-emerald-500 bg-emerald-500/5 shadow-xs"
+                      : "border-border bg-background hover:bg-card"
                   }`}
                 >
+                  {/* Subtle top indicator bar */}
+                  <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-emerald-500/0 via-emerald-500/40 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+
                   <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        {lt.tag}
+                      </span>
+                      <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                        {lt.rate}
+                      </span>
+                    </div>
+
                     <div className="font-bold text-sm text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {lt.label}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                    <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                       {lt.desc}
                     </p>
                   </div>
-                  <div className="mt-4 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                    <span>Explore Route</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+
+                  <div className="mt-5 pt-3 border-t border-border/50 flex items-center justify-between text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground group-hover:text-foreground">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                      {lt.highlight}
+                    </span>
+                    <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                      Check Route <ArrowRight className="w-3.5 h-3.5" />
+                    </span>
                   </div>
                 </button>
               ))}

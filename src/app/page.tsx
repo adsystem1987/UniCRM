@@ -763,12 +763,12 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 8: Embedded Business Loans Desk */}
-              <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-card to-amber-500/5 p-7 shadow-md hover:shadow-xl hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-amber-500 relative overflow-hidden">
-                <div className="absolute top-0 right-0 px-3 py-1 bg-amber-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
+              <div className="rounded-3xl border border-emerald-500/40 bg-gradient-to-b from-card to-emerald-500/5 p-7 shadow-md hover:shadow-xl hover:shadow-emerald-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-emerald-500 relative overflow-hidden">
+                <div className="absolute top-0 right-0 px-3 py-1 bg-emerald-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
                   Fintech Partner
                 </div>
                 <div>
-                  <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6">
                     <Landmark className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground">Need Money to Grow Your Business?</h3>
@@ -776,9 +776,9 @@ export default function LandingPage() {
                     Fast shop, stock, and business loans in 48 hours for Real Estate, D2C shops, Contractors &amp; Clinics. Low CIBIL score? You can still qualify if you own a house or have active GST/UPI turnover. Send bank papers directly on WhatsApp with zero confusion.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-between">
                   <span>15+ Banks &amp; NBFC Partners</span>
-                  <Link href="/loans" className="hover:underline flex items-center gap-1">
+                  <Link href="/loans" className="hover:underline flex items-center gap-1 font-bold">
                     <span>Check Eligibility</span>
                     <ArrowRight className="h-3 w-3" />
                   </Link>
