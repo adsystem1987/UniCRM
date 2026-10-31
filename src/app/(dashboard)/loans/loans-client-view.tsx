@@ -17,6 +17,7 @@ import {
   Clock,
   HelpCircle,
   MessageCircle,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -181,7 +182,15 @@ export function LoansClientView() {
           <div className="lg:col-span-8 bg-card border border-border rounded-2xl flex flex-col h-[580px] shadow-xs overflow-hidden">
             <div className="p-4 border-b border-border bg-muted/40 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center font-bold">
+                <button
+                  type="button"
+                  onClick={() => setStep("category")}
+                  className="p-1.5 rounded-lg bg-background border border-border text-foreground hover:bg-muted transition-colors flex items-center justify-center shrink-0"
+                  title="Back to Loan Categories"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+                <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 flex items-center justify-center font-bold shrink-0">
                   <Landmark className="w-4 h-4" />
                 </div>
                 <div>
@@ -196,9 +205,10 @@ export function LoansClientView() {
 
               <button
                 onClick={() => setStep("category")}
-                className="text-xs text-muted-foreground hover:text-foreground font-medium"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               >
-                Change Category
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back to Categories</span>
               </button>
             </div>
 
