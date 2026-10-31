@@ -29,12 +29,12 @@ interface Message {
 }
 
 const LOAN_TYPES = [
-  { id: "business", label: "💼 Unsecured Business Loan", desc: "₹2L to ₹50L based on monthly turnover" },
-  { id: "lap", label: "🏠 Loan Against Property (LAP)", desc: "Lowest interest rates, works even with low CIBIL" },
-  { id: "msme", label: "⚙️ MSME & Machinery Finance", desc: "CGTMSE government subsidized scheme" },
-  { id: "home", label: "🏡 Home Loan & Balance Transfer", desc: "New purchase or lower your existing EMI" },
-  { id: "private", label: "🤝 Private Funding / Revenue-Based", desc: "For D2C brands & high-turnover retailers" },
-  { id: "personal", label: "👤 Personal Emergency Loan", desc: "Instant 24hr disbursal" },
+  { id: "business", label: "💼 Shop & Business Stock Loan", desc: "₹2L to ₹50L for buying bulk inventory, marketing, and working capital" },
+  { id: "lap", label: "🏠 Property / House Owner Loan (LAP)", desc: "Lowest interest rates. Qualify easily even if you have a low CIBIL score" },
+  { id: "msme", label: "⚙️ Factory & Machinery Finance", desc: "Government subsidized CGTMSE loans for contractors and manufacturers" },
+  { id: "home", label: "🏡 Home Loan & Balance Transfer", desc: "New home purchase or lower your existing monthly bank EMI" },
+  { id: "private", label: "🛍️ D2C Brand & Online Store Funding", desc: "Fast approval based on your monthly UPI & GST sales" },
+  { id: "personal", label: "👤 Personal & Emergency Loan", desc: "Fast 24-hour funds for business owners and self-employed" },
 ];
 
 export function LoansClientView() {

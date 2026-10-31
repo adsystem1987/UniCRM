@@ -698,23 +698,26 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Feature 8: Embedded Business Loans & Capital Desk */}
+              {/* Feature 8: Embedded Business Loans Desk */}
               <div className="rounded-3xl border border-amber-500/40 bg-gradient-to-b from-card to-amber-500/5 p-7 shadow-md hover:shadow-xl hover:shadow-amber-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between hover:border-amber-500 relative overflow-hidden">
                 <div className="absolute top-0 right-0 px-3 py-1 bg-amber-500 text-[10px] font-black uppercase tracking-wider text-slate-950 rounded-bl-xl">
-                  Fintech Desk
+                  Fintech Partner
                 </div>
                 <div>
                   <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-6">
                     <Landmark className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Apply Loans &amp; Business Capital</h3>
+                  <h3 className="text-xl font-bold text-foreground">Need Money to Grow Your Business?</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Fast capital for Indian businesses. Conversational AI analyzes turnover and property anchors to unlock business loans, LAP, or working capital even with low CIBIL. Collect and verify ITRs directly via WhatsApp into private Google Drive storage.
+                    Fast shop, stock, and business loans in 48 hours for Real Estate, D2C shops, Contractors &amp; Clinics. Low CIBIL score? You can still qualify if you own a house or have active GST/UPI turnover. Send bank papers directly on WhatsApp with zero confusion.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center justify-between">
                   <span>15+ Banks &amp; NBFC Partners</span>
-                  <span className="font-mono text-[11px] opacity-80">WhatsApp Verification</span>
+                  <Link href="/loans" className="hover:underline flex items-center gap-1">
+                    <span>Check Eligibility</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
               </div>
             </div>
