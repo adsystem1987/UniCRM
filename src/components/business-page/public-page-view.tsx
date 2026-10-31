@@ -681,41 +681,77 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-4 border-t border-border/60 grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => openBookingModal(item)}
-                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground transition-colors flex items-center justify-center gap-1 shadow-xs"
-                        >
-                          {getItemBookingType(item) === 'stay' ? (
-                            <>
-                              <Home className="size-3.5" />
-                              Reserve Stay
-                            </>
-                          ) : getItemBookingType(item) === 'event' ? (
-                            <>
-                              <Ticket className="size-3.5" />
-                              Get Pass
-                            </>
-                          ) : (
-                            <>
-                              <Calendar className="size-3.5" />
-                              Book Slot
-                            </>
-                          )}
-                        </button>
+                      <div className="mt-4 pt-4 border-t border-border/60">
+                        {/* If direct WhatsApp order item (e.g. D2C / Products / Storefront) */}
+                        {item.button_label?.toLowerCase().includes('order') || item.price ? (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <a
+                              href={`https://wa.me/${page.whatsapp_number}?text=${encodeURIComponent(
+                                item.prefill_message || `Hi ${page.title}! I would like to order "${item.title}" (${item.price || ''}). Please confirm availability.`
+                              )}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full px-3 py-2.5 rounded-xl text-xs font-bold btn-gold-gradient transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
+                            >
+                              <MessageCircle className="size-4" />
+                              {item.button_label || 'Order on WhatsApp'}
+                            </a>
 
-                        <button
-                          onClick={() =>
-                            openChatWithMe(
-                              item.prefill_message ||
-                                `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
-                            )
-                          }
-                          className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
-                        >
-                          <MessageSquare className="size-3.5 text-primary" />
-                          {item.button_label || 'Inquire'}
-                        </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openChatWithMe(
+                                  item.prefill_message ||
+                                    `Hi ${page.title}! I have a question about "${item.title}".`
+                                )
+                              }
+                              className="w-full px-3 py-2.5 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
+                            >
+                              <MessageSquare className="size-3.5 text-primary" />
+                              Ask Question
+                            </button>
+                          </div>
+                        ) : (
+                          /* Standard Service / Stay / Appointment items */
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              type="button"
+                              onClick={() => openBookingModal(item)}
+                              className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground transition-colors flex items-center justify-center gap-1 shadow-xs"
+                            >
+                              {getItemBookingType(item) === 'stay' ? (
+                                <>
+                                  <Home className="size-3.5" />
+                                  Reserve Stay
+                                </>
+                              ) : getItemBookingType(item) === 'event' ? (
+                                <>
+                                  <Ticket className="size-3.5" />
+                                  Get Pass
+                                </>
+                              ) : (
+                                <>
+                                  <Calendar className="size-3.5" />
+                                  Book Slot
+                                </>
+                              )}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                openChatWithMe(
+                                  item.prefill_message ||
+                                    `Hi ${page.title}! I'm interested in "${item.title}". Please share details and availability.`
+                                )
+                              }
+                              className="w-full px-3 py-2 rounded-xl text-xs font-bold bg-muted hover:bg-muted/80 text-foreground transition-colors flex items-center justify-center gap-1.5 border border-border"
+                            >
+                              <MessageSquare className="size-3.5 text-primary" />
+                              {item.button_label || 'Inquire'}
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -860,7 +896,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
       </main>
 
       {/* Persistent Floating Bottom Bar for Mobile Only */}
-      <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between lg:hidden gap-2 shadow-lg">
+      <div className="fixed bottom-0 inset-x-0 z-40 p-3 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-between lg:hidden gap-2 shadow-lg safe-bottom">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-bold truncate text-foreground">{page.title}</p>
           <p className="text-[10px] text-primary font-medium truncate">
@@ -868,14 +904,19 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           </p>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            onClick={() => openBookingModal()}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl btn-gold-gradient font-bold text-xs shadow-xs"
+          <a
+            href={`https://wa.me/${page.whatsapp_number}?text=${encodeURIComponent(
+              `Hi ${page.title}! I'm visiting your page and would like to inquire.`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-3.5 py-2 rounded-xl btn-gold-gradient font-bold text-xs shadow-xs"
           >
-            <Calendar className="size-3.5" />
-            Book
-          </button>
+            <MessageCircle className="size-3.5" />
+            WhatsApp
+          </a>
           <button
+            type="button"
             onClick={() => openChatWithMe()}
             className="flex items-center gap-1 px-3 py-2 rounded-xl bg-card border border-border text-foreground font-bold text-xs shadow-xs"
           >
