@@ -276,7 +276,7 @@ export default function LandingPage() {
                     <Check className="h-3.5 w-3.5 text-emerald-500" /> 15+ Banks &amp; NBFC Partners
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface border border-border">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> 100% Free AI Pre-Screening
+                    <Check className="h-3.5 w-3.5 text-emerald-500" /> 100% Free Human Expert &amp; Dedicated Loan Advisor
                   </span>
                 </div>
               </div>
@@ -284,12 +284,12 @@ export default function LandingPage() {
               <div className="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto z-10">
                 <Link href="/loans" className="w-full">
                   <Button className="w-full h-12 px-7 font-black text-xs sm:text-sm btn-gold-gradient rounded-xl gap-2 shadow-md">
-                    <span>Check Loan Eligibility</span>
+                    <span>Talk to a Loan Advisor</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
                 <p className="text-[11px] text-center text-muted-foreground font-medium">
-                  Quick 1-Minute AI Evaluation
+                  Direct WhatsApp &amp; Phone Consultation
                 </p>
               </div>
 

@@ -44,12 +44,12 @@ export function LoansClientView() {
   const [selectedCategory, setSelectedCategory] = useState("business");
   const [requestedAmount, setRequestedAmount] = useState("₹15,00,000");
 
-  // AI Chat state
+  // Advisor Chat state
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "m-1",
       sender: "ai",
-      text: "Namaste! 🙏 I am your dedicated UniCRM Capital advisor. Tell me briefly about your business and loan requirement. Even if your CIBIL score is low or you lack a 3-year ITR, we have alternative approval routes through property ownership and daily turnover.",
+      text: "Namaste! 🙏 I am your dedicated loan advisory desk at UniCRM. Tell me briefly about your business needs. Even if your CIBIL score is low or you lack a 3-year ITR, we have flexible bank & NBFC options through property ownership, turnover, or machinery.",
       time: "Just now",
     },
   ]);
@@ -195,10 +195,10 @@ export function LoansClientView() {
                 </div>
                 <div>
                   <h3 className="font-bold text-xs sm:text-sm text-foreground">
-                    UniCRM AI Capital Underwriter
+                    Dedicated Loan Advisory Desk
                   </h3>
                   <p className="text-[10px] text-muted-foreground">
-                    Analyzing viable bank &amp; NBFC options for your business
+                    Human Assisted &amp; Partnered with 15+ Banks &amp; NBFCs
                   </p>
                 </div>
               </div>
