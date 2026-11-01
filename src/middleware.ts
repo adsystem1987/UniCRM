@@ -55,7 +55,7 @@ export async function middleware(request: NextRequest) {
     return withRefreshedCookies(NextResponse.redirect(callbackUrl));
   }
 
-  // Auth pages - redirect to dashboard if already logged in.
+  // Auth pages - redirect to intended destination or dashboard if already logged in.
   // Exception: when an invite token is in the query string we
   // send the already-signed-in user to /join/<token> instead so
   // they can accept the invitation in one click. Without this,
@@ -68,12 +68,16 @@ export async function middleware(request: NextRequest) {
   )) {
     const url = request.nextUrl.clone()
     const inviteToken = request.nextUrl.searchParams.get('invite')
+    const nextParam = request.nextUrl.searchParams.get('next')
     if (
       inviteToken &&
       (request.nextUrl.pathname === '/login' ||
         request.nextUrl.pathname === '/signup')
     ) {
       url.pathname = `/join/${encodeURIComponent(inviteToken)}`
+      url.search = ''
+    } else if (nextParam && nextParam.startsWith('/')) {
+      url.pathname = nextParam
       url.search = ''
     } else {
       url.pathname = '/dashboard'
@@ -85,12 +89,31 @@ export async function middleware(request: NextRequest) {
   // Protected pages - redirect to login if not authenticated
   // Every top-level route under src/app/(dashboard)/ belongs here —
   // middleware.test.ts reads that directory and fails on a missing one.
-  const protectedPaths = ['/dashboard', '/inbox', '/contacts', '/leads', '/pipelines', '/broadcasts', '/automations', '/flows', '/agents', '/notifications', '/settings']
+  const protectedPaths = [
+    '/dashboard',
+    '/inbox',
+    '/contacts',
+    '/leads',
+    '/pipelines',
+    '/broadcasts',
+    '/automations',
+    '/flows',
+    '/agents',
+    '/notifications',
+    '/settings',
+    '/loans',
+    '/blueprints',
+    '/business-pages',
+    '/orders',
+    '/outreach',
+  ]
   const isProtectedPath = protectedPaths.some(path => request.nextUrl.pathname.startsWith(path));
 
   if (!user && isProtectedPath) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    // Preserve next param so user returns directly to intended page after auth
+    url.searchParams.set('next', request.nextUrl.pathname + request.nextUrl.search)
     return withRefreshedCookies(NextResponse.redirect(url))
   }
 

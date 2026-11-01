@@ -30,6 +30,7 @@
 // ============================================================
 
 import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/gdrive/offload';
 import {
   loginFailurePath,
   parseEmailLink,
@@ -144,6 +145,27 @@ export async function GET(request: Request) {
       }).catch((err) => {
         console.error('[Slack] Failed to send signup notification:', err);
       });
+    }
+
+    // 3. Auto-configure customer role if signing up via loan advisor flow
+    const requestedRole = searchParams.get('role');
+    const isLoanFlow = requestedRole === 'customer' || next.startsWith('/loans');
+    if (isLoanFlow) {
+      try {
+        const admin = getAdminClient();
+        await admin
+          .from('profiles')
+          .update({
+            user_type: 'customer',
+            role: 'customer',
+            phone_verified: true,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('user_id', user.id);
+        console.log(`[Auth/Callback] Auto-assigned customer role to user ${user.id} (${user.email}) for loan flow`);
+      } catch (roleErr) {
+        console.error('[Auth/Callback] Failed to auto-assign customer role:', roleErr);
+      }
     }
   }
 

@@ -26,7 +26,11 @@ export default function SignupPage() {
 function SignupPageInner() {
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get("invite");
+  const next = searchParams.get("next");
+  const role = searchParams.get("role");
   const t = useTranslations("SignupPage");
+
+  const isCustomerSignup = role === "customer" || next?.startsWith("/loans");
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-background px-4 py-8">
@@ -49,12 +53,18 @@ function SignupPageInner() {
             )}
           </div>
           <CardTitle className="text-xl text-foreground font-black">
-            {inviteToken ? t("titleJoin") : "Create Your Free Workspace"}
+            {inviteToken
+              ? t("titleJoin")
+              : isCustomerSignup
+                ? "Talk to a Loan Advisor"
+                : "Create Your Free Workspace"}
           </CardTitle>
           <CardDescription className="text-muted-foreground text-xs">
             {inviteToken
               ? t("descJoin")
-              : "Instant 1-click verified registration via Google. No email confirmation delays."}
+              : isCustomerSignup
+                ? "Instant 1-click verified login to access personalized loan quotes and AI advisory desk."
+                : "Instant 1-click verified registration via Google. No email confirmation delays."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -63,7 +73,7 @@ function SignupPageInner() {
             <div className="flex items-center gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs text-emerald-900 dark:text-emerald-200 font-medium shadow-xs">
               <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
               <span>
-                <strong>100% Free Forever:</strong> Full omnichannel access for your entire team. No credit card required, ever.
+                <strong>100% Free Forever:</strong> {isCustomerSignup ? "Compare loan offers with zero fees & direct WhatsApp advisory." : "Full omnichannel access for your entire team. No credit card required, ever."}
               </span>
             </div>
           )}
@@ -72,7 +82,9 @@ function SignupPageInner() {
           <div className="space-y-3 pt-1">
             <GoogleSignInButton
               inviteToken={inviteToken}
-              text="Sign up with Google"
+              nextPath={next}
+              role={role}
+              text={isCustomerSignup ? "Continue to Loan Desk with Google" : "Sign up with Google"}
               className="h-12 text-sm shadow-md border-primary/30 hover:border-primary/60"
             />
 

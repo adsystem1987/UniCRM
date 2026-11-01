@@ -38,6 +38,8 @@ function LoginPageInner() {
   // account. After a successful sign-in we send them to the join
   // page to accept rather than to /dashboard.
   const inviteToken = searchParams.get("invite");
+  const next = searchParams.get("next");
+  const role = searchParams.get("role");
   const t = useTranslations("LoginPage");
   // Set by /auth/callback when an emailed link (confirmation, password
   // reset) could not be turned into a session — see src/lib/auth/callback.ts.
@@ -81,7 +83,7 @@ function LoginPageInner() {
     // reload the invite-accept flow already uses in join/[token].
     const destination = inviteToken
       ? `/join/${encodeURIComponent(inviteToken)}`
-      : "/dashboard";
+      : next || "/dashboard";
     window.location.href = destination;
   };
 
@@ -129,6 +131,8 @@ function LoginPageInner() {
           {/* Primary Action: 1-Click Google Sign In */}
           <GoogleSignInButton
             inviteToken={inviteToken}
+            nextPath={next}
+            role={role}
             text="Continue with Google"
           />
 

@@ -8,12 +8,16 @@ import { toast } from "sonner";
 
 interface GoogleSignInButtonProps {
   inviteToken?: string | null;
+  nextPath?: string | null;
+  role?: string | null;
   text?: string;
   className?: string;
 }
 
 export function GoogleSignInButton({
   inviteToken,
+  nextPath,
+  role,
   text = "Continue with Google",
   className,
 }: GoogleSignInButtonProps) {
@@ -25,8 +29,14 @@ export function GoogleSignInButton({
     try {
       const next = inviteToken
         ? `/join/${encodeURIComponent(inviteToken)}`
-        : "/dashboard";
-      const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+        : nextPath || "/dashboard";
+
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", next);
+      if (role) {
+        callbackUrl.searchParams.set("role", role);
+      }
+      const redirectTo = callbackUrl.toString();
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",

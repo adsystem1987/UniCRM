@@ -292,7 +292,7 @@ export default function LandingPage() {
 
               {/* Action Column */}
               <div className="shrink-0 flex flex-col gap-2.5 w-full lg:w-auto z-10 pt-2 sm:pt-0">
-                <Link href="/loans" className="w-full">
+                <Link href="/signup?next=/loans&role=customer" className="w-full">
                   <Button className="w-full h-11 sm:h-12 px-6 font-black text-xs sm:text-sm btn-gold-gradient rounded-xl gap-2 shadow-lg hover:shadow-emerald-500/20">
                     <Banknote className="h-4 w-4" />
                     <span>Talk to a Loan Advisor</span>
@@ -772,7 +772,7 @@ export default function LandingPage() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-between">
                   <span>15+ Banks &amp; NBFC Partners</span>
-                  <Link href="/loans" className="hover:underline flex items-center gap-1 font-bold">
+                  <Link href="/signup?next=/loans&role=customer" className="hover:underline flex items-center gap-1 font-bold">
                     <span>Check Eligibility</span>
                     <ArrowRight className="h-3 w-3" />
                   </Link>
