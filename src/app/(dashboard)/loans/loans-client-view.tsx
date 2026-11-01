@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
 import {
   Landmark,
   Building2,
@@ -21,6 +22,7 @@ import {
   Banknote,
   TrendingUp,
   Percent,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +30,7 @@ import { DsaLeadDesk } from "@/components/loans/dsa-lead-desk";
 
 interface Message {
   id: string;
-  sender: "user" | "ai";
+  sender: "user" | "ai" | "human_agent";
   text: string;
   time: string;
 }
@@ -92,6 +94,15 @@ export function LoansClientView() {
   const [selectedCategory, setSelectedCategory] = useState("business");
   const [requestedAmount, setRequestedAmount] = useState("₹15,00,000");
 
+  // Track conversation ID and takeover status
+  const [conversationId, setConversationId] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("unicrm_loan_conv_id");
+    }
+    return null;
+  });
+  const [isHumanTakenOver, setIsHumanTakenOver] = useState(false);
+
   // Advisor Chat state
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -103,6 +114,76 @@ export function LoansClientView() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Auto-scroll chat
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [messages, isSending]);
+
+  // Subscribe to real-time incoming messages & conversation status when conversationId is available
+  useEffect(() => {
+    if (!conversationId) return;
+
+    const supabase = createClient();
+
+    // 1. Listen for new messages inserted by human agents via Inbox
+    const channel = supabase
+      .channel(`loan-chat-${conversationId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload: any) => {
+          const newMsg = payload.new;
+          if (newMsg && newMsg.sender_type === "agent") {
+            setMessages((prev) => {
+              // Avoid duplicates
+              if (prev.some((m) => m.id === newMsg.id)) return prev;
+              return [
+                ...prev,
+                {
+                  id: newMsg.id,
+                  sender: "human_agent",
+                  text: newMsg.content_text || "",
+                  time: new Date(newMsg.created_at || Date.now()).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }),
+                },
+              ];
+            });
+            setIsHumanTakenOver(true);
+          }
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "conversations",
+          filter: `id=eq.${conversationId}`,
+        },
+        (payload: any) => {
+          const updatedConv = payload.new;
+          if (updatedConv) {
+            setIsHumanTakenOver(updatedConv.ai_autoreply_disabled === true);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId]);
 
   const handleSelectCategory = (catId: string) => {
     setSelectedCategory(catId);
@@ -132,21 +213,35 @@ export function LoansClientView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updated,
+          conversationId,
           applicantProfile: {
             businessName: account?.name || "Business Owner",
             category: selectedCategory,
             requestedAmount,
+            phone: profile?.phone || "",
+            name: profile?.full_name || account?.name || "Borrower",
           },
         }),
       });
 
       const data = await res.json();
+      if (data.conversationId) {
+        setConversationId(data.conversationId);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("unicrm_loan_conv_id", data.conversationId);
+        }
+      }
+
+      if (data.humanTakenOver !== undefined) {
+        setIsHumanTakenOver(data.humanTakenOver);
+      }
+
       if (data.reply) {
         setMessages((prev) => [
           ...prev,
           {
             id: `ai-${Date.now()}`,
-            sender: "ai",
+            sender: data.humanTakenOver ? "human_agent" : "ai",
             text: data.reply,
             time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
           },
@@ -299,9 +394,20 @@ export function LoansClientView() {
                   <Landmark className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-xs sm:text-sm text-foreground">
-                    Dedicated Loan Advisory Desk
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-bold text-xs sm:text-sm text-foreground">
+                      Dedicated Loan Advisory Desk
+                    </h3>
+                    {isHumanTakenOver ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 border border-blue-500/20">
+                        <UserCheck className="w-3 h-3" /> Human Advisor Joined
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                        <Sparkles className="w-3 h-3" /> AI Active
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[10px] text-muted-foreground">
                     Human Assisted &amp; Partnered with 15+ Banks &amp; NBFCs
                   </p>
@@ -317,8 +423,18 @@ export function LoansClientView() {
               </button>
             </div>
 
+            {/* Human Agent Takeover Notice */}
+            {isHumanTakenOver && (
+              <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-2 flex items-center justify-between text-xs text-blue-700 dark:text-blue-300">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-blue-600 shrink-0" />
+                  <span>A senior lending manager has taken over your inquiry for personal underwriting review.</span>
+                </div>
+              </div>
+            )}
+
             {/* Chat History */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+            <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
               {messages.map((m) => (
                 <div
                   key={m.id}
@@ -328,9 +444,16 @@ export function LoansClientView() {
                     className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-xs ${
                       m.sender === "user"
                         ? "bg-emerald-600 text-white rounded-br-xs"
+                        : m.sender === "human_agent"
+                        ? "bg-blue-600/10 text-foreground border border-blue-500/30 rounded-bl-xs"
                         : "bg-muted text-foreground border border-border rounded-bl-xs"
                     }`}
                   >
+                    {m.sender === "human_agent" && (
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1">
+                        <UserCheck className="w-3 h-3" /> Senior Loan Advisor (UniCRM Team)
+                      </div>
+                    )}
                     <p className="whitespace-pre-wrap">{m.text}</p>
                   </div>
                   <span className="text-[9px] text-muted-foreground mt-1 px-1">{m.time}</span>
@@ -348,7 +471,7 @@ export function LoansClientView() {
             <form onSubmit={handleSendMessage} className="p-3 border-t border-border flex items-center gap-2 bg-background">
               <input
                 type="text"
-                placeholder="Type your response (e.g. Need ₹25L, low CIBIL, own commercial shop in Pune)..."
+                placeholder={isHumanTakenOver ? "Reply directly to your loan advisor..." : "Type your response (e.g. Need ₹25L, low CIBIL, own commercial shop in Pune)..."}
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 className="flex-1 text-xs px-3.5 py-2.5 rounded-xl border border-border bg-muted/50 text-foreground placeholder:text-muted-foreground outline-none focus:border-emerald-500"
