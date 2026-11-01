@@ -56,7 +56,11 @@ interface OrderRecord {
   updated_at: string;
 }
 
-export function OrdersBillingPanel() {
+interface OrdersBillingPanelProps {
+  isCustomer?: boolean;
+}
+
+export function OrdersBillingPanel({ isCustomer = false }: OrdersBillingPanelProps) {
   const [orders, setOrders] = useState<OrderRecord[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -197,12 +201,16 @@ export function OrdersBillingPanel() {
   return (
     <div className="space-y-6">
       <SettingsPanelHead
-        title="Orders & Payment Tracker"
-        description="Track all UPI QR and direct payments, verify customer UTR reference numbers, and manage fulfillment with 0% gateway deductions."
+        title={isCustomer ? "My Purchases & Order History" : "Orders & Payment Tracker"}
+        description={
+          isCustomer
+            ? "View your purchase history, payment verification status, and access verified Google Drive invoices & receipts."
+            : "Track all UPI QR and direct payments, verify customer UTR reference numbers, and manage fulfillment with 0% gateway deductions."
+        }
       />
 
-      {/* Admin Highlight Banner */}
-      {isAdmin && (
+      {/* Admin Highlight Banner (Only for Business Workspace Admins) */}
+      {!isCustomer && isAdmin && (
         <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary shrink-0" />

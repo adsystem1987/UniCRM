@@ -1,21 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
 import { OrdersBillingPanel } from '@/components/settings/orders-billing-panel';
 import { Receipt } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function OrdersPage() {
-  const router = useRouter();
   const { profile } = useAuth();
+  const isCustomer = profile?.user_type === 'customer' || profile?.role === 'customer';
 
-  // If a retail customer accesses /orders directly, redirect them to their loan advisory desk
-  useEffect(() => {
-    if (profile?.user_type === 'customer' || profile?.role === 'customer') {
-      router.replace('/loans');
-    }
-  }, [profile, router]);
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2.5">
@@ -24,15 +16,17 @@ export default function OrdersPage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Orders & Billing
+            {isCustomer ? "My Orders & Receipts" : "Orders & Billing"}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Track customer orders, manual UPI/card verifications, transaction records, and automated Google Drive payment receipts.
+            {isCustomer
+              ? "Track your purchases, payment verification status, and view or download receipts."
+              : "Track customer orders, manual UPI/card verifications, transaction records, and automated Google Drive payment receipts."}
           </p>
         </div>
       </div>
 
-      <OrdersBillingPanel />
+      <OrdersBillingPanel isCustomer={isCustomer} />
     </div>
   );
 }
