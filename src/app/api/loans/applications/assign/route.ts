@@ -84,6 +84,25 @@ export async function POST(req: NextRequest) {
               .update({ stage_id: stage2.id, status: "open" })
               .eq("pipeline_id", pipeline.id)
               .eq("contact_id", contact.id);
+
+            // 3. Handover Conversation & Chat History to the Partner's Inbox
+            // Transfer open conversation to partner workspace so their agents can immediately read
+            // the AI pre-screening transcript and continue chatting with the borrower!
+            const { data: partnerProfile } = await admin
+              .from("profiles")
+              .select("account_id")
+              .eq("id", partnerUserId)
+              .maybeSingle();
+
+            if (partnerProfile?.account_id) {
+              await admin
+                .from("conversations")
+                .update({
+                  account_id: partnerProfile.account_id,
+                  assigned_agent_id: partnerUserId,
+                })
+                .eq("contact_id", contact.id);
+            }
           }
         }
       }
