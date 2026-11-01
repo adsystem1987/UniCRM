@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dfyunicrm.com';
 
 export const metadata: Metadata = {
-  title: 'Yellow Pages Directory — Businesses by Category, City & Alphabetical Index | UniCRM',
+  title: 'Business Directory Index — Verified Businesses by Category, City & Alphabetical Index | UniCRM',
   description:
     'Comprehensive business directory index organized alphabetically by company name, industry category, and city location across India.',
   alternates: {
@@ -121,7 +121,7 @@ export default async function YellowPagesDirectory() {
               <span>Back to Directory</span>
             </Link>
             <span className="text-border">|</span>
-            <span className="font-bold text-sm text-foreground">Yellow Pages A–Z</span>
+            <span className="font-bold text-sm text-foreground">Business Directory Index (A–Z)</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -140,7 +140,7 @@ export default async function YellowPagesDirectory() {
         <div className="mx-auto max-w-6xl space-y-4">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400">
             <Tag className="h-3.5 w-3.5" />
-            <span>Master Yellow Pages &amp; Business Index</span>
+            <span>Master Business Directory &amp; Category Index</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground">
             Business Directory Index
@@ -338,7 +338,7 @@ export default async function YellowPagesDirectory() {
       <footer className="border-t border-border bg-muted/20 px-4 py-8 text-xs text-muted-foreground">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-foreground">UniCRM Yellow Pages</span>
+            <span className="font-bold text-foreground">UniCRM Business Directory</span>
             <span>•</span>
             <span>Alphabetical &amp; Categorical Registry</span>
           </div>

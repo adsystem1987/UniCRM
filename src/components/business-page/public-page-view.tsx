@@ -889,7 +889,7 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
           </p>
           <div className="flex items-center justify-center gap-4 text-xs font-medium text-muted-foreground">
             <Link href="/p/directory" className="hover:text-foreground hover:underline font-semibold text-emerald-600 dark:text-emerald-400">
-              Yellow Pages (A–Z Index)
+              Business Directory Index (A–Z)
             </Link>
             <span>•</span>
             <Link href="/p" className="hover:text-foreground hover:underline">

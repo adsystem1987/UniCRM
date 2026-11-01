@@ -443,7 +443,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
         )}
       </main>
 
-      {/* Directory Footer Link to Yellow Pages */}
+      {/* Directory Footer Link to Business Directory Index */}
       <footer className="mt-16 border-t border-border bg-muted/20 px-4 py-8 text-xs text-muted-foreground">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -457,7 +457,7 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
               href="/p/directory"
               className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
             >
-              Yellow Pages (A–Z Index)
+              Business Directory Index (A–Z)
             </Link>
             <Link href="/" className="hover:text-foreground transition-colors">
               Platform Home

@@ -1133,7 +1133,7 @@ export default function LandingPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Link href="/p/directory" className="hover:text-foreground transition-colors font-semibold text-emerald-600 dark:text-emerald-400">
-              Yellow Pages (A–Z Directory)
+              Business Directory Index (A–Z)
             </Link>
             <Link href="/terms" className="hover:text-foreground transition-colors">
               Terms of Service
