@@ -4,10 +4,10 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.2.0`  
+**Current Version:** `v1.3.0`  
 **Date:** 2026-11-02  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `be0136c`  
+**Latest Commit:** `deedf39`  
 **Status:** Clean working tree. Commits staged locally (awaiting push approval).
 
 ---
@@ -97,8 +97,11 @@ When conversational AI operates on the client side only (e.g. in-memory React st
    - Enforces strict human takeover: when `ai_autoreply_disabled === true` or agent is assigned, the AI remains silent so workplace staff can reply from `/inbox`.
    - Outbound agent messages from `/inbox` route via Evolution/Meta to deliver straight to customer's WhatsApp.
 
-3. **Step 3: Automated Inactivity Background Trigger**
-   - Background worker checks for chats inactive for > 10 mins with a phone number and automatically invokes `/api/loans/followup`.
+3. **Step 3: Automated Inactivity Background Trigger** [COMPLETED]
+   - Implemented scheduled background worker trigger in `GET /api/loans/followup`.
+   - Checks open loan conversations idle for > 15 mins (up to 24h).
+   - Validates contacts with verified phone numbers, deduplicates to prevent re-sending within 24h, and dispatches automated WhatsApp re-engagement deep-link (`/loans?resume=<convId>`).
+   - Supports both cron execution with secret headers and authenticated dashboard invocation.
 
 ---
 
@@ -106,6 +109,7 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
+| **v1.3.0** | 2026-11-02 | Added scheduled inactivity drop-off recovery trigger via `GET /api/loans/followup` with anti-spam check, cron header validation, and deal/loan inquiry scanning. | `api/loans/followup/route.ts` | `deedf39` |
 | **v1.2.0** | 2026-11-02 | Added two-way WhatsApp inbound router in webhook & loan underwriter AI agent (`src/lib/loans/ai-reply.ts`). Human agent takeover (`ai_autoreply_disabled`) strictly silences AI so workplace staff reply via UniCRM `/inbox` directly to WhatsApp. | `api/evolution/webhook/route.ts`, `lib/loans/ai-reply.ts` | `be0136c` |
 | **v1.1.0** | 2026-11-02 | Implemented `GET /api/loans/consult` conversation hydration API and `?resume=` search param handling in `loans-client-view.tsx` with Suspense wrapper in `loans/page.tsx`. | `api/loans/consult/route.ts`, `loans-client-view.tsx`, `loans/page.tsx` | `1910119` |
 | **v1.0.0** | 2026-11-02 | Initial Phase AX baseline: DB persistence for `/loans`, Take Over / Resume AI, real-time message sync, WhatsApp drop-off recovery, and deal auto-structuring. | `api/loans/consult`, `loans-client-view.tsx`, `api/loans/followup`, `LOAN_ADVISORY_PIPELINE.md` | `b072edc`, `4ad485e` |
