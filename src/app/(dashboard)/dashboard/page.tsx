@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/use-auth'
 import { formatCurrency } from '@/lib/currency'
@@ -43,7 +44,16 @@ type RangeDays = 7 | 30 | 90
 
 export default function DashboardPage() {
   const t = useTranslations('Dashboard.page')
-  const { defaultCurrency } = useAuth()
+  const router = useRouter()
+  const { defaultCurrency, profile } = useAuth()
+
+  // Borrowers and retail customers belong in their dedicated Loan Advisory Desk
+  useEffect(() => {
+    if (profile?.user_type === 'customer' || profile?.role === 'customer') {
+      router.replace('/loans')
+    }
+  }, [profile, router])
+
   const [metrics, setMetrics] = useState<MetricsBundle | null>(null)
   const [metricsLoading, setMetricsLoading] = useState(true)
 

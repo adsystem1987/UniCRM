@@ -24,6 +24,7 @@ import { AiConfig } from '@/components/settings/ai-config';
 import { ChatWidgetPanel } from '@/components/settings/chat-widget-panel';
 import {
   resolveSection,
+  SECTION_META,
   type SettingsSection,
 } from '@/components/settings/settings-sections';
 
@@ -46,7 +47,8 @@ export default function SettingsPage() {
 function SettingsPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { defaultCurrency, isPlatformOwner, accountId } = useAuth();
+  const { defaultCurrency, isPlatformOwner, accountId, profile } = useAuth();
+  const isCustomer = profile?.user_type === 'customer' || profile?.role === 'customer';
   const { mode } = useTheme();
   const t = useTranslations('Settings');
 
@@ -67,10 +69,14 @@ function SettingsPageInner() {
     return null;
   }
 
+  // Prevent customers from accessing workspace-only tabs (members, integrations, api, whatsapp, etc.)
+  const requestedSection = resolveSection(rawTab);
+  const isWorkspaceOnly = SECTION_META[requestedSection]?.group === 'workspace';
+
   const section =
-    rawTab === 'master-admin' && !isPlatformOwner
-      ? 'overview'
-      : resolveSection(rawTab);
+    (rawTab === 'master-admin' && !isPlatformOwner) || (isCustomer && isWorkspaceOnly)
+      ? 'profile'
+      : requestedSection;
 
   const go = (next: SettingsSection) => {
     const params = new URLSearchParams(searchParams.toString());
