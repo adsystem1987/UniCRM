@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck, Sparkles, Building2, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Building2, Loader2, AlertCircle } from "lucide-react";
 
 interface ClaimDetails {
   businessName: string;
@@ -80,10 +80,10 @@ function ClaimContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-8">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-          <p className="text-sm text-muted-foreground">Verifying your workspace invitation...</p>
+          <p className="text-sm text-muted-foreground">Verifying your invitation…</p>
         </div>
       </div>
     );
@@ -91,20 +91,20 @@ function ClaimContent() {
 
   if (error || !claimDetails) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
-        <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center mb-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-8">
+        <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center">
+          <div className="w-12 h-12 rounded-full bg-destructive/10 text-destructive mx-auto flex items-center justify-center mb-4">
             <AlertCircle className="w-6 h-6" />
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-2">Invitation Unavailable</h2>
-          <p className="text-sm text-muted-foreground mb-6">
+          <h2 className="text-2xl font-bold text-foreground mb-2">Link Expired</h2>
+          <p className="text-sm text-muted-foreground mb-8">
             {error || "This invitation link may have expired or already been claimed."}
           </p>
           <Link
             href="/"
-            className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-foreground bg-muted rounded-lg hover:bg-muted-foreground/10 transition-colors"
+            className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-full hover:bg-emerald-700 transition-colors"
           >
-            Go to UniCRM Home
+            Back to UniCRM
           </Link>
         </div>
       </div>
@@ -113,14 +113,14 @@ function ClaimContent() {
 
   if (claimedSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
-        <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-lg animate-in fade-in zoom-in duration-300">
-          <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center mb-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-8">
+        <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center animate-in fade-in zoom-in duration-300">
+          <div className="w-16 h-16 rounded-full bg-emerald-600/10 text-emerald-600 mx-auto flex items-center justify-center mb-4">
             <CheckCircle2 className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">Workspace Activated!</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-2">You're In.</h2>
           <p className="text-sm text-muted-foreground mb-6">
-            Welcome to UniCRM, {claimDetails.businessName}! Redirecting you to your inbox...
+            Taking you to your dashboard now…
           </p>
           <div className="flex justify-center">
             <Loader2 className="w-6 h-6 animate-spin text-emerald-600" />
@@ -131,24 +131,20 @@ function ClaimContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-semibold mb-4 border border-emerald-200 dark:border-emerald-800">
-          <Sparkles className="w-3.5 h-3.5" />
-          Pre-Configured Workspace Reserved
-        </div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-foreground">
-          Claim Your Free Workspace
+    <div className="min-h-screen bg-background flex flex-col justify-center p-8">
+      <div className="mx-auto w-full max-w-md text-center">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">
+          Step Inside Your CRM
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          100% Free Core Software • WhatsApp CRM & Lead Inbox
+          Your workspace is pre-configured and waiting. Set a password to go live.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
-        <div className="bg-card py-8 px-6 shadow-xl sm:rounded-2xl border border-border sm:px-10">
+      <div className="mt-8 mx-auto w-full max-w-lg">
+        <div className="bg-card py-8 px-6 sm:rounded-2xl border border-border sm:px-10">
           {/* Business Details Preview */}
-          <div className="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4 border border-slate-200 dark:border-slate-700/60 mb-6">
+          <div className="rounded-xl bg-muted border border-border p-4 mb-6">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
                 <Building2 className="w-5 h-5" />
@@ -156,11 +152,11 @@ function ClaimContent() {
               <div>
                 <h3 className="font-semibold text-foreground">{claimDetails.businessName}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {claimDetails.email} • {claimDetails.category}
+                  {claimDetails.email} · {claimDetails.category}
                 </p>
-                <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
                   <ShieldCheck className="w-4 h-4" />
-                  Free forever • Unlimited contacts • Zero credit card
+                  Free forever · Unlimited contacts · No credit card
                 </div>
               </div>
             </div>
@@ -168,8 +164,8 @@ function ClaimContent() {
 
           <form onSubmit={handleClaim} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-foreground/90 mb-1">
-                Set a Password to Activate
+              <label className="block text-sm font-medium text-foreground mb-1">
+                Choose a Password
               </label>
               <input
                 type="password"
@@ -178,30 +174,27 @@ function ClaimContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 6 characters"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-card text-foreground focus:ring-2 focus:ring-emerald-500 text-sm"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-emerald-500 text-sm"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+              className="w-full flex items-center justify-center py-3 px-4 rounded-full text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors disabled:opacity-50"
             >
               {submitting ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <>
-                  Activate My Free Workspace
-                  <ArrowRight className="w-4 h-4" />
-                </>
+                "Activate Now"
               )}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
+          <div className="mt-6 pt-6 border-t border-border text-center">
             <Link
               href={`/opt-out?token=${token}`}
-              className="text-xs text-red-500 hover:text-red-700 underline"
+              className="text-xs text-muted-foreground hover:text-destructive transition-colors"
             >
               Don't want this workspace? Delete profile & opt-out
             </Link>
@@ -214,7 +207,7 @@ function ClaimContent() {
 
 export default function ClaimPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-emerald-600" /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-emerald-600" /></div>}>
       <ClaimContent />
     </Suspense>
   );

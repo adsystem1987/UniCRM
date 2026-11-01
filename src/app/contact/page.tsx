@@ -71,7 +71,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <header className="border-b border-border/40 py-4 px-6">
+      <header className="border-b border-border py-4 px-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <img
@@ -91,14 +91,14 @@ export default function ContactPage() {
       </header>
 
       <main className="flex-1 max-w-xl mx-auto w-full px-4 py-12">
-        <div className="rounded-3xl border border-border/60 bg-card p-8 shadow-sm">
+        <div className="rounded-3xl border border-border bg-card p-8">
           {success ? (
             <div className="py-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-200">
               <div className="h-16 w-16 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <div className="space-y-1">
-                <h2 className="text-2xl font-black text-foreground">Request Received in Real Time!</h2>
+                <h2 className="text-2xl font-black text-foreground">Message Received</h2>
                 <p className="text-sm text-muted-foreground max-w-sm mx-auto">
                   Thank you, <span className="font-semibold text-foreground">{successName}</span>! Your message has been routed to our support desk. We will respond within 1–4 business hours.
                 </p>
@@ -110,12 +110,12 @@ export default function ContactPage() {
                     setMessage("");
                   }}
                   variant="outline"
-                  className="w-full sm:w-auto font-semibold"
+                  className="w-full sm:w-auto font-semibold rounded-full"
                 >
                   Send Another Inquiry
                 </Button>
                 <Link href="/" className="w-full sm:w-auto">
-                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                  <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full">
                     Back to Homepage
                   </Button>
                 </Link>
@@ -123,14 +123,9 @@ export default function ContactPage() {
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black text-foreground">Contact Support Desk</h1>
-                  <p className="text-xs text-muted-foreground">Inquiries are sent to help@dfyunicrm.com</p>
-                </div>
+              <div className="mb-6">
+                <h1 className="text-2xl font-black text-foreground">Talk to Our Team</h1>
+                <p className="text-sm text-muted-foreground mt-1">We respond within hours, not days.</p>
               </div>
 
               {error && (
@@ -142,8 +137,8 @@ export default function ContactPage() {
 
               <form onSubmit={handleSubmit} action="/api/contact" method="POST" className="space-y-4">
                 <div className="space-y-1.5">
-                  <label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Your Name <span className="text-destructive">*</span>
+                  <label htmlFor="name" className="text-sm font-medium text-foreground">
+                    Your name <span className="text-destructive">*</span>
                   </label>
                   <input
                     id="name"
@@ -151,14 +146,14 @@ export default function ContactPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     placeholder="Ravi Kumar"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Email Address <span className="text-destructive">*</span>
+                  <label htmlFor="email" className="text-sm font-medium text-foreground">
+                    Email address <span className="text-destructive">*</span>
                   </label>
                   <input
                     id="email"
@@ -167,27 +162,27 @@ export default function ContactPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     placeholder="ravi@company.com"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="phone" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    WhatsApp / Phone Number
+                  <label htmlFor="phone" className="text-sm font-medium text-foreground">
+                    WhatsApp / Phone number
                   </label>
                   <input
                     id="phone"
                     name="phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     placeholder="+91 98765 43210"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="topic" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="topic" className="text-sm font-medium text-foreground">
                     Topic
                   </label>
                   <select
@@ -195,7 +190,7 @@ export default function ContactPage() {
                     name="topic"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   >
                     <option value="General Inquiry">General Question about UniCRM</option>
                     <option value="Optional Pro Setup (₹1,000 one-time)">Optional Done-For-You Pro Setup (₹1,000 one-time cost)</option>
@@ -218,7 +213,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="message" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="message" className="text-sm font-medium text-foreground">
                     Message <span className="text-destructive">*</span>
                   </label>
                   <textarea
@@ -228,7 +223,7 @@ export default function ContactPage() {
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
                     required
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     placeholder="How can we help your business?"
                   />
                 </div>
@@ -237,22 +232,21 @@ export default function ContactPage() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="w-full font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-full"
                   >
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Submitting in Real Time...
+                        Sending...
                       </span>
                     ) : (
-                      "Submit Support Request"
+                      "Send Message"
                     )}
                   </Button>
                 </div>
               </form>
 
-              <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <ShieldCheck className="h-4 w-4 text-emerald-500" />
+              <div className="mt-6 pt-4 text-center text-xs text-muted-foreground">
                 <span>We usually respond within 1–4 business hours.</span>
               </div>
             </>

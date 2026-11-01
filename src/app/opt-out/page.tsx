@@ -41,43 +41,43 @@ function OptOutContent() {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center shadow-lg">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8">
+      <div className="max-w-md w-full bg-card border border-border rounded-2xl p-8 text-center">
         {loading ? (
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-red-500" />
-            <p className="text-sm text-muted-foreground">Processing profile deletion and permanent unsubscribe...</p>
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Processing your request…</p>
           </div>
         ) : success ? (
           <div>
-            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-full bg-muted mx-auto flex items-center justify-center mb-5">
+              <CheckCircle2 className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Profile Deleted</h2>
-            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-              {message} Your email has been permanently added to our do-not-contact suppression list.
+            <h2 className="text-2xl font-bold text-foreground mb-3">All Done. You're Removed.</h2>
+            <p className="text-sm text-foreground mb-8 leading-relaxed">
+              We've permanently deleted your data and added your email to our do-not-contact list. You won't hear from us again.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-foreground/90 bg-muted rounded-lg hover:bg-muted-foreground/10 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:opacity-90 transition-opacity"
             >
-              Return to Homepage
+              Return Home
             </Link>
           </div>
         ) : (
           <div>
-            <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center mb-4">
-              <AlertCircle className="w-8 h-8" />
+            <div className="w-14 h-14 rounded-full bg-muted mx-auto flex items-center justify-center mb-5">
+              <AlertCircle className="w-7 h-7 text-destructive" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Notice</h2>
-            <p className="text-sm text-muted-foreground mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-3">Something Went Wrong</h2>
+            <p className="text-sm text-foreground mb-8 leading-relaxed">
               {error}
             </p>
             <Link
               href="/"
-              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-foreground/90 bg-muted rounded-lg hover:bg-muted-foreground/10 transition-colors"
+              className="inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:opacity-90 transition-opacity"
             >
-              Return to Homepage
+              Return Home
             </Link>
           </div>
         )}
@@ -88,7 +88,7 @@ function OptOutContent() {
 
 export default function OptOutPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-red-500" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-muted-foreground" /></div>}>
       <OptOutContent />
     </Suspense>
   );

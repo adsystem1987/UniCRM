@@ -11,15 +11,15 @@ export default function SuspendedPage() {
 
         <div className="space-y-2">
           <h1 className="text-xl font-bold tracking-tight text-foreground">
-            Workspace Suspended
+            Your Account Is Paused
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Your UniCRM workspace account has been suspended or is under administrative review.
+            Your UniCRM workspace is currently under review. This is usually resolved quickly.
           </p>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-card border border-border text-xs text-muted-foreground space-y-1.5 text-left">
-          <p className="font-semibold text-foreground">Next Steps:</p>
+        <div className="p-4 rounded-xl bg-muted border border-border text-xs text-muted-foreground space-y-1.5 text-left">
+          <p className="font-semibold text-foreground">Next Steps</p>
           <p>
             To restore access or resolve billing inquiries, contact platform support:
           </p>
@@ -34,7 +34,7 @@ export default function SuspendedPage() {
         <div className="pt-2">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold rounded-lg bg-surface hover:bg-surface-hover border border-border text-foreground transition-all"
+            className="inline-flex items-center justify-center px-5 py-2 text-sm font-medium rounded-full bg-muted hover:bg-muted/80 border border-border text-foreground transition-colors"
           >
             Return to Sign In
           </Link>
