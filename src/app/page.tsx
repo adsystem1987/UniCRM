@@ -916,35 +916,37 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing / Business Model Section: Free Forever DIY vs 3-Month Partner Pilot Pass */}
-        <section id="support-plan" className="py-10 sm:py-16 md:py-24 border-b border-border/40 bg-card/40">
+        <section id="support-plan" className="py-12 sm:py-20 md:py-28 border-b border-border/40 bg-gradient-to-b from-card/20 via-background to-card/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
-              <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 mb-3">
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-4">
+                <Sparkles className="h-3.5 w-3.5" />
                 Transparent Business Network Model
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-foreground">
-                Free Forever Core Software.<br className="hidden sm:inline" />Become a Verified Business Partner with 1-on-1 Onboarding.
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground leading-[1.12]">
+                Free Forever Core Software.<br className="hidden sm:inline" />
+                <span className="text-muted-foreground font-normal">Become a Verified Partner with 1-on-1 Onboarding.</span>
               </h2>
-              <p className="mt-2.5 sm:mt-3 text-muted-foreground text-sm sm:text-base md:text-lg font-medium">
-                Operate your business with zero per-seat fees. Choose DIY self-hosting for ₹0, or get our 1-on-1 guided onboarding &amp; partner pilot pass for ₹1,000 one-time.
+              <p className="mt-4 text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto font-normal leading-relaxed">
+                Operate your entire company with zero per-seat taxes. Choose DIY self-hosting for ₹0, or get our comprehensive 1-on-1 technical onboarding &amp; partner pilot pass for ₹1,000 one-time.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto items-stretch">
               {/* Plan 1: DIY UniCRM Core (Free Forever) */}
-              <div className="rounded-3xl border border-border/70 bg-card p-8 flex flex-col justify-between shadow-sm">
+              <div className="rounded-3xl border border-border bg-card/60 backdrop-blur-sm p-7 sm:p-9 flex flex-col justify-between shadow-sm hover:border-border-strong transition-all">
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-surface text-foreground border border-border">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-background text-foreground border border-border">
                       DIY Community Edition
                     </span>
-                    <span className="text-xs font-semibold text-muted-foreground">Free Forever</span>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Free Forever</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">DIY UniCRM Core</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground">DIY UniCRM Core</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2.5">
                     <span className="text-5xl font-black text-foreground">₹0</span>
                     <span className="text-sm text-muted-foreground font-semibold">/ lifetime free</span>
-                    <span className="rounded-full bg-emerald-500/15 border border-border px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                    <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                       Bring Your Own Cloud
                     </span>
                   </div>
@@ -952,14 +954,14 @@ export default function LandingPage() {
                   {/* Dynamic Scarcity Allocation Bar */}
                   <ScarcityAllocationBar />
 
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Complete access to the entire omnichannel CRM software. Bring your own cloud accounts with zero monthly subscription fees.
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                    Unrestricted access to the entire omnichannel CRM engine. Connect your own database and Google Drive with zero monthly subscription fees.
                   </p>
 
-                  <ul className="mt-6 space-y-3 text-sm text-foreground/90">
+                  <ul className="mt-6 space-y-3.5 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Dedicated Database (BYODB) — complete data privacy</span>
+                      <span>Dedicated Database (BYODB) — complete data sovereignty</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -971,9 +973,7 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>
-                        1-Click Micro-Pages &amp; Booking Desks (Stays, Events, Clinics, Salons &amp; Tours)
-                      </span>
+                      <span>1-Click Micro-Pages &amp; Digital Booking Catalog</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -981,14 +981,14 @@ export default function LandingPage() {
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Pre-Trained AI Squad Playbooks &amp; Strategy War Room</span>
+                      <span>Standard AI Gateway with bring-your-own-keys</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-border/40">
                   <Link href="/signup" className="block w-full">
-                    <Button variant="outline" className="w-full h-11 font-bold">
+                    <Button variant="outline" className="w-full h-12 font-bold rounded-full border-border hover:bg-card hover:border-primary/50 text-sm">
                       Start Free with DIY Setup
                     </Button>
                   </Link>
@@ -996,53 +996,62 @@ export default function LandingPage() {
               </div>
 
               {/* Plan 2: 3-Month Partner Pilot Pass — ₹1,000 Total */}
-              <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
-                <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
-                  Verified Business Partner
+              <div className="relative rounded-3xl border-2 border-primary bg-gradient-to-b from-card via-card to-card/90 p-7 sm:p-9 flex flex-col justify-between shadow-2xl shadow-primary/10">
+                <div className="absolute -top-3.5 right-8 rounded-full btn-gold-gradient px-3.5 py-1 text-[11px] font-black uppercase tracking-wider shadow-md">
+                  Most Popular
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
                       Guided 1-on-1 Onboarding
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">90-Day All-Inclusive</span>
+                    <span className="text-xs font-bold text-amber-500">90-Day VIP Pass</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">3-Month Partner Pilot Pass</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground">3-Month Partner Pilot Pass</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
-                    <span className="text-sm text-muted-foreground font-semibold">one-time onboarding &amp; 90-day pass</span>
+                    <span className="text-xs sm:text-sm text-muted-foreground font-semibold">one-time total &bull; 90-day access</span>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    For business owners, agencies &amp; service providers. We handle your entire setup on a private 1-on-1 call and accredit your business on the UniCRM Network.
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                    We personally handle your entire setup on a live 1-on-1 call, wire all channels, and bundle dedicated human Pro Support with autonomous AI squads.
                   </p>
 
-                  <ul className="mt-6 space-y-3 text-sm text-foreground/90">
+                  {/* Signature 3 Months AI Pro Squad Highlight */}
+                  <div className="mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-primary/10 to-transparent border border-emerald-500/25 space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-black text-emerald-600 dark:text-emerald-400">
+                      <Sparkles className="h-4 w-4 shrink-0" />
+                      <span>INCLUDES 3 MONTHS AI PRO SQUAD + PRO SUPPORT</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-normal">
+                      Full access to our pre-trained autonomous sales &amp; underwriting bots, automated follow-up sequences, plus direct priority WhatsApp support from the founders.
+                    </p>
+                  </div>
+
+                  <ul className="mt-5 space-y-3.5 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Private 1-on-1 Guided Setup Call</strong> with our founding team</span>
+                      <span><strong>Private 1-on-1 Setup Call</strong> with our technical founding team</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Complete BYOD Cloud Wiring</strong> (WhatsApp QR, Drive &amp; Calendar)</span>
+                      <span><strong>3 Months AI Pro Squad Access:</strong> Autonomous underwriter &amp; lead nurturing bots</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Invite Unlimited Team Members</strong> — zero per-seat fees forever</span>
+                      <span><strong>Dedicated Pro Support:</strong> Direct priority WhatsApp access for 90 days</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Verified Business Partner Accreditation</strong> on UniCRM Network</span>
+                      <span><strong>Complete BYOD Cloud Wiring:</strong> WhatsApp QR, Drive pool &amp; calendar setup</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Instant Digital Catalog / Micro-Page</strong> with 1-click orders</span>
+                      <span><strong>Verified Business Partner Accreditation</strong> on UniCRM Lending Network</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                        Managed uninterrupted database — zero weekly pruning worries
-                      </span>
+                      <span><strong>Zero Per-Seat Taxes Forever:</strong> Invite unlimited staff &amp; agents</span>
                     </li>
                   </ul>
                 </div>
@@ -1050,14 +1059,14 @@ export default function LandingPage() {
                 <div className="mt-8 pt-6 border-t border-border/40 space-y-2">
                   <ContactButton
                     variant="cta"
-                    className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
+                    className="w-full h-13 text-sm sm:text-base font-black rounded-full tracking-tight btn-gold-gradient shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all"
                     defaultTopic="Get 3-Month Partner Pilot Pass (₹1,000)"
                     icon="message"
                   >
                     <span>Claim Partner Pilot Pass (₹1,000)</span>
                   </ContactButton>
-                  <p className="text-[11px] text-center text-muted-foreground">
-                    One-time onboarding cost &bull; 90-day full access &bull; No automatic renewals
+                  <p className="text-[11px] text-center text-muted-foreground font-medium">
+                    One-time onboarding cost &bull; 90-day full access &bull; Zero automatic rebilling
                   </p>
                 </div>
               </div>
