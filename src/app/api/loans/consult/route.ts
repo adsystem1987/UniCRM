@@ -58,6 +58,93 @@ Guidelines:
       }),
     });
 
+    // If messages length indicates lead has provided key anchors (amount, turnover, or property),
+    // automatically structure or update a qualified deal under "Lending & Capital Desk" pipeline
+    if (formattedMessages.length >= 4 && accountId) {
+      try {
+        const adminSupabase = getAdminClient();
+        
+        // Ensure Lending Desk pipeline exists
+        const { data: pipelineData } = await adminSupabase.rpc('ensure_lending_pipeline', {
+          p_account_id: accountId,
+          p_user_id: userId,
+        });
+
+        const pipelineId = pipelineData;
+
+        if (pipelineId) {
+          // Get Stage 1 (New Qualified Leads)
+          const { data: stageData } = await adminSupabase
+            .from('pipeline_stages')
+            .select('id')
+            .eq('pipeline_id', pipelineId)
+            .order('position', { ascending: true })
+            .limit(1)
+            .single();
+
+          if (stageData?.id) {
+            // Find or create borrower contact
+            let contactId: string | null = null;
+            const userPhone = applicantProfile?.phone || '';
+            const userName = applicantProfile?.name || 'Loan Applicant';
+
+            if (userPhone) {
+              const { data: existingContact } = await adminSupabase
+                .from('contacts')
+                .select('id')
+                .eq('account_id', accountId)
+                .eq('phone', userPhone)
+                .limit(1)
+                .single();
+
+              if (existingContact?.id) {
+                contactId = existingContact.id;
+              } else {
+                const { data: newContact } = await adminSupabase
+                  .from('contacts')
+                  .insert({
+                    account_id: accountId,
+                    user_id: userId,
+                    name: userName,
+                    phone: userPhone,
+                  })
+                  .select('id')
+                  .single();
+                contactId = newContact?.id || null;
+              }
+            }
+
+            // Check if active deal already exists for this contact or user
+            if (contactId) {
+              const { data: existingDeal } = await adminSupabase
+                .from('deals')
+                .select('id')
+                .eq('account_id', accountId)
+                .eq('pipeline_id', pipelineId)
+                .eq('contact_id', contactId)
+                .limit(1)
+                .single();
+
+              if (!existingDeal?.id) {
+                await adminSupabase.from('deals').insert({
+                  account_id: accountId,
+                  user_id: userId,
+                  pipeline_id: pipelineId,
+                  stage_id: stageData.id,
+                  contact_id: contactId,
+                  title: `${applicantProfile?.category ? applicantProfile.category.toUpperCase() : 'BUSINESS'} LOAN INQUIRY`,
+                  value: applicantProfile?.amount ? parseFloat(applicantProfile.amount.replace(/[^0-9.]/g, '')) || 500000 : 500000,
+                  status: 'open',
+                });
+              }
+            }
+          }
+        }
+      } catch (pipelineErr) {
+        console.error('[loans/consult] pipeline auto-qualify error:', pipelineErr);
+      }
+    }
+
     if (!aiRes.ok) {
       return NextResponse.json({
         reply: "Thank you for sharing. Could you let me know if you or your family own any residential or commercial property, or what your average monthly business turnover is? That helps us find the best NBFC partners for you.",

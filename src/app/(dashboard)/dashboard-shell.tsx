@@ -49,7 +49,10 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         setSetupChecked(true);
 
         // If not fully configured and NOT already on settings page, show mandatory modal
-        if (!data.isFullyConfigured) {
+        // (Exempt users browsing /loans or registered as customer to eliminate friction)
+        const isCustomerOrLoanView = pathname?.startsWith("/loans") || profile?.role === "customer";
+
+        if (!data.isFullyConfigured && !isCustomerOrLoanView) {
           if (!pathname?.startsWith("/settings")) {
             setSetupModalOpen(true);
           } else {
