@@ -7,6 +7,7 @@ import { dispatchInboundToFlows } from '@/lib/flows/engine';
 import { dispatchInboundToAiReply } from '@/lib/ai/auto-reply';
 import { handlePhoneVerificationHandshake } from '@/lib/auth/phone-handshake';
 import { updateContactContinuousMemory } from '@/lib/ai/continuous-memory';
+import { handleLoanWhatsAppInbound } from '@/lib/loans/ai-reply';
 
 // Lazy-initialized admin client for webhook delivery
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,12 +99,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    // 1. Find or create Contact
+    // 1. Find or create Contact (matching with or without +/91 prefix)
+    const rawCleanPhone = phone.replace(/\D/g, '');
+    const altPhone = rawCleanPhone.startsWith('91') && rawCleanPhone.length === 12 ? rawCleanPhone.slice(2) : `91${rawCleanPhone}`;
+    const searchPhones = Array.from(new Set([phone, rawCleanPhone, altPhone, `+${rawCleanPhone}`, `+${altPhone}`]));
+
     let { data: contact } = await supabase
       .from('contacts')
       .select('id, name')
       .eq('account_id', accountId)
-      .eq('phone', phone)
+      .in('phone', searchPhones)
+      .limit(1)
       .maybeSingle();
 
     let isNewContact = false;
@@ -295,8 +301,25 @@ export async function POST(req: NextRequest) {
         console.error('[evolution-webhook] automations dispatch error:', autoErr);
       }
 
-      // 3. Fallback AI Smart Auto-Reply (if configured and flow didn't consume)
-      if (!flowConsumed && messageContent.trim()) {
+      // 3. Loan Advisory & Capital Desk Inbound Router
+      // If this conversation belongs to a loan applicant, route to loan underwriter handler
+      let loanHandled = false;
+      try {
+        loanHandled = await handleLoanWhatsAppInbound({
+          accountId,
+          conversationId: conv.id,
+          contactId: contact.id,
+          phone,
+          contactName: contact.name || pushName,
+          messageContent,
+          instanceName,
+        });
+      } catch (loanErr) {
+        console.error('[evolution-webhook] loan inbound handling error:', loanErr);
+      }
+
+      // 4. Fallback AI Smart Auto-Reply (if configured and flow / loan didn't consume)
+      if (!flowConsumed && !loanHandled && messageContent.trim()) {
         try {
           await dispatchInboundToAiReply({
             accountId,
