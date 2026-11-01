@@ -49,8 +49,11 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         setSetupChecked(true);
 
         // If not fully configured and NOT already on settings page, show mandatory modal
-        // (Exempt users browsing /loans or registered as customer to eliminate friction)
-        const isCustomerOrLoanView = pathname?.startsWith("/loans") || profile?.role === "customer";
+        // (Exempt customers and loan seekers so they never see agency BYOD modal)
+        const isCustomerOrLoanView = 
+          pathname?.startsWith("/loans") || 
+          profile?.user_type === "customer" || 
+          profile?.role === "customer";
 
         if (!data.isFullyConfigured && !isCustomerOrLoanView) {
           if (!pathname?.startsWith("/settings")) {
@@ -126,9 +129,14 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      {/* Mandatory Onboarding & Storage/DB Barrier */}
+      {/* Mandatory Onboarding & Storage/DB Barrier (Exempt for Customers) */}
       <MandatorySetupModal
-        open={phoneVerifiedState && setupModalOpen}
+        open={
+          phoneVerifiedState && 
+          setupModalOpen && 
+          profile?.user_type !== "customer" && 
+          profile?.role !== "customer"
+        }
         googleDriveConnected={googleDriveConnected}
         supabaseConnected={supabaseConnected}
         onRefresh={checkSetupStatus}

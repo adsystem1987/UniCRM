@@ -24,6 +24,7 @@ export interface Profile {
    * break.
    */
   role: string;
+  user_type?: string;
   /**
    * Opted-in beta feature keys for this account. The column survives
    * for future beta gates; no current feature reads it (Flows was
