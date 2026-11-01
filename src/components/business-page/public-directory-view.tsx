@@ -442,6 +442,32 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
           </div>
         )}
       </main>
+
+      {/* Directory Footer Link to Yellow Pages */}
+      <footer className="mt-16 border-t border-border bg-muted/20 px-4 py-8 text-xs text-muted-foreground">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-foreground">UniCRM Directory</span>
+            <span>•</span>
+            <span>Zero-Commission Direct WhatsApp Booking Platform</span>
+          </div>
+
+          <div className="flex items-center gap-6">
+            <Link
+              href="/p/directory"
+              className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+            >
+              Yellow Pages (A–Z Index)
+            </Link>
+            <Link href="/" className="hover:text-foreground transition-colors">
+              Platform Home
+            </Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">
+              Submit Business Free
+            </Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

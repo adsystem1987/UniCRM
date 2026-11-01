@@ -888,6 +888,10 @@ export function PublicBusinessPageView({ page }: { page: BusinessPageRecord }) {
             • Zero-Commission Direct WhatsApp Platform
           </p>
           <div className="flex items-center justify-center gap-4 text-xs font-medium text-muted-foreground">
+            <Link href="/p/directory" className="hover:text-foreground hover:underline font-semibold text-emerald-600 dark:text-emerald-400">
+              Yellow Pages (A–Z Index)
+            </Link>
+            <span>•</span>
             <Link href="/p" className="hover:text-foreground hover:underline">
               Browse Business Directory
             </Link>

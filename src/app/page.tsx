@@ -1131,7 +1131,10 @@ export default function LandingPage() {
             <span>A Community-Powered Omnichannel Project</span>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link href="/p/directory" className="hover:text-foreground transition-colors font-semibold text-emerald-600 dark:text-emerald-400">
+              Yellow Pages (A–Z Directory)
+            </Link>
             <Link href="/terms" className="hover:text-foreground transition-colors">
               Terms of Service
             </Link>
