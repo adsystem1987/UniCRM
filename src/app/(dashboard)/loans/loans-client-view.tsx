@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -88,11 +89,13 @@ const LOAN_TYPES = [
 
 export function LoansClientView() {
   const { account, profile, isPlatformOwner } = useAuth();
+  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<"apply" | "partner_desk">("apply");
   const [step, setStep] = useState<"category" | "chat" | "submitted">("category");
   const [selectedCategory, setSelectedCategory] = useState("business");
   const [requestedAmount, setRequestedAmount] = useState("₹15,00,000");
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
 
   // Track conversation ID and takeover status
   const [conversationId, setConversationId] = useState<string | null>(() => {
@@ -115,6 +118,54 @@ export function LoansClientView() {
   const [inputMessage, setInputMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
+
+  // Restore conversation from deep link (?resume=<convId>) or local cache
+  useEffect(() => {
+    const resumeId = searchParams?.get("resume");
+    const targetConvId = resumeId || conversationId;
+
+    if (!targetConvId) return;
+
+    // If resume parameter is present, we jump directly to chat and load historical context
+    if (resumeId) {
+      setConversationId(resumeId);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("unicrm_loan_conv_id", resumeId);
+      }
+      setStep("chat");
+    }
+
+    let isCancelled = false;
+    async function loadConversation(cId: string) {
+      try {
+        setIsLoadingSession(true);
+        const res = await fetch(`/api/loans/consult?conversationId=${encodeURIComponent(cId)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isCancelled || !data?.success) return;
+
+        if (Array.isArray(data.messages) && data.messages.length > 0) {
+          setMessages(data.messages);
+        }
+        if (data.isHumanTakenOver !== undefined) {
+          setIsHumanTakenOver(data.isHumanTakenOver);
+        }
+        if (resumeId) {
+          setStep("chat");
+        }
+      } catch (err) {
+        console.warn("[loans] error restoring conversation context:", err);
+      } finally {
+        if (!isCancelled) setIsLoadingSession(false);
+      }
+    }
+
+    loadConversation(targetConvId);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [searchParams]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -405,6 +456,11 @@ export function LoansClientView() {
                     ) : (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                         <Sparkles className="w-3 h-3" /> AI Active
+                      </span>
+                    )}
+                    {isLoadingSession && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20 animate-pulse">
+                        <Loader2 className="w-3 h-3 animate-spin" /> Syncing Thread...
                       </span>
                     )}
                   </div>

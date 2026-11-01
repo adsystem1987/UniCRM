@@ -56,6 +56,93 @@ function extractLoanDetails(allMessages: any[], profile: any = {}) {
 }
 
 /**
+ * GET /api/loans/consult?conversationId=<id>
+ * Hydrates an existing conversation when a borrower resumes via deep-link ?resume=<id>
+ */
+export async function GET(req: NextRequest) {
+  try {
+    const { accountId } = await getCurrentAccount();
+    const { searchParams } = new URL(req.url);
+    const conversationId = searchParams.get("conversationId");
+
+    if (!conversationId) {
+      return NextResponse.json({ error: "conversationId is required" }, { status: 400 });
+    }
+
+    const adminSupabase = getAdminClient();
+
+    // Verify conversation belongs to this account or get conversation details
+    const { data: conv, error: convErr } = await adminSupabase
+      .from("conversations")
+      .select(`
+        id,
+        account_id,
+        status,
+        ai_autoreply_disabled,
+        contact:contacts (
+          id,
+          name,
+          phone
+        )
+      `)
+      .eq("id", conversationId)
+      .maybeSingle();
+
+    if (convErr || !conv) {
+      return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
+    }
+
+    // Safety: ensure it matches account if user is signed in to an account
+    if (accountId && conv.account_id && conv.account_id !== accountId) {
+      return NextResponse.json({ error: "Unauthorized access to conversation" }, { status: 403 });
+    }
+
+    // Fetch messages for this conversation ordered chronologically
+    const { data: dbMessages, error: msgErr } = await adminSupabase
+      .from("messages")
+      .select("id, sender_type, content_text, created_at")
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: true });
+
+    if (msgErr) {
+      console.error("[loans/consult] error fetching messages:", msgErr);
+      return NextResponse.json({ error: "Failed to load messages" }, { status: 500 });
+    }
+
+    const formattedMessages = (dbMessages || []).map((m: any) => ({
+      id: m.id,
+      sender: m.sender_type === "customer" ? "user" : m.sender_type === "agent" ? "human_agent" : "ai",
+      text: m.content_text || "",
+      time: new Date(m.created_at || Date.now()).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }));
+
+    // If there were no messages stored, keep a fallback greeting
+    if (formattedMessages.length === 0) {
+      formattedMessages.push({
+        id: "m-welcome",
+        sender: "ai",
+        text: "Namaste! 🙏 Welcome back to your loan consultation desk. How can we proceed with your application today?",
+        time: "Just now",
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      conversationId: conv.id,
+      isHumanTakenOver: conv.ai_autoreply_disabled === true,
+      contact: (conv as any).contact || null,
+      messages: formattedMessages,
+    });
+  } catch (err: any) {
+    console.error("[loans/consult] GET error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+/**
  * POST /api/loans/consult
  * Conversational AI Loan Underwriter with DB persistence:
  * - Persists conversation and messages in `conversations` & `messages`
