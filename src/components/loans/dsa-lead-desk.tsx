@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Shield,
   ShieldCheck,
@@ -19,9 +20,19 @@ import {
   Check,
   X,
   ExternalLink,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
+interface PartnerWorkspace {
+  id: string;
+  name: string;
+  ownerId?: string;
+  ownerName?: string;
+  email?: string;
+  phone?: string;
+}
 
 interface LoanApplication {
   id: string;
@@ -34,6 +45,7 @@ interface LoanApplication {
   amount_requested: number;
   monthly_turnover?: string;
   status: string;
+  assigned_to_dsa_id?: string;
   isMasked?: boolean;
   created_at: string;
 }
@@ -56,12 +68,18 @@ const QUICK_DOC_TEMPLATES = [
 ];
 
 export function DsaLeadDesk() {
+  const { isPlatformOwner } = useAuth();
   const [applications, setApplications] = useState<LoanApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<LoanApplication | null>(null);
   const [documents, setDocuments] = useState<DocumentRequest[]>([]);
   const [loadingDocs, setLoadingDocs] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
+
+  // Platform Owner Assignment State
+  const [partners, setPartners] = useState<PartnerWorkspace[]>([]);
+  const [selectedPartnerId, setSelectedPartnerId] = useState<string>("");
+  const [isAssigning, setIsAssigning] = useState(false);
 
   const fetchApplications = async () => {
     try {
@@ -81,9 +99,58 @@ export function DsaLeadDesk() {
     }
   };
 
+  const fetchPartners = async () => {
+    if (!isPlatformOwner) return;
+    try {
+      const res = await fetch("/api/loans/partners");
+      if (res.ok) {
+        const data = await res.json();
+        setPartners(data.partners || []);
+        if (data.partners?.length > 0) {
+          setSelectedPartnerId(data.partners[0].ownerId || "");
+        }
+      }
+    } catch {
+      // Graceful fallback
+    }
+  };
+
   useEffect(() => {
     fetchApplications();
-  }, []);
+    if (isPlatformOwner) {
+      fetchPartners();
+    }
+  }, [isPlatformOwner]);
+
+  const handleAssignLead = async (appId: string) => {
+    if (!selectedPartnerId) {
+      toast.error("Please select a partner to assign.");
+      return;
+    }
+    try {
+      setIsAssigning(true);
+      const res = await fetch("/api/loans/applications/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          applicationId: appId,
+          partnerUserId: selectedPartnerId,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success("Lead assigned to partner workspace successfully!");
+        await fetchApplications();
+      } else {
+        toast.error(data.error || "Failed to assign lead");
+      }
+    } catch {
+      toast.error("Network error while assigning lead");
+    } finally {
+      setIsAssigning(false);
+    }
+  };
 
   const fetchDocuments = async (appId: string) => {
     try {
@@ -292,6 +359,51 @@ export function DsaLeadDesk() {
                   </Button>
                 )}
               </div>
+
+              {/* Platform Owner Lead Assignment Bar (Only visible to master admin) */}
+              {isPlatformOwner && (
+                <div className="mt-3 p-3.5 rounded-xl border border-primary/20 bg-primary/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="w-4 h-4 text-primary shrink-0" />
+                    <div>
+                      <div className="text-xs font-bold text-foreground">
+                        Allocate Lead to Verified Partner Workspace:
+                      </div>
+                      <div className="text-[10px] text-muted-foreground">
+                        File will immediately transfer to the partner desk with masked borrower contacts.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <select
+                      value={selectedPartnerId}
+                      onChange={(e) => setSelectedPartnerId(e.target.value)}
+                      className="text-xs px-3 py-1.5 rounded-lg border border-border bg-background text-foreground font-medium outline-none focus:border-primary flex-1 sm:w-56"
+                    >
+                      {partners.length === 0 ? (
+                        <option value="">No registered partner workspaces</option>
+                      ) : (
+                        partners.map((p) => (
+                          <option key={p.id} value={p.ownerId || p.id}>
+                            {p.name} ({p.ownerName})
+                          </option>
+                        ))
+                      )}
+                    </select>
+
+                    <Button
+                      size="sm"
+                      onClick={() => handleAssignLead(selectedApp.id)}
+                      disabled={isAssigning || !selectedPartnerId}
+                      className="h-8 px-3 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 shrink-0"
+                    >
+                      {isAssigning ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                      <span>Assign</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Document Collection Tracker */}
