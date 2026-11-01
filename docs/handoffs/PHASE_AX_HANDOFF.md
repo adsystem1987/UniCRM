@@ -4,11 +4,11 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.5.0`  
+**Current Version:** `v1.6.0`  
 **Date:** 2026-11-02  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `81f01af`  
-**Status:** Clean working tree, pushed to `origin staging`.
+**Latest Commit:** `37bd554`  
+**Status:** Clean working tree, waiting for user approval to push to `origin staging`.
 
 ---
 
@@ -109,6 +109,7 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
+| **v1.6.0** | 2026-11-02 | Workplace Sun & Moon contrast overhaul: eradicated hardcoded slate/gray/white color mismatches in `/outreach`, `/claim`, `/opt-out`, and modals (`lead-pack-order-dialog`, `ai-pro-order-dialog`, `upi-support-dialog`) using semantic tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`). Verified with `vitest` and `tsc`. | `outreach-console-view.tsx`, `claim/page.tsx`, `opt-out/page.tsx`, `lead-pack-order-dialog.tsx`, `ai-pro-order-dialog.tsx`, `upi-support-dialog.tsx` | `37bd554` |
 | **v1.5.0** | 2026-11-02 | Restyled pricing section with `taste-skill`: prominently highlighted **3 Months AI Pro Squad Access + Dedicated Founder Pro Support** on the 3-Month Partner Pilot Pass (₹1,000). | `src/app/page.tsx` | `c12db08` |
 | **v1.4.0** | 2026-11-02 | Restyled landing page hero and business capital desk using `taste-skill` anti-slop guidelines: bold anti-rent hook, high-contrast emotional CTA ("Claim Your Free Workplace"), and institutional credit desk framing. | `src/app/page.tsx` | `9446383` |
 | **v1.3.0** | 2026-11-02 | Added scheduled inactivity drop-off recovery trigger via `GET /api/loans/followup` with anti-spam check, cron header validation, and deal/loan inquiry scanning. | `api/loans/followup/route.ts` | `deedf39` |
