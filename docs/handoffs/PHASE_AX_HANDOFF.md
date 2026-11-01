@@ -4,10 +4,10 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.7.0`  
+**Current Version:** `v1.8.0`  
 **Date:** 2026-11-02  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `3df0f8e`  
+**Latest Commit:** `9a6c1fe`  
 **Status:** Clean working tree, waiting for user approval to push to `origin staging`.
 
 ---
@@ -109,6 +109,7 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
+| **v1.8.0** | 2026-11-02 | Adopted `AgriciDaniel/claude-seo` suite & runtime; upgraded agent-readiness (`llms.txt`, `robots.ts`, `sitemap.ts`) with `/loans` exposure and injected Schema.org `SoftwareApplication` & `Organization` JSON-LD structured data into root layout. | `public/llms.txt`, `src/app/robots.ts`, `src/app/sitemap.ts`, `src/app/layout.tsx` | `9a6c1fe` |
 | **v1.7.0** | 2026-11-02 | Restyled micro pages with `taste-skill` anti-slop guidelines: high CTR, confident emotional headlines, and pure semantic tokens across `/claim`, `/opt-out`, `/contact`, `/suspended`, `/privacy`, and `/terms`. Verified 0 type errors and 21/21 tests passing. | `src/app/claim/page.tsx`, `src/app/contact/page.tsx`, `src/app/opt-out/page.tsx`, `src/app/privacy/page.tsx`, `src/app/suspended/page.tsx`, `src/app/terms/page.tsx` | `3df0f8e` |
 | **v1.6.0** | 2026-11-02 | Workplace Sun & Moon contrast overhaul: eradicated hardcoded slate/gray/white color mismatches in `/outreach`, `/claim`, `/opt-out`, and modals (`lead-pack-order-dialog`, `ai-pro-order-dialog`, `upi-support-dialog`) using semantic tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`). Verified with `vitest` and `tsc`. | `outreach-console-view.tsx`, `claim/page.tsx`, `opt-out/page.tsx`, `lead-pack-order-dialog.tsx`, `ai-pro-order-dialog.tsx`, `upi-support-dialog.tsx` | `37bd554` |
 | **v1.5.0** | 2026-11-02 | Restyled pricing section with `taste-skill`: prominently highlighted **3 Months AI Pro Squad Access + Dedicated Founder Pro Support** on the 3-Month Partner Pilot Pass (₹1,000). | `src/app/page.tsx` | `c12db08` |
