@@ -144,14 +144,16 @@ export function UpiSupportDialog({
           </button>
 
           {/* QR Code */}
-          <div className="flex flex-col items-center justify-center p-3 bg-white rounded-xl shadow-xs border border-border">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={qrUrl}
-              alt={`Scan to pay ₹${effectiveAmount} via UPI`}
-              className="h-36 w-36 object-contain rounded"
-            />
-            <span className="mt-1 text-[11px] font-bold text-gray-800">
+          <div className="flex flex-col items-center justify-center p-3 bg-card text-foreground rounded-xl shadow-xs border border-border">
+            <div className="p-2 bg-white rounded-lg border border-border/40">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={qrUrl}
+                alt={`Scan to pay ₹${effectiveAmount} via UPI`}
+                className="h-36 w-36 object-contain rounded"
+              />
+            </div>
+            <span className="mt-2 text-[11px] font-bold text-foreground">
               Total: ₹{effectiveAmount} {isDfySelected ? "(One-Time Setup)" : "(Monthly Support)"}
             </span>
           </div>

@@ -195,26 +195,26 @@ export function AiProOrderDialog({
             </div>
 
             {/* QR Code Container */}
-            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-white text-gray-900 shadow-xs relative">
-              <div className="relative flex items-center justify-center min-h-[160px] w-full">
+            <div className="flex flex-col items-center justify-center p-3 rounded-xl border border-border bg-card text-foreground shadow-xs relative">
+              <div className="relative flex items-center justify-center min-h-[160px] w-full p-2 bg-white rounded-lg border border-border/40">
                 <img
                   src={qrUrl}
                   alt={`Scan to pay ₹${amount}`}
                   onLoad={() => setQrLoaded(true)}
-                  className={`h-36 w-36 sm:h-40 sm:w-40 object-contain rounded-lg transition-opacity duration-200 ${
+                  className={`h-36 w-36 sm:h-40 sm:w-40 object-contain rounded transition-opacity duration-200 ${
                     qrLoaded ? "opacity-100" : "opacity-0"
                   }`}
                 />
                 {!qrLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs text-gray-500 font-medium">Generating UPI QR...</span>
+                    <span className="text-xs text-muted-foreground font-medium">Generating UPI QR...</span>
                   </div>
                 )}
               </div>
-              <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-gray-900">
+              <div className="mt-2.5 flex items-center gap-1.5 text-xs font-bold text-foreground">
                 <span>Amount: ₹{amount}</span>
-                <span className="text-gray-400">•</span>
-                <span className="text-indigo-700">1 Month AI Pro Router</span>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-indigo-600 dark:text-indigo-400">1 Month AI Pro Router</span>
               </div>
             </div>
 
