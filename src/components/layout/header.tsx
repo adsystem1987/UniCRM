@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { LogOut, Menu, Settings as SettingsIcon, User } from "lucide-react";
+import { LogOut, Menu, Settings as SettingsIcon, User, Building2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import {
   Avatar,
   AvatarFallback,
@@ -48,7 +49,26 @@ import { useTranslations } from "next-intl";
 export function Header({ onOpenSidebar }: HeaderProps) {
   const t = useTranslations("Header");
   const pathname = usePathname();
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, refreshProfile } = useAuth();
+
+  const handleUpgradeToBusiness = async () => {
+    try {
+      const res = await fetch("/api/auth/set-user-type", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userType: "business" }),
+      });
+      if (res.ok) {
+        toast.success("Upgraded to Business Workspace! Please configure your storage & database.");
+        await refreshProfile();
+        window.location.reload();
+      } else {
+        toast.error("Failed to upgrade workspace. Please try again.");
+      }
+    } catch {
+      toast.error("Network error");
+    }
+  };
   const titleKey = getPageTitleKey(pathname);
 
   const initial =
@@ -110,6 +130,19 @@ export function Header({ onOpenSidebar }: HeaderProps) {
             </p>
           </div>
           <DropdownMenuSeparator className="bg-border" />
+          {profile?.user_type === "customer" && (
+            <>
+              <DropdownMenuItem
+                onClick={handleUpgradeToBusiness}
+                className="cursor-pointer bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold focus:bg-emerald-500/20 focus:text-emerald-500"
+              >
+                <Building2 className="size-4 shrink-0 text-emerald-500" />
+                <span>Activate Business Desk</span>
+                <Sparkles className="size-3.5 ml-auto text-amber-500" />
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="bg-border" />
+            </>
+          )}
           <DropdownMenuItem
             render={
               <Link

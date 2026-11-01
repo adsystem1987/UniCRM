@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useTotalUnread } from "@/hooks/use-total-unread";
 import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
+import { toast } from "sonner";
 import {
   Bell,
   Bot,
@@ -32,6 +33,9 @@ import {
   Receipt,
   Compass,
   Globe,
+  Building2,
+  Sparkles,
+  ArrowRight,
   Landmark,
 } from "lucide-react";
 
@@ -132,7 +136,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentTab = searchParams?.get("tab");
-  const { profile, profileLoading, account, accountRole, isPlatformOwner, signOut } = useAuth();
+  const { profile, profileLoading, account, accountRole, isPlatformOwner, signOut, refreshProfile } = useAuth();
   const totalUnread = useTotalUnread();
   const unreadNotifications = useUnreadNotifications();
   // Only surface the account-name strip when it actually carries
@@ -147,6 +151,26 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
     !profileLoading &&
     !!account?.name &&
     account.name !== profile?.full_name;
+
+  // Upgrade from customer to business workspace
+  const handleUpgradeToBusiness = async () => {
+    try {
+      const res = await fetch("/api/auth/set-user-type", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userType: "business" }),
+      });
+      if (res.ok) {
+        toast.success("Upgraded to Business Workspace! Please configure your storage & database.");
+        await refreshProfile();
+        window.location.reload();
+      } else {
+        toast.error("Failed to upgrade workspace. Please try again.");
+      }
+    } catch {
+      toast.error("Network error");
+    }
+  };
 
   // Close the drawer when route changes — users opened it to navigate,
   // so once they pick a destination the drawer should get out of the way.
@@ -423,8 +447,21 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
               align="end"
               side="top"
               sideOffset={6}
-              className="min-w-56 bg-popover text-popover-foreground ring-border"
+              className="min-w-60 bg-popover text-popover-foreground ring-border"
             >
+              {profile?.user_type === "customer" && (
+                <>
+                  <DropdownMenuItem
+                    onClick={handleUpgradeToBusiness}
+                    className="cursor-pointer bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold focus:bg-emerald-500/20 focus:text-emerald-500"
+                  >
+                    <Building2 className="size-4 shrink-0 text-emerald-500" />
+                    <span>Activate Business Desk</span>
+                    <Sparkles className="size-3.5 ml-auto text-amber-500" />
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-border" />
+                </>
+              )}
               <DropdownMenuItem
                 render={
                   <Link
