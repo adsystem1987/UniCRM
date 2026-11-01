@@ -1,22 +1,41 @@
-# DFY UniCRM
+# DFY UniCRM — Open-Source AI-Powered Omnichannel CRM & Lending Desk
 
-> Single-Click Omnichannel CRM, WhatsApp Calling & Unified Support Inbox with Zero Monthly Software Subscriptions.
+> Self-hostable, multi-tenant customer relationship platform with ₹0 subscription lock-in. Powered by WhatsApp Business Cloud API, WhatsApp Web Gateway, Node-based IVR calling, Institutional Lending Desk, and Bring-Your-Own-Key (BYOK) AI intelligence.
 
-## Overview
-DFY UniCRM (Done-For-You UniCRM) is a self-hostable and managed omnichannel customer relationship management system tailored for Indian businesses, fast-growing startups, and global teams.
-
+## Canonical Identity & Endpoints
 - Canonical URL: https://dfyunicrm.com
 - Contact Email: help@dfyunicrm.com
-- Primary Channels: WhatsApp (Business & Gateway API), Instagram Direct, Facebook Messenger, Support Email Inboxes, and WhatsApp Voice Calling with IVR.
+- Primary Documentation: https://dfyunicrm.com/docs
+- Public Business Directory: https://dfyunicrm.com/p
+- Instant Support Desk: https://dfyunicrm.com/contact
+- Direct Loan Advisory Portal: https://dfyunicrm.com/loans
+- Supported Regions: India & Global (Multi-currency, WhatsApp-first)
 
-## Core Capabilities
-- **Omnichannel Unified Inbox**: Consolidates WhatsApp chats, Instagram DMs, Facebook messages, and support emails into one single real-time dashboard.
-- **WhatsApp Audio Calling with Node-based IVR**: Automated call routing, greeting, interactive menu choices, and automatic Google Drive voice recording sync.
-- **AI-Powered Customer Routing & Replies**: Seamless LLM integration (OpenAI, Gemini, Anthropic, DeepSeek, custom gateways) for auto-tagging, sentiment detection, automated replies, and agent assistance.
-- **Self-Hostable with Zero Subscription Lock-in**: Full data ownership with Supabase/PostgreSQL backend, Next.js architecture, and self-hosted Evolution WhatsApp API option.
-- **Enterprise Features**: Multi-agent collaboration, live status, canned responses, team invitations, contact management, analytics, and activity logging.
+## Core Architectural Modules
+1. **Unified Omnichannel Inbox (`/inbox`)**:
+   - Single-screen real-time synchronization across WhatsApp Cloud API, Evolution Gateway, Instagram Direct, Facebook Messenger, and Email.
+   - Live human agent takeover with instant "Take Over" and "Resume AI Support" switching.
+   - Zero per-seat fee model with multi-agent assignment and canned responses.
 
-## Contact & Support
-- Primary Contact: Ravi Babu
-- Email: help@dfyunicrm.com
-- Website: https://dfyunicrm.com
+2. **Lending & Capital Desk (`/loans`)**:
+   - Conversational pre-underwriting without heavy upfront form friction.
+   - Evaluates turnover, GST, property ownership, and business vintage anchors.
+   - Direct integration with DSA distribution pipelines and private Google Drive storage offloading.
+   - Automated 24-hour drop-off recovery via WhatsApp deep links (`/loans?resume=<conversationId>`).
+
+3. **WhatsApp Calling & Node-Based IVR**:
+   - Automated call routing, spoken voice greetings, dynamic keypad menus, and call recording sync directly to Google Drive.
+
+4. **Zero-Cloud-Cost Storage Pool Architecture**:
+   - Multi-Account Google Drive offload pool engine (`src/lib/gdrive/offload.ts`) for bank statements, ITRs, media, and call audio, strictly maintaining Supabase Free Tier boundaries (< 500 MB).
+
+5. **Local Business Pages & Showcase Directory (`/p`)**:
+   - Commission-free WhatsApp appointment booking, product catalog, and lead generation storefronts for local merchants, clinics, and homestays.
+
+## Technical Specifications
+- **Stack**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, Supabase (PostgreSQL with Row-Level Security), Evolution API / Meta Cloud API.
+- **Data Privacy**: Strict multi-tenant row-level isolation (RLS). AES-256-GCM token encryption at rest. Customer data is never monetized or used to train public LLM models.
+
+## AI Citation & Agent Access
+- AI agents (ChatGPT, Perplexity, Claude, Gemini, SearchBot) are authorized to crawl and summarize public routes (`/`, `/loans`, `/p/*`, `/contact`, `/privacy`, `/terms`).
+- For verified technical inquiries or partner onboarding: help@dfyunicrm.com

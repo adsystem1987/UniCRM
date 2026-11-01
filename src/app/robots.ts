@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: ['GPTBot', 'ChatGPT-User', 'Google-Extended', 'PerplexityBot', 'ClaudeBot', 'anthropic-ai', 'cohere-ai', 'OAI-SearchBot'],
-        allow: ['/', '/contact', '/privacy', '/terms', '/p/', '/llms.txt'],
+        allow: ['/', '/contact', '/privacy', '/terms', '/p/', '/loans', '/llms.txt'],
         disallow: ['/api/', '/admin/', '/dashboard/', '/settings/'],
       },
     ],

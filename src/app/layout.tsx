@@ -152,6 +152,48 @@ export default async function RootLayout({
           id="theme-boot"
           dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }}
         />
+        {/* Structured Data (Schema.org) for Organization and SoftwareApplication */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": "DFY UniCRM",
+                "applicationCategory": "BusinessApplication",
+                "operatingSystem": "Web, Cloud, Self-Hosted",
+                "url": "https://dfyunicrm.com",
+                "description": "Open-Source AI-Powered Omnichannel CRM, WhatsApp Calling & Lending Desk with zero per-seat subscription lock-in.",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "INR",
+                  "availability": "https://schema.org/InStock"
+                },
+                "featureList": [
+                  "Unified Omnichannel WhatsApp & Social Inbox",
+                  "WhatsApp Audio Calling & Node-based IVR",
+                  "AI Draft Suggestions & Human Agent Takeover",
+                  "Conversational Loan Advisory & Capital Desk",
+                  "Multi-Account Google Drive Storage Offloading"
+                ]
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "DFY UniCRM",
+                "url": "https://dfyunicrm.com",
+                "logo": "https://dfyunicrm.com/logo.png",
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "email": "help@dfyunicrm.com",
+                  "contactType": "customer support"
+                }
+              }
+            ])
+          }}
+        />
         {/* Google Analytics (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-P9H01H22G1"
