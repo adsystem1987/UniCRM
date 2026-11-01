@@ -649,14 +649,14 @@ export default function LandingPage() {
                   <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-6">
                     <Globe className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Instant Business Page &amp; Booking</h3>
+                  <h3 className="text-xl font-bold text-foreground">1-Click Micro-Page &amp; WhatsApp Checkout</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    Launch your digital storefront in 60 seconds. Customers can browse your catalog, book appointments with direct Google Calendar sync, and receive instant automated WhatsApp confirmations and reminders.
+                    Launch your self-branded digital storefront in 60 seconds to market your products, services, or digital downloads. Sell with 1-click WhatsApp orders, instant appointment booking, and receive pre-screened client deal flow from our network partners.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-border/40 text-xs font-semibold text-primary flex items-center justify-between">
-                  <span>Google Calendar + WhatsApp Sync</span>
-                  <span className="font-mono text-[11px] opacity-80">/p/your-biz</span>
+                  <span>Self-Branded + Network Leads</span>
+                  <span className="font-mono text-[11px] opacity-80">/p/your-brand</span>
                 </div>
               </div>
 
@@ -899,18 +899,18 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Pricing / Business Model Section: Free Forever DIY vs 3-Month Pro Pilot Pass */}
+        {/* Pricing / Business Model Section: Free Forever DIY vs 3-Month Partner Pilot Pass */}
         <section id="support-plan" className="py-10 sm:py-16 md:py-24 border-b border-border/40 bg-card/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-16">
               <span className="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 mb-3">
-                Transparent Community Model
+                Transparent Business Network Model
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-foreground">
-                Free Forever Core Software.<br className="hidden sm:inline" />Pay Only If You Want a Guided 3-Month Pro Pilot.
+                Free Forever Core Software.<br className="hidden sm:inline" />Become a Verified Business Partner with 1-on-1 Onboarding.
               </h2>
               <p className="mt-2.5 sm:mt-3 text-muted-foreground text-sm sm:text-base md:text-lg font-medium">
-                Zero lock-in. Direct bills to Meta. Free forever with your own cloud workspace, or get our ₹1,000 all-inclusive 90-day pilot pass.
+                Operate your business with zero per-seat fees. Choose DIY self-hosting for ₹0, or get our 1-on-1 guided onboarding &amp; partner pilot pass for ₹1,000 one-time.
               </p>
             </div>
 
@@ -979,48 +979,48 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Plan 2: 3-Month Pro Pilot Pass — ₹1,000 Total */}
+              {/* Plan 2: 3-Month Partner Pilot Pass — ₹1,000 Total */}
               <div className="relative rounded-3xl border-2 border-foreground bg-card p-8 flex flex-col justify-between shadow-xl shadow-emerald-500/10">
                 <div className="absolute -top-3.5 right-8 rounded-full bg-foreground px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-background">
-                  Limited-Time Pilot Pass
+                  Verified Business Partner
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-500">
-                      Guided 90-Day Access
+                      Guided 1-on-1 Onboarding
                     </span>
-                    <span className="text-xs font-semibold text-emerald-500">No Monthly Renewal</span>
+                    <span className="text-xs font-semibold text-emerald-500">90-Day All-Inclusive</span>
                   </div>
-                  <h3 className="text-2xl font-black text-foreground">3-Month Pro Pilot Pass</h3>
+                  <h3 className="text-2xl font-black text-foreground">3-Month Partner Pilot Pass</h3>
                   <div className="mt-4 flex flex-wrap items-baseline gap-2">
                     <span className="text-5xl font-black text-foreground">₹1,000</span>
-                    <span className="text-sm text-muted-foreground font-semibold">total for 3 full months (one-time)</span>
+                    <span className="text-sm text-muted-foreground font-semibold">one-time onboarding &amp; 90-day pass</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    Everything set up and managed for you. No need to bring API keys or configure databases—test the full power of UniCRM for 90 days with zero strings attached.
+                    For business owners, agencies &amp; service providers. We handle your entire setup on a private 1-on-1 call and accredit your business on the UniCRM Network.
                   </p>
 
                   <ul className="mt-6 space-y-3 text-sm text-foreground/90">
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Everything in Free Core Software</strong></span>
+                      <span><strong>Private 1-on-1 Guided Setup Call</strong> with our founding team</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>1-Click Live Setup: WhatsApp QR, Google Drive &amp; Calendar</span>
+                      <span><strong>Complete BYOD Cloud Wiring</strong> (WhatsApp QR, Drive &amp; Calendar)</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>AI Pro Squads Included for 3 Months</strong> (no API key required)</span>
+                      <span><strong>Invite Unlimited Team Members</strong> — zero per-seat fees forever</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span><strong>Lead Finder Included</strong> (up to 100 verified leads / day)</span>
+                      <span><strong>Verified Business Partner Accreditation</strong> on UniCRM Network</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>1-Click Industry Micro-Page &amp; Booking Desk activation</span>
+                      <span><strong>Instant Digital Catalog / Micro-Page</strong> with 1-click orders</span>
                     </li>
                     <li className="flex items-center gap-2.5">
                       <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -1035,13 +1035,13 @@ export default function LandingPage() {
                   <ContactButton
                     variant="cta"
                     className="w-full h-12 text-sm sm:text-base font-black rounded-xl tracking-tight"
-                    defaultTopic="Get 3-Month Pro UniCRM (₹1,000)"
+                    defaultTopic="Get 3-Month Partner Pilot Pass (₹1,000)"
                     icon="message"
                   >
-                    <span>Get 3-Month Pro UniCRM</span>
+                    <span>Claim Partner Pilot Pass (₹1,000)</span>
                   </ContactButton>
                   <p className="text-[11px] text-center text-muted-foreground">
-                    Complete 90-day trial &bull; No automatic charges &bull; Downgrade to DIY Free anytime
+                    One-time onboarding cost &bull; 90-day full access &bull; No automatic renewals
                   </p>
                 </div>
               </div>
