@@ -4,11 +4,11 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.0.0 (Phase AX Baseline)`  
+**Current Version:** `v1.1.0`  
 **Date:** 2026-11-02  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `4ad485e`  
-**Status:** Clean working tree, pushed to `origin staging`.
+**Latest Commit:** `1910119`  
+**Status:** Clean working tree. Commit staged locally (awaiting push approval).
 
 ---
 
@@ -86,10 +86,10 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 ## 5. Next Immediate Steps (Phase AX Roadmap)
 
-1. **Step 1: Frontend `?resume=` Deep-Link Loader on `/loans`**
-   - In `loans-client-view.tsx`, inspect `useSearchParams().get('resume')`.
-   - Query previous messages from `messages` for that `conversation_id`.
-   - Jump directly to Step 2 (Advisory Chat view) with pre-filled history.
+1. **Step 1: Frontend `?resume=` Deep-Link Loader on `/loans`** [COMPLETED]
+   - In `loans-client-view.tsx`, reads `useSearchParams().get('resume')`.
+   - Hydrates previous conversation messages, contact info, and takeover state via `GET /api/loans/consult?conversationId=<id>`.
+   - Jumps directly to Step 2 (Advisory Chat view) with full pre-filled history and realtime sync.
 
 2. **Step 2: Two-Way WhatsApp Inbound Sync**
    - When borrower replies directly on WhatsApp, `evolution/webhook` attaches the incoming message to the same conversation.
@@ -104,4 +104,5 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
+| **v1.1.0** | 2026-11-02 | Implemented `GET /api/loans/consult` conversation hydration API and `?resume=` search param handling in `loans-client-view.tsx` with Suspense wrapper in `loans/page.tsx`. | `api/loans/consult/route.ts`, `loans-client-view.tsx`, `loans/page.tsx` | `1910119` |
 | **v1.0.0** | 2026-11-02 | Initial Phase AX baseline: DB persistence for `/loans`, Take Over / Resume AI, real-time message sync, WhatsApp drop-off recovery, and deal auto-structuring. | `api/loans/consult`, `loans-client-view.tsx`, `api/loans/followup`, `LOAN_ADVISORY_PIPELINE.md` | `b072edc`, `4ad485e` |
