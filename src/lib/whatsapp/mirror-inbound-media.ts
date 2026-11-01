@@ -1,7 +1,7 @@
 import { downloadMedia } from "./meta-api";
 import { extensionForMime } from "@/lib/media/filename";
 import { buildMediaPath, MEDIA_MAX_BYTES } from "@/lib/storage/upload-media";
-import { mirrorMediaToGoogleDrive } from "@/lib/gdrive/offload";
+import { mirrorMediaToGoogleDrive, getAdminClient } from "@/lib/gdrive/offload";
 
 /**
  * Copies inbound WhatsApp media into the `chat-media` bucket so it
@@ -219,6 +219,34 @@ export async function mirrorInboundMedia(
       });
 
       if (gdriveResult?.streamUrl) {
+        // If there is an active loan application with pending document requests for this account,
+        // automatically link this uploaded document!
+        try {
+          const supabase = getAdminClient();
+          const { data: pendingDoc } = await supabase
+            .from("loan_document_requests")
+            .select("id")
+            .eq("account_id", accountId)
+            .eq("status", "requested")
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+          if (pendingDoc?.id) {
+            await supabase
+              .from("loan_document_requests")
+              .update({
+                status: "uploaded",
+                file_url: gdriveResult.streamUrl,
+                file_name: objectName,
+                uploaded_at: new Date().toISOString(),
+              })
+              .eq("id", pendingDoc.id);
+          }
+        } catch (loanDocErr) {
+          console.warn("[mirror-media] Failed to auto-link loan document:", loanDocErr);
+        }
+
         return gdriveResult.streamUrl;
       }
     } catch (gdriveErr) {

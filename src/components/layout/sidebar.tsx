@@ -32,6 +32,7 @@ import {
   Receipt,
   Compass,
   Globe,
+  Landmark,
 } from "lucide-react";
 
 import type { AccountRole } from "@/lib/auth/roles";
@@ -111,6 +112,7 @@ const navItems: NavItem[] = [
   { href: "/flows", labelKey: "flows", icon: Workflow, beta: true },
   { href: "/agents", labelKey: "aiAgents", icon: Bot },
   { href: "/orders", labelKey: "orders", icon: Receipt },
+  { href: "/loans", labelKey: "applyLoans", icon: Landmark },
 ];
 
 const bottomNavItems = [

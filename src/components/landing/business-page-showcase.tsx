@@ -201,14 +201,13 @@ export function BusinessPageShowcase() {
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
           <Globe className="size-3.5" />
-          Platform Enabler • Front &amp; Back-Office Connected
+          1-Click Micro-Page • Self-Branded &amp; Network Connected
         </div>
         <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
-          Launch Your Branded Business Desk in 60 Seconds
+          Launch Your 1-Click Micro-Page &amp; Grow on Your Own Terms
         </h2>
         <p className="text-base md:text-lg text-muted-foreground font-medium leading-relaxed">
-          Give your business a high-converting booking &amp; catalog desk (<code className="text-xs bg-muted px-1.5 py-0.5 rounded text-foreground font-mono">/p/your-brand</code>). 
-          Inquiries and appointments land directly inside your UniCRM Unified Inbox and trigger WhatsApp flows with 0% platform commission.
+          Every business owner gets a high-converting digital storefront (<code className="text-xs bg-muted px-1.5 py-0.5 rounded text-foreground font-mono">/p/your-brand</code>) to market directly on Instagram, Google, and WhatsApp. Plus, get empaneled as a verified partner to receive pre-qualified customer inquiries from the UniCRM Network.
         </p>
 
         {/* Industry Switcher Pills */}
