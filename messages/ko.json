@@ -45,7 +45,8 @@
     "menuProfile": "프로필",
     "menuSettings": "설정",
     "menuSignOut": "로그아웃",
-    "orders": "주문 및 결제"
+    "customerDesk": "대출 및 신용 데스크",
+    "myLoans": "내 대출 상담"
   },
   "Header": {
     "dashboard": "대시보드",

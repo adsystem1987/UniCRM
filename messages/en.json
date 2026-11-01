@@ -47,7 +47,9 @@
     "defaultAvatar": "Avatar",
     "menuProfile": "Profile",
     "menuSettings": "Settings",
-    "menuSignOut": "Sign out"
+    "menuSignOut": "Sign out",
+    "customerDesk": "Loan & Credit Desk",
+    "myLoans": "My Loan Advisory"
   },
   "Header": {
     "dashboard": "Dashboard",

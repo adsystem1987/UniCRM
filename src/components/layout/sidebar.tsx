@@ -102,7 +102,7 @@ interface NavItem {
   beta?: boolean;
 }
 
-const navItems: NavItem[] = [
+const businessNavItems: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
   { href: "/inbox", labelKey: "inbox", icon: MessageSquare },
   { href: "/notifications", labelKey: "notifications", icon: Bell },
@@ -117,6 +117,11 @@ const navItems: NavItem[] = [
   { href: "/agents", labelKey: "aiAgents", icon: Bot },
   { href: "/orders", labelKey: "orders", icon: Receipt },
   { href: "/loans", labelKey: "applyLoans", icon: Landmark },
+];
+
+const customerNavItems: NavItem[] = [
+  { href: "/loans", labelKey: "myLoans", icon: Landmark },
+  { href: "/orders", labelKey: "orders", icon: Receipt },
 ];
 
 const bottomNavItems = [
@@ -249,8 +254,29 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
         {/* Main navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
+          {/* Customer Highlight Upgrade Card */}
+          {profile?.user_type === "customer" && (
+            <div className="mb-4 p-3 rounded-2xl bg-linear-to-br from-emerald-500/15 via-emerald-500/5 to-transparent border border-emerald-500/30 shadow-xs">
+              <div className="flex items-center gap-2 mb-1.5 text-xs font-bold text-foreground">
+                <Building2 className="size-4 text-emerald-500" />
+                <span>Customer Portal</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-snug mb-3">
+                Need CRM, WhatsApp broadcasts, or partner lead desk for your business?
+              </p>
+              <button
+                type="button"
+                onClick={handleUpgradeToBusiness}
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-transform active:scale-[0.98]"
+              >
+                <span>Activate Business Desk</span>
+                <Sparkles className="size-3 text-amber-300" />
+              </button>
+            </div>
+          )}
+
           <ul className="flex flex-col gap-1">
-            {navItems.map((item) => {
+            {(profile?.user_type === "customer" ? customerNavItems : businessNavItems).map((item) => {
               const [itemPath, itemQuery] = item.href.split("?");
               const isActive =
                 itemQuery

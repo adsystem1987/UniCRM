@@ -176,29 +176,31 @@ export function LoansClientView() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Toggle between Borrower Application and Partner Lead Assignment Desk */}
-          <div className="flex items-center p-1 rounded-xl bg-muted border border-border text-xs font-bold">
-            <button
-              onClick={() => setActiveTab("apply")}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
-                activeTab === "apply"
-                  ? "bg-background text-foreground shadow-2xs font-extrabold"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Borrower Desk
-            </button>
-            <button
-              onClick={() => setActiveTab("partner_desk")}
-              className={`px-3 py-1.5 rounded-lg transition-all ${
-                activeTab === "partner_desk"
-                  ? "bg-background text-foreground shadow-2xs font-extrabold text-emerald-600 dark:text-emerald-400"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Partner Lead Desk
-            </button>
-          </div>
+          {/* Toggle between Borrower Application and Partner Lead Assignment Desk (Hidden for Customers) */}
+          {profile?.user_type !== "customer" && profile?.role !== "customer" && (
+            <div className="flex items-center p-1 rounded-xl bg-muted border border-border text-xs font-bold">
+              <button
+                onClick={() => setActiveTab("apply")}
+                className={`px-3 py-1.5 rounded-lg transition-all ${
+                  activeTab === "apply"
+                    ? "bg-background text-foreground shadow-2xs font-extrabold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Borrower Desk
+              </button>
+              <button
+                onClick={() => setActiveTab("partner_desk")}
+                className={`px-3 py-1.5 rounded-lg transition-all ${
+                  activeTab === "partner_desk"
+                    ? "bg-background text-foreground shadow-2xs font-extrabold text-emerald-600 dark:text-emerald-400"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Partner Lead Desk
+              </button>
+            </div>
+          )}
 
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs">
             <CheckCircle2 className="w-3.5 h-3.5" /> 100% Free Consultation
