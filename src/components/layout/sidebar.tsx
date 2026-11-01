@@ -121,7 +121,6 @@ const businessNavItems: NavItem[] = [
 
 const customerNavItems: NavItem[] = [
   { href: "/loans", labelKey: "myLoans", icon: Landmark },
-  { href: "/orders", labelKey: "orders", icon: Receipt },
 ];
 
 const bottomNavItems = [

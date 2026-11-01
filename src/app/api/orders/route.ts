@@ -20,6 +20,15 @@ export async function GET() {
     const callerEmail = userData?.user?.email || null;
     const isMasterAdmin = isMasterAdminEmail(callerEmail);
 
+    // Check if caller is a retail customer
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('user_type, role')
+      .eq('user_id', userData?.user?.id)
+      .maybeSingle();
+
+    const isCustomer = profile?.user_type === 'customer' || profile?.role === 'customer';
+
     let query = isMasterAdmin
       ? supabaseAdmin().from('orders').select('*')
       : supabase.from('orders').select('*').eq('account_id', accountId);
@@ -30,14 +39,14 @@ export async function GET() {
       console.warn('[orders GET] database query error:', error.message);
       return NextResponse.json({
         orders: [],
-        isAdmin: ['owner', 'admin'].includes(role) || isMasterAdmin,
+        isAdmin: !isCustomer && (['owner', 'admin'].includes(role) || isMasterAdmin),
         isMasterAdmin,
       });
     }
 
     return NextResponse.json({
       orders: orders || [],
-      isAdmin: ['owner', 'admin'].includes(role) || isMasterAdmin,
+      isAdmin: !isCustomer && (['owner', 'admin'].includes(role) || isMasterAdmin),
       isMasterAdmin,
     });
   } catch (err: unknown) {
