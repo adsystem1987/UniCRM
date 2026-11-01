@@ -173,15 +173,22 @@ export default function LandingPage() {
         <section className="relative overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 md:pt-20 md:pb-28 border-b border-border/40">
           <div aria-hidden="true" className="mkt-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_55%_at_50%_40%,black,transparent)]" />
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            {/* Urgency Capacity Pill */}
-            <ScarcityHeroPill />
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-primary/10 border border-primary/20 text-foreground mb-6 shadow-xs animate-in fade-in duration-700">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="tracking-wide">
+                Community Funded &bull; Zero Subscription Tax &bull; Unlimited Team Seats
+              </span>
+            </div>
 
-            <h1 className="type-display max-w-5xl mx-auto text-foreground animate-slide-blur-up text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-[1.15]">
-              All your WhatsApp chats, calls, social DMs & support emails. <span className="text-muted-foreground font-normal">In one single CRM.</span>
+            <h1 className="max-w-4xl mx-auto text-foreground text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08]">
+              Stop paying rent on customer relationships.
             </h1>
 
-            <p className="type-body-muted mt-4 sm:mt-6 text-sm sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Why pay ₹15,000 every month juggling Wati, Zendesk, and call center tools? Handle your WhatsApp messaging, WhatsApp voice calls, Instagram DMs, Facebook messages, and support emails with zero per-seat fees.
+            <p className="mt-5 sm:mt-6 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal">
+              Every WhatsApp chat, incoming voice call, Instagram DM, and support ticket — centralized in your own database. Zero per-seat fees, zero middleman cuts, zero SaaS extortion.
             </p>
 
             {/* Channels Strip: Horizontal scroll on mobile for clean UX, wrapped grid on desktop */}
@@ -212,21 +219,31 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <div className="mt-6 sm:mt-8 flex flex-col items-center justify-center gap-3">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
-                <ScarcityCtaButton />
+            {/* Action Buttons: High-Contrast High-CTR */}
+            <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
+                <Link href="/signup" className="w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-13 px-8 rounded-full btn-gold-gradient font-black text-sm sm:text-base gap-2.5 shadow-xl hover:shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
+                  >
+                    <MessageCircle className="h-5 w-5 shrink-0" />
+                    <span>Claim Your Free Workplace</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
                 <ContactButton
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto h-12 sm:h-11 px-5 rounded-full font-medium text-sm sm:text-base border-border hover:border-border-strong hover:bg-surface-hover active:bg-surface-active active:translate-y-px"
+                  className="w-full sm:w-auto h-13 px-6 rounded-full font-semibold text-sm sm:text-base border-border bg-card/60 backdrop-blur-md hover:border-primary/50 hover:bg-card active:scale-[0.98] transition-all"
                 >
-                  <Headphones className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>Talk to Founders</span>
+                  <Headphones className="h-4 w-4 mr-2 text-primary" />
+                  <span>Talk with Founders</span>
                 </ContactButton>
               </div>
-              <p className="text-[11px] font-medium text-muted-foreground flex items-center justify-center gap-1.5 text-center px-4">
-                <CheckCircle2 className="h-3.5 w-3.5 text-[#25D366] shrink-0" />
-                Funded by our community • 100% Free forever • Zero credit card required
+              <p className="text-xs font-medium text-muted-foreground flex items-center justify-center gap-2 text-center px-4">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <span>No credit card &bull; Instant 60-second QR setup &bull; Keep 100% data ownership</span>
               </p>
             </div>
 
@@ -251,62 +268,61 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (TRUST-FIRST EMERALD & GOLD) */}
-        <section id="business-loans" className="py-6 sm:py-8 md:py-10 border-b border-border/40 bg-linear-to-r from-emerald-500/10 via-emerald-500/5 to-transparent">
+        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (TRUST-FIRST HIGH CTR) */}
+        <section id="business-loans" className="py-8 sm:py-12 border-b border-border/40 bg-gradient-to-b from-card/30 via-background to-card/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-card/95 p-5 sm:p-7 md:p-8 shadow-xl flex flex-col lg:flex-row items-center justify-between gap-5 sm:gap-6 backdrop-blur-xs relative overflow-hidden">
-              <div className="space-y-3 z-10 max-w-3xl text-left w-full">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 shadow-xs">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>Verified Banking Network • 48-Hour Disbursal</span>
+            <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-card via-card/90 to-emerald-950/20 p-6 sm:p-9 md:p-10 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-md relative overflow-hidden">
+              <div className="space-y-4 z-10 max-w-3xl text-left w-full">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+                  <span>Institutional Lending Desk • 48-Hour Approval</span>
                 </div>
                 
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-foreground flex items-center gap-2.5">
-                  <span>Need Money to Grow Your Business or Stock Inventory?</span>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
+                  Working capital for real businesses. Without bank intimidation.
                 </h3>
                 
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Fast shop, stock, and business loans for Indian entrepreneurs. Low CIBIL score? You can still qualify if you own a house or have active GST/UPI turnover. Direct paperwork verification on WhatsApp with complete confidentiality.
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Low CIBIL score or limited 3-year ITR? Our underwriting desk uses live turnover, GST receipts, and property collateral to match you directly with 15+ flexible private NBFCs and co-operatives.
                 </p>
 
-                {/* Money & Trust Badges: 2 cols on mobile for compact breathing room */}
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 pt-1 text-xs font-bold text-foreground">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs text-[11px] sm:text-xs">
-                    <Banknote className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                    <span>₹2L to ₹1Cr+</span>
+                {/* Proof Markers */}
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 pt-2 text-xs font-bold text-foreground">
+                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
+                    <Banknote className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <span>₹2L to ₹5 Cr+</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs text-[11px] sm:text-xs">
-                    <TrendingUp className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
+                    <TrendingUp className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span>From 1.05%/mo</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs text-[11px] sm:text-xs">
-                    <Coins className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                    <span>15+ Banks & NBFCs</span>
+                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
+                    <Coins className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span>15+ Banks &amp; NBFCs</span>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-surface border border-emerald-500/20 text-foreground shadow-xs text-[11px] sm:text-xs">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                    <span>100% Free Advisory</span>
+                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                    <span>₹0 Processing Fees</span>
                   </span>
                 </div>
               </div>
 
               {/* Action Column */}
-              <div className="shrink-0 flex flex-col gap-2.5 w-full lg:w-auto z-10 pt-2 sm:pt-0">
+              <div className="shrink-0 flex flex-col gap-3 w-full lg:w-auto z-10 pt-2 lg:pt-0">
                 <Link href="/signup?next=/loans&role=customer" className="w-full">
-                  <Button className="w-full h-11 sm:h-12 px-6 font-black text-xs sm:text-sm btn-gold-gradient rounded-xl gap-2 shadow-lg hover:shadow-emerald-500/20">
+                  <Button className="w-full h-13 px-8 font-black text-sm sm:text-base btn-gold-gradient rounded-full gap-2.5 shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all">
                     <Banknote className="h-4 w-4" />
-                    <span>Talk to a Loan Advisor</span>
+                    <span>Consult Credit Underwriter</span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
-                <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground font-semibold">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                  <span>Direct WhatsApp &amp; Phone Support</span>
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-semibold">
+                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                  <span>Confidential WhatsApp Consultation</span>
                 </div>
               </div>
 
-              {/* Subtle background ambient graphic */}
-              <div className="absolute -right-10 -bottom-10 size-56 rounded-full bg-emerald-500/10 pointer-events-none blur-xl" />
+              <div className="absolute -right-12 -bottom-12 size-64 rounded-full bg-emerald-500/10 pointer-events-none blur-2xl" />
             </div>
           </div>
         </section>
