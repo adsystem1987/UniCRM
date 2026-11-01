@@ -454,8 +454,14 @@ export function PublicDirectoryView({ pages }: { pages: PublicDirectoryPageItem[
 
           <div className="flex items-center gap-6">
             <Link
-              href="/p/directory"
+              href="/p"
               className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+            >
+              Explore Direct Business Desks
+            </Link>
+            <Link
+              href="/p/directory"
+              className="hover:text-foreground transition-colors"
             >
               Business Directory Index (A–Z)
             </Link>

@@ -1132,6 +1132,9 @@ export default function LandingPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link href="/p" className="hover:text-foreground transition-colors font-semibold text-emerald-600 dark:text-emerald-400">
+              Explore Direct Business Desks
+            </Link>
             <Link href="/p/directory" className="hover:text-foreground transition-colors font-semibold text-emerald-600 dark:text-emerald-400">
               Business Directory Index (A–Z)
             </Link>
