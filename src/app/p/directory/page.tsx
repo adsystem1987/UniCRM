@@ -5,7 +5,7 @@ import { getAdminClient } from '@/lib/gdrive/offload';
 import { PublicDirectoryPageItem } from '@/components/business-page/public-directory-view';
 import { SHOWCASE_BUSINESS_PAGES } from '@/lib/business-page/showcase-data';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // Cache on Vercel CDN for 24 hours (Zero CPU / Zero ISR writes on repeat visits)
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dfyunicrm.com';
 

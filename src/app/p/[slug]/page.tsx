@@ -12,7 +12,7 @@ interface PageProps {
   }>;
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400; // Cache on Vercel CDN for 24 hours (Zero CPU / Zero ISR writes on repeat visits)
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://dfyunicrm.com';
 
