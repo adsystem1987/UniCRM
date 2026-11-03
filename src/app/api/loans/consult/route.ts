@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAccount } from "@/lib/auth/account";
 import { getAdminClient } from "@/lib/gdrive/offload";
+import { getVaultSecret } from "@/lib/vault";
+import { getBorrowerNamespace, recallBorrowerContext, storeBorrowerMemory } from "@/lib/supermemory";
 
 export const dynamic = "force-dynamic";
 
 const OMNIROUTE_URL = process.env.OMNIROUTE_URL || "https://omniroute.dfydude.online/v1";
-const OMNIROUTE_KEY = process.env.OMNIROUTE_API_KEY || "sk-51ede91f935f3396-6c4dcc-42124cc3";
+const DEFAULT_OMNIROUTE_KEY = process.env.OMNIROUTE_API_KEY || "sk-51ede91f935f3396-6c4dcc-42124cc3";
 
 /**
  * Extracts structured loan application anchors from user messages or applicantProfile
@@ -295,8 +297,26 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Generate AI Loan Advisor reply
+    // Recall past borrower context from Supermemory if available
+    const borrowerNamespace = accountId && (userPhone || activeConvId)
+      ? getBorrowerNamespace(accountId, userPhone || activeConvId!)
+      : null;
+
+    let recalledContext: string[] = [];
+    if (borrowerNamespace) {
+      try {
+        recalledContext = await recallBorrowerContext(borrowerNamespace, incomingText || "loan advisory");
+      } catch (err) {
+        console.warn("[loans/consult] Supermemory recall skipped:", err);
+      }
+    }
+
+    const memorySnippet = recalledContext.length > 0
+      ? `\n\nVerified Borrower Memory & Historical Context:\n${recalledContext.map((c) => `- ${c}`).join("\n")}\nUse this context to personalize your advice and avoid re-asking details they already provided.`
+      : "";
+
     const systemPrompt = `You are the Senior Underwriting Officer at UniCRM Capital (India's leading MSME & Business Lending Network).
-Your mission is to understand the borrower's exact business needs and find viable financing angles even if they face traditional banking hurdles (like low CIBIL score, new business, or lack of 3-year ITR).
+Your mission is to understand the borrower's exact business needs and find viable financing angles even if they face traditional banking hurdles (like low CIBIL score, new business, or lack of 3-year ITR).${memorySnippet}
 
 Key Lending Paths to Consider in India:
 1. Unsecured Business Loan: Best if monthly GST/bank turnover > ₹2L, running 1+ year.
@@ -323,11 +343,13 @@ Guidelines:
 
     let replyText = "Thank you for sharing. Could you let me know if you or your family own any residential or commercial property, or what your average monthly business turnover is? That helps us find the best NBFC partners for you.";
 
+    const omniRouteKey = (await getVaultSecret("OMNIROUTE_API_KEY")) || DEFAULT_OMNIROUTE_KEY;
+
     try {
       const aiRes = await fetch(`${OMNIROUTE_URL}/chat/completions`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${OMNIROUTE_KEY}`,
+          Authorization: `Bearer ${omniRouteKey}`,
           "Content-Type": "application/json",
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         },
@@ -344,6 +366,15 @@ Guidelines:
       }
     } catch (aiErr) {
       console.error('[loans/consult] OmniRoute fetch error:', aiErr);
+    }
+
+    // Async persist latest interaction into Supermemory (non-blocking)
+    if (borrowerNamespace && incomingText) {
+      storeBorrowerMemory(
+        borrowerNamespace,
+        `Applicant: "${incomingText}". Underwriter advice: "${replyText}"`,
+        { phone: userPhone, conversationId: activeConvId }
+      ).catch((err) => console.warn('[loans/consult] Supermemory async store failed:', err));
     }
 
     // 6. Save bot reply into `messages`
