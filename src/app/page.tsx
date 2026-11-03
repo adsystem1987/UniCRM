@@ -50,6 +50,7 @@ import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showc
 import { ComparisonBanner } from "@/components/landing/comparison-banner";
 import { BusinessPageShowcase } from "@/components/landing/business-page-showcase";
 import { InteractiveCapitalCalculator } from "@/components/landing/interactive-capital-calculator";
+import { MotionHeroSection } from "@/components/landing/motion-hero-section";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -169,105 +170,9 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* Hero Section with Spring Motion Physics */}
       <main className="flex-1">
-        <section className="relative overflow-hidden pt-8 pb-14 sm:pt-14 sm:pb-20 md:pt-20 md:pb-28 border-b border-border/40">
-          <div aria-hidden="true" className="mkt-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_55%_at_50%_40%,black,transparent)]" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-primary/10 border border-primary/20 text-foreground mb-6 shadow-xs animate-in fade-in duration-700">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="tracking-wide">
-                Community Funded &bull; Zero Subscription Tax &bull; Unlimited Team Seats
-              </span>
-            </div>
-
-            <h1 className="max-w-4xl mx-auto text-foreground text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[1.08]">
-              Stop paying rent on customer relationships.
-            </h1>
-
-            <p className="mt-5 sm:mt-6 text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-normal">
-              Every WhatsApp chat, incoming voice call, Instagram DM, and support ticket — centralized in your own database. Zero per-seat fees, zero middleman cuts, zero SaaS extortion.
-            </p>
-
-            {/* Channels Strip: Horizontal scroll on mobile for clean UX, wrapped grid on desktop */}
-            <div className="mt-5 sm:mt-6 flex sm:flex-wrap items-center sm:justify-center gap-2 max-w-3xl mx-auto overflow-x-auto sm:overflow-visible pb-2 sm:pb-0 px-2 sm:px-0 no-scrollbar">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-semibold bg-surface text-foreground border border-border shrink-0 shadow-xs">
-                <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" /> WhatsApp Messaging
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-semibold bg-surface text-foreground border border-border shrink-0 shadow-xs">
-                <PhoneCall className="h-3.5 w-3.5 text-[#25D366]" /> WhatsApp Calling & IVR
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-semibold bg-surface text-foreground border border-border shrink-0 shadow-xs">
-                <Camera className="h-3.5 w-3.5 text-[#E4405F]" /> Instagram DMs
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-semibold bg-surface text-foreground border border-border shrink-0 shadow-xs">
-                <Mail className="h-3.5 w-3.5 text-[#EA4335]" /> Support Email Inbox
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border shrink-0">
-                <Share2 className="h-3.5 w-3.5 text-[#1877F2]" /> Facebook Messenger
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border shrink-0">
-                <HardDrive className="h-3.5 w-3.5 text-[#4285F4]" /> Cloud Drive Pool (15–45GB+)
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border shrink-0">
-                <Target className="h-3.5 w-3.5 text-primary" /> Smart Lead Finder
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-1 rounded-full text-xs font-medium bg-surface text-foreground border border-border shrink-0">
-                <Compass className="h-3.5 w-3.5 text-purple-500" /> 1-Click Industry Setup
-              </span>
-            </div>
-
-            {/* Action Buttons: High-Contrast High-CTR */}
-            <div className="mt-8 sm:mt-10 flex flex-col items-center justify-center gap-4">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
-                <Link href="/signup" className="w-full sm:w-auto">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto h-13 px-8 rounded-full btn-gold-gradient font-black text-sm sm:text-base gap-2.5 shadow-xl hover:shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap"
-                  >
-                    <MessageCircle className="h-5 w-5 shrink-0" />
-                    <span>Claim Your Free Workplace</span>
-                    <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-                <ContactButton
-                  variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto h-13 px-6 rounded-full font-semibold text-sm sm:text-base border-border bg-card/60 backdrop-blur-md hover:border-primary/50 hover:bg-card active:scale-[0.98] transition-all"
-                >
-                  <Headphones className="h-4 w-4 mr-2 text-primary" />
-                  <span>Talk with Founders</span>
-                </ContactButton>
-              </div>
-              <p className="text-xs font-medium text-muted-foreground flex items-center justify-center gap-2 text-center px-4">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                <span>No credit card &bull; Instant 60-second QR setup &bull; Keep 100% data ownership</span>
-              </p>
-            </div>
-
-            <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-3 sm:gap-x-8 sm:gap-y-3 text-xs sm:text-sm font-medium text-muted-foreground">
-              <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#25D366] shrink-0" />
-                <span>Zero Per-Seat Costs</span>
-              </div>
-              <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#25D366] shrink-0" />
-                <span>Instant QR Connect</span>
-              </div>
-              <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#25D366] shrink-0" />
-                <span>Free AI Gateway</span>
-              </div>
-              <div className="flex items-center gap-1.5 justify-center sm:justify-start">
-                <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#25D366] shrink-0" />
-                <span>WhatsApp Calling</span>
-              </div>
-            </div>
-          </div>
-        </section>
+        <MotionHeroSection />
 
         {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (INTERACTIVE MOTION CALCULATOR) */}
         <section id="business-loans" className="py-8 sm:py-12 border-b border-border/40 bg-gradient-to-b from-card/30 via-background to-card/20">
