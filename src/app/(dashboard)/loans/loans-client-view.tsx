@@ -26,6 +26,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "motion/react";
 
 import { DsaLeadDesk } from "@/components/loans/dsa-lead-desk";
 
@@ -379,11 +380,16 @@ export function LoansClientView() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {LOAN_TYPES.map((lt) => (
-                <button
+              {LOAN_TYPES.map((lt, idx) => (
+                <motion.button
                   key={lt.id}
                   onClick={() => handleSelectCategory(lt.id)}
-                  className={`text-left p-4.5 rounded-2xl border transition-all flex flex-col justify-between hover:border-emerald-500 hover:shadow-md hover:shadow-emerald-500/5 group relative overflow-hidden ${
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.05 }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`text-left p-4.5 rounded-2xl border transition-colors flex flex-col justify-between hover:border-emerald-500 hover:shadow-md hover:shadow-emerald-500/5 group relative overflow-hidden ${
                     selectedCategory === lt.id
                       ? "border-emerald-500 bg-emerald-500/5 shadow-xs"
                       : "border-border bg-background hover:bg-card"
@@ -419,7 +425,7 @@ export function LoansClientView() {
                       Check Route <ArrowRight className="w-3.5 h-3.5" />
                     </span>
                   </div>
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -491,35 +497,44 @@ export function LoansClientView() {
 
             {/* Chat History */}
             <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
-              {messages.map((m) => (
-                <div
-                  key={m.id}
-                  className={`flex flex-col ${m.sender === "user" ? "items-end" : "items-start"}`}
-                >
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-xs ${
-                      m.sender === "user"
-                        ? "bg-emerald-600 text-white rounded-br-xs"
-                        : m.sender === "human_agent"
-                        ? "bg-blue-600/10 text-foreground border border-blue-500/30 rounded-bl-xs"
-                        : "bg-muted text-foreground border border-border rounded-bl-xs"
-                    }`}
+              <AnimatePresence initial={false}>
+                {messages.map((m) => (
+                  <motion.div
+                    key={m.id}
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className={`flex flex-col ${m.sender === "user" ? "items-end" : "items-start"}`}
                   >
-                    {m.sender === "human_agent" && (
-                      <div className="flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1">
-                        <UserCheck className="w-3 h-3" /> Senior Loan Advisor (UniCRM Team)
-                      </div>
-                    )}
-                    <p className="whitespace-pre-wrap">{m.text}</p>
-                  </div>
-                  <span className="text-[9px] text-muted-foreground mt-1 px-1">{m.time}</span>
-                </div>
-              ))}
+                    <div
+                      className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-xs ${
+                        m.sender === "user"
+                          ? "bg-emerald-600 text-white rounded-br-xs"
+                          : m.sender === "human_agent"
+                          ? "bg-blue-600/10 text-foreground border border-blue-500/30 rounded-bl-xs"
+                          : "bg-muted text-foreground border border-border rounded-bl-xs"
+                      }`}
+                    >
+                      {m.sender === "human_agent" && (
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1">
+                          <UserCheck className="w-3 h-3" /> Senior Loan Advisor (UniCRM Team)
+                        </div>
+                      )}
+                      <p className="whitespace-pre-wrap">{m.text}</p>
+                    </div>
+                    <span className="text-[9px] text-muted-foreground mt-1 px-1">{m.time}</span>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               {isSending && (
-                <div className="flex items-center gap-2 text-muted-foreground text-xs italic p-2">
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 text-muted-foreground text-xs italic p-2"
+                >
                   <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
                   Advisor is evaluating your lending criteria...
-                </div>
+                </motion.div>
               )}
             </div>
 
