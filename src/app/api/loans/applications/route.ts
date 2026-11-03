@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAccount } from "@/lib/auth/account";
 import { getAdminClient } from "@/lib/gdrive/offload";
 import { isMasterAdminEmail } from "@/lib/auth/master-admin";
+import { maskPhoneNumber, maskEmailAddress } from "@/lib/dsa/monetization";
 
 export const dynamic = "force-dynamic";
 
@@ -41,22 +42,10 @@ export async function GET(req: NextRequest) {
       const isAcceptedDSA = app.assigned_to_dsa_id === userId && app.status !== "assigned" && app.status !== "rejected";
 
       if (!isOwnerOrApplicant && !isAcceptedDSA) {
-        // Mask phone: +91 98••••••10
-        const phone = app.phone || "";
-        const maskedPhone = phone.length > 5 
-          ? `${phone.slice(0, 4)}••••••${phone.slice(-2)}` 
-          : "••••••••••";
-
-        // Mask email: j••••@domain.com
-        const [userPart, domainPart] = (app.email || "").split("@");
-        const maskedEmail = userPart && domainPart 
-          ? `${userPart[0]}••••••@${domainPart}` 
-          : "••••@••••.com";
-
         return {
           ...app,
-          phone: maskedPhone,
-          email: maskedEmail,
+          phone: maskPhoneNumber(app.phone),
+          email: maskEmailAddress(app.email),
           isMasked: true,
         };
       }

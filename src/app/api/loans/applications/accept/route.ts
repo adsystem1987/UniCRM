@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAccount } from "@/lib/auth/account";
 import { getAdminClient } from "@/lib/gdrive/offload";
 import { isMasterAdminEmail } from "@/lib/auth/master-admin";
+import { recordLeadUnlock } from "@/lib/dsa/monetization";
 
 export const dynamic = "force-dynamic";
 
@@ -76,6 +77,11 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 });
+
+    // Record audit unlock in background
+    recordLeadUnlock(userId, applicationId).catch((err) =>
+      console.warn("[loans/accept] recordLeadUnlock failed:", err)
+    );
 
     // Returns unmasked details now that lead is formally accepted
     return NextResponse.json({
