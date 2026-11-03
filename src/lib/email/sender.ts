@@ -2,6 +2,7 @@ import { renderWelcomeEmailHtml } from "./templates/welcome";
 import { renderWhatsAppFollowupEmailHtml } from "./templates/followup-whatsapp";
 import { renderDfyPitchEmailHtml } from "./templates/dfy-pitch";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { hasValidMxRecord } from "./mx-validator";
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -57,6 +58,13 @@ export async function sendEmail(opts: SendEmailOptions): Promise<SendEmailRespon
 
       let lastId = "";
       for (const recipient of recipients) {
+        // Pre-flight MX check: Protect AWS SES from bounce penalties
+        const isValidMx = await hasValidMxRecord(recipient);
+        if (!isValidMx) {
+          console.warn(`[Email/SES] Skipped invalid recipient (No active MX records): ${recipient}`);
+          continue;
+        }
+
         console.log(`[Email/SES] Sending to ${recipient} from ${defaultFrom}...`);
         const command = new SendEmailCommand({
           Source: defaultFrom,

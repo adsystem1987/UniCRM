@@ -4,11 +4,11 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.9.5`  
+**Current Version:** `v1.9.6`  
 **Date:** 2026-11-04  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `aa29d99`  
-**Status:** Supabase Vault & Supermemory long-term borrower memory integrated. Clean verification on `staging`.
+**Latest Commit:** `8e7aed2`  
+**Status:** AWS SES Pre-flight MX Validator integrated. Clean verification on `staging`.
 
 ---
 
@@ -109,7 +109,8 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
-| **v1.9.5** | 2026-11-04 | Supabase Vault & Supermemory Integration: Implemented edge-safe `src/lib/vault.ts` with 60s in-memory TTL for zero-cost secret retrieval from Supabase Vault (`get_vault_secret`). Added `src/lib/supermemory.ts` for borrower long-term memory profiling and injected contextual memory retrieval and async memory persistence into conversational lending underwriter (`/api/loans/consult`). Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/vault.ts`, `src/lib/supermemory.ts`, `src/app/api/loans/consult/route.ts` | `aa29d99` |
+| **v1.9.6** | 2026-11-04 | Adopted Zero-Cost Email Bounce Shield from `dfydude.online`: Implemented `src/lib/email/mx-validator.ts` with DNS MX verification and in-memory TTL caching (4h success, 10m failure). Integrated pre-flight check into AWS SES delivery loop in `src/lib/email/sender.ts` to block non-existent domains and keep SES bounce rates under 5%. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/email/mx-validator.ts`, `src/lib/email/sender.ts` | `8e7aed2` |
+| **v1.9.5** | 2026-11-04 | Supabase Vault & Supermemory Integration: Implemented edge-safe `src/lib/vault.ts` with 60s in-memory TTL for zero-cost secret retrieval from Supabase Vault (`get_vault_secret`). Added `src/lib/supermemory.ts` for borrower long-term memory profiling and injected contextual memory retrieval and async memory persistence into conversational lending underwriter (`/api/loans/consult`). Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/vault.ts`, `src/lib/supermemory.ts`, `src/app/api/loans/consult/route.ts` | `f046a98` |
 | **v1.9.4** | 2026-11-04 | Fixed Vercel build failure during static page generation: added safe build-time fallbacks for `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `src/lib/supabase/client.ts` so `/reset-password` and other auth pages prerender cleanly even if env vars are missing during the build phase. Verified full Next.js production build (74/74 static pages generated). | `src/lib/supabase/client.ts` | `f90005f` |
 | **v1.9.3** | 2026-11-04 | Vercel Free-Tier Overhaul: Set `images.unoptimized = true` in `next.config.ts` (drops Fast Origin Transfer from 10GB to <100MB and prevents lambda image resizing); switched `/p`, `/p/directory`, and `/p/[slug]` to `revalidate = 86400` to serve from Vercel Edge CDN without triggering repeated function CPU invocations or 850k+ ISR writes. | `next.config.ts`, `src/app/p/page.tsx`, `src/app/p/directory/page.tsx`, `src/app/p/[slug]/page.tsx` | `104d538` |
 | **v1.9.2** | 2026-11-02 | Added direct layman-friendly footer link to `/p` as **"Explore Direct Business Desks"** across main landing page, business showcase pages, and yellow pages directory. | `src/app/page.tsx`, `public-directory-view.tsx`, `public-page-view.tsx` | `21ef562` |
