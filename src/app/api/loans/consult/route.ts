@@ -3,6 +3,7 @@ import { getCurrentAccount } from "@/lib/auth/account";
 import { getAdminClient } from "@/lib/gdrive/offload";
 import { getVaultSecret } from "@/lib/vault";
 import { getBorrowerNamespace, recallBorrowerContext, storeBorrowerMemory } from "@/lib/supermemory";
+import { notifyNewLoanApplication } from "@/lib/slack/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -469,6 +470,16 @@ Guidelines:
                 business_vintage: extracted.vintage || null,
                 status: 'submitted',
               });
+
+              // Dispatch real-time Slack alert for founder/agent desk (non-blocking)
+              notifyNewLoanApplication({
+                borrowerName: applicantProfile?.businessName || userName,
+                phone: userPhone,
+                loanType: `${(applicantProfile?.category || 'Business').toUpperCase()} Loan`,
+                amount: numericAmount,
+                city: applicantProfile?.city || 'India',
+                conversationId: activeConvId || undefined,
+              }).catch((err) => console.warn('[loans/consult] Slack alert error:', err));
             }
           }
         }

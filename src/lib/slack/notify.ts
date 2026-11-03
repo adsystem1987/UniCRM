@@ -1,10 +1,14 @@
+import { getVaultSecret } from "@/lib/vault";
+
 // ============================================================
 // Slack Notification Service
 //
 // Sends real-time alerts to a Slack channel via Slack Bot Token.
+// Credentials resolve from process.env or dynamically via Supabase Vault.
 // Used for:
 //   - New user registrations / signups
 //   - Inbound contact form leads
+//   - Loan applications & Underwriter alerts
 //   - Critical system events
 // ============================================================
 
@@ -29,6 +33,16 @@ interface ContactLeadNotificationParams {
   message: string;
 }
 
+export interface LoanApplicationAlertParams {
+  borrowerName?: string;
+  phone?: string;
+  loanType?: string;
+  amount?: number | string;
+  city?: string;
+  conversationId?: string;
+  status?: string;
+}
+
 /**
  * Send an arbitrary message or block layout to Slack.
  */
@@ -37,16 +51,21 @@ export async function sendSlackMessage({
   blocks,
   channel,
 }: SlackMessagePayload): Promise<boolean> {
-  const token = process.env.SLACK_BOT_TOKEN;
-  const targetChannel = channel || process.env.SLACK_CHANNEL;
+  const token =
+    process.env.SLACK_BOT_TOKEN || (await getVaultSecret("SLACK_BOT_TOKEN"));
+  const targetChannel =
+    channel ||
+    process.env.SLACK_CHANNEL ||
+    (await getVaultSecret("SLACK_CHANNEL")) ||
+    "C0BJU7JLKUM";
 
   if (!token) {
-    console.warn("[Slack] SLACK_BOT_TOKEN is not configured. Notification skipped.");
+    console.warn("[Slack] SLACK_BOT_TOKEN is not configured in env or Vault. Notification skipped.");
     return false;
   }
 
   if (!targetChannel) {
-    console.warn("[Slack] SLACK_CHANNEL is not configured. Notification skipped.");
+    console.warn("[Slack] SLACK_CHANNEL is not configured in env or Vault. Notification skipped.");
     return false;
   }
 
@@ -282,4 +301,83 @@ export async function sendOrderNotification({
     blocks,
   });
 }
+
+/**
+ * Notify when a new Loan Application is submitted or underwritten via /loans
+ */
+export async function notifyNewLoanApplication({
+  borrowerName,
+  phone,
+  loanType,
+  amount,
+  city,
+  conversationId,
+  status = "Pending Underwriting Review",
+}: LoanApplicationAlertParams): Promise<boolean> {
+  const formattedAmount =
+    typeof amount === "number"
+      ? `₹${amount.toLocaleString("en-IN")}`
+      : amount
+      ? `₹${amount}`
+      : "Not Disclosed";
+
+  const blocks = [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "🏦 High-Priority Loan Application Submitted",
+        emoji: true,
+      },
+    },
+    {
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Applicant:* ${borrowerName || "Verified Business Owner"}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Requested Amount:* *${formattedAmount}*`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Phone:* ${phone || "Not Disclosed"}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Product / Track:* ${loanType || "Business / MSME Loan"}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Location:* ${city || "All India"}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Status:* ${status}`,
+        },
+      ],
+    },
+    ...(conversationId
+      ? [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `🔗 Conversation ID: \`${conversationId}\` | Manage lead directly from UniCRM Inbox.`,
+              },
+            ],
+          },
+        ]
+      : []),
+  ];
+
+  return sendSlackMessage({
+    text: `🏦 New Loan Application: ${borrowerName || "Applicant"} (${phone || "N/A"}) - ${formattedAmount} for ${loanType || "MSME Loan"}`,
+    blocks,
+  });
+}
+
 
