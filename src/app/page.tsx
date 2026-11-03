@@ -49,6 +49,7 @@ import { LeadFinderShowcase } from "@/components/landing/lead-finder-showcase";
 import { IndustrySetupShowcase } from "@/components/landing/industry-setup-showcase";
 import { ComparisonBanner } from "@/components/landing/comparison-banner";
 import { BusinessPageShowcase } from "@/components/landing/business-page-showcase";
+import { InteractiveCapitalCalculator } from "@/components/landing/interactive-capital-calculator";
 
 export const metadata = {
   title: "DFY UniCRM — All-in-One Omnichannel CRM, WhatsApp Calling & Support Inbox",
@@ -268,62 +269,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (TRUST-FIRST HIGH CTR) */}
+        {/* SECTION: EMBEDDED BUSINESS CAPITAL & LOANS BANNER (INTERACTIVE MOTION CALCULATOR) */}
         <section id="business-loans" className="py-8 sm:py-12 border-b border-border/40 bg-gradient-to-b from-card/30 via-background to-card/20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="rounded-3xl border border-emerald-500/30 bg-gradient-to-br from-card via-card/90 to-emerald-950/20 p-6 sm:p-9 md:p-10 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 backdrop-blur-md relative overflow-hidden">
-              <div className="space-y-4 z-10 max-w-3xl text-left w-full">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                  <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-                  <span>Institutional Lending Desk • 48-Hour Approval</span>
-                </div>
-                
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight text-foreground leading-tight">
-                  Working capital for real businesses. Without bank intimidation.
-                </h3>
-                
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Low CIBIL score or limited 3-year ITR? Our underwriting desk uses live turnover, GST receipts, and property collateral to match you directly with 15+ flexible private NBFCs and co-operatives.
-                </p>
-
-                {/* Proof Markers */}
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2.5 pt-2 text-xs font-bold text-foreground">
-                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
-                    <Banknote className="h-4 w-4 text-emerald-500 shrink-0" />
-                    <span>₹2L to ₹5 Cr+</span>
-                  </span>
-                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
-                    <TrendingUp className="h-4 w-4 text-emerald-500 shrink-0" />
-                    <span>From 1.05%/mo</span>
-                  </span>
-                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
-                    <Coins className="h-4 w-4 text-amber-500 shrink-0" />
-                    <span>15+ Banks &amp; NBFCs</span>
-                  </span>
-                  <span className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-background/80 border border-border shadow-xs">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                    <span>₹0 Processing Fees</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Column */}
-              <div className="shrink-0 flex flex-col gap-3 w-full lg:w-auto z-10 pt-2 lg:pt-0">
-                <Link href="/signup?next=/loans&role=customer" className="w-full">
-                  <Button className="w-full h-13 px-8 font-black text-sm sm:text-base btn-gold-gradient rounded-full gap-2.5 shadow-xl hover:shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                    <Banknote className="h-4 w-4" />
-                    <span>Consult Credit Underwriter</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-semibold">
-                  <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                  <span>Confidential WhatsApp Consultation</span>
-                </div>
-              </div>
-
-              <div className="absolute -right-12 -bottom-12 size-64 rounded-full bg-emerald-500/10 pointer-events-none blur-2xl" />
-            </div>
+            <InteractiveCapitalCalculator />
           </div>
         </section>
 

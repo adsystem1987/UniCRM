@@ -4,11 +4,11 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.9.8`  
+**Current Version:** `v1.9.9`  
 **Date:** 2026-11-04  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `a5ccfb6`  
-**Status:** DSA Lead Contact Unlock & Anti-Theft Masking Protocol integrated. Clean verification on `staging`.
+**Latest Commit:** `2bc044e`  
+**Status:** Motion package adopted with Interactive Capital Calculator on landing page. Clean verification on `staging`.
 
 ---
 
@@ -109,7 +109,8 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
-| **v1.9.8** | 2026-11-04 | DSA Lead Contact Unlock & Anti-Theft Masking Protocol: Adopted monetization and contact unlock engine from `dfydude.online` (`src/lib/dsa/monetization.ts`). Centralized phone (`maskPhoneNumber`) and email (`maskEmailAddress`) anti-scraping obfuscation in `/api/loans/applications`. Integrated audit-logged lead acceptance tracking (`recordLeadUnlock`) in `/api/loans/applications/accept`. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/dsa/monetization.ts`, `src/app/api/loans/applications/route.ts`, `src/app/api/loans/applications/accept/route.ts` | `a5ccfb6` |
+| **v1.9.9** | 2026-11-04 | High-Interaction Motion Integration: Installed modern `motion` package. Built `InteractiveCapitalCalculator` (`src/components/landing/interactive-capital-calculator.tsx`) featuring real-time EMI preview, spring-animated track selection pill (`layoutId`), live slider value animations, and seamless query param handoff to `/loans`. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/landing/interactive-capital-calculator.tsx`, `src/app/page.tsx`, `package.json` | `2bc044e` |
+| **v1.9.8** | 2026-11-04 | DSA Lead Contact Unlock & Anti-Theft Masking Protocol: Adopted monetization and contact unlock engine from `dfydude.online` (`src/lib/dsa/monetization.ts`). Centralized phone (`maskPhoneNumber`) and email (`maskEmailAddress`) anti-scraping obfuscation in `/api/loans/applications`. Integrated audit-logged lead acceptance tracking (`recordLeadUnlock`) in `/api/loans/applications/accept`. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/dsa/monetization.ts`, `src/app/api/loans/applications/route.ts`, `src/app/api/loans/applications/accept/route.ts` | `48607ef` |
 | **v1.9.7** | 2026-11-04 | Vault-Powered Slack Real-Time Alerts: Integrated dynamic credential resolution from Supabase Vault (`SLACK_BOT_TOKEN`, `SLACK_CHANNEL`) in `src/lib/slack/notify.ts`. Added structured Block Kit alert `notifyNewLoanApplication` and wired it into `/api/loans/consult` for immediate founder/underwriter notifications when a borrower completes application qualification. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/slack/notify.ts`, `src/app/api/loans/consult/route.ts` | `adccfdb` |
 | **v1.9.6** | 2026-11-04 | Adopted Zero-Cost Email Bounce Shield from `dfydude.online`: Implemented `src/lib/email/mx-validator.ts` with DNS MX verification and in-memory TTL caching (4h success, 10m failure). Integrated pre-flight check into AWS SES delivery loop in `src/lib/email/sender.ts` to block non-existent domains and keep SES bounce rates under 5%. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/email/mx-validator.ts`, `src/lib/email/sender.ts` | `f196fa3` |
 | **v1.9.5** | 2026-11-04 | Supabase Vault & Supermemory Integration: Implemented edge-safe `src/lib/vault.ts` with 60s in-memory TTL for zero-cost secret retrieval from Supabase Vault (`get_vault_secret`). Added `src/lib/supermemory.ts` for borrower long-term memory profiling and injected contextual memory retrieval and async memory persistence into conversational lending underwriter (`/api/loans/consult`). Verified 0 TypeScript errors and 21/21 vitest pass. | `src/lib/vault.ts`, `src/lib/supermemory.ts`, `src/app/api/loans/consult/route.ts` | `f046a98` |
