@@ -21,6 +21,7 @@ import { Plus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { formatCurrency } from "@/lib/currency";
 import { useTranslations } from "next-intl";
+import { motion, AnimatePresence } from "motion/react";
 
 interface PipelineBoardProps {
   stages: PipelineStage[];
@@ -242,14 +243,16 @@ function StageColumn({
             {t("dropDealHere")}
           </div>
         ) : (
-          deals.map((deal) => (
-            <DraggableDealCard
-              key={deal.id}
-              deal={deal}
-              stage={stage}
-              onEdit={onEditDeal}
-            />
-          ))
+          <AnimatePresence initial={false}>
+            {deals.map((deal) => (
+              <DraggableDealCard
+                key={deal.id}
+                deal={deal}
+                stage={stage}
+                onEdit={onEditDeal}
+              />
+            ))}
+          </AnimatePresence>
         )}
       </div>
 
@@ -280,13 +283,17 @@ function DraggableDealCard({
   });
 
   return (
-    <div
+    <motion.div
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      style={{ opacity: isDragging ? 0.3 : 1, touchAction: "none" }}
+      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+      animate={{ opacity: isDragging ? 0.3 : 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+      style={{ touchAction: "none" }}
     >
       <DealCard deal={deal} stage={stage} onEdit={onEdit} />
-    </div>
+    </motion.div>
   );
 }
