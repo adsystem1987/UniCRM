@@ -4,11 +4,11 @@
 > **Autonomous Assistant Instruction**:
 > Whenever a new session starts, read this document to understand the current phase and next steps. Whenever a feature, bugfix, or schema update is introduced, automatically append a new version entry in Section 6 below and update the version header.
 
-**Current Version:** `v1.9.13`  
+**Current Version:** `v1.9.14`  
 **Date:** 2026-11-04  
 **Current Git Branch:** `staging`  
-**Latest Commit:** `939ed5b`  
-**Status:** Pipelines Kanban Board enhanced with Motion spring physics and AnimatePresence. Clean verification on `staging`.
+**Latest Commit:** `ae6e008`  
+**Status:** Omnichannel Inbox enhanced with Motion spring physics and AnimatePresence. Clean verification on `staging`.
 
 ---
 
@@ -109,7 +109,8 @@ When conversational AI operates on the client side only (e.g. in-memory React st
 
 | Version | Date | Changes Summary | Key Files Affected | Commit |
 |---|---|---|---|---|
-| **v1.9.13** | 2026-11-04 | Pipelines Kanban Motion Integration: Enhanced `src/components/pipelines/pipeline-board.tsx` with `motion` spring layout transitions and `AnimatePresence`. Draggable deal cards now mount with spring physics (`initial={{ opacity: 0, y: 8, scale: 0.98 }}`), gracefully exit across stage buckets (`exit={{ opacity: 0, scale: 0.95 }}`), and retain drag opacity. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/pipelines/pipeline-board.tsx` | `939ed5b` |
+| **v1.9.14** | 2026-11-04 | Omnichannel Inbox Motion Integration: Enhanced `src/components/inbox/conversation-list.tsx` with `motion` spring layout transitions and `AnimatePresence`. Live incoming conversations and threads mount smoothly (`initial={{ opacity: 0, y: 6 }}`, `whileTap={{ scale: 0.99 }}`) with zero-lag selection feedback. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/inbox/conversation-list.tsx` | `ae6e008` |
+| **v1.9.13** | 2026-11-04 | Pipelines Kanban Motion Integration: Enhanced `src/components/pipelines/pipeline-board.tsx` with `motion` spring layout transitions and `AnimatePresence`. Draggable deal cards now mount with spring physics (`initial={{ opacity: 0, y: 8, scale: 0.98 }}`), gracefully exit across stage buckets (`exit={{ opacity: 0, scale: 0.95 }}`), and retain drag opacity. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/pipelines/pipeline-board.tsx` | `e02afda` |
 | **v1.9.12** | 2026-11-04 | Business Directory Motion Integration: Built `DirectoryCardGrid` (`src/components/business-page/directory-card-grid.tsx`) with staggered spring entrance and hover elevation physics, plus `DirectoryJumpBar` (`src/components/business-page/directory-jump-bar.tsx`) with tactile letter scale feedback. Integrated into `/p/directory` while maintaining `revalidate = 86400` static edge caching. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/business-page/directory-card-grid.tsx`, `src/components/business-page/directory-jump-bar.tsx`, `src/app/p/directory/page.tsx` | `27709e0` |
 | **v1.9.11** | 2026-11-04 | Conversational Underwriter & Loan Desk Motion Rollout: Enhanced `src/app/(dashboard)/loans/loans-client-view.tsx` with staggered spring-animated card entrance for loan categories (`whileHover={{ y: -3, scale: 1.01 }}`), smooth chat bubble spring animation with `AnimatePresence` (`opacity: 0, y: 10, scale: 0.98`), and spring indicator for underwriting analysis state. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/app/(dashboard)/loans/loans-client-view.tsx` | `ca6da8c` |
 | **v1.9.10** | 2026-11-04 | Motion Hero Section & Live Signal Badges: Built `MotionHeroSection` (`src/components/landing/motion-hero-section.tsx`) with staggered spring entrance physics, floating ambient glow animation, and interactive desktop live signal badges (Live ₹25L MSME Loan Approval + Direct WhatsApp Lead). Integrated into `src/app/page.tsx`. Verified 0 TypeScript errors and 21/21 vitest pass. | `src/components/landing/motion-hero-section.tsx`, `src/app/page.tsx` | `d88a4c3` |

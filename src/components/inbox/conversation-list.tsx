@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion, AnimatePresence } from "motion/react";
 
 interface ConversationListProps {
   activeConversationId: string | null;
@@ -407,15 +408,17 @@ export function ConversationList({
           </div>
         ) : (
           <div className="flex flex-col">
-            {filtered.map((conv) => (
-              <ConversationItem
-                key={conv.id}
-                conversation={conv}
-                isActive={conv.id === activeConversationId}
-                onSelect={handleSelect}
-                t={t}
-              />
-            ))}
+            <AnimatePresence initial={false}>
+              {filtered.map((conv) => (
+                <ConversationItem
+                  key={conv.id}
+                  conversation={conv}
+                  isActive={conv.id === activeConversationId}
+                  onSelect={handleSelect}
+                  t={t}
+                />
+              ))}
+            </AnimatePresence>
           </div>
         )}
       </ScrollArea>
@@ -451,10 +454,15 @@ function ConversationItem({
     : "";
 
   return (
-    <button
+    <motion.button
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      whileTap={{ scale: 0.99 }}
       onClick={handleClick}
       className={cn(
-        "flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/50",
+        "flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/50 relative",
         isActive && "border-l-2 border-primary bg-muted/70"
       )}
     >
@@ -499,6 +507,6 @@ function ConversationItem({
           </div>
         </div>
       </div>
-    </button>
+    </motion.button>
   );
 }
