@@ -4,6 +4,8 @@ import { ArrowLeft, MapPin, Building2, Tag, ExternalLink } from 'lucide-react';
 import { getAdminClient } from '@/lib/gdrive/offload';
 import { PublicDirectoryPageItem } from '@/components/business-page/public-directory-view';
 import { SHOWCASE_BUSINESS_PAGES } from '@/lib/business-page/showcase-data';
+import { DirectoryCardGrid } from '@/components/business-page/directory-card-grid';
+import { DirectoryJumpBar } from '@/components/business-page/directory-jump-bar';
 
 export const revalidate = 86400; // Cache on Vercel CDN for 24 hours (Zero CPU / Zero ISR writes on repeat visits)
 
@@ -149,38 +151,13 @@ export default async function YellowPagesDirectory() {
             Browse verified Indian enterprises, contractors, lending brokers, and luxury properties categorized by alphabetical letter, industry niche, and city location.
           </p>
 
-          {/* Jump Anchor Bar */}
-          <div className="pt-4 flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-semibold text-muted-foreground mr-2">Jump to:</span>
-            {alphabet.map((letter) => {
-              const hasEntries = (alphabeticalGroups[letter]?.length || 0) > 0;
-              return (
-                <a
-                  key={letter}
-                  href={hasEntries ? `#letter-${letter}` : undefined}
-                  className={`w-7 h-7 flex items-center justify-center rounded-md text-xs font-bold transition-colors ${
-                    hasEntries
-                      ? 'bg-card border border-border text-foreground hover:bg-primary hover:text-primary-foreground'
-                      : 'text-muted-foreground/30 pointer-events-none'
-                  }`}
-                >
-                  {letter}
-                </a>
-              );
-            })}
-            <a
-              href="#categories"
-              className="ml-2 px-2.5 py-1 rounded-md text-xs font-semibold border border-border bg-card hover:bg-muted text-foreground transition-colors"
-            >
-              By Category ↓
-            </a>
-            <a
-              href="#locations"
-              className="px-2.5 py-1 rounded-md text-xs font-semibold border border-border bg-card hover:bg-muted text-foreground transition-colors"
-            >
-              By City Location ↓
-            </a>
-          </div>
+          {/* Jump Anchor Bar with Motion Physics */}
+          <DirectoryJumpBar
+            alphabet={alphabet}
+            activeCounts={Object.fromEntries(
+              Object.entries(alphabeticalGroups).map(([k, v]) => [k, v.length])
+            )}
+          />
         </div>
       </section>
 
@@ -213,39 +190,7 @@ export default async function YellowPagesDirectory() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {alphabeticalGroups[letter].map((biz) => (
-                    <Link
-                      key={biz.id}
-                      href={`/p/${biz.slug}`}
-                      className="group p-4 rounded-xl border border-border bg-card hover:border-emerald-500/60 transition-all flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-bold text-sm text-foreground group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                            {biz.title}
-                          </h3>
-                          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </div>
-                        {biz.tagline && (
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
-                            {biz.tagline}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
-                        <span className="truncate max-w-[160px] flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-emerald-500 shrink-0" />
-                          {biz.address ? biz.address.split(',')[0] : 'Pan-India'}
-                        </span>
-                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">
-                          {biz.items.length} {biz.items.length === 1 ? 'Offering' : 'Offerings'}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                <DirectoryCardGrid items={alphabeticalGroups[letter]} />
               </div>
             ))}
           </div>
